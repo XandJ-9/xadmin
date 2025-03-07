@@ -53,6 +53,8 @@ db.sqlite3
 *.sln
 *.sw?
 
+*.class
+
 # System
 .DS_Store
 Thumbs.db
