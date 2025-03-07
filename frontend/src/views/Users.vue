@@ -10,7 +10,7 @@
       <el-table-column prop="id" label="ID" width="80" />
       <el-table-column prop="username" label="用户名" width="180" />
       <el-table-column prop="role" label="角色" width="180" />
-      <el-table-column prop="createTime" label="创建时间" />
+      <el-table-column prop="create_time" label="创建时间" />
       <el-table-column label="操作" width="180">
         <template #default="scope">
           <el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>
@@ -49,24 +49,30 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import request from '@/utils/request'
 
-const userList = ref([
-  {
-    id: 1,
-    username: 'admin',
-    role: '管理员',
-    createTime: '2024-03-15'
-  },
-  {
-    id: 2,
-    username: 'user1',
-    role: '普通用户',
-    createTime: '2024-03-15'
+const userList = ref([])
+const loading = ref(false)
+
+const fetchUsers = async () => {
+  loading.value = true
+  try {
+    const response = await request.get('/api/users/')
+    userList.value = response
+  } catch (error) {
+    ElMessage.error('获取用户列表失败')
+    console.error('Error fetching users:', error)
+  } finally {
+    loading.value = false
   }
-])
+}
+
+onMounted(() => {
+  fetchUsers()
+})
 
 const dialogVisible = ref(false)
 const dialogTitle = ref('')
@@ -106,43 +112,51 @@ const handleEdit = (row) => {
   dialogVisible.value = true
 }
 
-const handleDelete = (row) => {
-  ElMessageBox.confirm('确认删除该用户吗？', '提示', {
-    confirmButtonText: '确定',
-    cancelButtonText: '取消',
-    type: 'warning'
-  }).then(() => {
-    // TODO: 实现实际的删除逻辑
-    const index = userList.value.findIndex(item => item.id === row.id)
-    userList.value.splice(index, 1)
+const handleDelete = async (row) => {
+  try {
+    await ElMessageBox.confirm('确认删除该用户吗？', '提示', {
+      confirmButtonText: '确定',
+      cancelButtonText: '取消',
+      type: 'warning'
+    })
+    
+    await request.delete(`/api/users/${row.id}`)
     ElMessage.success('删除成功')
-  })
+    await fetchUsers()
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error('删除失败')
+      console.error('Error deleting user:', error)
+    }
+  }
 }
 
-const handleSubmit = () => {
-  userFormRef.value.validate((valid) => {
+const handleSubmit = async () => {
+  userFormRef.value.validate(async (valid) => {
     if (valid) {
-      // TODO: 实现实际的提交逻辑
-      if (userForm.id) {
-        // 编辑用户
-        const index = userList.value.findIndex(item => item.id === userForm.id)
-        userList.value[index] = {
-          ...userList.value[index],
-          username: userForm.username,
-          role: userForm.role === 'admin' ? '管理员' : '普通用户'
+      try {
+        if (userForm.id) {
+          // 编辑用户
+          await request.put(`/api/users/${userForm.id}/`, {
+            username: userForm.username,
+            role: userForm.role
+          })
+          ElMessage.success('编辑成功')
+        } else {
+          // 添加用户
+          await request.post('/api/users/', {
+            username: userForm.username,
+            password: userForm.password,
+            role: userForm.role
+          })
+          ElMessage.success('添加成功')
         }
-        ElMessage.success('编辑成功')
-      } else {
-        // 添加用户
-        userList.value.push({
-          id: userList.value.length + 1,
-          username: userForm.username,
-          role: userForm.role === 'admin' ? '管理员' : '普通用户',
-          createTime: new Date().toLocaleDateString()
-        })
-        ElMessage.success('添加成功')
+        dialogVisible.value = false
+        await fetchUsers()
+      } catch (error) {
+        ElMessage.error(userForm.id ? '编辑失败' : '添加失败')
+        console.error('Error submitting user:', error)
       }
-      dialogVisible.value = false
     }
   })
 }

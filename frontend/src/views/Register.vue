@@ -1,27 +1,33 @@
 <template>
-  <div class="login-container">
-    <div class="login-box">
-      <!-- <h2>后台管理系统</h2> -->
-      <el-form :model="loginForm" :rules="rules" ref="loginFormRef">
+  <div class="register-container">
+    <div class="register-box">
+      <h2>用户注册</h2>
+      <el-form :model="registerForm" :rules="rules" ref="registerFormRef">
         <el-form-item prop="username">
-          <el-input v-model="loginForm.username" placeholder="用户名">
+          <el-input v-model="registerForm.username" placeholder="用户名">
             <template #prefix>
               <el-icon><User /></el-icon>
             </template>
           </el-input>
         </el-form-item>
         <el-form-item prop="password">
-          <el-input v-model="loginForm.password" type="password" placeholder="密码">
+          <el-input v-model="registerForm.password" type="password" placeholder="密码">
             <template #prefix>
               <el-icon><Lock /></el-icon>
             </template>
           </el-input>
         </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="handleLogin" :loading="loading" style="width: 100%">登录</el-button>
+        <el-form-item prop="role">
+          <el-select v-model="registerForm.role" placeholder="请选择角色" style="width: 100%">
+            <el-option label="普通用户" value="user" />
+            <el-option label="管理员" value="admin" />
+          </el-select>
         </el-form-item>
         <el-form-item>
-          <el-link type="primary" @click="goToRegister" style="width: 100%; text-align: center;">没有账号？去注册</el-link>
+          <el-button type="primary" @click="handleRegister" :loading="loading" style="width: 100%">注册</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-link type="primary" @click="goToLogin" style="width: 100%; text-align: center;">已有账号？去登录</el-link>
         </el-form-item>
       </el-form>
     </div>
@@ -36,41 +42,35 @@ import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
 
 const router = useRouter()
-const loginFormRef = ref(null)
+const registerFormRef = ref(null)
 const loading = ref(false)
 
-const loginForm = reactive({
+const registerForm = reactive({
   username: '',
-  password: ''
+  password: '',
+  role: 'user'
 })
 
 const rules = {
   username: [{ required: true, message: '请输入用户名', trigger: 'blur' }],
-  password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
+  password: [{ required: true, message: '请输入密码', trigger: 'blur' }],
+  role: [{ required: true, message: '请选择角色', trigger: 'change' }]
 }
 
-const goToRegister = () => {
-  router.push('/register')
-}
-
-const handleLogin = () => {
-  loginFormRef.value.validate(async (valid) => {
+const handleRegister = () => {
+  registerFormRef.value.validate(async (valid) => {
     if (valid) {
       loading.value = true
       try {
-        const response = await request.post('/api/users/login/', {
-          username: loginForm.username,
-          password: loginForm.password
-        })
-        console.log(response.data)
+        const response = await request.post('/api/users/register/', registerForm)
         const { token, user } = response.data
         localStorage.setItem('token', token)
         localStorage.setItem('user', JSON.stringify(user))
         
-        ElMessage.success('登录成功')
+        ElMessage.success('注册成功')
         router.push('/dashboard')
       } catch (error) {
-        const errorMessage = error.response?.data?.error || '登录失败，请稍后重试'
+        const errorMessage = error.response?.data?.error || '注册失败，请稍后重试'
         ElMessage.error(errorMessage)
       } finally {
         loading.value = false
@@ -78,10 +78,14 @@ const handleLogin = () => {
     }
   })
 }
+
+const goToLogin = () => {
+  router.push('/login')
+}
 </script>
 
 <style scoped>
-.login-container {
+.register-container {
   height: 100vh;
   display: flex;
   justify-content: center;
@@ -89,7 +93,7 @@ const handleLogin = () => {
   background-color: #f5f7fa;
 }
 
-.login-box {
+.register-box {
   width: 400px;
   padding: 40px;
   background: #ffffff;
@@ -97,7 +101,7 @@ const handleLogin = () => {
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
 
-.login-box h2 {
+.register-box h2 {
   text-align: center;
   margin-bottom: 35px;
   color: #303133;

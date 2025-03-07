@@ -7,16 +7,25 @@ from django.contrib.auth import authenticate
 from .models import User
 from .serializers import UserSerializer
 from .permissions import IsAdminUser, IsSuperUser, IsOwnerOrAdmin
+import logging
+
+logger = logging.getLogger('django')
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
     def get_permissions(self):
+        # 根据不同的操作动作返回相应的权限类
+        # 登录和注册操作允许所有用户访问，不需要认证
         if self.action in ['login', 'register']:
-            return [AllowAny()]
+            permission_classes = [AllowAny]
+            return [permission() for permission in permission_classes]
+        # 用户列表只允许管理员和超级用户访问
         elif self.action == 'list':
-            return [IsAdminUser() | IsSuperUser()]
+            return [IsAdminUser() , IsSuperUser()]
+        # 对于查看、更新、部分更新和删除操作
+        # 只允许用户操作自己的信息，或者由管理员操作
         elif self.action in ['retrieve', 'update', 'partial_update', 'destroy']:
             return [IsOwnerOrAdmin()]
         return super().get_permissions()
@@ -25,6 +34,7 @@ class UserViewSet(viewsets.ModelViewSet):
     def login(self, request):
         username = request.data.get('username')
         password = request.data.get('password')
+        logger.info(f"Login attempt for user: {username}, password: {password}")
         user = authenticate(username=username, password=password)
 
         if user:

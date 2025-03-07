@@ -1,9 +1,8 @@
 <template>
-  <Layout>
-    <router-view></router-view>
-  </Layout>
+    <div class="container">
+    Dashboard
+    </div>
 </template>
 
 <script setup>
-import Layout from '../components/Layout.vue'
 </script>
