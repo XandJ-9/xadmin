@@ -74,7 +74,7 @@ const fetchUsers = async () => {
         search: searchQuery.value
       }
     })
-    userList.value = response
+    userList.value = response.data
   } catch (error) {
     ElMessage.error('获取用户列表失败')
     console.error('Error fetching users:', error)
