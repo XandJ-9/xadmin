@@ -4,6 +4,14 @@
       <el-button type="primary" @click="handleAdd">
         <el-icon><Plus /></el-icon>添加用户
       </el-button>
+      <el-input
+        v-model="searchQuery"
+        placeholder="搜索用户名"
+        style="width: 200px"
+      />
+      <el-button @click="fetchUsers">
+        <el-icon><Search /></el-icon>搜索
+      </el-button>
     </div>
 
     <el-table :data="userList" style="width: 100%">
@@ -56,11 +64,16 @@ import request from '@/utils/request'
 
 const userList = ref([])
 const loading = ref(false)
+const searchQuery = ref('')
 
 const fetchUsers = async () => {
   loading.value = true
   try {
-    const response = await request.get('/api/users/')
+    const response = await request.get('/api/users/', {
+      params: {
+        search: searchQuery.value
+      }
+    })
     userList.value = response
   } catch (error) {
     ElMessage.error('获取用户列表失败')
