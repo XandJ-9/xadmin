@@ -27,7 +27,6 @@ class UserOperationMiddleware(MiddlewareMixin):
                         logger.warning(f'用户 {username} {"登录" if action.__name__ == "login" else "注册"}失败')
         return response
 
-class UserOperationMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
