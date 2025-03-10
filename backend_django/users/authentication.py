@@ -19,6 +19,7 @@ def get_user_from_token(request):
         user_id = access_token.get('user_id')
         user = User.objects.get(id=user_id)
         logging.info(f'User {user.username} authenticated with token')
+        logger.info(f'Authenticated user: {user.username}')
         return user
     except (InvalidToken, TokenError, User.DoesNotExist) as e:
         logger.error(f'Token authentication failed: {str(e)}')
