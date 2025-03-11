@@ -16,16 +16,12 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
 
     def get_permissions(self):
-        # 根据不同的操作动作返回相应的权限类
-        # 登录和注册操作允许所有用户访问，不需要认证
+        print(f"{__file__} : Request action : {self.action}, Request user : {self.request.user}")
         if self.action in ['login', 'register']:
             permission_classes = [AllowAny]
             return [permission() for permission in permission_classes]
-        # 用户列表只允许管理员访问
         elif self.action == 'list':
             return [IsAdminUser()]
-        # 对于查看、更新、部分更新和删除操作
-        # 只允许用户操作自己的信息，或者由管理员操作
         elif self.action in ['retrieve', 'update', 'partial_update', 'destroy']:
             return [IsOwnerOrAdmin()]
         return super().get_permissions()

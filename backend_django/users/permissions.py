@@ -1,11 +1,10 @@
 from rest_framework import permissions
-import logging
+# import logging
 
-logger = logging.getLogger('django')
+# logger = logging.getLogger('django')
 
 class IsAdminUser(permissions.BasePermission):
     def has_permission(self, request, view):
-        logger.info(f'Checking permission for user: {request.user.username}')
         return request.user and request.user.is_authenticated and request.user.role == 'admin'
 
 class IsSuperUser(permissions.BasePermission):
@@ -13,6 +12,9 @@ class IsSuperUser(permissions.BasePermission):
         return request.user and request.user.is_superuser
 
 class IsOwnerOrAdmin(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return request.user and request.user.is_authenticated
+
     def has_object_permission(self, request, view, obj):
         if not request.user.is_authenticated:
             return False

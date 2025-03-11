@@ -76,8 +76,11 @@ const fetchUsers = async () => {
     })
     userList.value = response.data
   } catch (error) {
-    ElMessage.error('获取用户列表失败')
-    console.error('Error fetching users:', error)
+      if (error.response.status === 403) {
+        ElMessage.error('当前用户无访问权限')
+      } else {
+        ElMessage.error('获取用户列表失败')
+        }
   } finally {
     loading.value = false
   }

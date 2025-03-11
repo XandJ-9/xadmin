@@ -46,10 +46,11 @@ request.interceptors.response.use(
           window.location.href = '/login'
           break
         case HTTP_STATUS.FORBIDDEN:
-          alert(ERROR_MESSAGES.FORBIDDEN)
+            // alert(ERROR_MESSAGES.FORBIDDEN)
           break
         default:
-              alert(ERROR_MESSAGES.DEFAULT)
+          // alert(ERROR_MESSAGES.DEFAULT)
+          break
       }
     } else {
       alert(ERROR_MESSAGES.NETWORK_ERROR)
