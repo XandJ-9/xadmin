@@ -6,11 +6,11 @@
       </el-button>
     </div>
 
-    <el-table :data="roleList" style="width: 100%">
+    <el-table :data="roleList" style="width: 100%" v-loading="loading">
       <el-table-column prop="id" label="ID" width="80" />
       <el-table-column prop="name" label="角色名称" width="180" />
       <el-table-column prop="description" label="描述" />
-      <el-table-column prop="createTime" label="创建时间" width="180" />
+      <el-table-column prop="create_time" label="创建时间" width="180" />
       <el-table-column label="操作" width="180">
         <template #default="scope">
           <el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>
@@ -43,24 +43,33 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, onMounted } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import request from '@/utils/request'
 
-const roleList = ref([
-  {
-    id: 1,
-    name: '管理员',
-    description: '系统管理员，拥有所有权限',
-    createTime: '2024-03-15'
-  },
-  {
-    id: 2,
-    name: '普通用户',
-    description: '普通用户，拥有基本权限',
-    createTime: '2024-03-15'
+const roleList = ref([])
+const loading = ref(false)
+
+const fetchRoles = async () => {
+  loading.value = true
+  try {
+    const response = await request.get('/api/roles/')
+    roleList.value = response.data
+  } catch (error) {
+    if (error.response?.status === 403) {
+      ElMessage.error('当前用户无访问权限')
+    } else {
+      ElMessage.error('获取角色列表失败')
+    }
+  } finally {
+    loading.value = false
   }
-])
+}
+
+onMounted(() => {
+  fetchRoles()
+})
 
 const dialogVisible = ref(false)
 const dialogTitle = ref('')
@@ -97,52 +106,50 @@ const handleEdit = (row) => {
   dialogVisible.value = true
 }
 
-const handleDelete = (row) => {
-  ElMessageBox.confirm(
-    '确认删除该角色吗？',
-    '警告',
-    {
+const handleDelete = async (row) => {
+  try {
+    await ElMessageBox.confirm('确认删除该角色吗？', '警告', {
       confirmButtonText: '确定',
       cancelButtonText: '取消',
       type: 'warning',
+    })
+    
+    await request.delete(`/api/roles/${row.id}/`)
+    ElMessage.success('删除成功')
+    await fetchRoles()
+  } catch (error) {
+    if (error !== 'cancel') {
+      ElMessage.error('删除失败')
+      console.error('Error deleting role:', error)
     }
-  ).then(() => {
-    // TODO: 实现实际的删除逻辑
-    const index = roleList.value.findIndex(item => item.id === row.id)
-    if (index > -1) {
-      roleList.value.splice(index, 1)
-      ElMessage.success('删除成功')
-    }
-  }).catch(() => {})
+  }
 }
 
-const handleSubmit = () => {
-  roleFormRef.value.validate((valid) => {
+const handleSubmit = async () => {
+  roleFormRef.value.validate(async (valid) => {
     if (valid) {
-      // TODO: 实现实际的提交逻辑
-      if (roleForm.id === null) {
-        // 添加角色
-        const newRole = {
-          id: roleList.value.length + 1,
-          name: roleForm.name,
-          description: roleForm.description,
-          createTime: new Date().toLocaleDateString()
-        }
-        roleList.value.push(newRole)
-        ElMessage.success('添加成功')
-      } else {
-        // 编辑角色
-        const index = roleList.value.findIndex(item => item.id === roleForm.id)
-        if (index > -1) {
-          roleList.value[index] = {
-            ...roleList.value[index],
+      try {
+        if (roleForm.id) {
+          // 编辑角色
+          await request.put(`/api/roles/${roleForm.id}/`, {
             name: roleForm.name,
             description: roleForm.description
-          }
+          })
           ElMessage.success('编辑成功')
+        } else {
+          // 添加角色
+          await request.post('/api/roles/', {
+            name: roleForm.name,
+            description: roleForm.description
+          })
+          ElMessage.success('添加成功')
         }
+        dialogVisible.value = false
+        await fetchRoles()
+      } catch (error) {
+        ElMessage.error(roleForm.id ? '编辑失败' : '添加失败')
+        console.error('Error submitting role:', error)
       }
-      dialogVisible.value = false
     }
   })
 }

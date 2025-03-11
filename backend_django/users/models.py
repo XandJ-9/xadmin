@@ -1,32 +1,38 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
+from .models_base import BaseModel
 
-class User(AbstractUser):
-    role = models.CharField(max_length=50, default='user')
-    create_time = models.DateTimeField(default=timezone.now)
-    
-    groups = models.ManyToManyField(
-        'auth.Group',
-        verbose_name='groups',
-        blank=True,
-        help_text='The groups this user belongs to.',
-        related_name='custom_user_set',
-        related_query_name='custom_user'
-    )
-    user_permissions = models.ManyToManyField(
-        'auth.Permission',
-        verbose_name='user permissions',
-        blank=True,
-        help_text='Specific permissions for this user.',
-        related_name='custom_user_set',
-        related_query_name='custom_user'
-    )
+class Role(BaseModel):
+    name = models.CharField(max_length=50, unique=True, verbose_name='角色名称')
+    description = models.TextField(blank=True, verbose_name='角色描述')
+    created_at = models.DateTimeField(default=timezone.now, verbose_name='创建时间')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
 
     class Meta:
-        db_table = 'users'
+        verbose_name = '角色'
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.name
+
+class User(AbstractUser, BaseModel):
+    """自定义用户模型"""
+    nickname = models.CharField(max_length=50, blank=True, null=True, verbose_name='昵称')
+    avatar = models.CharField(max_length=200, blank=True, null=True, verbose_name='头像')
+    is_active = models.BooleanField(default=True, verbose_name='是否激活')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
+    role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True, related_name='users', verbose_name='角色')
+    
+    # 移除默认的groups和user_permissions字段
+    groups = None
+    user_permissions = None
+
+    class Meta:
         verbose_name = '用户'
         verbose_name_plural = verbose_name
+        ordering = ['-id']
 
     def __str__(self):
         return self.username

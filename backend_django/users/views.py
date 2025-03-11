@@ -4,19 +4,23 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
-from .models import User
-from .serializers import UserSerializer
+from .models import User, Role
+from .serializers import UserSerializer, RoleSerializer
 from .permissions import IsAdminUser, IsSuperUser, IsOwnerOrAdmin
 import logging
 
 logger = logging.getLogger('django')
+
+class RoleViewSet(viewsets.ModelViewSet):
+    queryset = Role.objects.all()
+    serializer_class = RoleSerializer
+    permission_classes = [IsAdminUser]
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
     def get_permissions(self):
-        print(f"{__file__} : Request action : {self.action}, Request user : {self.request.user}")
         if self.action in ['login', 'register']:
             permission_classes = [AllowAny]
             return [permission() for permission in permission_classes]
@@ -30,7 +34,7 @@ class UserViewSet(viewsets.ModelViewSet):
     def login(self, request):
         username = request.data.get('username')
         password = request.data.get('password')
-        logger.info(f"Login attempt for user: {username}, password: {password}")
+        logger.debug(f"Login attempt for user: {username}, password: {password}")
         user = authenticate(username=username, password=password)
 
         if user:

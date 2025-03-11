@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',  # 添加CORS应用
-    'users.apps.UsersConfig'
+    'users.apps.UsersConfig',
+    'datasource.apps.DatasourceConfig'
 ]
 
 MIDDLEWARE = [
@@ -92,8 +93,14 @@ DATABASES = {
         'PASSWORD': env('DB_PASSWORD'),
         'HOST': env('DB_HOST'),
         'PORT': env('DB_PORT'),
+        'OPTIONS': {
+            'options': '-c search_path=public'
+        }
     }
 }
+
+# 设置数据库表前缀
+DATABASE_TABLE_PREFIX = 'xadmin'
 
 
 # Password validation
@@ -163,21 +170,21 @@ LOGGING = {
     'disable_existing_loggers': False,
     'formatters': {
         'verbose': {
-            'format': '{levelname} {asctime} {module} {message}',
+            'format': '{asctime} {levelname} {module}|{lineno} : {message}',
             'style': '{',
         },
         'simple': {
-            'format': '{levelname} {message}',
+            'format': '{levelname} : {message}',
             'style': '{',
         },
         'user_operation': {
-            'format': '{asctime} {message}',
+            'format': '{asctime} : {message}',
             'style': '{',
         },
     },
     'handlers': {
         'console': {
-            'level': 'INFO',
+            'level': 'DEBUG',
             'class': 'logging.StreamHandler',
             'formatter': 'verbose'
         },
