@@ -14,7 +14,7 @@ logger = logging.getLogger('django')
 class RoleViewSet(viewsets.ModelViewSet):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
-    permission_classes = [IsAdminUser]
+    # permission_classes = [IsAdminUser]
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
