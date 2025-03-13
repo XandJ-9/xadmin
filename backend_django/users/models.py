@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
-from .models_base import BaseModel
+from xadmin.models_base import BaseModel
 
 class Role(BaseModel):
     name = models.CharField(max_length=50, unique=True, verbose_name='角色名称')

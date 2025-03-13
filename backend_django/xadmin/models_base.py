@@ -6,3 +6,4 @@ class BaseModel(models.Model):
     """所有模型的基类，用于设置统一的表前缀"""
     class Meta:
         abstract = True
+        db_table = 'your_prefix_%(app_label)s_%(class)s'

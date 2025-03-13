@@ -1,7 +1,7 @@
 from django.db import models
 from django.utils import timezone
 from users.models import User
-from users.models_base import BaseModel
+from xadmin.models_base import BaseModel
 
 class DataSource(BaseModel):
     name = models.CharField(max_length=100, verbose_name='数据源名称')
