@@ -12,7 +12,7 @@ class Role(BaseModel):
     class Meta(BaseModel.Meta):
         verbose_name = '角色'
         verbose_name_plural = verbose_name
-        # db_table = BaseModel.Meta.db_table + '_role'
+        db_table = BaseModel.Meta.db_table + '_role'
 
     def __str__(self):
         return self.name
