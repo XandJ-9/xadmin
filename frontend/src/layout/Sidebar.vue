@@ -10,24 +10,23 @@
       active-text-color="#409EFF"
       router
     >
-      <el-menu-item index="/dashboard">
-        <el-icon><DataBoard /></el-icon>
-        <span>Dashboard</span>
-      </el-menu-item>
-      <el-menu-item index="/users">
-        <el-icon><User /></el-icon>
-        <span>用户管理</span>
-      </el-menu-item>
-      <el-menu-item index="/roles">
-        <el-icon><Setting /></el-icon>
-        <span>角色管理</span>
+      <el-menu-item v-for="route in menuRoutes" :key="route.path" :index="'/' + route.path">
+        <el-icon>
+          <component :is="route.meta?.icon" />
+        </el-icon>
+        <span>{{ route.meta?.title || route.name }}</span>
       </el-menu-item>
     </el-menu>
   </el-aside>
 </template>
 
 <script setup>
-import { User, Setting, DataBoard } from '@element-plus/icons-vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+const menuRoutes = router.options.routes
+  .find(route => route.path === '/' && route.children)
+  ?.children || []
 
 defineProps({
   isCollapse: {

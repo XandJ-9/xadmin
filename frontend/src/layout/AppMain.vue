@@ -20,6 +20,7 @@
       </div>
     </el-header>
     
+    <tag-view />
     <el-main>
       <router-view />
     </el-main>
@@ -30,7 +31,7 @@
 import { ArrowDown, Expand, Fold } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
 import { computed, ref, onMounted } from 'vue'
-
+import TagView from './TagView.vue'
 const props = defineProps({
   isCollapse: {
     type: Boolean,

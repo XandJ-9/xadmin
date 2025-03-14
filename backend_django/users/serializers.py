@@ -11,7 +11,7 @@ class RoleSerializer(serializers.ModelSerializer):
 
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=False)
-    create_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
+    create_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True, source='created_at')
     role_info = RoleSerializer(source='role', read_only=True)
     role_id = serializers.PrimaryKeyRelatedField(
         source='role',

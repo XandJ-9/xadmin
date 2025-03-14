@@ -17,7 +17,7 @@
     <el-table :data="userList" style="width: 100%">
       <el-table-column prop="id" label="ID" width="80" />
       <el-table-column prop="username" label="用户名" width="180" />
-      <el-table-column prop="role" label="角色" width="180" />
+      <el-table-column prop="role_info.name" label="角色" width="180" />
       <el-table-column prop="create_time" label="创建时间" />
       <el-table-column label="操作" width="180">
         <template #default="scope">

@@ -24,7 +24,7 @@ class DataSourceViewSet(viewsets.ModelViewSet):
             return DataSource.objects.all()
         return DataSource.objects.filter(creator=user)
 
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['post'], url_path='test')
     def test_connection(self, request, pk=None):
         datasource = self.get_object()
         try:
@@ -44,7 +44,7 @@ class DataSourceViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-    @action(detail=True, methods=['post'])
+    @action(detail=True, methods=['post'], url_path='query')
     def execute_query(self, request, pk=None):
         datasource = self.get_object()
         sql = request.data.get('sql')
@@ -68,7 +68,7 @@ class DataSourceViewSet(viewsets.ModelViewSet):
             with connection.cursor() as cursor:
                 cursor.execute(sql)
                 if sql.strip().lower().startswith('select'):
-                    results = cursor.fetchall()
+                    results = cursor.fetchmany(10000)
                     return Response({
                         'data': results,
                         'total': len(results)

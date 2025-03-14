@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { User, Setting, DataBoard } from '@element-plus/icons-vue'
 
 const routes = [
     {
@@ -23,18 +24,48 @@ const routes = [
             {
                 path: 'dashboard',
                 name: 'Dashboard',
-                component: () => import('@/views/Dashboard.vue')
+                component: () => import('@/views/Dashboard.vue'),
+                meta: {
+                    icon: DataBoard,
+                    title: 'Dashboard'
+                }
             },
             {
                 path: 'users',
                 name: 'Users',
-                component: () => import('@/views/Users.vue')
+                component: () => import('@/views/Users.vue'),
+                meta: {
+                    icon: User,
+                    title: '用户管理'
+                }
             },
             {
                 path: 'roles',
                 name: 'Roles',
-                component: () => import('@/views/Roles.vue')
+                component: () => import('@/views/Roles.vue'),
+                meta: {
+                    icon: Setting,
+                    title: '角色管理'
+                }
+          },
+          {
+            path: 'datasources',
+            name: 'Datasources',
+            component: () => import('@/views/DataSources.vue'),
+            meta: {
+                icon: Setting,
+                title: '数据源管理'
             }
+        },
+        {
+            path: 'dataquery',
+            name: 'DataQuery',
+            component: () => import('@/views/DataQuery.vue'),
+            meta: {
+                icon: DataBoard,
+                title: '数据查询'
+            }
+        }
         ]
     }
 ]
