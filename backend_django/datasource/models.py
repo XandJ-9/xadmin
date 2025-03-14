@@ -19,6 +19,7 @@ class DataSource(BaseModel):
     class Meta:
         verbose_name = '数据源'
         verbose_name_plural = verbose_name
+        db_table = BaseModel.Meta.db_table + '_datasource'
 
     def __str__(self):
         return self.name

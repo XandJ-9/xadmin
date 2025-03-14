@@ -9,9 +9,10 @@ class Role(BaseModel):
     created_at = models.DateTimeField(default=timezone.now, verbose_name='创建时间')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
 
-    class Meta:
+    class Meta(BaseModel.Meta):
         verbose_name = '角色'
         verbose_name_plural = verbose_name
+        # db_table = BaseModel.Meta.db_table + '_role'
 
     def __str__(self):
         return self.name
@@ -33,6 +34,7 @@ class User(AbstractUser, BaseModel):
         verbose_name = '用户'
         verbose_name_plural = verbose_name
         ordering = ['-id']
+        db_table = BaseModel.Meta.db_table + '_user'
 
     def __str__(self):
         return self.username
