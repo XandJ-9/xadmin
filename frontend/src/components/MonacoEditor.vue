@@ -47,6 +47,66 @@ const configureLanguages = () => {
           kind: monaco.languages.CompletionItemKind.Keyword,
           insertText: 'WHERE',
         },
+        {
+          label: 'GROUP BY',
+          kind: monaco.languages.CompletionItemKind.Keyword,
+          insertText: 'GROUP BY',
+        },
+        {
+          label: 'ORDER BY',
+          kind: monaco.languages.CompletionItemKind.Keyword,
+          insertText: 'ORDER BY',
+        },
+        {
+          label: 'HAVING',
+          kind: monaco.languages.CompletionItemKind.Keyword,
+          insertText: 'HAVING',
+        },
+        {
+          label: 'JOIN',
+          kind: monaco.languages.CompletionItemKind.Keyword,
+          insertText: 'JOIN',
+        },
+        {
+          label: 'LEFT JOIN',
+          kind: monaco.languages.CompletionItemKind.Keyword,
+          insertText: 'LEFT JOIN',
+        },
+        {
+          label: 'RIGHT JOIN',
+          kind: monaco.languages.CompletionItemKind.Keyword,
+          insertText: 'RIGHT JOIN',
+        },
+        {
+          label: 'INNER JOIN',
+          kind: monaco.languages.CompletionItemKind.Keyword,
+          insertText: 'INNER JOIN',
+        },
+        {
+          label: 'LIMIT',
+          kind: monaco.languages.CompletionItemKind.Keyword,
+          insertText: 'LIMIT',
+        },
+        {
+          label: 'OFFSET',
+          kind: monaco.languages.CompletionItemKind.Keyword,
+          insertText: 'OFFSET',
+        },
+        {
+          label: 'INSERT INTO',
+          kind: monaco.languages.CompletionItemKind.Keyword,
+          insertText: 'INSERT INTO',
+        },
+        {
+          label: 'UPDATE',
+          kind: monaco.languages.CompletionItemKind.Keyword,
+          insertText: 'UPDATE',
+        },
+        {
+          label: 'DELETE FROM',
+          kind: monaco.languages.CompletionItemKind.Keyword,
+          insertText: 'DELETE FROM',
+        },
       ],
     }),
   })
@@ -71,7 +131,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['update:modelValue', 'change'])
+const emit = defineEmits(['update:modelValue', 'change', 'cursor-change'])
 
 const editorContainer = ref(null)
 let editor = null
@@ -88,6 +148,7 @@ onBeforeUnmount(() => {
 })
 
 const initMonaco = () => {
+
   const defaultOptions = {
     value: props.modelValue,
     language: props.language,
@@ -134,10 +195,18 @@ const initMonaco = () => {
     ...props.options
   })
 
+
+
   editor.onDidChangeModelContent(() => {
     const value = editor.getValue()
     emit('update:modelValue', value)
     emit('change', value)
+  })
+
+  editor.onDidChangeCursorPosition((e) => {
+    const position = editor.getPosition()
+    emit('cursor-change', position)
+    // console.log('光标位置变化：', position)
   })
 }
 

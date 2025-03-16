@@ -25,14 +25,32 @@
             language="sql"
             theme="vs-light"
             @change="onEditorChange"
+            @cursor-change="handleCursorChange"
           />
       </div>
-      <QueryResult
-        :query-result="queryResult"
-        :table-columns="tableColumns"
-        :loading="loading"
-        :error="error"
-      />
+      
+      <el-tabs 
+        v-model="activeTab" 
+        type="card" 
+        closable 
+        @tab-remove="removeTab"
+        class="query-tabs"
+      >
+        <el-tab-pane
+          v-for="tab in queryTabs"
+          :key="tab.id"
+          :label="tab.label"
+          :name="tab.id"
+        >
+          <QueryResult
+            :query-result="tab.queryResult"
+            :table-columns="tab.tableColumns"
+            :loading="loading"
+            :error="tab.error"
+            class="query-result"
+          />
+        </el-tab-pane>
+      </el-tabs>
     </div>
   </div>
 </template>
@@ -47,11 +65,13 @@ import QueryResult from '@/components/QueryResult.vue'
 const dataSources = ref([])
 const selectedDataSource = ref('')
 const sqlQuery = ref('')
-const queryResult = ref([])
-const tableColumns = ref([])
 const loading = ref(false)
-const error = ref('')
+const currentCursorPosition = ref(0)
 
+// 标签页相关数据
+const activeTab = ref('')
+const queryTabs = ref([])
+const tabIndex = ref(0)
 
 const fetchDataSources = async () => {
   try {
@@ -64,10 +84,36 @@ const fetchDataSources = async () => {
 
 const handleDataSourceChange = () => {
   // 清空当前查询结果
-  queryResult.value = []
-  tableColumns.value = []
-  error.value = ''
-  // currentPage.value = 1
+  sqlQuery.value = ''
+  activeTab.value = ''
+  queryTabs.value = []
+}
+
+// 获取当前光标所在的SQL语句
+const getCurrentSql = () => {
+  const content = sqlQuery.value
+  if (!content) return ''
+
+  // 分割所有SQL语句，保留分号
+  const statements = content.split(/(?<=;)/)
+  let currentLine = currentCursorPosition.value?.lineNumber || 1
+  let currentColumn = currentCursorPosition.value?.column || 1
+  let lineCount = 0
+
+  // 找到光标所在的SQL语句
+  for (let statement of statements) {
+    const statementLines = statement.split('\n')
+    lineCount += statementLines.length
+
+    if (lineCount >= currentLine) {
+      // 找到包含光标的语句块
+      return statement.trim()
+    }
+  }
+
+  // 如果没有找到或者是最后一个语句，返回最后一个语句
+  const lastStatement = statements[statements.length - 1]
+  return lastStatement ? lastStatement.trim() : ''
 }
 
 const executeQuery = async () => {
@@ -81,30 +127,73 @@ const executeQuery = async () => {
     return
   }
 
+  const sql = getCurrentSql()
+
+  if (!sql) {
+    ElMessage.warning('请输入SQL语句')
+    return
+  }
+
   loading.value = true
-  error.value = ''
-  currentPage.value = 1
+  const newTabId = `tab-${tabIndex.value++}`
   
   try {
     const response = await request.post(`/api/datasources/${selectedDataSource.value}/query/`, {
-      sql: sqlQuery.value
+      sql
     })
     
-    if (response.data.total > 0) {
-      // 从第一条记录中获取列名
-      tableColumns.value = Object.keys(response.data.data[0])
-      // dataList = response.data.data
-      queryResult.value = response.data.data
-    } else {
-      queryResult.value = []
-      tableColumns.value = []
+    // 创建新标签
+    const newTab = {
+      id: newTabId,
+      label: `查询-${tabIndex.value}`,
+      sql: sql,
+      queryResult: [],
+      tableColumns: [],
+      error: ''
     }
+
+    if (response.data.total > 0) {
+      newTab.tableColumns = Object.keys(response.data.data[0])
+      newTab.queryResult = response.data.data
+    }
+
+    queryTabs.value.push(newTab)
+    activeTab.value = newTabId
   } catch (err) {
-    error.value = err.response?.data?.message || '查询执行失败'
-    queryResult.value = []
-    tableColumns.value = []
+    const newTab = {
+      id: newTabId,
+      label: `查询-${tabIndex.value}`,
+      sql: sql,
+      queryResult: [],
+      tableColumns: [],
+      error: err.response?.data?.message || '查询执行失败'
+    }
+    queryTabs.value.push(newTab)
+    activeTab.value = newTabId
   } finally {
     loading.value = false
+  }
+}
+
+const removeTab = (targetName) => {
+  const tabs = queryTabs.value
+  let activeName = activeTab.value
+  
+  if (activeName === targetName) {
+    tabs.forEach((tab, index) => {
+      if (tab.id === targetName) {
+        const nextTab = tabs[index + 1] || tabs[index - 1]
+        if (nextTab) {
+          activeName = nextTab.id
+        }
+      }
+    })
+  }
+  
+  activeTab.value = activeName
+  queryTabs.value = tabs.filter(tab => tab.id !== targetName)
+  if (queryTabs.value.length == 0) {
+    tabIndex.value = 0
   }
 }
 
@@ -156,6 +245,10 @@ const editorOptions = {
 const onEditorChange = (value) => {
   sqlQuery.value = value
 }
+
+const handleCursorChange = (position) => {
+  currentCursorPosition.value = position
+}
 </script>
 
 <style scoped>
@@ -182,14 +275,33 @@ const onEditorChange = (value) => {
   border-radius: 4px;
   padding: 16px;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
 .query-editor {
-  flex: 0 0 auto;
+  flex: 1;
   border: 1px solid #dcdfe6;
   border-radius: 4px;
   overflow: hidden;
-  height: 300px;
   position: relative;
+  min-height: 300px;
+}
+
+.query-tabs {
+  margin-top: 16px;
+}
+
+.query-result {
+  flex-shrink: 0;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>
