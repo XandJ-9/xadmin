@@ -18,13 +18,13 @@
     </div>
 
     <div class="query-editor">
-      <el-input
-        v-model="sqlQuery"
-        type="textarea"
-        :rows="8"
-        placeholder="请输入SQL查询语句"
-        :spellcheck="false"
-      />
+        <MonacoEditor
+          v-model="sqlQuery"
+          :options="editorOptions"
+          language="sql"
+          theme="vs-light"
+          @change="onEditorChange"
+        />
     </div>
 
     <div class="query-result" v-loading="loading">
@@ -76,6 +76,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
+import MonacoEditor from '@/components/MonacoEditor.vue'
 
 const dataSources = ref([])
 const selectedDataSource = ref('')
@@ -183,6 +184,51 @@ const executeQuery = async () => {
 onMounted(() => {
   fetchDataSources()
 })
+
+// Monaco Editor配置
+const editorOptions = {
+  minimap: { enabled: false },
+  scrollBeyondLastLine: false,
+  automaticLayout: true,
+  tabSize: 2,
+  fontSize: 14,
+  suggestOnTriggerCharacters: true,
+  formatOnPaste: true,
+  formatOnType: true,
+  wordWrap: 'on',
+  lineNumbers: 'on',
+  roundedSelection: false,
+  scrollbar: {
+    vertical: 'visible',
+    horizontal: 'visible',
+    useShadows: false,
+    verticalScrollbarSize: 8,
+    horizontalScrollbarSize: 8
+  },
+  padding: { top: 0, left: 8, right: 8, bottom: 0},
+  quickSuggestions: true,
+  snippetSuggestions: 'inline',
+  formatOnSave: true,
+  lineNumbersMinChars: 5,
+  lineDecorationsWidth: 5,
+  theme: {
+    colors: {
+      'editor.background': '#f5f7fa',
+      'editorLineNumber.background': '#f5f7fa',
+      'editorLineNumber.foreground': '#606266',
+      'editorGutter.background': '#fffffe'
+    }
+  },
+  // 添加快捷键支持
+  keybindings: [
+    { command: 'editor.action.formatDocument', key: 'ctrl+shift+f' },
+    { command: 'editor.action.formatDocument', key: 'cmd+shift+f' },
+  ]
+}
+
+const onEditorChange = (value) => {
+  sqlQuery.value = value
+}
 </script>
 
 <style scoped>
@@ -202,7 +248,14 @@ onMounted(() => {
 
 .query-editor {
   flex: 0 0 auto;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  height: 300px;
+  position: relative;
 }
+
 
 .query-result {
   flex: 1;
