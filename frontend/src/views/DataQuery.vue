@@ -17,66 +17,32 @@
       <el-button type="primary" @click="executeQuery" :loading="loading">执行查询</el-button>
     </div>
 
-    <div class="query-editor">
-        <MonacoEditor
-          v-model="sqlQuery"
-          :options="editorOptions"
-          language="sql"
-          theme="vs-light"
-          @change="onEditorChange"
-        />
-    </div>
-
-    <div class="query-result" v-loading="loading">
-      <div v-if="error" class="error-message">
-        <el-alert :title="error" type="error" show-icon />
-      </div>
-      <div v-else-if="queryResult.length > 0">
-        <el-table 
-          :data="paginatedData" 
-          style="width: 100%" 
-          border 
-          stripe
-          height="calc(100vh - 400px)"
-          @sort-change="handleSortChange"
-        >
-          <el-table-column
-            v-for="column in tableColumns"
-            :key="column"
-            :prop="column"
-            :label="column"
-            sortable
-            show-overflow-tooltip
-          >
-            <template #default="scope">
-              <span>{{ formatCellValue(scope.row[column]) }}</span>
-            </template>
-          </el-table-column>
-        </el-table>
-        <div class="pagination-container">
-          <el-pagination
-            :current-page="currentPage"
-            :page-size="pageSize"
-            :page-sizes="[10, 20, 50, 100]"
-            :total="queryResult.length"
-            layout="total, sizes, prev, pager, next, jumper"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
+    <div class="query-content">
+      <div class="query-editor">
+          <MonacoEditor
+            v-model="sqlQuery"
+            :options="editorOptions"
+            language="sql"
+            theme="vs-light"
+            @change="onEditorChange"
           />
-        </div>
       </div>
-      <div v-else-if="!loading" class="empty-result">
-        <el-empty description="暂无查询结果" />
-      </div>
+      <QueryResult
+        :query-result="queryResult"
+        :table-columns="tableColumns"
+        :loading="loading"
+        :error="error"
+      />
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
 import MonacoEditor from '@/components/MonacoEditor.vue'
+import QueryResult from '@/components/QueryResult.vue'
 
 const dataSources = ref([])
 const selectedDataSource = ref('')
@@ -86,45 +52,6 @@ const tableColumns = ref([])
 const loading = ref(false)
 const error = ref('')
 
-// 分页相关
-const currentPage = ref(1)
-const pageSize = ref(20)
-const paginatedData = computed(() => {
-  const start = (currentPage.value - 1) * pageSize.value
-  const end = start + pageSize.value
-  return queryResult.value.slice(start, end)
-})
-
-const handleSizeChange = (val) => {
-  pageSize.value = val
-  currentPage.value = 1
-}
-
-const handleCurrentChange = (val) => {
-  currentPage.value = val
-}
-
-const handleSortChange = ({ prop, order }) => {
-  if (!prop || !order) return
-  
-  queryResult.value.sort((a, b) => {
-    const valueA = a[prop]
-    const valueB = b[prop]
-    
-    if (order === 'ascending') {
-      return valueA < valueB ? -1 : valueA > valueB ? 1 : 0
-    } else {
-      return valueA > valueB ? -1 : valueA < valueB ? 1 : 0
-    }
-  })
-}
-
-const formatCellValue = (value) => {
-  if (value === null || value === undefined) return '-'
-  if (value instanceof Date) return value.toLocaleString()
-  if (typeof value === 'object') return JSON.stringify(value)
-  return value.toString()
-}
 
 const fetchDataSources = async () => {
   try {
@@ -140,7 +67,7 @@ const handleDataSourceChange = () => {
   queryResult.value = []
   tableColumns.value = []
   error.value = ''
-  currentPage.value = 1
+  // currentPage.value = 1
 }
 
 const executeQuery = async () => {
@@ -246,40 +173,23 @@ const onEditorChange = (value) => {
   align-items: center;
 }
 
-.query-editor {
-  flex: 0 0 auto;
-  border: 1px solid #dcdfe6;
-  border-radius: 4px;
-  overflow: hidden;
-  margin-bottom: 16px;
-  height: 300px;
-  position: relative;
-}
-
-
-.query-result {
+.query-content {
   flex: 1;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
   background-color: #fff;
   border-radius: 4px;
   padding: 16px;
   box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
 }
 
-.error-message {
-  margin-bottom: 16px;
-}
-
-.empty-result {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.pagination-container {
-  margin-top: 20px;
-  display: flex;
-  justify-content: flex-end;
+.query-editor {
+  flex: 0 0 auto;
+  border: 1px solid #dcdfe6;
+  border-radius: 4px;
+  overflow: hidden;
+  height: 300px;
+  position: relative;
 }
 </style>
