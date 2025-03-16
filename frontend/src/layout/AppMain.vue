@@ -20,7 +20,9 @@
       </div>
     </el-header>
     
-    <tag-view />
+    <keep-alive>
+      <tag-view />
+    </keep-alive>
     <el-main>
       <router-view />
     </el-main>
@@ -28,7 +30,6 @@
 </template>
 
 <script setup>
-import { ArrowDown, Expand, Fold } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
 import { computed, ref, onMounted } from 'vue'
 import TagView from './TagView.vue'

@@ -28,38 +28,21 @@
 </template>
 
 <script setup>
-import { ref, watch , onUnmounted} from 'vue'
+import { ref, watch, onUnmounted, inject } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
 const route = useRoute()
 const router = useRouter()
 
-const visitedViews = ref([])
+// 注入Layout组件提供的状态和方法
+const visitedViews = inject('visitedViews')
+const addView = inject('addView')
+const delView = inject('delView')
+
 const visible = ref(false)
 const top = ref(0)
 const left = ref(0)
 const selectedTag = ref(null)
-
-// 添加视图
-const addView = (view) => {
-  const isExists = visitedViews.value.some(v => v.path === view.path)
-  if (!isExists) {
-    visitedViews.value.push({
-      name: view.name,
-      path: view.path,
-      title: view.meta?.title || '未命名',
-      query: view.query
-    })
-  }
-}
-
-// 删除视图
-const delView = (view) => {
-  const index = visitedViews.value.findIndex(v => v.path === view.path)
-  if (index > -1) {
-    visitedViews.value.splice(index, 1)
-  }
-}
 
 // 关闭选中标签
 const closeSelectedTag = (view) => {
