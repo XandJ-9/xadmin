@@ -136,6 +136,7 @@ const handleEdit = (row) => {
 }
 
 const handleTest = async (row) => {
+    console.log(row)
   try {
     await request.post(`/api/datasources/${row.id}/test/`)
     ElMessage.success('连接测试成功')

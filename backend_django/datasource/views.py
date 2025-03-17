@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from .models import DataSource
 from .serializers import DataSourceSerializer
 from users.permissions import IsAdminUser, IsOwnerOrAdmin
-import pymysql
+from .executors.factory import QueryExecutorFactory
 import logging
 
 logger = logging.getLogger('django')
@@ -27,16 +27,14 @@ class DataSourceViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'], url_path='test')
     def test_connection(self, request, pk=None):
         datasource = self.get_object()
+        executor = QueryExecutorFactory.get_executor(datasource.type, host=datasource.host, port=datasource.port,database= datasource.database, username =datasource.username, password=datasource.password)
         try:
-            connection = pymysql.connect(
-                host=datasource.host,
-                port=datasource.port,
-                user=datasource.username,
-                password=datasource.password,
-                database=datasource.database
+            if executor.test_connection():
+                return Response({'message': '连接成功'}, status=status.HTTP_200_OK)
+            return Response(
+                {'error': '连接失败'},
+                status=status.HTTP_400_BAD_REQUEST
             )
-            connection.close()
-            return Response({'message': '连接成功'}, status=status.HTTP_200_OK)
         except Exception as e:
             logger.error(f'数据源连接测试失败: {str(e)}')
             return Response(
@@ -48,6 +46,7 @@ class DataSourceViewSet(viewsets.ModelViewSet):
     def execute_query(self, request, pk=None):
         datasource = self.get_object()
         sql = request.data.get('sql')
+        limit = request.data.get('limit', 10000)
 
         if not sql:
             return Response(
@@ -55,37 +54,14 @@ class DataSourceViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+        executor = QueryExecutorFactory.get_executor(datasource.type, host=datasource.host, port=datasource.port,database= datasource.database, username =datasource.username, password=datasource.password)
+
         try:
-            connection = pymysql.connect(
-                host=datasource.host,
-                port=datasource.port,
-                user=datasource.username,
-                password=datasource.password,
-                database=datasource.database,
-                cursorclass=pymysql.cursors.DictCursor
-            )
-
-            with connection.cursor() as cursor:
-                cursor.execute(sql)
-                if sql.strip().lower().startswith('select'):
-                    results = cursor.fetchmany(10000)
-                    return Response({
-                        'data': results,
-                        'total': len(results)
-                    })
-                else:
-                    connection.commit()
-                    return Response({
-                        'message': '执行成功',
-                        'affected_rows': cursor.rowcount
-                    })
-
+            result = executor.execute_query(sql, limit)
+            return Response(result)
         except Exception as e:
             logger.error(f'SQL执行失败: {str(e)}')
             return Response(
-                {'error': f'执行失败: {str(e)}'},
+                {'error': str(e)},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        finally:
-            if 'connection' in locals():
-                connection.close()
