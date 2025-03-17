@@ -16,6 +16,8 @@ class DataSourceViewSet(viewsets.ModelViewSet):
     def get_permissions(self):
         if self.action == 'list':
             return [IsAdminUser()]
+        elif self.action == 'create':
+            return [IsAdminUser()]
         return [IsOwnerOrAdmin()]
 
     def get_queryset(self):
@@ -54,7 +56,12 @@ class DataSourceViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        executor = QueryExecutorFactory.get_executor(datasource.type, host=datasource.host, port=datasource.port,database= datasource.database, username =datasource.username, password=datasource.password)
+        executor = QueryExecutorFactory.get_executor(datasource.type, 
+        host=datasource.host, 
+        port=datasource.port,
+        database= datasource.database, 
+        username =datasource.username, 
+        password=datasource.password)
 
         try:
             result = executor.execute_query(sql, limit)

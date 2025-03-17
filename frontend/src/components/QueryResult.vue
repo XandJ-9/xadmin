@@ -3,13 +3,13 @@
     <div v-if="error" class="error-message">
       <el-alert :title="error" type="error" show-icon />
     </div>
-    <div v-else-if="queryResult.length > 0">
+    <div v-else-if="queryResult.length > 0" class="result-container">
       <el-table 
         :data="paginatedData" 
         style="width: 100%" 
         border 
         stripe
-        height="calc(100vh - 400px)"
+        max-height="calc(100vh - 450px)"
         @sort-change="handleSortChange"
       >
         <el-table-column
@@ -108,12 +108,22 @@ const formatCellValue = (value) => {
 
 <style scoped>
 .query-result {
-  flex: 1;
-  overflow: auto;
-  background-color: #fff;
-  border-radius: 4px;
-  padding: 16px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.result-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 16px;
+}
+
+.pagination-container {
+  padding: 16px 0;
+  display: flex;
+  justify-content: flex-end;
 }
 
 .error-message {
@@ -121,15 +131,9 @@ const formatCellValue = (value) => {
 }
 
 .empty-result {
-  height: 100%;
   display: flex;
-  align-items: center;
   justify-content: center;
-}
-
-.pagination-container {
-  margin-top: 20px;
-  display: flex;
-  justify-content: flex-end;
+  align-items: center;
+  height: 100%;
 }
 </style>

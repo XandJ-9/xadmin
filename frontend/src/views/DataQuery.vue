@@ -18,7 +18,7 @@
     </div>
 
     <div class="query-content">
-      <div class="query-editor">
+      <div class="query-editor" :style="{ height: editorHeight + 'px' }">
           <MonacoEditor
             v-model="sqlQuery"
             :options="editorOptions"
@@ -28,6 +28,8 @@
             @cursor-change="handleCursorChange"
           />
       </div>
+      
+      <div class="resizer" @mousedown="startResize"></div>
       
       <el-tabs 
         v-model="activeTab" 
@@ -56,7 +58,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
 import MonacoEditor from '@/components/MonacoEditor.vue'
@@ -73,6 +75,38 @@ const activeTab = ref('')
 const queryTabs = ref([])
 const tabIndex = ref(0)
 
+// 编辑器高度相关
+const editorHeight = ref(300)
+const isResizing = ref(false)
+const startY = ref(0)
+const startHeight = ref(0)
+
+const startResize = (e) => {
+  isResizing.value = true
+  startY.value = e.clientY
+  startHeight.value = editorHeight.value
+  document.addEventListener('mousemove', handleMouseMove)
+  document.addEventListener('mouseup', stopResize)
+}
+
+const handleMouseMove = (e) => {
+  if (!isResizing.value) return
+  const deltaY = e.clientY - startY.value
+  const newHeight = Math.max(100, Math.min(window.innerHeight - 300, startHeight.value + deltaY))
+  editorHeight.value = newHeight
+}
+
+const stopResize = () => {
+  isResizing.value = false
+  document.removeEventListener('mousemove', handleMouseMove)
+  document.removeEventListener('mouseup', stopResize)
+}
+
+onUnmounted(() => {
+  document.removeEventListener('mousemove', handleMouseMove)
+  document.removeEventListener('mouseup', stopResize)
+})
+
 const fetchDataSources = async () => {
   try {
     const response = await request.get('/api/datasources/')
@@ -84,9 +118,9 @@ const fetchDataSources = async () => {
 
 const handleDataSourceChange = () => {
   // 清空当前查询结果
-  sqlQuery.value = ''
-  activeTab.value = ''
-  queryTabs.value = []
+//   sqlQuery.value = ''
+//   activeTab.value = ''
+//   queryTabs.value = []
 }
 
 // 获取当前光标所在的SQL语句
@@ -166,7 +200,7 @@ const executeQuery = async () => {
       sql: sql,
       queryResult: [],
       tableColumns: [],
-      error: err.response?.data?.message || '查询执行失败'
+      error: err.response?.data.error || '查询执行失败'
     }
     queryTabs.value.push(newTab)
     activeTab.value = newTabId
@@ -257,7 +291,7 @@ const handleCursorChange = (position) => {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  height: calc(100vh - 120px);
+  /* height: calc(100vh - 120px); */
 }
 
 .query-header {
@@ -279,16 +313,42 @@ const handleCursorChange = (position) => {
 }
 
 .query-editor {
-  flex: 1;
   border: 1px solid #dcdfe6;
   border-radius: 4px;
   overflow: hidden;
   position: relative;
-  min-height: 300px;
+  min-height: 100px;
+  resize: vertical;
+}
+
+.resizer {
+  width: 100%;
+  height: 6px;
+  background-color: #f0f2f5;
+  cursor: row-resize;
+  position: relative;
+}
+
+.resizer:hover {
+  background-color: #e4e7ed;
+}
+
+.resizer::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 30px;
+  height: 2px;
+  background-color: #909399;
+  border-radius: 1px;
 }
 
 .query-tabs {
   margin-top: 16px;
+  flex: 1;
+  overflow: auto;
 }
 
 .query-result {
