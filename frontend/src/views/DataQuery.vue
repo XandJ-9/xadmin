@@ -64,6 +64,7 @@ import request from '@/utils/request'
 import MonacoEditor from '@/components/MonacoEditor.vue'
 import QueryResult from '@/components/QueryResult.vue'
 
+// 数据查询相关数据
 const dataSources = ref([])
 const selectedDataSource = ref('')
 const sqlQuery = ref('')

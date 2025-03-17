@@ -45,6 +45,7 @@
           <el-select v-model="form.type" placeholder="请选择数据源类型" style="width: 100%">
             <el-option label="MySQL" value="mysql" />
             <el-option label="PostgreSQL" value="postgresql" />
+            <el-option label="StarRocks" value="starrocks" />
           </el-select>
         </el-form-item>
         <el-form-item label="主机地址" prop="host">

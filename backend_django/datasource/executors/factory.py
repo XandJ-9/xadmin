@@ -2,11 +2,13 @@ from typing import Dict, Type
 from .base import QueryExecutor
 from .mysql import MySQLQueryExecutor
 from .postgresql import PostgreSQLQueryExecutor
+from .starrocks import StarRocksQueryExecutor
 
 class QueryExecutorFactory:
     _executors: Dict[str, Type[QueryExecutor]] = {
         'mysql': MySQLQueryExecutor,
-        'postgresql': PostgreSQLQueryExecutor
+        'postgresql': PostgreSQLQueryExecutor,
+        'starrocks': StarRocksQueryExecutor
     }
 
     @classmethod
