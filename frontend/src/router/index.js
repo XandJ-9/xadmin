@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { User, Setting, DataBoard } from '@element-plus/icons-vue'
+import { User, Setting, DataBoard, Collection, Edit} from '@element-plus/icons-vue'
 
 const routes = [
     {
@@ -53,7 +53,7 @@ const routes = [
             name: 'Datasources',
             component: () => import('@/views/DataSources.vue'),
             meta: {
-                icon: Setting,
+                icon: Collection,
                 title: '数据源管理'
             }
         },
@@ -62,7 +62,7 @@ const routes = [
             name: 'DataQuery',
             component: () => import('@/views/DataQuery.vue'),
             meta: {
-                icon: DataBoard,
+                icon: Edit,
                 title: '数据查询'
             }
         }

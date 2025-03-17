@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',  # 添加CORS应用
     'users.apps.UsersConfig',
-    'datasource.apps.DatasourceConfig'
+    'datasource.apps.DatasourceConfig',
+    'report.apps.ReportConfig'
 ]
 
 MIDDLEWARE = [
