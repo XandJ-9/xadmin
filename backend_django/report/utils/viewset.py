@@ -2,7 +2,7 @@ from django.db import transaction
 
 from rest_framework.decorators import action
 from rest_framework.viewsets import ModelViewSet
-
+from users.permissions import IsOwnerOrAdmin,IsAdminUser
 from ..utils.util_response import SuccessResponse, ErrorResponse, DetailResponse
 
 
@@ -15,7 +15,12 @@ class CustomModelViewSet(ModelViewSet):
     search_fields = ()
     import_field_dict = {}
     export_field_label = {}
-
+    def get_permissions(self):
+        if self.action == 'list':
+            return [IsAdminUser()]
+        elif self.action == 'create':
+            return [IsAdminUser()]
+        return [IsOwnerOrAdmin()]
     def filter_queryset(self, queryset):
         for backend in set(set(self.filter_backends) or []):
             queryset = backend().filter_queryset(self.request, queryset, self)
