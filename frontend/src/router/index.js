@@ -65,7 +65,16 @@ const routes = [
                 icon: Edit,
                 title: '数据查询'
             }
-        }
+        },
+            {
+                path: 'report',
+                name: 'Report',
+                component: () => import('@/views/reportinfo/index.vue'),
+                meta: {
+                    icon: Edit,
+                    title: '报表设计'
+                }
+            }
         ]
     }
 ]
