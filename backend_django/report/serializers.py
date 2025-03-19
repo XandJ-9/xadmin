@@ -8,10 +8,11 @@ class PlatformInfoSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'creator', 'create_datetime', 'update_datetime']
 
 class ModuleInfoSerializer(serializers.ModelSerializer):
+    platform = serializers.PrimaryKeyRelatedField(queryset=PlatformInfo.objects.all())
     class Meta:
         model = ModuleInfo
         fields = '__all__'
-        read_only_fields = ['id', 'creator', 'create_datetime', 'update_datetime']
+        read_only_fields = ['id', 'creator', 'create_datetime', 'update_datetime','platform']
 
 class ReportInfoSerializer(serializers.ModelSerializer):
     class Meta:

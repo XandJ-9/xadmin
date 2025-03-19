@@ -52,7 +52,7 @@ class CustomModelViewSet(ModelViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         if request.user:
-            serializer.validated_data['creator'] = request.user.user_id
+            serializer.validated_data['creator'] = request.user
         self.perform_create(serializer)
         return DetailResponse(data=serializer.data, msg="新增成功")
 

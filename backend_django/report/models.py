@@ -19,7 +19,7 @@ class CoreModel(models.Model):
 # 平台信息
 class PlatformInfo(CoreModel):
     name = models.CharField(max_length=255, verbose_name='平台名称')
-    desc = models.CharField(max_length=255, verbose_name='描述')
+    desc = models.CharField(max_length=255, verbose_name='描述', null=True, blank=True)
     class Meta:
         db_table = "report_platform_info"
 
@@ -61,7 +61,7 @@ class InterfaceInfo(CoreModel):
     interface_desc = models.TextField(verbose_name='接口描述')
     interface_db_type = models.CharField(max_length=255, verbose_name='数据库类型')
     interface_db_name = models.CharField(max_length=255, verbose_name='数据库名称')
-    interface_sql = models.TextField(verbose_name='接口sql')
+    interface_sql = models.TextField(verbose_name='接口sql', null=True, blank=True)
     is_total = models.CharField(default='0', max_length=1, verbose_name='是否合计',choices=IS_TOTAL_CHOICES)
     total_sql = models.TextField(verbose_name='合计sql', null=True, blank=True)
     is_paging = models.CharField(default='0', max_length=1, verbose_name='是否分页',choices=IS_PAGING_CHOICE)

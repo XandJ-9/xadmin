@@ -10,23 +10,23 @@
       active-text-color="#409EFF"
       router
     >
-      <el-menu-item v-for="route in menuRoutes" :key="route.path" :index="'/' + route.path">
-        <el-icon>
-          <component :is="route.meta?.icon" />
-        </el-icon>
-        <span>{{ route.meta?.title || route.name }}</span>
-      </el-menu-item>
+      <template v-for="route in showMenuRoutes" :key="route.path">
+        <sub-menu :route="route" />
+      </template>
     </el-menu>
   </el-aside>
 </template>
 
 <script setup>
 import { useRouter } from 'vue-router'
+import SubMenu from '@/layout/SubMenuItem.vue'
 
 const router = useRouter()
 const menuRoutes = router.options.routes
   .find(route => route.path === '/' && route.children)
   ?.children || []
+
+const showMenuRoutes = menuRoutes.filter(route => route.meta?.hidden !== true)
 
 defineProps({
   isCollapse: {

@@ -11,14 +11,14 @@ from ..serializers import (
     InterfaceFieldSerializer
 )
 
-class PlatformInfoViewSet(CustomModelViewSet):
+class PlatformInfoViewSet(ModelViewSet):
     queryset = PlatformInfo.objects.all()
     serializer_class = PlatformInfoSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     search_fields = ['name', 'desc']
     ordering_fields = ['id', 'create_datetime', 'update_datetime']
 
-class ModuleInfoViewSet(CustomModelViewSet):
+class ModuleInfoViewSet(ModelViewSet):
     queryset = ModuleInfo.objects.all()
     serializer_class = ModuleInfoSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -26,7 +26,7 @@ class ModuleInfoViewSet(CustomModelViewSet):
     search_fields = ['name', 'desc']
     ordering_fields = ['id', 'create_datetime', 'update_datetime']
 
-class ReportInfoViewSet(CustomModelViewSet):
+class ReportInfoViewSet(ModelViewSet):
     queryset = ReportInfo.objects.all()
     serializer_class = ReportInfoSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -46,6 +46,6 @@ class InterfaceFieldViewSet(CustomModelViewSet):
     queryset = InterfaceField.objects.all()
     serializer_class = InterfaceFieldSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['interface', 'field_type', 'data_type']
+    filterset_fields = ['interface']
     search_fields = ['field_name', 'field_code', 'field_desc']
     ordering_fields = ['id', 'create_datetime', 'update_datetime', 'field_order']
