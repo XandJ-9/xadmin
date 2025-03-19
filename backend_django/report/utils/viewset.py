@@ -2,7 +2,8 @@ from django.db import transaction
 
 from rest_framework.decorators import action
 from rest_framework.viewsets import ModelViewSet
-from users.permissions import IsOwnerOrAdmin,IsAdminUser,AnyAllow
+from rest_framework.permissions import AllowAny
+from users.permissions import IsOwnerOrAdmin,IsAdminUser
 from ..utils.util_response import SuccessResponse, ErrorResponse, DetailResponse
 
 
@@ -16,9 +17,7 @@ class CustomModelViewSet(ModelViewSet):
     import_field_dict = {}
     export_field_label = {}
     def get_permissions(self):
-        if self.action == 'list':
-            return [AnyAllow()]
-        elif self.action in ['create', 'update', 'partial_update', 'destroy']:
+        if self.action in ['create', 'update', 'partial_update', 'destroy']:
             return [IsAdminUser()]
         return [IsOwnerOrAdmin()]
     def filter_queryset(self, queryset):
