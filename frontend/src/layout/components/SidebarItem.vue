@@ -20,7 +20,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import path from 'path'
+import path from 'path-browserify'
 
 const props = defineProps({
   route: {
@@ -48,7 +48,7 @@ const resolvePath = (routePath) => {
   if (routePath.startsWith('/')) {
     return routePath
   }
-  return path.resolve(props.basePath, routePath)
+  return routePath
 }
 </script>
 
