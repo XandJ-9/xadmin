@@ -6,8 +6,8 @@
 </template>
 
 <script setup>
-import Sidebar from './Sidebar.vue'
-import AppMain from './AppMain.vue'
+import Sidebar from './components/Sidebar.vue'
+import AppMain from './components/AppMain.vue'
 import { ref, computed, provide } from 'vue'
 
 const isCollapse = ref(false)
@@ -45,5 +45,4 @@ provide('delView', delView)
   height: 100vh;
   width: 100vw;
 }
-
 </style>

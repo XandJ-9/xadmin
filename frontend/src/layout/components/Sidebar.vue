@@ -11,7 +11,7 @@
       router
     >
       <template v-for="route in showMenuRoutes" :key="route.path">
-        <sub-menu :route="route" />
+        <sidebar-item :route="route" />
       </template>
     </el-menu>
   </el-aside>
@@ -19,14 +19,14 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
-import SubMenu from '@/layout/SubMenuItem.vue'
+import SidebarItem from './SidebarItem.vue'
 
 const router = useRouter()
 const menuRoutes = router.options.routes
   .find(route => route.path === '/' && route.children)
   ?.children || []
 
-const showMenuRoutes = menuRoutes.filter(route => route.meta?.hidden !== true)
+const showMenuRoutes = menuRoutes.filter(route => route.hidden !== true)
 
 defineProps({
   isCollapse: {

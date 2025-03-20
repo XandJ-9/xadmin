@@ -19,7 +19,7 @@ const routes = [
   {
     path: '/',
     name: 'Layout',
-    component: () => import('@/layout/Layout.vue'),
+    component: () => import('@/layout/Index.vue'),
     children: [
       {
         path: 'dashboard',
@@ -115,10 +115,10 @@ const routes = [
             path: 'interface-fields/:id',
             name: 'InterfaceFields',
             component: () => import('@/views/reportinfo/InterfaceFields.vue'),
+            hidden: true,
             meta: {
               icon: Edit,
               title: '接口字段管理',
-              hidden: true
             }
           }
         ]
