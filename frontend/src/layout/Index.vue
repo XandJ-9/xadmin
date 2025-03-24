@@ -14,7 +14,12 @@ const isCollapse = ref(false)
 const sidebarWidth = computed(() => isCollapse.value ? '64px' : '200px')
 
 // TagView状态管理
-const visitedViews = ref([])
+const visitedViews = ref([{
+  name: 'Dashboard',
+  path: '/dashboard',
+  title: '首页',
+  query: {}
+}])
 const addView = (view) => {
   const isExists = visitedViews.value.some(v => v.path === view.path)
   if (!isExists) {
