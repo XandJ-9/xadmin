@@ -1,7 +1,7 @@
 <template>
   <el-container class="layout-container">
     <Sidebar :is-collapse="isCollapse" :sidebar-width="sidebarWidth" />
-    <AppMain :is-collapse="isCollapse" :sidebar-width="sidebarWidth" />
+    <AppMain v-model:is-collapse="isCollapse" :sidebar-width="sidebarWidth" />
   </el-container>
 </template>
 

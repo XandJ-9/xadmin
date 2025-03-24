@@ -62,6 +62,7 @@ const mainWidth = computed(() => {
 })
 
 const toggleCollapse = () => {
+  console.log('toggleCollapse',props.isCollapse)
   emit('update:isCollapse', !props.isCollapse)
 }
 
