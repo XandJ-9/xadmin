@@ -10,9 +10,12 @@
       active-text-color="#409EFF"
       router
     >
-      <template v-for="route in showMenuRoutes" :key="route.path">
-        <sidebar-item :route="route" />
-      </template>
+      <sidebar-item 
+        v-for="(route,index) in sidebarRouters" 
+        :key="route.path + index"
+        :route="route" 
+        :base-path="'/'"
+        />
     </el-menu>
   </el-aside>
 </template>
@@ -22,11 +25,10 @@ import { useRouter } from 'vue-router'
 import SidebarItem from './SidebarItem.vue'
 
 const router = useRouter()
-const menuRoutes = router.options.routes
+const sidebarRouters = router.options.routes
   .find(route => route.path === '/' && route.children)
   ?.children || []
 
-const showMenuRoutes = menuRoutes.filter(route => route.hidden !== true)
 
 defineProps({
   isCollapse: {

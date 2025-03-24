@@ -1,14 +1,17 @@
 <template>
-  <el-sub-menu v-if="hasChildren" :index="resolvePath(route.path)">
+  <el-sub-menu v-if="hasChildren" :index="route.path">
     <template #title>
       <el-icon v-if="route.meta?.icon">
         <component :is="route.meta.icon" />
       </el-icon>
       <span>{{ route.meta?.title || route.name }}</span>
     </template>
-    <template v-for="child in visibleChildren" :key="child.path">
-      <sidebar-item :route="child" :base-path="resolvePath(route.path)" />
-    </template>
+      <sidebar-item 
+      v-for="child in visibleChildren" 
+      :key="child.path"
+      :route="child" 
+      :base-path="resolvePath(route.path)"
+      />
   </el-sub-menu>
   <el-menu-item v-else :index="resolvePath(route.path)">
     <el-icon v-if="route.meta?.icon">
@@ -32,7 +35,7 @@ const props = defineProps({
   },
   basePath: {
     type: String,
-    default: ''
+    default: '/'
   }
 })
 
@@ -48,7 +51,8 @@ const resolvePath = (routePath) => {
   if (routePath.startsWith('/')) {
     return routePath
   }
-  return routePath
+  let fullPath = path.join(props.basePath, routePath)
+  return fullPath
 }
 </script>
 

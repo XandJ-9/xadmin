@@ -10,7 +10,7 @@
         @contextmenu.prevent="openMenu(tag, $event)"
       >
         {{ tag.title }}
-        <el-icon
+        <el-icon v-if="tag.path !== '/dashboard'"
           class="el-icon-close"
           @click.prevent.stop="closeSelectedTag(tag)"
         >
@@ -127,7 +127,7 @@ onUnmounted(() => {
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .tags-view-container {
   height: 34px;
   width: 100%;

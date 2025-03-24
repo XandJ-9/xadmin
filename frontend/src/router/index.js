@@ -67,7 +67,7 @@ const routes = [
         }
       },
       {
-        path: 'reportmanager/',
+        path: 'reportmanage',
         name: 'ReportManage',
         component: () => import('@/views/reportinfo/index.vue'),
         meta: {
