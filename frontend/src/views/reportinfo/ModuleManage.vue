@@ -12,7 +12,9 @@
       <div class="search-area">
         <el-form :inline="true" :model="searchForm" class="demo-form-inline">
           <el-form-item label="平台名称">
-            <el-select v-model="searchForm.platformId" placeholder="请选择平台" clearable @change="handlePlatformChange">
+            <el-select v-model="searchForm.platformId" placeholder="请选择平台" clearable 
+            style="width: 120px;"
+            @change="handlePlatformChange">
               <el-option
                 v-for="item in platformOptions"
                 :key="item.id"
