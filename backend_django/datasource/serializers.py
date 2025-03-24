@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import DataSource
+from .models import DataSource, QueryLog
 
 class DataSourceSerializer(serializers.ModelSerializer):
     creator_username = serializers.CharField(source='creator.username', read_only=True)
@@ -22,3 +22,15 @@ class DataSourceSerializer(serializers.ModelSerializer):
         representation = super().to_representation(instance)
         representation.pop('password', None)
         return representation
+
+
+class QueryLogSerializer(serializers.ModelSerializer):
+    datasource_name = serializers.CharField(source='datasource.name', read_only=True)
+    username = serializers.CharField(source='user.username', read_only=True)
+    created_at = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
+
+    class Meta:
+        model = QueryLog
+        fields = ['id', 'datasource', 'datasource_name', 'user', 'username', 'sql', 
+                 'status', 'error_message', 'execution_time', 'result_count', 'created_at']
+        read_only_fields = ['id', 'created_at']

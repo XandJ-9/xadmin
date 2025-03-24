@@ -53,7 +53,7 @@
 
       <!-- 数据表格 -->
       <el-table :data="tableData" style="width: 100%" v-loading="loading">
-        <el-table-column prop="interface_code" label="接口编码" />
+        <el-table-column prop="interface_code" label="接口编码" width="150" />
         <el-table-column prop="interface_name" label="接口名称" />
         <el-table-column prop="interface_desc" label="接口描述" show-overflow-tooltip />
         <el-table-column prop="interface_db_type" label="数据库类型"/>
@@ -73,7 +73,7 @@
             {{ scope.row.is_date_option === '1' ? '是' : '否' }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right">
+        <el-table-column label="操作" fixed="right" min-width="200">
           <template #default="scope">
             <el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>
             <el-button size="small" type="danger" @click="handleDelete(scope.row)">删除</el-button>

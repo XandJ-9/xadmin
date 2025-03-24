@@ -60,6 +60,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # 'users.authentication.JWTAuthenticationMiddleware',  # 添加JWT认证中间件
     'users.middleware.UserOperationMiddleware',  # 添加用户操作中间件
+    'datasource.middleware.QueryLogMiddleware',  # 添加查询日志中间件
 ]
 
 ROOT_URLCONF = 'xadmin.urls'

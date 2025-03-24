@@ -1,8 +1,8 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from .models import DataSource
-from .serializers import DataSourceSerializer
+from .models import DataSource, QueryLog
+from .serializers import DataSourceSerializer, QueryLogSerializer
 from users.permissions import IsAdminUser, IsOwnerOrAdmin
 from .executors.factory import QueryExecutorFactory
 import logging
@@ -72,3 +72,44 @@ class DataSourceViewSet(viewsets.ModelViewSet):
                 {'error': str(e)},
                 status=status.HTTP_400_BAD_REQUEST
             )
+            
+    @action(detail=False, methods=['get'], url_path='query-logs')
+    def query_logs(self, request):
+        user = request.user
+        page = int(request.query_params.get('page', 1))
+        page_size = int(request.query_params.get('page_size', 10))
+        datasource_id = request.query_params.get('datasource_id')
+        status_filter = request.query_params.get('status')
+        start_date = request.query_params.get('start_date')
+        end_date = request.query_params.get('end_date')
+        
+        # 根据用户角色过滤查询日志
+        if user.is_superuser or (user.role and user.role.name == 'admin'):
+            queryset = QueryLog.objects.all()
+        else:
+            queryset = QueryLog.objects.filter(user=user)
+        
+        # 应用过滤条件
+        if datasource_id:
+            queryset = queryset.filter(datasource_id=datasource_id)
+        if status_filter:
+            queryset = queryset.filter(status=status_filter)
+        if start_date:
+            queryset = queryset.filter(created_at__gte=start_date)
+        if end_date:
+            queryset = queryset.filter(created_at__lte=end_date)
+            
+        # 计算分页
+        total = queryset.count()
+        start = (page - 1) * page_size
+        end = page * page_size
+        queryset = queryset[start:end]
+        
+        serializer = QueryLogSerializer(queryset, many=True)
+        
+        return Response({
+            'total': total,
+            'page': page,
+            'page_size': page_size,
+            'results': serializer.data
+        })

@@ -23,3 +23,23 @@ class DataSource(BaseModel):
 
     def __str__(self):
         return self.name
+
+
+class QueryLog(BaseModel):
+    datasource = models.ForeignKey(DataSource, on_delete=models.CASCADE, verbose_name='数据源')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='执行用户')
+    sql = models.TextField(verbose_name='SQL语句')
+    status = models.CharField(max_length=20, default='success', verbose_name='执行状态')
+    error_message = models.TextField(blank=True, null=True, verbose_name='错误信息')
+    execution_time = models.FloatField(default=0, verbose_name='执行时间(秒)')
+    result_count = models.IntegerField(default=0, verbose_name='结果行数')
+    created_at = models.DateTimeField(default=timezone.now, verbose_name='创建时间')
+
+    class Meta:
+        verbose_name = '查询日志'
+        verbose_name_plural = verbose_name
+        db_table = BaseModel.Meta.db_table + '_query_log'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.datasource.name} - {self.created_at}"

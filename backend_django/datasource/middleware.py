@@ -1,0 +1,84 @@
+import time
+import logging
+from .models import QueryLog
+
+logger = logging.getLogger('django')
+
+class QueryLogMiddleware:
+    """中间件，用于记录SQL查询日志"""
+    
+    def __init__(self, get_response):
+        self.get_response = get_response
+        
+    def __call__(self, request):
+        # 处理请求前的代码
+        response = self.get_response(request)
+        # 处理请求后的代码
+        return response
+        
+    def process_view(self, request, view_func, view_args, view_kwargs):
+        # 只处理数据源查询API
+        if not hasattr(request, 'resolver_match') or not request.resolver_match:
+            return None
+            
+        if request.resolver_match.url_name != 'datasource-execute-query':
+            return None
+            
+        # 设置开始时间
+        request.query_start_time = time.time()
+
+        print(f'process_view with request: {request}, view_func: {view_func}, view_args: {view_args}, view_kwargs: {view_kwargs}')
+        return None
+        
+    def process_response(self, request, response):
+        # 处理查询日志记录
+        if not hasattr(request, 'query_start_time'):
+            return response
+            
+        # 计算执行时间
+        execution_time = time.time() - request.query_start_time
+        
+        # 获取请求和响应数据
+        try:
+            # 获取数据源ID
+            datasource_id = request.resolver_match.kwargs.get('pk')
+            if not datasource_id:
+                return response
+                
+            # 获取SQL和结果
+            # sql = request.data.get('sql', '')
+            sql = request.POST.get('sql') if request.method == 'POST' else request.GET.get('sql')
+            print(f'process_response with request: {request}, response: {response}')
+            if not sql:
+                return response
+                
+            # 判断查询状态
+            status_code = 'success'
+            error_message = None
+            result_count = 0
+            
+            # 检查响应状态
+            if hasattr(response, 'data'):
+                if 'error' in response.data:
+                    status_code = 'error'
+                    error_message = response.data.get('error')
+                elif isinstance(response.data, list):
+                    result_count = len(response.data)
+                elif isinstance(response.data, dict) and 'data' in response.data:
+                    result_count = len(response.data.get('data', []))
+            
+            # 创建查询日志
+            QueryLog.objects.create(
+                datasource_id=datasource_id,
+                user=request.user,
+                sql=sql,
+                status=status_code,
+                error_message=error_message,
+                execution_time=execution_time,
+                result_count=result_count
+            )
+            
+        except Exception as e:
+            logger.error(f'记录查询日志失败: {str(e)}')
+            
+        return response
