@@ -1,6 +1,5 @@
 <template>
   <div class="system-log-container">
-    <el-card class="box-card">
       <div class="filter-container">
         <el-form :inline="true" :model="filterForm">
           <el-form-item label="日志类型">
@@ -47,7 +46,6 @@
           :total="pagination.total">
         </el-pagination>
       </div>
-    </el-card>
   </div>
 </template>
 

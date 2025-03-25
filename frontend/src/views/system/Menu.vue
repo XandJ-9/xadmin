@@ -1,6 +1,5 @@
 <template>
   <div class="system-menu-container">
-    <el-card class="box-card">
       <div class="operation-container">
         <el-button type="primary" @click="handleAdd">添加菜单</el-button>
       </div>
@@ -32,7 +31,6 @@
           </template>
         </el-table-column>
       </el-table>
-    </el-card>
     
     <!-- 添加/编辑菜单对话框 -->
     <el-dialog :title="dialogTitle" v-model="dialogVisible" width="500px">

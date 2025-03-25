@@ -1,6 +1,5 @@
 <template>
   <div class="system-config-container">
-    <el-card class="box-card">
       <el-form :model="configForm" label-width="120px">
         <el-form-item label="系统名称">
           <el-input v-model="configForm.systemName"></el-input>
@@ -22,7 +21,6 @@
           <el-button @click="resetForm">重置</el-button>
         </el-form-item>
       </el-form>
-    </el-card>
   </div>
 </template>
 

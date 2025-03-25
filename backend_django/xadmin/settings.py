@@ -170,6 +170,10 @@ SIMPLE_JWT = {
 AUTH_USER_MODEL = 'users.User'
 
 # Logging Configuration
+LOG_Directory = os.path.join(BASE_DIR, '.logs')
+if not os.path.exists(LOG_Directory):
+    os.makedirs(LOG_Directory)
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -196,7 +200,7 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs', 'django.log'),
+            'filename': os.path.join(LOG_Directory, 'django.log'),
             'maxBytes': 15728640,  # 15MB
             'backupCount': 10,
             'formatter': 'simple',
@@ -204,7 +208,7 @@ LOGGING = {
         'user_operation_file': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(BASE_DIR, 'logs', 'user_operation.log'),
+            'filename': os.path.join(LOG_Directory, 'user_operation.log'),
             'maxBytes': 15728640,  # 15MB
             'backupCount': 10,
             'formatter': 'user_operation',
