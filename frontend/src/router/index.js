@@ -19,7 +19,7 @@ const routes = [
   {
     path: '/',
     name: 'Layout',
-    component: () => import('@/layout/Index.vue'),
+    component: () => import('@/layout/index.vue'),
     children: [
       {
         path: 'dashboard',
