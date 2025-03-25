@@ -1,6 +1,6 @@
 from django.db import models
 from django.db.models import F
-from users.models import User
+from system.models import User
 
 class CoreModel(models.Model):
     """

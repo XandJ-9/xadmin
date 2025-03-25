@@ -1,6 +1,6 @@
 from django.db import models
 from django.utils import timezone
-from users.models import User
+from system.models import User
 from xadmin.models_base import BaseModel
 
 class DataSource(BaseModel):
@@ -19,7 +19,7 @@ class DataSource(BaseModel):
     class Meta:
         verbose_name = '数据源'
         verbose_name_plural = verbose_name
-        db_table = BaseModel.Meta.db_table + '_datasource'
+        db_table = 'ds_datasource'
 
     def __str__(self):
         return self.name
@@ -38,7 +38,7 @@ class QueryLog(BaseModel):
     class Meta:
         verbose_name = '查询日志'
         verbose_name_plural = verbose_name
-        db_table = BaseModel.Meta.db_table + '_query_log'
+        db_table = 'ds_query_log'
         ordering = ['-created_at']
 
     def __str__(self):

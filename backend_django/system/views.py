@@ -4,8 +4,8 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
-from .models import User, Role
-from .serializers import UserSerializer, RoleSerializer
+from .models import User, Role, Menu, SystemConfig
+from. serializers import MenuSerializer, SystemConfigSerializer,UserSerializer, RoleSerializer
 from .permissions import IsAdminUser, IsSuperUser, IsOwnerOrAdmin
 import logging
 
@@ -59,3 +59,45 @@ class UserViewSet(viewsets.ModelViewSet):
                 'user': serializer.data
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class MenuViewSet(viewsets.ModelViewSet):
+    queryset = Menu.objects.all()
+    serializer_class = MenuSerializer
+    permission_classes = [IsAdminUser]
+    
+    def perform_create(self, serializer):
+        serializer.save(creator=self.request.user)
+    
+    def list(self, request, *args, **kwargs):
+        # 获取顶级菜单
+        queryset = Menu.objects.filter(parent=None).order_by('sort')
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=False, methods=['get'])
+    def all(self, request):
+        # 获取所有菜单
+        queryset = Menu.objects.all().order_by('sort')
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+class SystemConfigViewSet(viewsets.ModelViewSet):
+    queryset = SystemConfig.objects.all()
+    serializer_class = SystemConfigSerializer
+    permission_classes = [IsAdminUser]
+    
+    def perform_create(self, serializer):
+        serializer.save(creator=self.request.user)
+    
+    @action(detail=False, methods=['get'])
+    def by_key(self, request):
+        key = request.query_params.get('key')
+        if not key:
+            return Response({'error': '请提供配置键'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            config = SystemConfig.objects.get(key=key)
+            serializer = self.get_serializer(config)
+            return Response(serializer.data)
+        except SystemConfig.DoesNotExist:
+            return Response({'error': f'未找到配置项: {key}'}, status=status.HTTP_404_NOT_FOUND)

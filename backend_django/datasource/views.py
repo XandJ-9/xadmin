@@ -1,9 +1,10 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from system.permissions import IsAdminUser, IsOwnerOrAdmin
+
 from .models import DataSource, QueryLog
 from .serializers import DataSourceSerializer, QueryLogSerializer
-from users.permissions import IsAdminUser, IsOwnerOrAdmin
 from .executors.factory import QueryExecutorFactory
 import logging
 

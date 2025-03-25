@@ -2,7 +2,7 @@ import logging
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.contrib.auth.hashers import make_password
-from users.models import User, Role
+from system.models import User, Role
 from datasource.models import DataSource
 
 logger = logging.getLogger('django')

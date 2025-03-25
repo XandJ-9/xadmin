@@ -44,9 +44,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'corsheaders',  # 添加CORS应用
-    'users.apps.UsersConfig',
     'datasource.apps.DatasourceConfig',
-    'report.apps.ReportConfig'
+    'report.apps.ReportConfig',
+    'system.apps.SystemConfig'  # 添加system应用
 ]
 
 MIDDLEWARE = [
@@ -59,7 +59,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # 'users.authentication.JWTAuthenticationMiddleware',  # 添加JWT认证中间件
-    'users.middleware.UserOperationMiddleware',  # 添加用户操作中间件
+    'system.middleware.UserOperationMiddleware',  # 添加用户操作中间件
     'datasource.middleware.QueryLogMiddleware',  # 添加查询日志中间件
 ]
 
@@ -167,7 +167,7 @@ SIMPLE_JWT = {
 }
 
 # Custom user model
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'system.User'
 
 # Logging Configuration
 LOG_Directory = os.path.join(BASE_DIR, '.logs')

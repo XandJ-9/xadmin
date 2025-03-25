@@ -3,7 +3,7 @@ from django.db import transaction
 from rest_framework.decorators import action
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny
-from users.permissions import IsOwnerOrAdmin,IsAdminUser
+from system.permissions import IsOwnerOrAdmin,IsAdminUser
 from ..utils.util_response import SuccessResponse, ErrorResponse, DetailResponse
 
 

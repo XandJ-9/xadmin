@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from .models import User, Role
+from .models import User,Role,Menu, SystemConfig
+
 
 class RoleSerializer(serializers.ModelSerializer):
     create_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
@@ -43,3 +44,25 @@ class UserSerializer(serializers.ModelSerializer):
         validated_data['role']=role_instance
 
         return super().update(instance, validated_data)
+
+class MenuSerializer(serializers.ModelSerializer):
+    creator_info = UserSerializer(source='creator', read_only=True)
+    parent_name = serializers.CharField(source='parent.name', read_only=True)
+    created_at = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
+    updated_at = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
+    
+    class Meta:
+        model = Menu
+        fields = ['id', 'name', 'parent', 'parent_name', 'path', 'component', 'icon', 'sort', 'hidden', 
+                 'creator', 'creator_info', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+class SystemConfigSerializer(serializers.ModelSerializer):
+    creator_info = UserSerializer(source='creator', read_only=True)
+    created_at = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
+    updated_at = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
+    
+    class Meta:
+        model = SystemConfig
+        fields = ['id', 'key', 'value', 'description', 'creator', 'creator_info', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_at', 'updated_at']
