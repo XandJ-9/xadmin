@@ -2,7 +2,7 @@ import logging
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.contrib.auth.hashers import make_password
-from system.models import User, Role
+from system.models import User, Role, Menu
 from datasource.models import DataSource
 
 logger = logging.getLogger('django')
@@ -27,6 +27,9 @@ class Command(BaseCommand):
         
         # 初始化管理员用户
         self._init_admin_user(force)
+        
+        # 初始化菜单
+        self._init_menus(force)
         
         # 初始化示例数据源
         self._init_sample_datasource(force)
@@ -160,3 +163,249 @@ class Command(BaseCommand):
             self.stdout.write(self.style.WARNING(f'更新示例数据源: {datasource.name}'))
         else:
             self.stdout.write(f'示例数据源已存在: {datasource.name}')
+    
+    def _init_menus(self, force):
+        """初始化菜单数据"""
+        self.stdout.write('初始化菜单数据...')
+        
+        # 获取管理员用户
+        try:
+            admin_user = User.objects.get(username='admin')
+        except User.DoesNotExist:
+            self.stdout.write(self.style.ERROR('管理员用户不存在，请先初始化管理员用户'))
+            return
+        
+        # 定义菜单数据
+        menu_data = [
+            # 仪表盘
+            {
+                'name': '仪表盘',
+                'path': '/dashboard',
+                'component': 'Dashboard',
+                'icon': 'DataBoard',
+                'sort': 1,
+                'hidden': False,
+                'parent': None
+            },
+            # 系统管理
+            {
+                'name': '系统管理',
+                'path': '/system',
+                'component': 'Layout',
+                'icon': 'Setting',
+                'sort': 2,
+                'hidden': False,
+                'parent': None
+            },
+            # 系统管理子菜单
+            {
+                'name': '角色管理',
+                'path': '/system/system-role',
+                'component': 'SystemRole',
+                'icon': 'Setting',
+                'sort': 1,
+                'hidden': False,
+                'parent_name': '系统管理'
+            },
+            {
+                'name': '用户管理',
+                'path': '/system/system-user',
+                'component': 'SystemUser',
+                'icon': 'Setting',
+                'sort': 2,
+                'hidden': False,
+                'parent_name': '系统管理'
+            },
+            {
+                'name': '菜单管理',
+                'path': '/system/system-menu',
+                'component': 'SystemMenu',
+                'icon': 'Menu',
+                'sort': 3,
+                'hidden': False,
+                'parent_name': '系统管理'
+            },
+            {
+                'name': '系统配置',
+                'path': '/system/system-config',
+                'component': 'SystemConfig',
+                'icon': 'Setting',
+                'sort': 4,
+                'hidden': False,
+                'parent_name': '系统管理'
+            },
+            {
+                'name': '系统日志',
+                'path': '/system/system-log',
+                'component': 'SystemLog',
+                'icon': 'Setting',
+                'sort': 5,
+                'hidden': False,
+                'parent_name': '系统管理'
+            },
+            # 数据管理
+            {
+                'name': '数据管理',
+                'path': '/data',
+                'component': 'Layout',
+                'icon': 'DataLine',
+                'sort': 3,
+                'hidden': False,
+                'parent': None
+            },
+            # 数据管理子菜单
+            {
+                'name': '数据源管理',
+                'path': '/datasources',
+                'component': 'Datasources',
+                'icon': 'Collection',
+                'sort': 1,
+                'hidden': False,
+                'parent_name': '数据管理'
+            },
+            # 数据开发
+            {
+                'name': '数据开发',
+                'path': '/dataquery',
+                'component': 'Layout',
+                'icon': 'Edit',
+                'sort': 4,
+                'hidden': False,
+                'parent': None
+            },
+            # 数据开发子菜单
+            {
+                'name': '数据查询',
+                'path': '/dataquery/index',
+                'component': 'DataQuery',
+                'icon': 'Edit',
+                'sort': 1,
+                'hidden': False,
+                'parent_name': '数据开发'
+            },
+            {
+                'name': '查询日志',
+                'path': '/dataquery/querylog',
+                'component': 'QueryLog',
+                'icon': 'Edit',
+                'sort': 2,
+                'hidden': False,
+                'parent_name': '数据开发'
+            },
+            # 报表信息
+            {
+                'name': '报表信息',
+                'path': '/reportmanage',
+                'component': 'ReportManage',
+                'icon': 'Edit',
+                'sort': 5,
+                'hidden': False,
+                'parent': None
+            },
+            # 报表信息子菜单
+            {
+                'name': '平台管理',
+                'path': '/reportmanage/platform',
+                'component': 'Platform',
+                'icon': 'Edit',
+                'sort': 1,
+                'hidden': False,
+                'parent_name': '报表信息'
+            },
+            {
+                'name': '模块管理',
+                'path': '/reportmanage/module',
+                'component': 'Module',
+                'icon': 'Edit',
+                'sort': 2,
+                'hidden': False,
+                'parent_name': '报表信息'
+            },
+            {
+                'name': '报表设计',
+                'path': '/reportmanage/report',
+                'component': 'Report',
+                'icon': 'Edit',
+                'sort': 3,
+                'hidden': False,
+                'parent_name': '报表信息'
+            },
+            {
+                'name': '接口管理',
+                'path': '/reportmanage/interface',
+                'component': 'Interface',
+                'icon': 'Edit',
+                'sort': 4,
+                'hidden': False,
+                'parent_name': '报表信息'
+            }
+        ]
+        
+        # 创建父菜单字典，用于关联子菜单
+        parent_menus = {}
+        
+        # 首先创建所有父菜单
+        for item in menu_data:
+            if item.get('parent') is None and not item.get('parent_name'):
+                menu, created = Menu.objects.get_or_create(
+                    name=item['name'],
+                    defaults={
+                        'path': item['path'],
+                        'component': item['component'],
+                        'icon': item['icon'],
+                        'sort': item['sort'],
+                        'hidden': item['hidden'],
+                        'creator': admin_user
+                    }
+                )
+                
+                if created:
+                    self.stdout.write(self.style.SUCCESS(f'创建菜单: {menu.name}'))
+                elif force:
+                    menu.path = item['path']
+                    menu.component = item['component']
+                    menu.icon = item['icon']
+                    menu.sort = item['sort']
+                    menu.hidden = item['hidden']
+                    menu.save()
+                    self.stdout.write(self.style.WARNING(f'更新菜单: {menu.name}'))
+                else:
+                    self.stdout.write(f'菜单已存在: {menu.name}')
+                
+                # 将父菜单添加到字典中
+                parent_menus[menu.name] = menu
+        
+        # 然后创建所有子菜单
+        for item in menu_data:
+            if item.get('parent_name'):
+                parent = parent_menus.get(item['parent_name'])
+                if not parent:
+                    self.stdout.write(self.style.ERROR(f'父菜单不存在: {item["parent_name"]}，无法创建子菜单: {item["name"]}'))
+                    continue
+                
+                menu, created = Menu.objects.get_or_create(
+                    name=item['name'],
+                    defaults={
+                        'path': item['path'],
+                        'component': item['component'],
+                        'icon': item['icon'],
+                        'sort': item['sort'],
+                        'hidden': item['hidden'],
+                        'parent': parent,
+                        'creator': admin_user
+                    }
+                )
+                
+                if created:
+                    self.stdout.write(self.style.SUCCESS(f'创建子菜单: {menu.name}'))
+                elif force:
+                    menu.path = item['path']
+                    menu.component = item['component']
+                    menu.icon = item['icon']
+                    menu.sort = item['sort']
+                    menu.hidden = item['hidden']
+                    menu.parent = parent
+                    menu.save()
+                    self.stdout.write(self.style.WARNING(f'更新子菜单: {menu.name}'))
+                else:
+                    self.stdout.write(f'子菜单已存在: {menu.name}')
