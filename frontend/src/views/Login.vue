@@ -62,11 +62,9 @@ const handleLogin = () => {
           username: loginForm.username,
           password: loginForm.password
         })
-        console.log(response.data)
         const { token, user } = response.data
         localStorage.setItem('token', token)
         localStorage.setItem('user', JSON.stringify(user))
-        
         ElMessage.success('登录成功')
         router.push('/dashboard')
       } catch (error) {
