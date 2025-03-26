@@ -56,6 +56,15 @@ class MenuSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'parent', 'parent_name', 'path', 'component', 'icon', 'sort', 'hidden', 
                  'creator', 'creator_info', 'created_at', 'updated_at']
         read_only_fields = ['id', 'created_at', 'updated_at']
+    
+    def create(self, validated_data):
+        validated_data['creator'] = self.context['request'].user
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        print("validated_data",validated_data)
+        validated_data['creator'] = self.context['request'].user
+        return super().update(instance, validated_data)
 
 class SystemConfigSerializer(serializers.ModelSerializer):
     creator_info = UserSerializer(source='creator', read_only=True)

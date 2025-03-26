@@ -79,68 +79,19 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import request from '@/utils/request'
+import { listToTree } from '@/utils/treeUtils'
 
 // 菜单数据
-const menuData = ref([
-  {
-    id: 1,
-    name: '系统管理',
-    path: '/system',
-    component: 'Layout',
-    icon: 'Setting',
-    sort: 1,
-    hidden: false,
-    children: [
-      {
-        id: 2,
-        name: '系统配置',
-        path: '/system/system-config',
-        component: 'SystemConfig',
-        icon: 'Setting',
-        sort: 1,
-        hidden: false,
-        parentId: 1
-      },
-      {
-        id: 3,
-        name: '菜单管理',
-        path: '/system/system-menu',
-        component: 'SystemMenu',
-        icon: 'Menu',
-        sort: 2,
-        hidden: false,
-        parentId: 1
-      }
-    ]
-  },
-  {
-    id: 4,
-    name: '数据管理',
-    path: '/data',
-    component: 'Layout',
-    icon: 'DataLine',
-    sort: 2,
-    hidden: false,
-    children: [
-      {
-        id: 5,
-        name: '数据源管理',
-        path: '/data/datasources',
-        component: 'DataSources',
-        icon: 'Collection',
-        sort: 1,
-        hidden: false,
-        parentId: 4
-      }
-    ]
-  }
-])
+const menuData = ref([])
 
 // 菜单树数据，用于选择上级菜单
 const menuTreeData = computed(() => {
-  // 构建树形结构
-  return [{ id: 0, name: '根菜单', children: [...menuData.value] }]
+  // 使用工具方法将扁平菜单数据转换为树形结构
+  // 添加根菜单选项
+  return [{ id: 0, name: '根菜单', children: menuData.value }]
 })
+
 
 // 对话框相关
 const dialogVisible = ref(false)
@@ -179,7 +130,19 @@ const handleAdd = () => {
 // 编辑菜单
 const handleEdit = (row) => {
   dialogTitle.value = '编辑菜单'
-  Object.assign(menuForm, row)
+  console.log(row)
+  // 设置表单数据
+  Object.assign(menuForm, {
+    id: row.id,
+    name: row.name,
+    path: row.path,
+    component: row.component,
+    icon: row.icon,
+    sort: row.sort,
+    hidden: row.hidden,
+    parentId: row.parent || 0 , // 如果parent为null，则设置为0（根菜单）
+    creator: row.creator
+  })
   dialogVisible.value = true
 }
 
@@ -194,8 +157,8 @@ const handleDelete = (row) => {
       type: 'warning',
     }
   ).then(() => {
-    // 这里添加删除菜单的逻辑
-    ElMessage.success('删除成功')
+    // 调用删除菜单API
+    deleteMenu(row.id)
   }).catch(() => {
     // 取消删除
   })
@@ -220,24 +183,83 @@ const resetForm = () => {
 
 // 提交表单
 const submitForm = () => {
-  menuFormRef.value.validate((valid) => {
+  menuFormRef.value.validate(async (valid) => {
     if (valid) {
-      // 这里添加保存菜单的逻辑
-      if (menuForm.id) {
-        // 编辑菜单
-        ElMessage.success('菜单更新成功')
-      } else {
-        // 添加菜单
-        ElMessage.success('菜单添加成功')
+      // 准备提交的数据
+      const submitData = {
+        name: menuForm.name,
+        path: menuForm.path,
+        component: menuForm.component,
+        icon: menuForm.icon,
+        sort: menuForm.sort,
+        hidden: menuForm.hidden,
+        parent: menuForm.parentId === 0 ? null : menuForm.parentId,
+        creator: menuForm.creator
       }
-      dialogVisible.value = false
+      
+      // 如果是编辑，添加ID
+      if (menuForm.id) {
+        submitData.id = menuForm.id
+      }
+      
+      // 调用保存菜单API
+      const success = await saveMenu(submitData)
+      if (success) {
+        dialogVisible.value = false
+      }
     }
   })
 }
 
+// 获取菜单列表
+const fetchMenuList = async () => {
+  try {
+    const response = await request.get('/api/menus/all/')
+    // menuData.value = response.data
+    menuData.value = listToTree(response.data)
+    ElMessage.success('菜单数据加载成功')
+  } catch (error) {
+    console.error('获取菜单列表失败:', error)
+    ElMessage.error('获取菜单列表失败')
+  }
+}
+
+// 删除菜单
+const deleteMenu = async (id) => {
+  try {
+    await request.delete(`/api/menus/${id}/`)
+    ElMessage.success('删除成功')
+    fetchMenuList() // 重新加载菜单数据
+  } catch (error) {
+    console.error('删除菜单失败:', error)
+    ElMessage.error('删除菜单失败')
+  }
+}
+
+// 保存菜单
+const saveMenu = async (menuData) => {
+  try {
+    if (menuData.id) {
+      // 编辑菜单
+      await request.put(`/api/menus/${menuData.id}/`, menuData)
+      ElMessage.success('菜单更新成功')
+    } else {
+      // 添加菜单
+      await request.post('/api/menus/', menuData)
+      ElMessage.success('菜单添加成功')
+    }
+    fetchMenuList() // 重新加载菜单数据
+    return true
+  } catch (error) {
+    console.error('保存菜单失败:', error)
+    ElMessage.error('保存菜单失败')
+    return false
+  }
+}
+
 onMounted(() => {
   // 组件挂载时加载菜单数据
-  // 这里可以添加从后端获取菜单数据的逻辑
+  fetchMenuList()
 })
 </script>
 
