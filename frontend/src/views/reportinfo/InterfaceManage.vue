@@ -1,11 +1,8 @@
 <template>
   <div class="interface-manage">
-      <template #header>
         <div class="card-header">
-          <span>接口管理</span>
           <el-button type="primary" @click="handleAdd">新增接口</el-button>
         </div>
-      </template>
       
       <!-- 搜索区域 -->
       <div class="search-area">

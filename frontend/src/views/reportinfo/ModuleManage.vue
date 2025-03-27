@@ -1,11 +1,8 @@
 <template>
   <div class="module-manage">
-      <template #header>
         <div class="card-header">
-          <span>模块管理</span>
           <el-button type="primary" @click="handleAdd">新增模块</el-button>
         </div>
-      </template>
       
       <!-- 搜索区域 -->
       <div class="search-area">

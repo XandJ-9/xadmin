@@ -1,11 +1,8 @@
 <template>
   <div class="platform-manage">
-      <template #header>
         <div class="card-header">
-          <span>平台管理</span>
           <el-button type="primary" @click="handleAdd">新增平台</el-button>
         </div>
-      </template>
       
       <!-- 搜索区域 -->
       <div class="search-area">
