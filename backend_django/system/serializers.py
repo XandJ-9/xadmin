@@ -39,9 +39,10 @@ class UserSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         if 'password' in validated_data:
             instance.set_password(validated_data.pop('password'))
-        role_name = validated_data.get('role')
-        role_instance = Role.objects.get(name=role_name)
-        validated_data['role']=role_instance
+        if 'role' in validated_data:
+            role_name = validated_data.get('role')
+            role_instance = Role.objects.get(name=role_name)
+            validated_data['role']=role_instance
 
         return super().update(instance, validated_data)
 

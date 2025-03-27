@@ -19,9 +19,10 @@
       <el-table-column prop="username" label="用户名" width="180" />
       <el-table-column prop="role_info.name" label="角色" width="180" />
       <el-table-column prop="create_time" label="创建时间" />
-      <el-table-column label="操作" width="180">
+      <el-table-column label="操作" width="250">
         <template #default="scope">
           <el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>
+          <el-button size="small" type="warning" @click="handleResetPwd(scope.row)">重置密码</el-button>
           <el-button size="small" type="danger" @click="handleDelete(scope.row)">删除</el-button>
         </template>
       </el-table-column>
@@ -36,13 +37,11 @@
         <el-form-item label="用户名" prop="username">
           <el-input v-model="userForm.username" />
         </el-form-item>
-        <el-form-item label="密码" prop="password">
-          <el-input v-model="userForm.password" type="password" />
-        </el-form-item>
         <el-form-item label="角色" prop="role">
           <el-select v-model="userForm.role" placeholder="请选择角色">
-            <el-option label="管理员" value="admin" />
-            <el-option label="普通用户" value="user" />
+            <!-- <el-option label="管理员" value="admin" />
+            <el-option label="普通用户" value="user" /> -->
+            <el-option v-for="role in roleList" :key="role.id" :label="role.description" :value="role.name" />
           </el-select>
         </el-form-item>
       </el-form>
@@ -62,9 +61,20 @@ import { Plus } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
 
+const roleList = ref([])
 const userList = ref([])
 const loading = ref(false)
 const searchQuery = ref('')
+
+
+const fetchRoles = async () => {
+  try {
+    const response = await request.get('/api/roles/')
+    roleList.value = response.data
+  } catch (error) {
+    ElMessage.error('获取角色列表失败')
+  }
+}
 
 const fetchUsers = async () => {
   loading.value = true
@@ -107,7 +117,8 @@ const rules = {
   role: [{ required: true, message: '请选择角色', trigger: 'change' }]
 }
 
-const handleAdd = () => {
+const handleAdd = async () => {
+    await fetchRoles()
   dialogTitle.value = '添加用户'
   Object.assign(userForm, {
     id: null,
@@ -118,7 +129,8 @@ const handleAdd = () => {
   dialogVisible.value = true
 }
 
-const handleEdit = (row) => {
+const handleEdit = async (row) => {
+    await fetchRoles()
   dialogTitle.value = '编辑用户'
   Object.assign(userForm, {
     id: row.id,
@@ -176,6 +188,25 @@ const handleSubmit = async () => {
     }
   })
 }
+
+const handleResetPwd = async (row) => {
+    try {
+        await ElMessageBox.confirm('确认重置该用户密码吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+        })
+        
+        await request.put(`/api/users/${row.id}/reset_pwd/`)
+        ElMessage.success('重置密码成功')
+    } catch (error) {
+        if (error !== 'cancel') {
+        ElMessage.error('重置密码失败')
+        console.error('Error resetting password:', error)
+        }
+    }
+}
+
 </script>
 
 <style scoped>
