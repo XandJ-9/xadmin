@@ -24,6 +24,7 @@ class QueryLogMiddleware(MiddlewareMixin):
         if not hasattr(request, 'resolver_match') or not request.resolver_match:
             return None
             
+        # 只处理数据查询请求
         if request.resolver_match.url_name != 'datasource-execute-query':
             return None
         
