@@ -39,7 +39,7 @@
       
       <el-table :data="logData" style="width: 100%" border v-loading="loading">
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
-        <el-table-column prop="dataSourceName" label="数据源" width="120"></el-table-column>
+        <el-table-column prop="datasource_name" label="数据源" width="120"></el-table-column>
         <el-table-column prop="username" label="查询用户" width="120"></el-table-column>
         <el-table-column prop="status" label="状态" width="100">
           <template #default="scope">
@@ -48,7 +48,7 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="executionTime" label="执行时间(ms)" width="120"></el-table-column>
+        <el-table-column prop="execution_time" label="执行时间(ms)" width="120"></el-table-column>
         <el-table-column prop="sql" label="SQL语句">
           <template #default="scope">
             <el-tooltip 
@@ -62,7 +62,7 @@
             </el-tooltip>
           </template>
         </el-table-column>
-        <el-table-column prop="errorMessage" label="错误信息">
+        <el-table-column prop="error_message" label="错误信息">
           <template #default="scope">
             <span v-if="scope.row.status === 'error'" class="error-message">
               {{ scope.row.errorMessage }}
@@ -70,7 +70,7 @@
             <span v-else>-</span>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="查询时间" width="180"></el-table-column>
+        <el-table-column prop="created_at" label="查询时间" width="180"></el-table-column>
         <el-table-column label="操作" width="120" fixed="right">
           <template #default="scope">
             <el-button 
@@ -252,9 +252,9 @@ const searchLogs = async () => {
       params.end_date = filterForm.value.dateRange[1].toISOString().split('T')[0]
     }
     
-    const response = await request.get('/api/datasources/query-logs/', { params })
-    logData.value = response.data.results
-    pagination.value.total = response.data.count
+    const response = await request.get('/api/querylogs/', { params })
+    logData.value = response.data
+    pagination.value.total = response.data.length
   } catch (error) {
     ElMessage.error('获取查询日志失败')
   } finally {
@@ -288,7 +288,7 @@ const handleCurrentChange = (page) => {
 // 查看查询详情
 const viewQueryDetail = async (row) => {
   try {
-    const response = await request.get(`/api/query-logs/${row.id}/`)
+    const response = await request.get(`/api/datasources/query-logs/${row.id}/`)
     currentQuery.value = {
       ...response.data,
       dataSourceName: row.dataSourceName,

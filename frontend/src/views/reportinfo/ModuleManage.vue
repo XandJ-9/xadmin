@@ -1,6 +1,5 @@
 <template>
   <div class="module-manage">
-    <el-card class="box-card">
       <template #header>
         <div class="card-header">
           <span>模块管理</span>
@@ -118,7 +117,6 @@
           </span>
         </template>
       </el-dialog>
-    </el-card>
   </div>
 </template>
 

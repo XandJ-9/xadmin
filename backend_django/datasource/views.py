@@ -1,6 +1,8 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.filters import SearchFilter, OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from system.permissions import IsAdminUser, IsOwnerOrAdmin
 
 from .models import DataSource, QueryLog
@@ -114,3 +116,23 @@ class DataSourceViewSet(viewsets.ModelViewSet):
             'page_size': page_size,
             'results': serializer.data
         })
+    
+
+class QueryLogViewSet(viewsets.ModelViewSet):
+    queryset = QueryLog.objects.all()
+    serializer_class = QueryLogSerializer
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    
+    # filterset_fields = ['datasource_id', 'status', ]
+    # search_fields = ['datasource_id', 'status', 'sta_date']
+
+    def get_permissions(self):
+        if self.action == 'list':
+            return [IsAdminUser()]
+        return [IsOwnerOrAdmin()]
+
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_superuser or (user.role and user.role.name == 'admin'):
+            return QueryLog.objects.all()
+        return QueryLog.objects.filter(user=user)

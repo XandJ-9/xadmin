@@ -1,6 +1,5 @@
 <template>
   <div class="platform-manage">
-    <el-card class="box-card">
       <template #header>
         <div class="card-header">
           <span>平台管理</span>
@@ -95,7 +94,6 @@
           </span>
         </template>
       </el-dialog>
-    </el-card>
   </div>
 </template>
 

@@ -1,6 +1,5 @@
 <template>
   <div class="interface-fields">
-    <el-card class="box-card">
       <template #header>
         <div class="card-header">
           <span>接口字段配置 - {{ interfaceInfo?.interface_name }}</span>
@@ -123,7 +122,6 @@
           </span>
         </template>
       </el-dialog>
-    </el-card>
   </div>
 </template>
 

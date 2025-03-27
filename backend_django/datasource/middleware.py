@@ -1,21 +1,24 @@
+from django.utils.deprecation import MiddlewareMixin
 import time
 import logging
 from .models import QueryLog
 
 logger = logging.getLogger('django')
 
-class QueryLogMiddleware:
+class QueryLogMiddleware(MiddlewareMixin):
     """中间件，用于记录SQL查询日志"""
     
     def __init__(self, get_response):
         self.get_response = get_response
         
-    def __call__(self, request):
-        # 处理请求前的代码
-        response = self.get_response(request)
-        # 处理请求后的代码
-        return response
-        
+    # def __call__(self, request):
+    #     # 处理请求前的代码
+    #     response = self.get_response(request)
+
+    #     # 处理请求后的代码
+    #     return self.process_response(request, response)
+
+
     def process_view(self, request, view_func, view_args, view_kwargs):
         # 只处理数据源查询API
         if not hasattr(request, 'resolver_match') or not request.resolver_match:
@@ -23,23 +26,26 @@ class QueryLogMiddleware:
             
         if request.resolver_match.url_name != 'datasource-execute-query':
             return None
-            
+        
+
         # 设置开始时间
         request.query_start_time = time.time()
 
-        print(f'process_view with request: {request}, view_func: {view_func}, view_args: {view_args}, view_kwargs: {view_kwargs}')
         return None
         
     def process_response(self, request, response):
         # 处理查询日志记录
         if not hasattr(request, 'query_start_time'):
             return response
-            
+
         # 计算执行时间
         execution_time = time.time() - request.query_start_time
-        
+
         # 获取请求和响应数据
         try:
+            if request.user.is_anonymous:
+                return response
+            
             # 获取数据源ID
             datasource_id = request.resolver_match.kwargs.get('pk')
             if not datasource_id:
@@ -48,7 +54,7 @@ class QueryLogMiddleware:
             # 获取SQL和结果
             # sql = request.data.get('sql', '')
             sql = request.POST.get('sql') if request.method == 'POST' else request.GET.get('sql')
-            print(f'process_response with request: {request}, response: {response}')
+
             if not sql:
                 return response
                 
