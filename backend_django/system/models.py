@@ -62,6 +62,21 @@ class Menu(BaseModel):
     def __str__(self):
         return self.name
 
+class RoleMenu(BaseModel):
+    """角色菜单关联模型"""
+    role = models.ForeignKey(Role, on_delete=models.CASCADE, related_name='role_menus', verbose_name='角色')
+    menu = models.ForeignKey(Menu, on_delete=models.CASCADE, related_name='role_menus', verbose_name='菜单')
+    created_at = models.DateTimeField(default=timezone.now, verbose_name='创建时间')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_role_menus', verbose_name='创建者')
+    updator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='updated_role_menus', verbose_name='更新者')
+    class Meta:
+        verbose_name = '角色菜单关联'
+        verbose_name_plural = verbose_name
+        db_table ='sys_role_menu'
+    def __str__(self):
+        return f"{self.role.name} - {self.menu.name}"
+
 class SystemConfig(BaseModel):
     """系统配置模型"""
     key = models.CharField(max_length=50, unique=True, verbose_name='配置键')

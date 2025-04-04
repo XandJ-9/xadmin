@@ -70,7 +70,7 @@ const handleRegister = () => {
         ElMessage.success('注册成功')
         router.push('/dashboard')
       } catch (error) {
-        const errorMessage = error.response?.data?.error || '注册失败，请稍后重试'
+        const errorMessage = error.response?.data || '注册失败，请稍后重试'
         ElMessage.error(errorMessage)
       } finally {
         loading.value = false

@@ -15,6 +15,46 @@ class RoleViewSet(viewsets.ModelViewSet):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
     # permission_classes = [IsAdminUser]
+    
+    @action(detail=True, methods=['get'])
+    def menus(self, request, pk=None):
+        """获取角色的菜单权限"""
+        role = self.get_object()
+        # 获取角色关联的所有菜单ID
+        role_menus = role.role_menus.all()
+        menu_ids = [rm.menu_id for rm in role_menus]
+        return Response({'menu_ids': menu_ids}, status=status.HTTP_200_OK)
+    
+    @action(detail=True, methods=['post'])
+    def set_menus(self, request, pk=None):
+        """设置角色的菜单权限"""
+        role = self.get_object()
+        menu_ids = request.data.get('menu_ids', [])
+        
+        # 验证菜单ID是否有效
+        if not all(isinstance(mid, int) for mid in menu_ids):
+            return Response({'error': '菜单ID必须为整数'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # 验证菜单是否存在
+        existing_menu_ids = set(Menu.objects.filter(id__in=menu_ids).values_list('id', flat=True))
+        invalid_ids = set(menu_ids) - existing_menu_ids
+        if invalid_ids:
+            return Response({'error': f'菜单ID不存在: {list(invalid_ids)}'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # 清除原有的角色菜单关联
+        role.role_menus.all().delete()
+        
+        # 创建新的角色菜单关联
+        from .models import RoleMenu
+        for menu_id in menu_ids:
+            RoleMenu.objects.create(
+                role=role,
+                menu_id=menu_id,
+                creator=request.user,
+                updator=request.user
+            )
+        
+        return Response({'menu_ids': menu_ids}, status=status.HTTP_200_OK)
 
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()

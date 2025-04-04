@@ -11,10 +11,11 @@
       <el-table-column prop="name" label="角色名称" width="180" />
       <el-table-column prop="description" label="描述" />
       <el-table-column prop="create_time" label="创建时间" width="180" />
-      <el-table-column label="操作" width="180">
+      <el-table-column label="操作" width="250">
         <template #default="scope">
           <el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>
           <el-button size="small" type="danger" @click="handleDelete(scope.row)">删除</el-button>
+          <el-button size="small" type="primary" @click="handlePermission(scope.row)">编辑权限</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -39,6 +40,9 @@
         </span>
       </template>
     </el-dialog>
+    
+    <!-- 角色权限编辑抽屉 -->
+    <RolePermission ref="rolePermissionRef" />
   </div>
 </template>
 
@@ -47,6 +51,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
+import RolePermission from '@/components/RolePermission.vue'
 
 const roleList = ref([])
 const loading = ref(false)
@@ -152,6 +157,14 @@ const handleSubmit = async () => {
       }
     }
   })
+}
+
+// 角色权限编辑相关
+const rolePermissionRef = ref(null)
+
+// 处理编辑权限
+const handlePermission = (row) => {
+  rolePermissionRef.value.open(row)
 }
 </script>
 
