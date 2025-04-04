@@ -1,4 +1,4 @@
-import router from './index'
+import router from './router/index'
 import { useUserStore } from '@/store/user'
 import { useMenuStore } from '@/store/menu'
 import { useRouteStore } from '@/store/route'
@@ -11,11 +11,13 @@ const whiteList = ['/login', '/register']
  * 处理权限验证和动态路由加载
  */
 router.beforeEach(async (to, from, next) => {
-  // 获取store
-  const userStore = useUserStore()
-  const menuStore = useMenuStore()
+
+//   // 获取store
+//   const userStore = useUserStore()
+//   const menuStore = useMenuStore()
   const routeStore = useRouteStore()
-  
+  await routeStore.addDynamicRoutes()
+  next()
   /*
   // 判断用户是否已登录
   if (userStore.getLoginStatus) {

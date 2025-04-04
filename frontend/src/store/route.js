@@ -1,6 +1,8 @@
 import { defineStore } from 'pinia'
 import { useMenuStore } from './menu'
 import router from '@/router'
+import { listToTree  } from '@/utils/treeUtils'
+import { tr } from 'element-plus/es/locale/index.mjs'
 
 /**
  * 路由状态管理
@@ -27,7 +29,17 @@ export const useRouteStore = defineStore('route', {
     generateRoutes(menuTree) {
       // 这里可以根据实际需求实现路由生成逻辑
       // 当前项目已经有静态路由配置，此处可以根据权限过滤或动态添加路由
-      return []
+      const treeData = listToTree(menuTree)
+      console.log('33',treeData)
+      treeData.forEach(item => {
+        if (item.children) {
+          item.children.forEach(child => {
+            child.path = child.path
+            child.component = () => import(`@/views/${child.component}.vue`)
+          })
+        }
+      })
+      return treeData
     },
     
     /**
@@ -46,8 +58,6 @@ export const useRouteStore = defineStore('route', {
       
       // 生成路由配置
       const routes = this.generateRoutes(menuStore.getMenuTree)
-      
-      console.log('routes', routes)
       
       // 添加路由
       routes.forEach(route => {

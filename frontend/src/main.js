@@ -7,7 +7,7 @@ import './style.css'
 import App from './App.vue'
 import router from './router'
 // 导入路由权限守卫
-// import './router/permission'
+import './permission'
 
 const app = createApp(App)
 
