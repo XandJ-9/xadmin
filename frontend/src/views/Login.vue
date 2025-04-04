@@ -30,10 +30,9 @@
 
 <script setup>
 import { ref, reactive } from 'vue'
-import { User, Lock } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import request from '@/utils/request'
+import { useUserStore } from '@/store/user'
 
 const router = useRouter()
 const loginFormRef = ref(null)
@@ -53,23 +52,27 @@ const goToRegister = () => {
   router.push('/register')
 }
 
+const userStore = useUserStore()
+
 const handleLogin = () => {
   loginFormRef.value.validate(async (valid) => {
     if (valid) {
       loading.value = true
       try {
-        const response = await request.post('/api/users/login/', {
+        // 使用Pinia store进行登录
+        const result = await userStore.login({
           username: loginForm.username,
           password: loginForm.password
         })
-        const { token, user } = response.data
-        localStorage.setItem('token', token)
-        localStorage.setItem('user', JSON.stringify(user))
-        ElMessage.success('登录成功')
-        router.push('/dashboard')
+        
+        if (result.success) {
+          ElMessage.success('登录成功')
+          router.push('/dashboard')
+        } else {
+          ElMessage.error(result.error)
+        }
       } catch (error) {
-        const errorMessage = error.response?.data?.error || '登录失败，请稍后重试'
-        ElMessage.error(errorMessage)
+        ElMessage.error('登录失败，请稍后重试')
       } finally {
         loading.value = false
       }

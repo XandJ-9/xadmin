@@ -5,7 +5,7 @@
       </div>
       
       <el-table :data="menuData" style="width: 100%" row-key="id" border default-expand-all>
-        <el-table-column prop="id" label="ID" width="80"></el-table-column>
+        <!-- <el-table-column prop="id" label="ID" width="80"></el-table-column> -->
         <el-table-column prop="name" label="菜单名称" width="180"></el-table-column>
         <el-table-column prop="path" label="路由路径" width="180"></el-table-column>
         <el-table-column prop="component" label="组件路径"></el-table-column>

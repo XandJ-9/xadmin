@@ -1,7 +1,7 @@
 <template>
   <el-drawer
     v-model="visible"
-    title="编辑角色权限"
+    title="编辑角色菜单权限"
     size="30%"
     :destroy-on-close="true"
     direction="rtl"

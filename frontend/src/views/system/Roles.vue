@@ -15,7 +15,7 @@
         <template #default="scope">
           <el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>
           <el-button size="small" type="danger" @click="handleDelete(scope.row)">删除</el-button>
-          <el-button size="small" type="primary" @click="handlePermission(scope.row)">编辑权限</el-button>
+          <el-button size="small" type="primary" @click="handlePermission(scope.row)">菜单权限</el-button>
         </template>
       </el-table-column>
     </el-table>

@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { User, Setting, DataBoard, Collection, Edit } from '@element-plus/icons-vue'
 
-const routes = [
+const constantRoutes = [
   {
     path: '/',
     redirect: '/login'
@@ -15,7 +15,10 @@ const routes = [
     path: '/register',
     name: 'Register',
     component: () => import('@/views/Register.vue')
-  },
+  }
+]
+
+const asyncRoutes = [
   {
     path: '/',
     name: 'Layout',
@@ -181,6 +184,12 @@ const routes = [
       }
     ]
   }
+]
+
+
+const routes = [
+  ...constantRoutes,
+  ...asyncRoutes
 ]
 
 const router = createRouter({

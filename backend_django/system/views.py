@@ -120,6 +120,25 @@ class MenuViewSet(viewsets.ModelViewSet):
         queryset = Menu.objects.all().order_by('sort')
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+    
+    @action(detail=False, methods=['get'])
+    def user_menus(self, request):
+        """根据当前登录用户的角色返回菜单列表（扁平结构）"""
+        user = request.user
+        if not user.role:
+            return Response({'error': '用户没有分配角色'}, status=status.HTTP_403_FORBIDDEN)
+        
+        # 获取用户角色关联的所有菜单ID
+        role_menus = user.role.role_menus.all()
+        menu_ids = [rm.menu_id for rm in role_menus]
+        
+        # 获取所有菜单并按排序字段排序
+        menus = Menu.objects.filter(id__in=menu_ids).order_by('sort')
+        
+        # 序列化菜单数据，返回扁平结构
+        serializer = self.get_serializer(menus, many=True)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 class SystemConfigViewSet(viewsets.ModelViewSet):
     queryset = SystemConfig.objects.all()

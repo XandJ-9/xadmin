@@ -40,6 +40,8 @@ import { User, Lock } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
+import { useUserStore } from '@/store/user'
+import { useMenuStore } from '@/store/menu'
 
 const router = useRouter()
 const registerFormRef = ref(null)
@@ -57,15 +59,23 @@ const rules = {
   role: [{ required: true, message: '请选择角色', trigger: 'change' }]
 }
 
+const userStore = useUserStore()
+const menuStore = useMenuStore()
+
 const handleRegister = () => {
   registerFormRef.value.validate(async (valid) => {
     if (valid) {
       loading.value = true
       try {
+        // 发送注册请求
         const response = await request.post('/api/users/register/', registerForm)
-        const { token, user } = response.data
-        localStorage.setItem('token', token)
-        localStorage.setItem('user', JSON.stringify(user))
+        const userData = response.data
+        
+        // 保存用户数据
+        userStore.setUserData(userData)
+        
+        // 获取用户菜单
+        await menuStore.fetchUserMenus()
         
         ElMessage.success('注册成功')
         router.push('/dashboard')
