@@ -63,6 +63,7 @@ import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
 import MonacoEditor from '@/components/MonacoEditor.vue'
 import QueryResult from '@/components/QueryResult.vue'
+import { editor } from 'monaco-editor'
 
 // 数据查询相关数据
 const dataSources = ref([])
@@ -77,7 +78,7 @@ const queryTabs = ref([])
 const tabIndex = ref(0)
 
 // 编辑器高度相关
-const editorHeight = ref(300)
+const editorHeight = ref(500)
 const isResizing = ref(false)
 const startY = ref(0)
 const startHeight = ref(0)
@@ -194,6 +195,7 @@ const executeQuery = async () => {
 
     queryTabs.value.push(newTab)
     activeTab.value = newTabId
+    editorHeight.value = 400
   } catch (err) {
     const newTab = {
       id: newTabId,
