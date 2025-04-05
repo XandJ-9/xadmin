@@ -190,8 +190,8 @@ class Command(BaseCommand):
             # 系统管理
             {
                 'name': '系统管理',
-                'path': '/system',
-                'component': 'Layout',
+                'path': 'system',
+                'component': 'system/index',
                 'icon': 'Setting',
                 'sort': 2,
                 'hidden': False,
@@ -200,8 +200,8 @@ class Command(BaseCommand):
             # 系统管理子菜单
             {
                 'name': '角色管理',
-                'path': '/system/system-role',
-                'component': 'SystemRole',
+                'path': 'system-role',
+                'component': 'system/Roles',
                 'icon': 'Setting',
                 'sort': 1,
                 'hidden': False,
@@ -209,8 +209,8 @@ class Command(BaseCommand):
             },
             {
                 'name': '用户管理',
-                'path': '/system/system-user',
-                'component': 'SystemUser',
+                'path': 'system-user',
+                'component': 'system/Users',
                 'icon': 'Setting',
                 'sort': 2,
                 'hidden': False,
@@ -218,8 +218,8 @@ class Command(BaseCommand):
             },
             {
                 'name': '菜单管理',
-                'path': '/system/system-menu',
-                'component': 'SystemMenu',
+                'path': 'system-menu',
+                'component': 'system/Menu',
                 'icon': 'Menu',
                 'sort': 3,
                 'hidden': False,
@@ -227,8 +227,8 @@ class Command(BaseCommand):
             },
             {
                 'name': '系统配置',
-                'path': '/system/system-config',
-                'component': 'SystemConfig',
+                'path': 'system-config',
+                'component': 'system/Config',
                 'icon': 'Setting',
                 'sort': 4,
                 'hidden': False,
@@ -236,38 +236,28 @@ class Command(BaseCommand):
             },
             {
                 'name': '系统日志',
-                'path': '/system/system-log',
-                'component': 'SystemLog',
+                'path': 'system-log',
+                'component': 'system/Log',
                 'icon': 'Setting',
                 'sort': 5,
                 'hidden': False,
                 'parent_name': '系统管理'
             },
-            # 数据管理
-            {
-                'name': '数据管理',
-                'path': '/data',
-                'component': 'Layout',
-                'icon': 'DataLine',
-                'sort': 3,
-                'hidden': False,
-                'parent': None
-            },
-            # 数据管理子菜单
+            # 数据源管理
             {
                 'name': '数据源管理',
-                'path': '/datasources',
-                'component': 'Datasources',
+                'path': 'datasources',
+                'component': 'DataSources',
                 'icon': 'Collection',
                 'sort': 1,
                 'hidden': False,
-                'parent_name': '数据管理'
+                'parent': None
             },
             # 数据开发
             {
                 'name': '数据开发',
-                'path': '/dataquery',
-                'component': 'Layout',
+                'path': 'dataquery',
+                'component': 'index',
                 'icon': 'Edit',
                 'sort': 4,
                 'hidden': False,
@@ -276,8 +266,8 @@ class Command(BaseCommand):
             # 数据开发子菜单
             {
                 'name': '数据查询',
-                'path': '/dataquery/index',
-                'component': 'DataQuery',
+                'path': 'index',
+                'component': 'dataquery/index',
                 'icon': 'Edit',
                 'sort': 1,
                 'hidden': False,
@@ -285,8 +275,8 @@ class Command(BaseCommand):
             },
             {
                 'name': '查询日志',
-                'path': '/dataquery/querylog',
-                'component': 'QueryLog',
+                'path': 'querylog',
+                'component': 'dataquery/QueryLog',
                 'icon': 'Edit',
                 'sort': 2,
                 'hidden': False,
@@ -295,8 +285,8 @@ class Command(BaseCommand):
             # 报表信息
             {
                 'name': '报表信息',
-                'path': '/reportmanage',
-                'component': 'ReportManage',
+                'path': 'reportinfo',
+                'component': 'index',
                 'icon': 'Edit',
                 'sort': 5,
                 'hidden': False,
@@ -305,8 +295,8 @@ class Command(BaseCommand):
             # 报表信息子菜单
             {
                 'name': '平台管理',
-                'path': '/reportmanage/platform',
-                'component': 'Platform',
+                'path': 'platform',
+                'component': 'reportinfo/PlatformManage',
                 'icon': 'Edit',
                 'sort': 1,
                 'hidden': False,
@@ -314,8 +304,8 @@ class Command(BaseCommand):
             },
             {
                 'name': '模块管理',
-                'path': '/reportmanage/module',
-                'component': 'Module',
+                'path': 'module',
+                'component': 'reportinfo/ModuleManage',
                 'icon': 'Edit',
                 'sort': 2,
                 'hidden': False,
@@ -323,8 +313,8 @@ class Command(BaseCommand):
             },
             {
                 'name': '报表设计',
-                'path': '/reportmanage/report',
-                'component': 'Report',
+                'path': 'report',
+                'component': 'reportinfo/ReportManage',
                 'icon': 'Edit',
                 'sort': 3,
                 'hidden': False,
@@ -332,8 +322,8 @@ class Command(BaseCommand):
             },
             {
                 'name': '接口管理',
-                'path': '/reportmanage/interface',
-                'component': 'Interface',
+                'path': 'interface',
+                'component': 'reportinfo/InterfaceManage',
                 'icon': 'Edit',
                 'sort': 4,
                 'hidden': False,

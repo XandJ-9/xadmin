@@ -2,6 +2,26 @@ import { defineStore } from 'pinia'
 import { useMenuStore } from './menu'
 import router from '@/router'
 import { dynamicRoutes } from '../router/routes'
+
+
+const viewsModules = import.meta.glob('@/views/**/*.vue')
+
+export function dynamicImport(dynamicViewsModules, component) {
+  const keys = Object.keys(dynamicViewsModules);
+  const matchKeys = keys.filter((key) => {
+    const k = key.replace(/\/src\/views|../, '');
+    return k.startsWith(`${component}`) || k.startsWith(`/${component}`);
+  });
+
+  if (matchKeys?.length === 1) {
+      const matchKey = matchKeys[0];
+      return dynamicViewsModules[matchKey];
+  }
+  if (matchKeys?.length > 1) {
+      return false;
+  }
+}
+
 /**
  * 路由状态管理
  */
@@ -28,19 +48,25 @@ export const useRouteStore = defineStore('route', {
       // 这里可以根据实际需求实现路由生成逻辑
       // 当前项目已经有静态路由配置，此处可以根据权限过滤或动态添加路由
 
+      const result = []
+
       // 处理菜单数据，转换为路由格式
       menuTree.forEach(item => {
+          // 使用静态路径映射替代动态导入
+          // console.log(`@/views/${item.component}.vue`)
+          item.component = dynamicImport(viewsModules ,item.component)
+          // item.component = () => import(`@/views/${item.component}.vue`)
+          // item.component = (resolve) => require([`@/views/${item.component}.vue`],resolve)
+        
         if (item.children) {
-          item.children.forEach(child => {
-            child.path = child.path
-            child.component = () => import(`@/views/${child.component}.vue`)
-          })
+          item.children = this.generateRoutes(item.children)
         }
+        
+        result.push(item)
       })
 
-      console.log('menuTree', menuTree)
       // 返回系统路由配置，确保它能被正确添加到路由中
-      return []
+      return result
     },
     
     /**
@@ -59,12 +85,14 @@ export const useRouteStore = defineStore('route', {
       
       // 生成路由配置
       const routes = this.generateRoutes(menuStore.getMenuTree)
-      
+
       // // 添加路由
-      dynamicRoutes.forEach(route => {
+      routes.forEach(route => {
         // 系统路由已经是相对路径，直接添加到根路由的children中
         router.addRoute('Layout', route)
       })
+
+      console.log(router.getRoutes())
 
       this.isRoutesAdded = true
     },

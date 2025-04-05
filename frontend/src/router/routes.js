@@ -55,5 +55,99 @@ export const dynamicRoutes = [
       }
     }
   ]
+  },
+  {
+    path: 'datasources',
+    name: 'Datasources',
+    component: () => import('@/views/DataSources.vue'),
+    meta: {
+      icon: Collection,
+      title: '数据源管理'
+    }
+  },
+  {
+    path: 'dataquery',
+    redirect: '/dataquery/index',
+    meta: {
+      icon: Edit,
+      title: '数据开发'
+    },
+    children: [
+      {
+        path: 'index',
+        name: 'DataQuery',
+        component: () => import('@/views/dataquery/index.vue'),
+        meta: {
+          icon: Edit,
+          title: '数据查询'
+        }
+      },
+      {
+        path: 'querylog',
+        name: 'QueryLog',
+        component: () => import('@/views/dataquery/QueryLog.vue'),
+        meta: {
+          icon: Edit,
+          title: '查询日志'
+        }
+      }
+    ]
+  },
+  {
+    path: 'reportmanage',
+    name: 'ReportManage',
+    component: () => import('@/views/reportinfo/index.vue'),
+    meta: {
+      icon: Edit,
+      title: '报表信息'
+    },
+    children: [
+      {
+        path: 'platform',
+        name: 'Platform',
+        component: () => import('@/views/reportinfo/PlatformManage.vue'),
+        meta: {
+          icon: Edit,
+          title: '平台管理'
+        }
+      },
+      {
+        path: 'module',
+        name: 'Module',
+        component: () => import('@/views/reportinfo/ModuleManage.vue'),
+        meta: {
+          icon: Edit,
+          title: '模块管理'
+        }
+      },
+      {
+        path: 'report',
+        name: 'Report',
+        component: () => import('@/views/reportinfo/ReportManage.vue'),
+        meta: {
+          icon: Edit,
+          title: '报表设计'
+        }
+      },
+      {
+        path: 'interface',
+        name: 'Interface',
+        component: () => import('@/views/reportinfo/InterfaceManage.vue'),
+        meta: {
+          icon: Edit,
+          title: '接口管理'
+        }
+      },
+      {
+        path: 'interface-fields/:id',
+        name: 'InterfaceFields',
+        component: () => import('@/views/reportinfo/InterfaceFields.vue'),
+        hidden: true,
+        meta: {
+          icon: Edit,
+          title: '接口字段管理',
+        }
+      }
+    ]
   }
 ]
