@@ -174,9 +174,10 @@ const executeQuery = async () => {
   const newTabId = `tab-${tabIndex.value++}`
   
   try {
-    const response = await request.post(`/api/datasources/${selectedDataSource.value}/query/`, {
-      sql
-    })
+    const formData = new FormData()
+    formData.append('sql', sql)
+    
+    const response = await request.post(`/api/datasources/${selectedDataSource.value}/query/`, formData)
     
     // 创建新标签
     const newTab = {

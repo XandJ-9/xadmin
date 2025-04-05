@@ -31,7 +31,7 @@ class QueryLogMiddleware(MiddlewareMixin):
 
         # 设置开始时间
         request.query_start_time = time.time()
-
+        logger.info(f'开始记录查询日志: {request.query_start_time}')
         return None
         
     def process_response(self, request, response):
@@ -51,10 +51,18 @@ class QueryLogMiddleware(MiddlewareMixin):
             datasource_id = request.resolver_match.kwargs.get('pk')
             if not datasource_id:
                 return response
-                
+
+            # 解析请求数据 
+            # 将httprequest转换为rest_framework.request.Request对象
+            from rest_framework.request import Request
+            from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
+            new_request = Request(request, parsers=[JSONParser(), FormParser(), MultiPartParser()])
+            
+
             # 获取SQL和结果
-            # sql = request.data.get('sql', '')
-            sql = request.POST.get('sql') if request.method == 'POST' else request.GET.get('sql')
+            sql = new_request.data.get('sql', '')
+            # sql = request.POST.get('sql') if request.method == 'POST' else request.GET.get('sql')
+            logger.info(f'记录查询SQL: {sql}')
 
             if not sql:
                 return response
