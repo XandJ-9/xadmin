@@ -3,7 +3,7 @@ import { useMenuStore } from './menu'
 import router from '@/router'
 import { dynamicRoutes } from '../router/routes'
 
-
+// 动态导入所有的视图组件， ES推荐使用
 const viewsModules = import.meta.glob('@/views/**/*.vue')
 
 export function dynamicImport(dynamicViewsModules, component) {
