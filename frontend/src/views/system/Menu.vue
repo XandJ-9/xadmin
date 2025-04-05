@@ -217,7 +217,7 @@ const fetchMenuList = async () => {
     const response = await request.get('/api/menus/all/')
     // menuData.value = response.data
     menuData.value = listToTree(response.data)
-    ElMessage.success('菜单数据加载成功')
+    // ElMessage.success('菜单数据加载成功')
   } catch (error) {
     console.error('获取菜单列表失败:', error)
     ElMessage.error('获取菜单列表失败')

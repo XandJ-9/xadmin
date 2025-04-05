@@ -1,16 +1,14 @@
 import { defineStore } from 'pinia'
 import { useMenuStore } from './menu'
 import router from '@/router'
-import { listToTree  } from '@/utils/treeUtils'
-import { tr } from 'element-plus/es/locale/index.mjs'
-
+import { dynamicRoutes } from '../router/routes'
 /**
  * 路由状态管理
  */
 export const useRouteStore = defineStore('route', {
   state: () => ({
     // 动态路由是否已添加
-    isRoutesAdded: false
+    isRoutesAdded: false,
   }),
   
   getters: {
@@ -29,9 +27,9 @@ export const useRouteStore = defineStore('route', {
     generateRoutes(menuTree) {
       // 这里可以根据实际需求实现路由生成逻辑
       // 当前项目已经有静态路由配置，此处可以根据权限过滤或动态添加路由
-      const treeData = listToTree(menuTree)
-      console.log('33',treeData)
-      treeData.forEach(item => {
+
+      // 处理菜单数据，转换为路由格式
+      menuTree.forEach(item => {
         if (item.children) {
           item.children.forEach(child => {
             child.path = child.path
@@ -39,7 +37,10 @@ export const useRouteStore = defineStore('route', {
           })
         }
       })
-      return treeData
+
+      console.log('menuTree', menuTree)
+      // 返回系统路由配置，确保它能被正确添加到路由中
+      return []
     },
     
     /**
@@ -59,11 +60,12 @@ export const useRouteStore = defineStore('route', {
       // 生成路由配置
       const routes = this.generateRoutes(menuStore.getMenuTree)
       
-      // 添加路由
-      routes.forEach(route => {
-        router.addRoute(route)
+      // // 添加路由
+      dynamicRoutes.forEach(route => {
+        // 系统路由已经是相对路径，直接添加到根路由的children中
+        router.addRoute('Layout', route)
       })
-      
+
       this.isRoutesAdded = true
     },
     
@@ -71,6 +73,9 @@ export const useRouteStore = defineStore('route', {
      * 重置路由状态
      */
     resetRouteState() {
+      // 重置菜单状态
+      const menuStore = useMenuStore()
+      menuStore.resetMenuState()
       this.isRoutesAdded = false
       // 这里可以添加移除动态路由的逻辑
     }

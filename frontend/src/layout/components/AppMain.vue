@@ -33,6 +33,7 @@
 import { useRouter } from 'vue-router'
 import { computed, ref, onMounted } from 'vue'
 import TagView from './TagView.vue'
+import { useUserStore } from '@/store/user'
 const props = defineProps({
   isCollapse: {
     type: Boolean,
@@ -68,6 +69,8 @@ const toggleCollapse = () => {
 
 const handleLogout = () => {
   localStorage.removeItem('token')
+  const userStore = useUserStore()
+  userStore.logout()
   router.push('/login')
 }
 </script>

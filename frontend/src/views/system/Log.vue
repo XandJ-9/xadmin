@@ -96,7 +96,7 @@ const logData = ref([
 // 查询日志
 const searchLogs = () => {
   // 这里添加查询日志的逻辑
-  console.log('查询条件:', filterForm.value)
+  // console.log('查询条件:', filterForm.value)
   // 模拟查询后更新分页信息
   pagination.value.total = 100
 }

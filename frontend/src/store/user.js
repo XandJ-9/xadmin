@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import request from '@/utils/request'
-import { useMenuStore } from './menu'
 
 /**
  * 用户状态管理
@@ -63,12 +62,9 @@ export const useUserStore = defineStore('user', {
         // 保存用户数据
         this.setUserData(userData)
         
-        // 获取用户菜单
-        const menuStore = useMenuStore()
-        await menuStore.fetchUserMenus()
-        
         return { success: true }
       } catch (error) {
+        console.error('登录失败', error)
         return { 
           success: false, 
           error: error.response?.data?.error || '登录失败，请稍后重试'
@@ -88,10 +84,6 @@ export const useUserStore = defineStore('user', {
       // 清除本地存储
       localStorage.removeItem('token')
       localStorage.removeItem('user')
-      
-      // 重置菜单状态
-      const menuStore = useMenuStore()
-      menuStore.resetMenuState()
     }
   }
 })

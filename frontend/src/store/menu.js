@@ -12,7 +12,7 @@ export const useMenuStore = defineStore('menu', {
     // 树形结构的菜单数据
     menuTree: [],
     // 是否已加载菜单数据
-    loaded: false
+    loaded: false,
   }),
   
   getters: {

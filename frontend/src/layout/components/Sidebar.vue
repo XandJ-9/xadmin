@@ -23,12 +23,16 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import SidebarItem from './SidebarItem.vue'
+import { useMenuStore } from '@/store/menu'
 
+const menuStore = useMenuStore()
 const router = useRouter()
-const sidebarRouters = router.options.routes
+
+const constantRouters = router.options.routes
   .find(route => route.path === '/' && route.children)
   ?.children || []
 
+const sidebarRouters = [ ...constantRouters, ...menuStore.menuTree ]
 
 defineProps({
   isCollapse: {
