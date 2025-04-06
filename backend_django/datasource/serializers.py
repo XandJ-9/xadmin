@@ -20,7 +20,7 @@ class DataSourceSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation.pop('password', None)
+        # representation.pop('password', None)
         return representation
 
 
