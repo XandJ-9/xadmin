@@ -58,8 +58,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'users.authentication.JWTAuthenticationMiddleware',  # 添加JWT认证中间件
-    # 'system.middleware.UserOperationMiddleware',  # 添加用户操作中间件
+    'system.middleware.UserOperationMiddleware',  # 添加用户操作中间件
     'datasource.middleware.QueryLogMiddleware',  # 添加查询日志中间件
 ]
 
@@ -185,7 +184,7 @@ LOGGING = {
             'style': '{',
         },
         'simple': {
-            'format': '{levelname} : {message}',
+            'format': '{asctime} {levelname} : {message}',
             'style': '{',
         },
         'user_operation': {
@@ -218,12 +217,12 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers': ['console'],
+            'handlers': ['file'],
             'level': 'INFO',
             'propagate': True,
         },
         'user_operation': {
-            'handlers': ['user_operation_file'],
+            'handlers': ['console'],
             'level': 'INFO',
             'propagate': True,
         },

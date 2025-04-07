@@ -253,7 +253,7 @@ class Command(BaseCommand):
                 'path': 'datasources',
                 'component': 'DataSources',
                 'icon': 'Collection',
-                'sort': 1,
+                'sort': 6,
                 'hidden': False,
                 'parent': None
             },
@@ -263,7 +263,7 @@ class Command(BaseCommand):
                 'path': 'dataquery',
                 'component': 'index',
                 'icon': 'Edit',
-                'sort': 4,
+                'sort': 7,
                 'hidden': False,
                 'parent': None
             },
