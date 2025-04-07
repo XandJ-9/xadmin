@@ -1,7 +1,7 @@
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ModelViewSet
-from .utils.viewset import CustomModelViewSet
+from utils.viewset import CustomModelViewSet
 from .models import PlatformInfo, ModuleInfo, ReportInfo, InterfaceInfo, InterfaceField
 from .serializers import (
     PlatformInfoSerializer,
@@ -11,14 +11,14 @@ from .serializers import (
     InterfaceFieldSerializer
 )
 
-class PlatformInfoViewSet(ModelViewSet):
+class PlatformInfoViewSet(CustomModelViewSet):
     queryset = PlatformInfo.objects.all()
     serializer_class = PlatformInfoSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     search_fields = ['name', 'desc']
     ordering_fields = ['id', 'create_datetime', 'update_datetime']
 
-class ModuleInfoViewSet(ModelViewSet):
+class ModuleInfoViewSet(CustomModelViewSet):
     queryset = ModuleInfo.objects.all()
     serializer_class = ModuleInfoSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -26,7 +26,7 @@ class ModuleInfoViewSet(ModelViewSet):
     search_fields = ['name', 'desc']
     ordering_fields = ['id', 'create_datetime', 'update_datetime']
 
-class ReportInfoViewSet(ModelViewSet):
+class ReportInfoViewSet(CustomModelViewSet):
     queryset = ReportInfo.objects.all()
     serializer_class = ReportInfoSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]

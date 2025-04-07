@@ -19,7 +19,18 @@
         </template>
       </el-table-column>
     </el-table>
-
+      <!-- 分页 -->
+      <div class="pagination-container">
+        <el-pagination
+          :current-page="currentPage"
+          :page-size="pageSize"
+          :page-sizes="[10, 20, 50, 100]"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+        />
+      </div>
     <el-dialog
       :title="dialogTitle"
       v-model="dialogVisible"
@@ -58,7 +69,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
 
@@ -66,6 +77,18 @@ const reportList = ref([])
 const dialogVisible = ref(false)
 const dialogTitle = ref('')
 const moduleOptions = ref([])
+
+
+// 搜索表单数据
+const searchForm = reactive({
+  platformId: '',
+  moduleCode: '',
+  moduleName: ''
+})
+const currentPage = ref(1)
+const pageSize = ref(10)
+const total = ref(0)
+
 
 const form = ref({
   name: '',
@@ -82,9 +105,16 @@ const formRef = ref(null)
 const currentId = ref(null)
 
 const fetchReportList = async () => {
-  try {
-    const response = await request.get('/api/report/reports/')
-    reportList.value = response.data
+    try {
+      const params = {
+      page: currentPage.value,
+      page_size: pageSize.value,
+      platform_id: searchForm.platformId,
+      module_code: searchForm.moduleCode,
+      name: searchForm.moduleName
+    }
+    const response = await request.get('/api/report/reports/',{ params })
+    reportList.value = response.data.data.data
   } catch (error) {
     ElMessage.error('获取报表列表失败')
   }
@@ -92,8 +122,8 @@ const fetchReportList = async () => {
 
 const fetchModuleOptions = async () => {
   try {
-    const response = await request.get('/api/report/modules/')
-    moduleOptions.value = response.data
+    const response = await request.get('/api/report/modules/list_all/')
+    moduleOptions.value = response.data.data
   } catch (error) {
     ElMessage.error('获取模块列表失败')
   }
@@ -159,6 +189,18 @@ const handleSubmit = async () => {
       }
     }
   })
+}
+
+// 分页大小变更处理
+const handleSizeChange = (val) => {
+  pageSize.value = val
+  fetchReportList()
+}
+
+// 当前页变更处理
+const handleCurrentChange = (val) => {
+  currentPage.value = val
+  fetchReportList()
 }
 
 onMounted(() => {

@@ -120,8 +120,8 @@ const getPlatformList = async () => {
       name: searchForm.platformName
     }
     const response = await request.get('/api/report/platforms/', { params })
-    tableData.value = response.data
-    total.value = response.data.length
+    tableData.value = response.data.data.data
+    total.value = response.data.data.total
   } catch (error) {
     console.error('获取平台列表失败：', error)
     ElMessage.error('获取平台列表失败')

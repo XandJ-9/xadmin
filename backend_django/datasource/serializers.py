@@ -25,6 +25,7 @@ class QueryLogSerializer(BizModelSerializer):
 
     class Meta:
         model = QueryLog
-        fields = ['id', 'datasource', 'datasource_name', 'creator', 'username', 'sql', 
-                 'status', 'error_message', 'execution_time', 'result_count', 'create_time','creator_username']
+        fields = '__all__'
+        # fields = ['id', 'datasource', 'datasource_name', 'creator', 'username', 'sql', 
+                #  'status', 'error_message', 'execution_time', 'result_count', 'create_time','creator_username']
         read_only_fields = ['id', 'created_at']

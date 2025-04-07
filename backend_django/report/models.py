@@ -19,6 +19,7 @@ class ModuleInfo(BizBaseModel):
     platform = models.ForeignKey(PlatformInfo,verbose_name="平台", on_delete=models.CASCADE, null=True)
     class Meta:
         db_table = "report_module_info"
+        ordering = ('-updated_at',)
     def __str__(self) -> str:
         return self.name
 

@@ -1,11 +1,12 @@
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
+from django.core.paginator import Paginator as DjangoPaginator
 from collections import OrderedDict
 from django.core.paginator import InvalidPage
 from rest_framework.exceptions import NotFound
 from rest_framework.utils.urls import replace_query_param, remove_query_param
 
-from ..utils.util_response import SuccessResponse
+from utils.util_response import SuccessResponse
 
 class CustomPagination(PageNumberPagination):
     page_size = 10

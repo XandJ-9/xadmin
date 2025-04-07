@@ -70,7 +70,7 @@
             <span v-else>-</span>
           </template>
         </el-table-column>
-        <el-table-column prop="created_at" label="查询时间" width="180"></el-table-column>
+        <el-table-column prop="create_time" label="查询时间" width="180"></el-table-column>
         <el-table-column label="操作" width="120" fixed="right">
           <template #default="scope">
             <el-button 
@@ -253,8 +253,8 @@ const searchLogs = async () => {
     }
     
     const response = await request.get('/api/querylogs/', { params })
-    logData.value = response.data
-    pagination.value.total = response.data.length
+    logData.value = response.data.data.data
+    pagination.value.total = response.data.data.total
   } catch (error) {
     ElMessage.error('获取查询日志失败')
   } finally {

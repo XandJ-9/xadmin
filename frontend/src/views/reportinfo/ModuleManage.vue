@@ -136,8 +136,8 @@ const platformOptions = ref([])
 // 获取平台列表
 const getPlatformList = async () => {
   try {
-    const response = await request.get('/api/report/platforms/')
-    platformOptions.value = response.data
+    const response = await request.get('/api/report/platforms/list_all/')
+    platformOptions.value = response.data.data
   } catch (error) {
     console.error('获取平台列表失败：', error)
   }
@@ -155,8 +155,8 @@ const getModuleList = async () => {
       name: searchForm.moduleName
     }
     const response = await request.get('/api/report/modules/', { params })
-    tableData.value = response.data
-    total.value = response.data.length
+    tableData.value = response.data.data.data
+    total.value = response.data.data.total
   } catch (error) {
     console.error('获取模块列表失败：', error)
     ElMessage.error('获取模块列表失败')

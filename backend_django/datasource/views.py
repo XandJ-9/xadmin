@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from system.permissions import IsAdminUser, IsOwnerOrAdmin
-
+from utils.viewset import CustomModelViewSet
 from .models import DataSource, QueryLog
 from .serializers import DataSourceSerializer, QueryLogSerializer
 from .executors.factory import QueryExecutorFactory
@@ -77,7 +77,7 @@ class DataSourceViewSet(viewsets.ModelViewSet):
             )
             
 
-class QueryLogViewSet(viewsets.ModelViewSet):
+class QueryLogViewSet(CustomModelViewSet):
     queryset = QueryLog.objects.all()
     serializer_class = QueryLogSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -93,5 +93,8 @@ class QueryLogViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         user = self.request.user
         if user.is_superuser or (user.role and user.role.name == 'admin'):
-            return QueryLog.objects.all()
-        return QueryLog.objects.filter(user=user)
+            queryset = QueryLog.objects.all()
+            logger.info(f'{user.username}查询所有查询记录条数: {queryset.count()}')
+        else:
+            queryset = QueryLog.objects.filter(creator=user)
+        return queryset

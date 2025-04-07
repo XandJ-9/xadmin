@@ -1,11 +1,9 @@
-from django.db import transaction
-
+from django.core.paginator import Paginator
 from rest_framework.decorators import action
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny
 from system.permissions import IsOwnerOrAdmin,IsAdminUser
-from ..utils.util_response import SuccessResponse, ErrorResponse, DetailResponse
-
+from .util_response import SuccessResponse, ErrorResponse, DetailResponse
 
 class CustomModelViewSet(ModelViewSet):
     values_queryset = None
@@ -16,6 +14,8 @@ class CustomModelViewSet(ModelViewSet):
     search_fields = ()
     import_field_dict = {}
     export_field_label = {}
+    # pagination_class = CustomPagination
+
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
             return [IsAdminUser()]
@@ -51,19 +51,27 @@ class CustomModelViewSet(ModelViewSet):
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        if request.user:
-            serializer.validated_data['creator'] = request.user
-        self.perform_create(serializer)
+        # if request.user:
+            # serializer.validated_data['creator'] = request.user
+        # self.perform_create(serializer)
         return DetailResponse(data=serializer.data, msg="新增成功")
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-        serializer = self.get_serializer(queryset, many=True)
-        return SuccessResponse(data=serializer.data, msg="获取成功")
+        # 这里先序列化，再分页，数据量大的情况下不可取，需要优化
+        ser = self.get_serializer(queryset, many=True)
+        page_no = request.query_params.get('page', 1)
+        page_size = request.query_params.get('page_size',10)
+        p = Paginator(ser.data, page_size)
+        page_data = p.get_page(page_no).object_list
+        return SuccessResponse(data=page_data, total=p.count,page=page_no,limit=page_size, msg="获取成功")
+        # page = self.paginate_queryset(queryset)
+        # p = Paginator(serializer_data, page_size)
+        # if p is not None:
+        #     # serializer = self.get_serializer(page, many=True)
+        #     # return self.get_paginated_response(serializer.data)
+        #     return SuccessResponse(data=p.get_page(page_size).object_list, msg="获取成功", page=page_no, limit=page_size, total=p.count)
+        # return SuccessResponse(data=serializer.data, msg="获取成功")
 
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -75,18 +83,24 @@ class CustomModelViewSet(ModelViewSet):
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
-        if request.user:
-            serializer.validated_data['updater'] = request.user.user_id
+        # if request.user:
+            # serializer.validated_data['updater'] = request.user.user_id
         self.perform_update(serializer)
 
-        if getattr(instance, '_prefetched_objects_cache', None):
+        # if getattr(instance, '_prefetched_objects_cache', None):
             # If 'prefetch_related' has been applied to a queryset, we need to
             # forcibly invalidate the prefetch cache on the instance.
-            instance._prefetched_objects_cache = {}
+            # instance._prefetched_objects_cache = {}
         return DetailResponse(data=serializer.data, msg="更新成功")
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.delete()
         return DetailResponse(data=[], msg="删除成功")
+    
 
+    @action(methods=['get'], detail=False)
+    def list_all(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        return DetailResponse(data=serializer.data, msg="获取成功")
