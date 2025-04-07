@@ -6,7 +6,7 @@ from django.conf import settings
 from .models import User
 import logging
 
-# logger = logging.getLogger('django')
+logger = logging.getLogger('django')
 
 def get_user_from_token(request):
     auth_header = request.headers.get('Authorization')
@@ -18,7 +18,6 @@ def get_user_from_token(request):
         access_token = AccessToken(token)
         user_id = access_token.get('user_id')
         user = User.objects.get(id=user_id)
-        # logger.info(f'User {user.username} authenticated with token')
         return user
     except (InvalidToken, TokenError, User.DoesNotExist) as e:
         # logger.error(f'Token authentication failed: {str(e)}')
@@ -30,5 +29,6 @@ class JWTAuthenticationMiddleware:
 
     def __call__(self, request):
         request.user = SimpleLazyObject(lambda: get_user_from_token(request))
-        print(f' {__file__} : JWTAuthenticationMiddleware called, user: {request.user}' )
+        if request.user.is_authenticated:
+            logger.info(f'User {request.user.username} (role: {request.user.role}) accessed {request.path} with method {request.method}')
         return self.get_response(request)

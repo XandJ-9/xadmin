@@ -20,7 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
         required=False,
         write_only=True
     )
-    role = serializers.CharField(write_only=True, required=False)
+    role = serializers.CharField(write_only=True, required=True)
 
     class Meta:
         model = User

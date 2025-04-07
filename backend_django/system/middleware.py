@@ -2,6 +2,7 @@ import logging
 from django.utils.deprecation import MiddlewareMixin
 from django.http import JsonResponse
 from django.conf import settings
+from rest_framework import status
 
 logger = logging.getLogger('user_operation')
 
@@ -10,15 +11,16 @@ class UserOperationMiddleware(MiddlewareMixin):
     def process_response(self, request, response):
         if not hasattr(request, 'resolver_match') or not request.resolver_match:
             return response
-        logger.info(f'process_response => {request.resolver_match}')
 
-        if request.resolver_match.url_name == 'user-login':
-            action = request.method.lower()
-            if action in ['post']:
-                logger.info(f'用户{request.POST.get("username")}登录成功')
-        if request.resolver_match.url_name == 'user-register':
-            action = request.method.lower()
-            if action in ['post']:
-                logger.info(f'新用户注册，用户名：{request.POST.get("username")}')
+        if request.method.lower() in ['post', 'get', 'put', 'delete']:
+          if request.resolver_match.url_name == 'user-login':
+              token = response.data.get('token')
+              if token:
+                  logger.info(f'用户登录成功，用户名：{request.POST.get("username")}')
+          if request.resolver_match.url_name == 'user-register':
+              if response.status_code == status.HTTP_201_CREATED:
+                  logger.info(f'新用户注册成功，用户名：{request.POST.get("username")}')
+              else:
+                  logger.info(f'新用户注册失败，用户名：{request.POST.get("username")}')
 
         return response
