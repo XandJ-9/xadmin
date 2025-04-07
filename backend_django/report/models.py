@@ -4,7 +4,7 @@ from system.models import BizBaseModel
 
 # 平台信息
 class PlatformInfo(BizBaseModel):
-    name = models.CharField(max_length=255, verbose_name='平台名称')
+    name = models.CharField(max_length=255, verbose_name='平台名称', unique=True)
     desc = models.CharField(max_length=255, verbose_name='描述', null=True, blank=True)
     class Meta:
         db_table = "report_platform_info"
@@ -14,8 +14,8 @@ class PlatformInfo(BizBaseModel):
 
 # 模块信息
 class ModuleInfo(BizBaseModel):
-    name = models.CharField(max_length=255, verbose_name='模块名称')
-    desc = models.CharField(max_length=255, verbose_name='描述')
+    name = models.CharField(max_length=255, verbose_name='模块名称', unique=True)
+    desc = models.CharField(max_length=255, verbose_name='描述',blank=True, null=True)
     platform = models.ForeignKey(PlatformInfo,verbose_name="平台", on_delete=models.CASCADE, null=True)
     class Meta:
         db_table = "report_module_info"
@@ -25,7 +25,7 @@ class ModuleInfo(BizBaseModel):
 # 报表信息
 class ReportInfo(BizBaseModel):
     name = models.CharField(max_length=255, verbose_name='报表名称')
-    desc = models.CharField(max_length=255, verbose_name='描述')
+    desc = models.CharField(max_length=255, verbose_name='描述', blank=True, null=True)
     module = models.ForeignKey(ModuleInfo,verbose_name="模块", on_delete=models.CASCADE, null=True)
     
     class Meta:

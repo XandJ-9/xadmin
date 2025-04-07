@@ -63,9 +63,6 @@
           :rules="rules"
           label-width="120px"
         >
-          <el-form-item label="平台编码" prop="platform_code">
-            <el-input v-model="formData.platform_code" placeholder="请输入平台编码" />
-          </el-form-item>
           <el-form-item label="平台名称" prop="name">
             <el-input v-model="formData.name" placeholder="请输入平台名称" />
           </el-form-item>
@@ -169,8 +166,7 @@ const formData = reactive({
 
 // 表单校验规则
 const rules = {
-  platform_code: [{ required: true, message: '请输入平台编码', trigger: 'blur' }],
-  name: [{ required: true, message: '请输入平台名称', trigger: 'blur' }],
+  name: [{ required: true, message: '请输入平台名称', trigger: 'blur', description: '名称必须唯一' }],
   status: [{ required: true, message: '请选择状态', trigger: 'change' }]
 }
 

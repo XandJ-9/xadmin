@@ -8,9 +8,10 @@
       <el-table-column prop="id" label="ID" width="80" />
       <el-table-column prop="name" label="报表名称" />
       <el-table-column prop="desc" label="描述" />
-      <el-table-column prop="module" label="所属模块" />
-      <el-table-column prop="create_datetime" label="创建时间" width="180" />
-      <el-table-column prop="update_datetime" label="更新时间" width="180" />
+      <el-table-column prop="module_name" label="所属模块" />
+      <el-table-column prop="platform_name" label="所属平台" />
+      <el-table-column prop="create_time" label="创建时间" width="180" />
+      <el-table-column prop="update_time" label="更新时间" width="180" />
       <el-table-column label="操作" width="200" fixed="right">
         <template #default="{ row }">
           <el-button size="small" @click="handleEdit(row)">编辑</el-button>

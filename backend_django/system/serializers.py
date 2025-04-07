@@ -75,3 +75,19 @@ class SystemConfigSerializer(serializers.ModelSerializer):
         model = SystemConfig
         fields = ['id', 'key', 'value', 'description', 'creator', 'creator_info', 'created_at', 'updated_at']
         read_only_fields = ['id', 'created_at', 'updated_at']
+
+class BizModelSerializer(serializers.ModelSerializer):
+    """adding creator and updator fields to serializers."""
+    creator_username = serializers.CharField(source='creator.username', read_only=True)
+    create_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True, source='created_at')
+    updator_username = serializers.CharField(source='updator.username', read_only=True)
+    update_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True, source='updated_at')
+    
+    def create(self, validated_data):
+        validated_data['creator'] = self.context['request'].user
+        validated_data['updator'] = self.context['request'].user
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        validated_data['updator'] = self.context['request'].user
+        return super().update(instance, validated_data)

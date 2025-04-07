@@ -19,9 +19,6 @@
               />
             </el-select>
           </el-form-item>
-          <el-form-item label="模块编码">
-            <el-input v-model="searchForm.moduleCode" placeholder="请输入模块编码" clearable />
-          </el-form-item>
           <el-form-item label="模块名称">
             <el-input v-model="searchForm.moduleName" placeholder="请输入模块名称" clearable />
           </el-form-item>
@@ -37,7 +34,7 @@
         <!-- <el-table-column prop="module_code" label="模块编码" width="120" /> -->
         <el-table-column prop="name" label="模块名称" width="120" />
         <el-table-column prop="desc" label="模块描述" show-overflow-tooltip />
-        <el-table-column prop="platform" label="所属平台" width="120" />
+        <el-table-column prop="platform_name" label="所属平台" width="120" />
         <el-table-column prop="status" label="状态" width="80">
           <template #default="scope">
             {{ scope.row.status === '1' ? '启用' : '禁用' }}
@@ -85,9 +82,6 @@
                 :value="item.id"
               />
             </el-select>
-          </el-form-item>
-          <el-form-item label="模块编码" prop="module_code">
-            <el-input v-model="formData.module_code" placeholder="请输入模块编码" />
           </el-form-item>
           <el-form-item label="模块名称" prop="name">
             <el-input v-model="formData.name" placeholder="请输入模块名称" />
