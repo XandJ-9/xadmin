@@ -85,7 +85,7 @@ class QueryLogMiddleware(MiddlewareMixin):
             # 创建查询日志
             QueryLog.objects.create(
                 datasource_id=datasource_id,
-                user=request.user,
+                creator=request.user,
                 sql=sql,
                 status=status_code,
                 error_message=error_message,

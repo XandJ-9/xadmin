@@ -2,7 +2,7 @@ import logging
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.contrib.auth.hashers import make_password
-from system.models import User, Role, Menu
+from system.models import User, Role, Menu, RoleMenu
 from datasource.models import DataSource
 
 logger = logging.getLogger('django')
@@ -33,7 +33,11 @@ class Command(BaseCommand):
         
         # 初始化示例数据源
         self._init_sample_datasource(force)
-        
+
+        # 初始化角色关联菜单
+        self._init_role_menu(force)
+
+
         self.stdout.write(self.style.SUCCESS('系统数据初始化完成！'))
     
     def _init_roles(self, force):
@@ -399,3 +403,44 @@ class Command(BaseCommand):
                     self.stdout.write(self.style.WARNING(f'更新子菜单: {menu.name}'))
                 else:
                     self.stdout.write(f'子菜单已存在: {menu.name}')
+
+    def _init_role_menu(self, force=False):
+        """初始化角色菜单权限"""
+        self.stdout.write('初始化角色菜单权限...')
+        
+        # 获取管理员角色和管理员用户
+        try:
+            admin_role = Role.objects.get(name='admin')
+            admin_user = User.objects.get(username='admin')
+        except (Role.DoesNotExist, User.DoesNotExist):
+            self.stdout.write(self.style.ERROR('管理员角色或用户不存在，请先初始化角色和用户'))
+            return
+        
+        # 获取所有菜单
+        menus = Menu.objects.all()
+        
+        # 如果是强制更新，先删除已有的角色菜单关联
+        if force:
+            RoleMenu.objects.filter(role=admin_role).delete()
+            self.stdout.write(self.style.WARNING(f'已删除角色 {admin_role.name} 的所有菜单权限'))
+        
+        # 批量创建角色菜单关联
+        role_menus = []
+        for menu in menus:
+            # 检查是否已存在关联
+            if not RoleMenu.objects.filter(role=admin_role, menu=menu).exists():
+                role_menu = RoleMenu(
+                    role=admin_role,
+                    menu=menu,
+                    creator=admin_user,
+                    updator=admin_user
+                )
+                role_menus.append(role_menu)
+                self.stdout.write(self.style.SUCCESS(f'为角色 {admin_role.name} 添加菜单权限: {menu.name}'))
+        
+        # 批量创建角色菜单关联记录
+        if role_menus:
+            RoleMenu.objects.bulk_create(role_menus)
+            self.stdout.write(self.style.SUCCESS(f'成功创建 {len(role_menus)} 条角色菜单关联记录'))
+        else:
+            self.stdout.write('所有菜单权限已存在，无需创建')

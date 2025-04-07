@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
 from xadmin.models_base import BaseModel
 
+
 class Role(BaseModel):
     name = models.CharField(max_length=50, unique=True, verbose_name='角色名称')
     description = models.TextField(blank=True, verbose_name='角色描述')
@@ -45,7 +46,7 @@ class Menu(BaseModel):
     name = models.CharField(max_length=50, verbose_name='菜单名称')
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children', verbose_name='父菜单')
     path = models.CharField(max_length=100, verbose_name='路由路径')
-    component = models.CharField(max_length=100, verbose_name='组件路径')
+    component = models.CharField(max_length=100, verbose_name='组件路径', default='index')
     redirect = models.CharField(max_length=100, blank=True, null=True, verbose_name='重定向路径')
     name_code = models.CharField(max_length=50, blank=True, null=True, verbose_name='路由名称代码')
     icon = models.CharField(max_length=50, blank=True, null=True, verbose_name='图标')
@@ -97,3 +98,13 @@ class SystemConfig(BaseModel):
 
     def __str__(self):
         return f"{self.key}: {self.value}"
+
+
+class BizBaseModel(BaseModel):
+    """业务公共字段模型"""
+    created_at = models.DateTimeField(default=timezone.now, verbose_name='创建时间')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='%(class)s_creator', verbose_name='创建者', blank=True, null=True)
+    updator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='%(class)s_updator', verbose_name='更新者', blank=True, null=True)
+    class Meta:
+        abstract = True

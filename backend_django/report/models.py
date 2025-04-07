@@ -1,23 +1,9 @@
 from django.db import models
 from django.db.models import F
-from system.models import User
-
-class CoreModel(models.Model):
-    """
-    核心标准抽象模型模型,可直接继承使用
-    """
-    id = models.BigAutoField(primary_key=True, help_text="Id", verbose_name="Id", editable=False)
-    update_datetime = models.DateTimeField(auto_now=True, null=True, blank=True, help_text="修改时间",verbose_name="修改时间")
-    create_datetime = models.DateTimeField(auto_now_add=True, null=True, blank=True, help_text="创建时间", verbose_name="创建时间")
-    creator = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='创建者', blank=True, null=True)
-
-    class Meta:
-        abstract = True
-        verbose_name = '核心模型'
-        verbose_name_plural = verbose_name
+from system.models import BizBaseModel
 
 # 平台信息
-class PlatformInfo(CoreModel):
+class PlatformInfo(BizBaseModel):
     name = models.CharField(max_length=255, verbose_name='平台名称')
     desc = models.CharField(max_length=255, verbose_name='描述', null=True, blank=True)
     class Meta:
@@ -27,7 +13,7 @@ class PlatformInfo(CoreModel):
         return self.name
 
 # 模块信息
-class ModuleInfo(CoreModel):
+class ModuleInfo(BizBaseModel):
     name = models.CharField(max_length=255, verbose_name='模块名称')
     desc = models.CharField(max_length=255, verbose_name='描述')
     platform = models.ForeignKey(PlatformInfo,verbose_name="平台", on_delete=models.CASCADE, null=True)
@@ -37,7 +23,7 @@ class ModuleInfo(CoreModel):
         return self.name
 
 # 报表信息
-class ReportInfo(CoreModel):
+class ReportInfo(BizBaseModel):
     name = models.CharField(max_length=255, verbose_name='报表名称')
     desc = models.CharField(max_length=255, verbose_name='描述')
     module = models.ForeignKey(ModuleInfo,verbose_name="模块", on_delete=models.CASCADE, null=True)
@@ -48,7 +34,7 @@ class ReportInfo(CoreModel):
         return self.name
 
 # 接口信息
-class InterfaceInfo(CoreModel):
+class InterfaceInfo(BizBaseModel):
     IS_TOTAL_CHOICES = (('1', '是'), ('0', '否'))
     IS_PAGING_CHOICE = (('1', '是'), ('0', '否'))
     IS_DATA_OPTION_CHOICE = (('1', '是'), ('0', '否'))
@@ -81,7 +67,7 @@ class InterfaceInfo(CoreModel):
 
 # 接口字段信息
 # 接口数据类型 输出参数(1字符 2整数 3小数 4百分比) 输入参数(11日期 12月份 13单选 14多选 15文本)
-class InterfaceField(CoreModel):
+class InterfaceField(BizBaseModel):
     DATA_TYPE_CHOICES = (
         ('1','字符'),
         ('2','整数'),
@@ -129,7 +115,7 @@ class InterfaceField(CoreModel):
         return self.interface_para_code
 
 # 数据表信息
-class TableInfo(CoreModel):
+class TableInfo(BizBaseModel):
     table_name = models.CharField(max_length=255, verbose_name='表名')
     table_desc = models.CharField(max_length=255, verbose_name='描述')
     table_schema = models.CharField(max_length=255, verbose_name='表模式', null=True, default="")
@@ -143,7 +129,7 @@ class TableInfo(CoreModel):
         )
 
 # 表字段信息
-class TableColumnInfo(CoreModel):
+class TableColumnInfo(BizBaseModel):
     # table_id = models.IntegerField(verbose_name='表id')
     table = models.ForeignKey(TableInfo, on_delete=models.CASCADE, null=True)
     column_name = models.CharField(max_length=255, verbose_name='字段名')
@@ -160,7 +146,7 @@ class TableColumnInfo(CoreModel):
         unique_together = ('table', 'column_name')
 
 # 表映射关系
-class TableMapping(CoreModel):
+class TableMapping(BizBaseModel):
     table_id = models.IntegerField(verbose_name='表id', null=True)
     table_schema = models.CharField(max_length=255, verbose_name='表模式',null=True)
     schema_type = models.CharField(max_length=255, verbose_name='模式类型', null=True)
@@ -174,7 +160,7 @@ class TableMapping(CoreModel):
 
 
 # 表字段映射关系
-class TableColumnMapping(CoreModel):
+class TableColumnMapping(BizBaseModel):
     table_id = models.IntegerField(verbose_name='表id')
     
     class Meta:
