@@ -74,7 +74,7 @@ class UserViewSet(viewsets.ModelViewSet):
     def login(self, request):
         username = request.data.get('username')
         password = request.data.get('password')
-        logger.debug(f"Login attempt for user: {username}, password: {password}")
+        # 根据用户名和密码判断用户是否存在
         user = authenticate(username=username, password=password)
 
         if user:

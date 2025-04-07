@@ -1,7 +1,5 @@
 import logging
 from django.utils.deprecation import MiddlewareMixin
-from django.http import JsonResponse
-from django.conf import settings
 from rest_framework import status
 
 logger = logging.getLogger('user_operation')
