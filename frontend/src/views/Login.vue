@@ -58,12 +58,13 @@ const handleLogin = () => {
   loginFormRef.value.validate(async (valid) => {
     if (valid) {
       loading.value = true
-      try {
-        // 使用Pinia store进行登录
-        const result = await userStore.login({
-          username: loginForm.username,
-          password: loginForm.password
-        })
+        try {
+            // 创建FormData对象并添加表单数据
+            const formdata = new FormData()
+            formdata.append('username', loginForm.username)
+            formdata.append('password', loginForm.password)
+            // 使用Pinia store进行登录
+            const result = await userStore.login(formdata)
         
         if (result.success) {
           ElMessage.success('登录成功')
