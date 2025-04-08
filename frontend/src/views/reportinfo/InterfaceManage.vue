@@ -1,11 +1,8 @@
 <template>
   <div class="interface-manage">
-        <div class="card-header">
-          <el-button type="primary" @click="handleAdd">新增接口</el-button>
-        </div>
-      
+
       <!-- 搜索区域 -->
-      <div class="search-area">
+    <div class="search-area">
         <el-form :inline="true" :model="searchForm" class="demo-form-inline">
           <el-form-item label="平台名称">
             <el-select v-model="searchForm.platformId" placeholder="请选择平台" clearable @change="handlePlatformChange">
@@ -78,17 +75,23 @@
         </el-table-column>
       </el-table>
 
-      <!-- 分页 -->
-      <div class="pagination-container">
-        <el-pagination
-          :current-page="currentPage"
-          :page-size="pageSize"
-          :page-sizes="[10, 20, 50, 100]"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
+      <div class="card-footer">
+          <div class="add-btn">
+            <el-button type="primary" @click="handleAdd">新增接口</el-button>
+          </div>
+
+            <!-- 分页 -->
+            <div class="pagination-container">
+                <el-pagination
+                :current-page="currentPage"
+                :page-size="pageSize"
+                :page-sizes="[10, 20, 50, 100]"
+                layout="total, sizes, prev, pager, next, jumper"
+                :total="total"
+                @size-change="handleSizeChange"
+                @current-change="handleCurrentChange"
+                />
+            </div>
       </div>
 
       <!-- 接口表单对话框 -->
@@ -471,8 +474,16 @@ onMounted(() => {
   margin-bottom: 20px;
 }
 
-.pagination-container {
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-top: 20px;
+}
+.add-btn {
+  margin-bottom: 20px;
+}
+.pagination-container {
   display: flex;
   justify-content: flex-end;
 }

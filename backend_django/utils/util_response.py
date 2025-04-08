@@ -29,9 +29,11 @@ class DetailResponse(Response):
                  content_type=None,):
         std_data = {
             "code": 20000,
-            "data": data,
             "msg": msg
         }
+        
+        if data:
+            std_data['data'] = data
         super().__init__(std_data, status, template_name, headers, exception, content_type)
 
 

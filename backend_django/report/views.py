@@ -1,6 +1,5 @@
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.viewsets import ModelViewSet
 from utils.viewset import CustomModelViewSet
 from .models import PlatformInfo, ModuleInfo, ReportInfo, InterfaceInfo, InterfaceField
 from .serializers import (
@@ -10,6 +9,8 @@ from .serializers import (
     InterfaceInfoSerializer,
     InterfaceFieldSerializer
 )
+from .common.excel_import_export import ExcelImportExportMixin
+
 
 class PlatformInfoViewSet(CustomModelViewSet):
     queryset = PlatformInfo.objects.all()
@@ -34,7 +35,7 @@ class ReportInfoViewSet(CustomModelViewSet):
     search_fields = ['name', 'desc']
     ordering_fields = ['id', 'create_datetime', 'update_datetime']
 
-class InterfaceInfoViewSet(CustomModelViewSet):
+class InterfaceInfoViewSet(ExcelImportExportMixin,CustomModelViewSet):
     queryset = InterfaceInfo.objects.all()
     serializer_class = InterfaceInfoSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
