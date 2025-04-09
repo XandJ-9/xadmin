@@ -6,6 +6,15 @@ from openpyxl import Workbook
 from utils.util_response import DetailResponse
 from ..models import *
 
+class ExcelResponse(HttpResponse):
+    def __init__(self, content = ..., *args, **kwargs):
+        kwargs['content_type'] = 'application/msexcel'
+        filename = kwargs.get('filename', 'export.xlsx')
+        kwargs['Content-Disposition'] =  f'attachment;filename={quote(str(f"{filename}"))}'
+        kwargs['Access-Control-Expose-Headers'] = 'Content-Disposition'
+        super().__init__(content, *args, **kwargs)
+
+
 class ExcelImportExportMixin:
 
     @action(methods=['post'], detail=False, url_path='importInterfaceinfo', url_name='import_interfaceinfo')
@@ -31,11 +40,12 @@ class ExcelImportExportMixin:
         if not instance:
             return DetailResponse(code=400,msg='接口不存在')
         # 设置返回类型为Excel
-        response = HttpResponse(content_type="application/msexcel")
-        # cross-origin跨域请求需要设置Access-Control-Expose-Headers响应信息
-        response["Access-Control-Expose-Headers"] = f"Content-Disposition"
-        # 设置文件名
-        response["content-disposition"] = f'attachment;filename={quote(str(f"{instance.report}-{instance.interface_name}.xlsx"))}'
+        # response = HttpResponse(content_type="application/msexcel")
+        # # cross-origin跨域请求需要设置Access-Control-Expose-Headers响应信息
+        # response["Access-Control-Expose-Headers"] = f"Content-Disposition"
+        # # 设置文件名
+        # response["content-disposition"] = f'attachment;filename={quote(str(f"{instance.report}-{instance.interface_name}.xlsx"))}'
+        response = ExcelResponse(filename=f"{instance.report}-{instance.interface_name}.xlsx")
         # wb = generate_interface_workbook(interface_id)
         wb = Workbook()
         wb.save(response)

@@ -4,6 +4,10 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny
 from system.permissions import IsOwnerOrAdmin,IsAdminUser
 from .util_response import SuccessResponse, ErrorResponse, DetailResponse
+import logging
+
+logger = logging.getLogger('django')
+
 
 class CustomModelViewSet(ModelViewSet):
     values_queryset = None
@@ -53,18 +57,23 @@ class CustomModelViewSet(ModelViewSet):
         serializer.is_valid(raise_exception=True)
         # if request.user:
             # serializer.validated_data['creator'] = request.user
-        # self.perform_create(serializer)
+        self.perform_create(serializer)
         return DetailResponse(data=serializer.data, msg="新增成功")
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         # 这里先序列化，再分页，数据量大的情况下不可取，需要优化
         ser = self.get_serializer(queryset, many=True)
-        page_no = request.query_params.get('page', 1)
-        page_size = request.query_params.get('page_size',10)
-        p = Paginator(ser.data, page_size)
-        page_data = p.get_page(page_no).object_list
-        return SuccessResponse(data=page_data, total=p.count,page=page_no,limit=page_size, msg="获取成功")
+        noPage = request.query_params.get('noPage', "0")
+        
+        if noPage == '1':
+            return DetailResponse(data=ser.data, msg="获取数据")
+        else:
+            page_no = request.query_params.get('page', 1)
+            page_size = request.query_params.get('page_size',10)
+            p = Paginator(ser.data, page_size)
+            page_data = p.get_page(page_no).object_list
+            return SuccessResponse(data=page_data, total=p.count,page=page_no,limit=page_size, msg="获取成功")
         # page = self.paginate_queryset(queryset)
         # p = Paginator(serializer_data, page_size)
         # if p is not None:

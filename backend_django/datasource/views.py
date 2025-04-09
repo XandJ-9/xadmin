@@ -29,6 +29,14 @@ class DataSourceViewSet(viewsets.ModelViewSet):
             return DataSource.objects.all()
         return DataSource.objects.filter(creator=user)
 
+    @action(detail=False, methods=['get'], url_path='types')
+    def get_datasource_types(self, request):
+        """
+        获取所有数据源的简单信息
+        """
+        type_set = DataSource.objects.distinct('type')
+        return Response(type_set.values('type'))
+
     @action(detail=True, methods=['post'], url_path='test')
     def test_connection(self, request, pk=None):
         datasource = self.get_object()

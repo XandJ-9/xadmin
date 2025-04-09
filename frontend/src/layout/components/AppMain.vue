@@ -20,11 +20,13 @@
       </div>
     </el-header>
     
-    <keep-alive>
-      <tag-view />
-    </keep-alive>
+    <tag-view />
     <el-main>
-      <router-view />
+        <router-view v-slot="{ Component }">
+            <keep-alive>
+                <component :is="Component" />
+            </keep-alive>
+        </router-view>
     </el-main>
   </el-container>
 </template>
@@ -48,7 +50,8 @@ const props = defineProps({
 const emit = defineEmits(['update:isCollapse'])
 
 const router = useRouter()
-const username = ref('管理员')
+const username = ref('')
+const current = ref('')
 
 onMounted(() => {
   const user = localStorage.getItem('user')

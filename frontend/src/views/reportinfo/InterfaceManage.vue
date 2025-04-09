@@ -5,7 +5,9 @@
     <div class="search-area">
         <el-form :inline="true" :model="searchForm" class="demo-form-inline">
           <el-form-item label="平台名称">
-            <el-select v-model="searchForm.platformId" placeholder="请选择平台" clearable @change="handlePlatformChange">
+            <el-select v-model="searchForm.platformId" placeholder="请选择平台" clearable 
+            style="display: inline-block; width: 120px;"
+            @change="handlePlatformChange">
               <el-option
                 v-for="item in platformOptions"
                 :key="item.id"
@@ -15,7 +17,9 @@
             </el-select>
           </el-form-item>
           <el-form-item label="模块名称">
-            <el-select v-model="searchForm.moduleId" placeholder="请选择模块" clearable @change="handleModuleChange">
+            <el-select v-model="searchForm.moduleId" placeholder="请选择模块" clearable
+            style="display: inline-block; width: 120px;"
+            @change="handleModuleChange">
               <el-option
                 v-for="item in moduleOptions"
                 :key="item.id"
@@ -25,7 +29,8 @@
             </el-select>
           </el-form-item>
           <el-form-item label="报表名称">
-            <el-select v-model="searchForm.reportId" placeholder="请选择报表" clearable>
+            <el-select v-model="searchForm.reportId" placeholder="请选择报表" clearable
+            style="display: inline-block; width: 120px;">
               <el-option
                 v-for="item in reportOptions"
                 :key="item.id"
@@ -107,7 +112,7 @@
           label-width="120px"
         >
           <el-form-item label="平台名称" prop="platform">
-            <el-select v-model="formData.platform" placeholder="请选择平台" @change="handleFormPlatformChange">
+            <el-select v-model="formData.platform" placeholder="请选择平台">
               <el-option
                 v-for="item in platformOptions"
                 :key="item.id"
@@ -117,7 +122,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="模块名称" prop="module">
-            <el-select v-model="formData.module" placeholder="请选择模块" @change="handleFormModuleChange">
+            <el-select v-model="formData.module" placeholder="请选择模块">
               <el-option
                 v-for="item in moduleOptions"
                 :key="item.id"
@@ -151,10 +156,11 @@
             />
           </el-form-item>
           <el-form-item label="数据库类型" prop="interface_db_type">
-            <el-select v-model="formData.interface_db_type" placeholder="请选择数据库类型">
-              <el-option label="MySQL" value="mysql" />
-              <el-option label="Oracle" value="oracle" />
-              <el-option label="PostgreSQL" value="postgresql" />
+            <el-select v-model="formData.interface_db_type" placeholder="请选择数据库类型" @click="getDatasourceList">
+              <!-- <el-option label="MySQL" value="mysql" /> -->
+              <!-- <el-option label="Oracle" value="oracle" /> -->
+              <!-- <el-option label="PostgreSQL" value="postgresql" /> -->
+               <el-option v-for="item in datasourceOptions" :key="item.id" :label="item.type" :value="item.type" />
             </el-select>
           </el-form-item>
           <el-form-item label="数据库名称" prop="interface_db_name">
@@ -186,6 +192,13 @@
           </span>
         </template>
       </el-dialog>
+      
+
+      <!-- 接口字段编辑窗口 -->
+      <div class="field-editor-view">
+        
+      </div>
+  
   </div>
 </template>
 
@@ -216,12 +229,23 @@ const total = ref(0)
 const platformOptions = ref([])
 const moduleOptions = ref([])
 const reportOptions = ref([])
+const datasourceOptions = ref([])
+
+// 获取支持的数据库类型
+const getDatasourceList = async () => {
+  try {
+    const response = await request.get('/api/datasources/types/')
+    datasourceOptions.value = response.data
+  } catch (error) {
+    console.error('获取数据库类型列表失败：', error)
+  }
+}
 
 // 获取平台列表
 const getPlatformList = async () => {
   try {
-    const response = await request.get('/api/report/platforms/')
-    platformOptions.value = response.data
+    const response = await request.get('/api/report/platforms/list_all/')
+    platformOptions.value = response.data.data
   } catch (error) {
     console.error('获取平台列表失败：', error)
   }
@@ -230,8 +254,8 @@ const getPlatformList = async () => {
 // 获取模块列表
 const getModuleList = async (platformId) => {
   try {
-    const response = await request.get(`/api/report/modules/?platform_id=${platformId}`)
-    moduleOptions.value = response.data
+    const response = await request.get(`/api/report/modules/?platform_id=${platformId}&noPage=1`)
+    moduleOptions.value = response.data.data
   } catch (error) {
     console.error('获取模块列表失败：', error)
   }
@@ -240,8 +264,9 @@ const getModuleList = async (platformId) => {
 // 获取报表列表
 const getReportList = async (moduleId) => {
   try {
-    const response = await request.get(`/api/report/reports/?module_id=${moduleId}`)
-    reportOptions.value = response.data
+    const response = await request.get(`/api/report/reports/?module_id=${moduleId}&noPage=1`)
+      reportOptions.value = response.data.data
+    console.info('获取报表列表', response.data.data)
   } catch (error) {
     console.error('获取报表列表失败：', error)
   }

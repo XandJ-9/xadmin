@@ -45,7 +45,7 @@ class InterfaceInfo(BizBaseModel):
     report = models.ForeignKey(ReportInfo,verbose_name="报表", on_delete=models.CASCADE)
     interface_name= models.CharField(max_length=255, verbose_name='接口名称')
     interface_code= models.CharField(max_length=255, verbose_name='接口编码',unique=True)
-    interface_desc = models.TextField(verbose_name='接口描述')
+    interface_desc = models.TextField(verbose_name='接口描述',null=True, blank=True)
     interface_db_type = models.CharField(max_length=255, verbose_name='数据库类型')
     interface_db_name = models.CharField(max_length=255, verbose_name='数据库名称')
     interface_sql = models.TextField(verbose_name='接口sql', null=True, blank=True)
