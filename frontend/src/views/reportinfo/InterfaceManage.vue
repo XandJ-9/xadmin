@@ -76,6 +76,7 @@
             <el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>
             <el-button size="small" type="danger" @click="handleDelete(scope.row)">删除</el-button>
             <el-button size="small" type="success" @click="handleFields(scope.row)">字段配置</el-button>
+            <el-button size="small" type="info" @click="handleExport(scope.row)">导出</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -473,6 +474,11 @@ const handleDelete = async (row) => {
 // 跳转到字段配置页面
 const handleFields = (row) => {
   router.push(`/interface-fields/${row.id}`)
+}
+
+// 导出接口到excel
+const handleExport = () => {
+    
 }
 
 // 页面加载时获取数据

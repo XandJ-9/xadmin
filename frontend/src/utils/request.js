@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { API_CONFIG, USER_STORAGE_KEYS, HTTP_STATUS, ERROR_MESSAGES } from './config'
+import { ElLoading, ElMessage } from 'element-plus'
 
 const request = axios.create(API_CONFIG)
 
@@ -58,5 +59,39 @@ request.interceptors.response.use(
     return Promise.reject(error)
   }
 )
+
+
+export function download(url, method, params = {}, filename='文件导出.xlsx') {
+    downloadLoadingInstance = ElLoading.service({ text: "正在下载数据，请稍候", spinner: "el-icon-loading", background: "rgba(0, 0, 0, 0.7)", })
+    return service({
+        url: url,
+        method: method,
+        params: params, 
+        responseType: 'blob'
+    }).then(async res => {
+      let xlsxName = window.decodeURI(res.headers['content-disposition'].split('=')[1]);
+      let fileName = xlsxName || `${filename}.xlsx`;
+      if (res) {
+          const blob = new Blob([res.data], { type: 'charset=utf-8' });
+          saveAs(blob, fileName);
+
+        //   使用a标签下载
+        //   const elink = document.createElement('a')
+        //   elink.download = fileName
+        //   elink.style.display = 'none'
+        //   elink.href = URL.createObjectURL(blob)
+        //   document.body.appendChild(elink)
+        //   elink.click()
+        //   URL.revokeObjectURL(elink.href) // 释放URL 对象0
+        //   document.body.removeChild(elink);
+      }
+      downloadLoadingInstance.close();
+    }).catch((r) => {
+      console.error(r)
+      ElMessage.error('下载文件出现错误，请联系管理员！')
+      downloadLoadingInstance.close();
+    })
+  }
+
 
 export default request
