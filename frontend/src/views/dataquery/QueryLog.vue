@@ -80,7 +80,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="create_time" label="查询时间" width="180"></el-table-column>
-        <el-table-column label="操作" width="200" fixed="right">
+        <el-table-column label="操作" width="100" fixed="right">
           <template #default="scope">
             <el-button 
               type="primary" 
@@ -88,14 +88,6 @@
               @click="viewQueryDetail(scope.row)"
             >
               查看详情
-            </el-button>
-            <el-button 
-              type="primary" 
-              link 
-              @click="reExecuteQuery(scope.row)"
-              :disabled="scope.row.status === 'error'"
-            >
-              重新执行
             </el-button>
           </template>
         </el-table-column>
@@ -118,10 +110,10 @@
     <el-dialog
       v-model="dialogVisible"
       title="查询详情"
-      width="600px"
+      width="50%"
     >
       <div class="query-detail">
-        <div class="detail-item">
+        <!-- <div class="detail-item">
           <span class="label">数据源：</span>
           <span>{{ currentQuery.dataSourceName }}</span>
         </div>
@@ -136,7 +128,7 @@
         <div class="detail-item">
           <span class="label">执行时间：</span>
           <span>{{ currentQuery.executionTime }}ms</span>
-        </div>
+        </div> -->
         <div class="detail-item">
           <span class="label">状态：</span>
           <el-tag :type="currentQuery.status === 'success' ? 'success' : 'danger'">
@@ -181,13 +173,6 @@
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="dialogVisible = false">关闭</el-button>
-          <el-button 
-            type="primary" 
-            @click="reExecuteQuery(currentQuery)"
-            :disabled="currentQuery.status === 'error'"
-          >
-            重新执行
-          </el-button>
         </span>
       </template>
     </el-dialog>
@@ -418,13 +403,14 @@ onMounted(() => {
 .query-detail {
   display: flex;
   flex-wrap: wrap;
+  flex-direction: column;
   gap: 16px;
 }
 
 .detail-item {
   display: flex;
   align-items: flex-start;
-  width: calc(33% - 16px);
+  /* width: calc(33% - 16px); */
 }
 
 .full-width {
@@ -482,20 +468,17 @@ onMounted(() => {
   color: #abb2bf;
 }
 
-.error-box {
-  background-color: #2c1a1a;
-  padding: 16px;
-}
 
 .error-box pre {
   margin: 0;
-  padding: 16px;
+  padding: 5px;
   white-space: pre-wrap;
   word-break: break-word;
   color: #e06c75;
   font-family: 'Fira Code', 'Consolas', 'Monaco', 'Andale Mono', monospace;
   font-size: 14px;
   line-height: 1.5;
+  overflow-x: auto;
 }
 
 .error-box {

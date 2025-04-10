@@ -77,7 +77,7 @@
     <el-dialog
       :title="dialogTitle"
       v-model="dialogVisible"
-      width="600px"
+      width="50%"
     >
       <el-form :model="form" :rules="rules" ref="formRef" label-width="100px">
         <!-- 报表信息 -->

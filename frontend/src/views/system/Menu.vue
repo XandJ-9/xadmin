@@ -33,7 +33,7 @@
       </el-table>
     
     <!-- 添加/编辑菜单对话框 -->
-    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="500px">
+    <el-dialog :title="dialogTitle" v-model="dialogVisible" width="50%">
       <el-form :model="menuForm" label-width="100px" :rules="rules" ref="menuFormRef">
         <el-form-item label="上级菜单">
           <el-tree-select

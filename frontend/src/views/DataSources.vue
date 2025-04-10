@@ -29,7 +29,7 @@
     <el-dialog
       :title="dialogTitle"
       v-model="dialogVisible"
-      width="500px"
+      width="50%"
       @close="resetForm"
     >
       <el-form

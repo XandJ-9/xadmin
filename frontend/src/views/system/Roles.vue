@@ -23,7 +23,7 @@
     <el-dialog
       :title="dialogTitle"
       v-model="dialogVisible"
-      width="500px"
+      width="50%"
     >
       <el-form :model="roleForm" :rules="rules" ref="roleFormRef" label-width="80px">
         <el-form-item label="角色名称" prop="name">

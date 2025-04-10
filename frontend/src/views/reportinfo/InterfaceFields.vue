@@ -1,6 +1,6 @@
 <template>
   <div class="interface-fields">
-      <template #header>
+      <template>
         <div class="card-header">
           <span>接口字段配置 - {{ interfaceInfo?.interface_name }}</span>
           <el-button type="primary" @click="handleAdd">新增字段</el-button>

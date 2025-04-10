@@ -31,7 +31,7 @@
     <el-dialog
       :title="dialogTitle"
       v-model="dialogVisible"
-      width="500px"
+      width="50%"
     >
       <el-form :model="userForm" :rules="rules" ref="userFormRef" label-width="80px">
         <el-form-item label="用户名" prop="username">
