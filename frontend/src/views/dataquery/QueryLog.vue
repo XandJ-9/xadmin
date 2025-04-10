@@ -64,10 +64,19 @@
         </el-table-column>
         <el-table-column prop="error_message" label="错误信息">
           <template #default="scope">
-            <span v-if="scope.row.status === 'error'" class="error-message">
-              {{ scope.row.errorMessage }}
-            </span>
-            <span v-else>-</span>
+            <el-tooltip
+              class="box-item"
+              effect="dark"
+              :content="scope.row.error_message"
+              placement="top-start"
+              :hide-after="0"
+              >
+              <span v-if="scope.row.status === 'error'" class="error-message">
+              {{ scope.row.error_message }}
+              </span>
+              <span v-else>-</span>
+            </el-tooltip>
+
           </template>
         </el-table-column>
         <el-table-column prop="create_time" label="查询时间" width="180"></el-table-column>
@@ -288,7 +297,7 @@ const handleCurrentChange = (page) => {
 // 查看查询详情
 const viewQueryDetail = async (row) => {
   try {
-    const response = await request.get(`/api/datasources/query-logs/${row.id}/`)
+    const response = await request.get(`/api/datasources/querylogs/${row.id}/`)
     currentQuery.value = {
       ...response.data,
       dataSourceName: row.dataSourceName,

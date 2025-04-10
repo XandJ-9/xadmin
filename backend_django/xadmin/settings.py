@@ -46,7 +46,8 @@ INSTALLED_APPS = [
     'corsheaders',  # 添加CORS应用
     'datasource.apps.DatasourceConfig',
     'report.apps.ReportConfig',
-    'system.apps.SystemConfig'  # 添加system应用
+    'system.apps.SystemConfig',  # 添加system应用
+    'app_init.apps.AppInitConfig'
 ]
 
 MIDDLEWARE = [
@@ -132,7 +133,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True
 

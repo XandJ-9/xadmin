@@ -181,16 +181,6 @@ class Command(BaseCommand):
         
         # 定义菜单数据
         menu_data = [
-            # 仪表盘
-            {
-                'name': '仪表盘',
-                'path': '/dashboard',
-                'component': 'Dashboard',
-                'icon': 'DataBoard',
-                'sort': 1,
-                'hidden': False,
-                'parent': None
-            },
             # 系统管理
             {
                 'name': '系统管理',
@@ -297,24 +287,6 @@ class Command(BaseCommand):
                 'parent': None
             },
             # 报表信息子菜单
-            {
-                'name': '平台管理',
-                'path': 'platform',
-                'component': 'reportinfo/PlatformManage',
-                'icon': 'Edit',
-                'sort': 1,
-                'hidden': False,
-                'parent_name': '报表信息'
-            },
-            {
-                'name': '模块管理',
-                'path': 'module',
-                'component': 'reportinfo/ModuleManage',
-                'icon': 'Edit',
-                'sort': 2,
-                'hidden': False,
-                'parent_name': '报表信息'
-            },
             {
                 'name': '报表设计',
                 'path': 'report',

@@ -267,7 +267,6 @@ const getReportList = async (moduleId) => {
   try {
     const response = await request.get(`/api/report/reports/?module_id=${moduleId}&noPage=1`)
       reportOptions.value = response.data.data
-    console.info('获取报表列表', response.data.data)
   } catch (error) {
     console.error('获取报表列表失败：', error)
   }
