@@ -83,7 +83,7 @@ const openMenu = (tag, e) => {
   const offsetWidth = document.querySelector('.tags-view-container').offsetWidth
   const maxLeft = offsetWidth - menuMinWidth
   const left = e.clientX - offsetLeft + 15
-  left = left > maxLeft ? maxLeft : left
+  left.value = left > maxLeft ? maxLeft : left
   top.value = e.clientY
   visible.value = true
   selectedTag.value = tag

@@ -1,5 +1,6 @@
 from django.utils.deprecation import MiddlewareMixin
 import time
+from decimal import Decimal
 import logging
 from .models import QueryLog
 
@@ -40,7 +41,7 @@ class QueryLogMiddleware(MiddlewareMixin):
             return response
 
         # 计算执行时间
-        execution_time = time.time() - request.query_start_time
+        execution_time = float(time.time() - request.query_start_time)
 
         # 获取请求和响应数据
         try:

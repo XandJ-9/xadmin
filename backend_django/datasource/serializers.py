@@ -22,7 +22,7 @@ class DataSourceSerializer(BizModelSerializer):
 class QueryLogSerializer(BizModelSerializer):
     datasource_name = serializers.CharField(source='datasource.name', read_only=True)
     username = serializers.CharField(source='creator.username', read_only=True)
-
+    execution_time = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
     class Meta:
         model = QueryLog
         fields = '__all__'

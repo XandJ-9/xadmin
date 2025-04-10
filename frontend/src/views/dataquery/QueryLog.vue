@@ -80,7 +80,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="create_time" label="查询时间" width="180"></el-table-column>
-        <el-table-column label="操作" width="120" fixed="right">
+        <el-table-column label="操作" width="200" fixed="right">
           <template #default="scope">
             <el-button 
               type="primary" 
@@ -118,7 +118,7 @@
     <el-dialog
       v-model="dialogVisible"
       title="查询详情"
-      width="80%"
+      width="600px"
     >
       <div class="query-detail">
         <div class="detail-item">
@@ -146,7 +146,13 @@
         <div class="detail-item full-width">
           <span class="label">SQL语句：</span>
           <div class="sql-code">
-            <pre>{{ currentQuery.sql }}</pre>
+            <div class="sql-header">
+              <span>SQL</span>
+              <el-button type="primary" link size="small" @click="copySql">
+                <el-icon><Document /></el-icon> 复制
+              </el-button>
+            </div>
+            <pre><code ref="sqlCodeBlock" class="language-sql">{{ currentQuery.sql }}</code></pre>
           </div>
         </div>
         <div v-if="currentQuery.status === 'error'" class="detail-item full-width">
@@ -189,10 +195,17 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, nextTick, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
 import { useRouter } from 'vue-router'
+import hljs from 'highlight.js/lib/core'
+import sql from 'highlight.js/lib/languages/sql'
+import 'highlight.js/styles/atom-one-dark.css'
+import { Document } from '@element-plus/icons-vue'
+
+// 注册SQL语言高亮
+hljs.registerLanguage('sql', sql)
 
 const router = useRouter()
 
@@ -231,6 +244,31 @@ const currentQuery = ref({
   resultPreview: [],
   resultColumns: [],
   resultTotal: 0
+})
+
+// SQL代码块引用
+const sqlCodeBlock = ref(null)
+
+// 复制SQL功能
+const copySql = () => {
+  if (currentQuery.value.sql) {
+    navigator.clipboard.writeText(currentQuery.value.sql)
+      .then(() => {
+        ElMessage.success('SQL已复制到剪贴板')
+      })
+      .catch(() => {
+        ElMessage.error('复制失败，请手动复制')
+      })
+  }
+}
+
+// 监听对话框显示状态，当对话框显示时应用代码高亮
+watch(dialogVisible, (newVal) => {
+  if (newVal && sqlCodeBlock.value) {
+    nextTick(() => {
+      hljs.highlightElement(sqlCodeBlock.value)
+    })
+  }
 })
 
 // 获取数据源列表
@@ -297,15 +335,29 @@ const handleCurrentChange = (page) => {
 // 查看查询详情
 const viewQueryDetail = async (row) => {
   try {
-    const response = await request.get(`/api/datasources/querylogs/${row.id}/`)
+    const response = await request.get(`/api/querylogs/${row.id}/`)
+    const result = response.data.data
     currentQuery.value = {
-      ...response.data,
-      dataSourceName: row.dataSourceName,
-      resultPreview: response.data.result_preview || [],
-      resultColumns: response.data.result_columns || [],
-      resultTotal: response.data.result_total || 0
+      id: result.id,
+      dataSourceName: result.datasource_name,
+      username: result.username,
+      status: result.status,
+      executionTime: result.execution_time,
+      sql: result.sql,
+      errorMessage: result.error_message,
+      createTime: result.create_time,
+      // resultPreview: response.data.result_preview || [],
+      // resultColumns: result.result_columns || [],
+      // resultTotal: result.result_total || 0
     }
     dialogVisible.value = true
+    
+    // 在对话框显示后应用代码高亮
+    nextTick(() => {
+      if (sqlCodeBlock.value) {
+        hljs.highlightElement(sqlCodeBlock.value)
+      }
+    })
   } catch (error) {
     ElMessage.error('获取查询详情失败')
   }
@@ -388,17 +440,62 @@ onMounted(() => {
 }
 
 .sql-code, .error-box {
-  background-color: #f5f7fa;
-  border-radius: 4px;
-  padding: 12px;
+  background-color: #282c34;
+  border-radius: 6px;
   width: 100%;
   overflow-x: auto;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  margin-top: 8px;
 }
 
-.sql-code pre, .error-box pre {
+.sql-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 16px;
+  background-color: #21252b;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  border-bottom: 1px solid #3e4451;
+}
+
+.sql-header span {
+  font-size: 12px;
+  font-weight: bold;
+  color: #abb2bf;
+}
+
+.sql-code pre {
   margin: 0;
+  padding: 16px;
   white-space: pre-wrap;
   word-break: break-word;
+  font-family: 'Fira Code', 'Consolas', 'Monaco', 'Andale Mono', monospace;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.sql-code code {
+  background: transparent;
+  padding: 0;
+  border-radius: 0;
+  color: #abb2bf;
+}
+
+.error-box {
+  background-color: #2c1a1a;
+  padding: 16px;
+}
+
+.error-box pre {
+  margin: 0;
+  padding: 16px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: #e06c75;
+  font-family: 'Fira Code', 'Consolas', 'Monaco', 'Andale Mono', monospace;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .error-box {
