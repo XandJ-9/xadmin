@@ -33,9 +33,7 @@ class ExcelImportExportMixin:
             status=200,
         )
 
-    @action(methods=['post'], detail=False, url_path='exportInterfaceinfo', url_name='export_interfaceinfo'
-            ,permission_classes=[]
-            ,authentication_classes=[])
+    @action(methods=['post'], detail=False, url_path='exportInterfaceinfo', url_name='export_interfaceinfo')
     def export_interfaceinfo(self, request, *args, **kwargs):
         """
         Export interface information to an Excel file.
