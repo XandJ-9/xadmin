@@ -22,8 +22,8 @@ class CustomModelViewSet(ModelViewSet):
 
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
-            return [IsAdminUser()]
-        return [IsOwnerOrAdmin()]
+            return [IsOwnerOrAdmin()]
+        return super().get_permissions()
     def filter_queryset(self, queryset):
         for backend in set(set(self.filter_backends) or []):
             queryset = backend().filter_queryset(self.request, queryset, self)
