@@ -1,5 +1,5 @@
 from rest_framework.decorators import action
-from django.http.response import HttpResponseNotFound, HttpResponse
+from django.http.response import HttpResponseNotFound, HttpResponse,HttpResponseServerError
 from urllib.parse import quote
 from django.conf import settings
 
@@ -36,13 +36,13 @@ class ExcelImportExportMixin:
                 for chunk in uploadfile.chunks():
                     outfile.write(chunk)
             handle_interface_import(full_filepath, request.user)
-        except Exception as e:
-            logger.error(e)
-            raise e
-        return DetailResponse(
+            return DetailResponse(
             msg='Import interface information from Excel file',
             status=200,
-        )
+            )
+        except Exception as e:
+            logger.error(e)
+            return HttpResponseServerError(content='导入文件解析失败，请检查是否格式正确')
 
     @action(methods=['post'], detail=False, url_path='exportInterfaceinfo', url_name='export_interfaceinfo')
     def export_interfaceinfo(self, request, *args, **kwargs):
@@ -63,7 +63,7 @@ class ExcelImportExportMixin:
             return response
         except Exception as e:
             logger.error(e)
-            return HttpResponseNotFound(content='接口不存在')
+            return HttpResponseNotFound(content='导出接口失败')
     
 
     @action(methods=['post'], detail=False, url_path='importTablemapping', url_name='import_tablemapping')
