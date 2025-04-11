@@ -1,13 +1,13 @@
 from rest_framework.decorators import action
 from django.http.response import HttpResponseNotFound, HttpResponse
 from urllib.parse import quote
-from openpyxl import Workbook
+from django.conf import settings
 
 from utils.util_response import DetailResponse
 from ..models import *
-from report.common.excel_constant import generate_interface_workbook
+from report.common.excel_operations import generate_interface_workbook, handle_interface_import
 
-import logging 
+import os,logging 
 
 logger = logging.getLogger('django')
 
@@ -29,8 +29,16 @@ class ExcelImportExportMixin:
         Import interface information from an Excel file.
         """
         # Implement the logic to read the Excel file and import data
-        file = request.FILES
-        logger.info(f'{file}')
+        try:
+            uploadfile = request.FILES['file']
+            full_filepath = os.path.join(settings.IMPORT_FILE_PATH,uploadfile._name)
+            with open(full_filepath,'wb+') as outfile:
+                for chunk in uploadfile.chunks():
+                    outfile.write(chunk)
+            handle_interface_import(full_filepath, request.user)
+        except Exception as e:
+            logger.error(e)
+            raise e
         return DetailResponse(
             msg='Import interface information from Excel file',
             status=200,

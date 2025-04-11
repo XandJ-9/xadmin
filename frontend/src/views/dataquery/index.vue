@@ -63,7 +63,6 @@ import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
 import MonacoEditor from '@/components/MonacoEditor.vue'
 import QueryResult from '@/components/QueryResult.vue'
-import { editor } from 'monaco-editor'
 
 // 数据查询相关数据
 const dataSources = ref([])
@@ -357,6 +356,7 @@ const handleCursorChange = (position) => {
 
 .query-result {
   flex-shrink: 0;
+  height: 100vh;
 }
 
 .fade-enter-active,

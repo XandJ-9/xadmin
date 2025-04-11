@@ -1,7 +1,8 @@
-from openpyxl import Workbook
+from openpyxl import Workbook, load_workbook
 from openpyxl.styles import Font,DEFAULT_FONT, PatternFill, Border, Side, Alignment
-
-from report.serializers import InterfaceInfoSerializer,InterfaceFieldSerializer
+import os
+from report.serializers import *
+from report.models import *
 
 DefaultStyle={
     "font" : Font(name='Calibri',
@@ -100,3 +101,80 @@ def generate_interface_workbook(interface, fields):
     set_area_border(ws,ws.min_row,ws.max_row,ws.min_column,ws.max_column)
     ws['P1']='report'
     return wb
+
+
+def handle_interface_import(full_filepath, user = None):
+    if not os.path.exists(full_filepath):
+        raise Exception(f'{full_filepath} not exists')
+    filename = os.path.basename(full_filepath)
+    wb = load_workbook(full_filepath)
+    ws = wb['report']
+    platform_info = {
+        'name':ws['F1'].value,
+        'desc':ws['G1'].value
+    }
+    platform, created = PlatformInfo.objects.get_or_create(name=platform_info['name'],
+                                                           defaults={
+                                                               'desc': platform_info['desc'],
+                                                               'creator': user
+                                                           })
+    if not created:
+        # 数据表中已存在，则更新
+        platform.desc = platform_info['desc']
+        platform.updator = user
+        platform.save()
+    
+    module_info = {
+        'name':ws['B1'].value,
+        'platform': platform
+    }
+    module, created = ModuleInfo.objects.get_or_create(name=module_info['name'],
+                                                       defaults={
+                                                           'platform':module_info['platform'], 
+                                                           'creator':user
+                                                        })
+    if not created:
+        module.platform = module_info['platform']
+        module.updator = user
+        module.save()
+    
+    report_info = {
+        'name':ws['D1'].value,
+        'module':module
+    }
+    report, created = ReportInfo.objects.get_or_create(name=report_info['name'],
+                                                       defaults ={
+                                                           'module':report_info['module'],
+                                                           'creator':user
+                                                       })
+    if not created:
+        report.module = report_info['module']
+        report.updator = user
+        report.save()
+    
+    # 下述方法使用模型序列化类来保存数据
+    interface_info = {
+        'interface_name':ws['B2'].value,
+        'interface_code':ws['D2'].value,
+        'is_date_option':ws['F2'].value,
+        'is_second_table':ws['H2'].value,
+        'is_login_visit':ws['J2'].value,
+        'alarm_type':ws['L2'].value,
+        'interface_db_type':ws['B3'].value,
+        'interface_db_name':ws['D3'].value,
+        'interface_sql':ws['F3'].value,
+        'is_paging':ws['B4'].value,
+        'is_total':ws['D4'].value,
+        'total_sql':ws['F4'].value,
+        'report':report.id,
+        'creator':user.id,
+        'updator':user.id
+    }
+    interface = InterfaceInfo.objects.filter(interface_code = interface_info['interface_code'])
+    if interface:
+        ser = InterfaceInfoSerializer(instance = interface[0],data=interface_info)
+    else:
+        ser = InterfaceInfoSerializer(data=interface_info)
+    # 在序列化模型对象时，会将选项字段转换
+    ser.is_valid(raise_exception=True)
+    ser.save()

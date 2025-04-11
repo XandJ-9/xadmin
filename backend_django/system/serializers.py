@@ -83,11 +83,11 @@ class BizModelSerializer(serializers.ModelSerializer):
     updator_username = serializers.CharField(source='updator.username', read_only=True)
     update_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True, source='updated_at')
     
-    def create(self, validated_data):
-        validated_data['creator'] = self.context['request'].user
-        validated_data['updator'] = self.context['request'].user
-        return super().create(validated_data)
+    # def create(self, validated_data):
+    #     # validated_data['creator'] = self.context['request'].user
+    #     # validated_data['updator'] = self.context['request'].user
+    #     return super().create(validated_data)
 
-    def update(self, instance, validated_data):
-        validated_data['updator'] = self.context['request'].user
-        return super().update(instance, validated_data)
+    # def update(self, instance, validated_data):
+    #     # validated_data['updator'] = self.context['request'].user
+    #     return super().update(instance, validated_data)

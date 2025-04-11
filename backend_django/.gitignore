@@ -7,3 +7,5 @@ __pycache__/
 # User-specific files
 .logs/
 .logs/*
+
+import_files/

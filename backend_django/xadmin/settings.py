@@ -165,7 +165,7 @@ REST_FRAMEWORK = {
 # JWT settings
 from datetime import timedelta
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1440),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
@@ -238,3 +238,9 @@ CORS_ALLOW_CREDENTIALS = True   # 允许携带认证信息
 
 # CSRF settings
 CSRF_TRUSTED_ORIGINS = ['http://localhost:5173']  # 添加前端开发服务器域名
+
+
+# 导入文件处理
+IMPORT_FILE_PATH = os.path.join(BASE_DIR, 'import_files')
+if not os.path.exists(IMPORT_FILE_PATH):
+    os.makedirs(IMPORT_FILE_PATH)

@@ -22,8 +22,9 @@ class CustomModelViewSet(ModelViewSet):
 
     def get_permissions(self):
         if self.action in ['create', 'update', 'partial_update', 'destroy']:
-            return [IsOwnerOrAdmin()]
-        return super().get_permissions()
+            return [IsAdminUser()]
+        return [IsOwnerOrAdmin()]
+    
     def filter_queryset(self, queryset):
         for backend in set(set(self.filter_backends) or []):
             queryset = backend().filter_queryset(self.request, queryset, self)
@@ -42,21 +43,23 @@ class CustomModelViewSet(ModelViewSet):
             return action_serializer_class
         return super().get_serializer_class()
 
-    # 通过many=True直接改造原有的API，使其可以批量创建
     # def get_serializer(self, *args, **kwargs):
     #     serializer_class = self.get_serializer_class()
     #     kwargs.setdefault('context', self.get_serializer_context())
-    #     if isinstance(self.request.data, list):
-    #         with transaction.atomic():
-    #             return serializer_class(many=True, *args, **kwargs)
+    #     if self.action == 'create':
+    #         kwargs['creator'] = self.request.user
+    #         kwargs['updator'] = self.request.user
     #     else:
-    #         return serializer_class(*args, **kwargs)
+    #         kwargs['updator'] = self.request.user
+    #     return serializer_class(*args, **kwargs)
+
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        # if request.user:
-            # serializer.validated_data['creator'] = request.user
+        if request.user:
+            serializer.validated_data['creator'] = request.user
+            serializer.validated_data['updator'] = request.user
         self.perform_create(serializer)
         return DetailResponse(data=serializer.data, msg="新增成功")
 
@@ -92,8 +95,8 @@ class CustomModelViewSet(ModelViewSet):
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
-        # if request.user:
-            # serializer.validated_data['updater'] = request.user.user_id
+        if request.user:
+            serializer.validated_data['updator'] = request.user
         self.perform_update(serializer)
 
         # if getattr(instance, '_prefetched_objects_cache', None):

@@ -51,25 +51,34 @@
 
       <!-- 数据表格 -->
       <el-table :data="tableData" style="width: 100%" v-loading="loading">
-        <el-table-column prop="interface_code" label="接口编码" width="150" />
+        <el-table-column prop="interface_code" label="接口编码" width="250" />
         <el-table-column prop="interface_name" label="接口名称" />
-        <el-table-column prop="interface_desc" label="接口描述" show-overflow-tooltip />
+        <el-table-column prop="interface_desc" label="接口描述" show-overflow-tooltip >
+            <template #default="scope">
+                {{ scope.row.interface_desc ? scope.row.interface_desc : scope.row.interface_name }}
+            </template>
+        </el-table-column>
         <el-table-column prop="interface_db_type" label="数据库类型"/>
         <el-table-column prop="interface_db_name" label="数据库名称"/>
         <el-table-column prop="is_total" label="是否合计">
           <template #default="scope">
-            {{ scope.row.is_total === '1' ? '是' : '否' }}
+            {{ scope.row.is_total }}
           </template>
         </el-table-column>
         <el-table-column prop="is_paging" label="是否分页" width="80">
           <template #default="scope">
-            {{ scope.row.is_paging === '1' ? '是' : '否' }}
+            {{ scope.row.is_paging }}
           </template>
         </el-table-column>
         <el-table-column prop="is_date_option" label="是否日期查询">
           <template #default="scope">
-            {{ scope.row.is_date_option === '1' ? '是' : '否' }}
+            {{ scope.row.is_date_option }}
           </template>
+        </el-table-column>
+        <el-table-column prop="is_login_visit" label="是否需要登录">
+            <template #default="scope">
+                {{ scope.row.is_login_visit }}
+            </template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" min-width="200">
           <template #default="scope">
@@ -87,20 +96,16 @@
             <!-- <el-button type="primary" @click="handleImporExcel">模板导入</el-button> -->
             <el-upload
                 :file-list="fileList"
-                class="upload-demo"
                 multiple
                 :on-preview="handlePreview"
                 :on-remove="handleRemove"
                 :before-remove="beforeRemove"
                 :limit="3"
                 :on-exceed="handleExceed"
+                @click="handleExport"
+                style="display: inline-block; margin: 5px;"
             >
                 <el-button type="primary">Click to upload</el-button>
-                <template #tip>
-                <div class="el-upload__tip">
-                    jpg/png files with a size less than 500KB.
-                </div>
-                </template>
             </el-upload>
           </div>
             <!-- 分页 -->
