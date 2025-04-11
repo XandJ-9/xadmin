@@ -31,6 +31,7 @@ class ExcelImportExportMixin:
         # Implement the logic to read the Excel file and import data
         try:
             uploadfile = request.FILES['file']
+            logger.info(uploadfile._name)
             full_filepath = os.path.join(settings.IMPORT_FILE_PATH,uploadfile._name)
             with open(full_filepath,'wb+') as outfile:
                 for chunk in uploadfile.chunks():

@@ -7,9 +7,9 @@
       <el-input
         v-model="searchQuery"
         placeholder="搜索用户名"
-        style="width: 200px"
+        style="width: 200px; margin-left: 5px;"
       />
-      <el-button @click="fetchUsers">
+      <el-button @click="fetchUsers" style="margin-left: 5px;">
         <el-icon><Search /></el-icon>搜索
       </el-button>
     </div>
