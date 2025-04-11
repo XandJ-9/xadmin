@@ -1,23 +1,24 @@
 from rest_framework.decorators import action
-from django.http.response import HttpResponseNotFound, HttpResponse 
+from django.http.response import HttpResponseNotFound, HttpResponse
 from urllib.parse import quote
 from openpyxl import Workbook
 
 from utils.util_response import DetailResponse
 from ..models import *
-
+from report.common.excel_constant import generate_interface_workbook
 
 import logging 
 
 logger = logging.getLogger('django')
 
 class ExcelResponse(HttpResponse):
-    def __init__(self, content = ..., *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         filename = kwargs.pop('filename', 'export.xlsx')
-        super().__init__(content, *args, **kwargs)
-        self['content_type'] = 'application/msexcel'
-        self['Content-Disposition'] =  f'attachment;filename={quote(str(f"{filename}"))}'
-        self['Access-Control-Expose-Headers'] = 'Content-Disposition'
+        super().__init__(*args, **kwargs)
+        self.headers['Content-Type'] = 'application/msexcel'
+        self.headers['content-disposition'] =  f'attachment;filename={quote(str(f"{filename}"))}'
+        # # cross-origin跨域请求需要设置Access-Control-Expose-Headers响应信息
+        self.headers['Access-Control-Expose-Headers'] = 'Content-Disposition'
 
 
 class ExcelImportExportMixin:
@@ -28,6 +29,8 @@ class ExcelImportExportMixin:
         Import interface information from an Excel file.
         """
         # Implement the logic to read the Excel file and import data
+        file = request.FILES
+        logger.info(f'{file}')
         return DetailResponse(
             msg='Import interface information from Excel file',
             status=200,
@@ -41,18 +44,13 @@ class ExcelImportExportMixin:
         # Implement the logic to export data to an Excel file
         interface_id = request.query_params.get('interface_id')
         try:
-            instance = InterfaceInfo.objects.get(id = interface_id)
+            interface = InterfaceInfo.objects.get(id = interface_id)
         
-
-            # 设置返回类型为Excel
-            # response = HttpResponse(content_type="application/msexcel")
-            # # cross-origin跨域请求需要设置Access-Control-Expose-Headers响应信息
-            # response["Access-Control-Expose-Headers"] = f"Content-Disposition"
-            # # 设置文件名
-            # response["content-disposition"] = f'attachment;filename={quote(str(f"{instance.report}-{instance.interface_name}.xlsx"))}'
-            response = ExcelResponse(filename=f"{instance.report}-{instance.interface_name}.xlsx")
-            # wb = generate_interface_workbook(interface_id)
-            wb = Workbook()
+            fields = InterfaceField.objects.filter(interface_id = interface_id)
+            if not fields:
+                fields = None
+            response = ExcelResponse(filename=f"{interface.report}-{interface.interface_name}.xlsx")
+            wb = generate_interface_workbook(interface, fields)
             wb.save(response)
             return response
         except Exception as e:

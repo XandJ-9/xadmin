@@ -84,8 +84,25 @@
       <div class="card-footer">
           <div class="add-btn">
             <el-button type="primary" @click="handleAdd">新增接口</el-button>
+            <!-- <el-button type="primary" @click="handleImporExcel">模板导入</el-button> -->
+            <el-upload
+                :file-list="fileList"
+                class="upload-demo"
+                multiple
+                :on-preview="handlePreview"
+                :on-remove="handleRemove"
+                :before-remove="beforeRemove"
+                :limit="3"
+                :on-exceed="handleExceed"
+            >
+                <el-button type="primary">Click to upload</el-button>
+                <template #tip>
+                <div class="el-upload__tip">
+                    jpg/png files with a size less than 500KB.
+                </div>
+                </template>
+            </el-upload>
           </div>
-
             <!-- 分页 -->
             <div class="pagination-container">
                 <el-pagination
@@ -204,7 +221,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted, reactive, inject } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
 import { useRouter } from 'vue-router'
@@ -475,10 +492,21 @@ const handleFields = (row) => {
   router.push(`/interface-fields/${row.id}`)
 }
 
+const download = inject('download')
+
 // 导出接口到excel
-const handleExport = () => {
-    
+const handleExport = (row) => {
+    // request.post(`/api/report/interfaces/exportInterfaceinfo/`,{interface_id: row.id}).then((response) => {})
+    download(`/api/report/interfaces/exportInterfaceinfo/`, 'POST', {interface_id: row.id}, '接口信息.xlsx')
 }
+
+
+// 上传excel文件导入
+const handleImporExcel = () => {
+
+}
+
+
 
 // 页面加载时获取数据
 onMounted(() => {

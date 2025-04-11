@@ -1,6 +1,7 @@
 import axios from 'axios'
 import { API_CONFIG, USER_STORAGE_KEYS, HTTP_STATUS, ERROR_MESSAGES } from './config'
 import { ElLoading, ElMessage } from 'element-plus'
+import { saveAs } from 'file-saver'
 
 const request = axios.create(API_CONFIG)
 
@@ -62,8 +63,8 @@ request.interceptors.response.use(
 
 
 export function download(url, method, params = {}, filename='文件导出.xlsx') {
-    downloadLoadingInstance = ElLoading.service({ text: "正在下载数据，请稍候", spinner: "el-icon-loading", background: "rgba(0, 0, 0, 0.7)", })
-    return service({
+    const downloadLoadingInstance = ElLoading.service({ text: "正在下载数据，请稍候", spinner: "el-icon-loading", background: "rgba(0, 0, 0, 0.7)", })
+    return request({
         url: url,
         method: method,
         params: params, 
