@@ -23,17 +23,17 @@ const asyncRoutes = [
     path: '/',
     name: 'Layout',
     component: () => import('@/layout/index.vue'),
-    // children: [
-    //   {
-    //     path: 'dashboard',
-    //     name: 'Dashboard',
-    //     component: () => import('@/views/Dashboard.vue'),
-    //     meta: {
-    //       icon: DataBoard,
-    //       title: 'Dashboard'
-    //     }
-    //   }
-    // ]
+    children: [
+      {
+        path: 'dashboard',
+        name: 'Dashboard',
+        component: () => import('@/views/Dashboard.vue'),
+        meta: {
+          icon: DataBoard,
+          title: 'Dashboard'
+        }
+      }
+    ]
   }
 ]
 

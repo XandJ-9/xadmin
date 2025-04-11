@@ -132,13 +132,9 @@ onMounted(() => {
   padding: 20px;
 }
 
-.box-card {
-  margin-top: 20px;
-}
-
-.filter-container {
+/* .filter-container {
   margin-bottom: 20px;
-}
+} */
 
 .pagination-container {
   margin-top: 20px;

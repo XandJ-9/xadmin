@@ -181,15 +181,6 @@ class Command(BaseCommand):
         
         # 定义菜单数据
         menu_data = [
-            {
-                'name': '首页',
-                'path': '/dashboard',
-                'component': 'Dashboard',
-                'icon': 'HomeFilled',
-                'sort': 1,
-                'hidden': False,
-                'parent': None
-            },
             # 系统管理
             {
                 'name': '系统管理',
