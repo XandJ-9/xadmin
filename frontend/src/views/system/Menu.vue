@@ -2,9 +2,21 @@
   <div class="system-menu-container">
       <div class="operation-container">
         <el-button type="primary" @click="handleAdd">添加菜单</el-button>
+          <el-input
+            v-model="searchKeyword"
+            placeholder="请输入菜单名称或路径搜索"
+            clearable
+            @clear="handleSearch"
+            style="width: 200px; margin-left: 5px;"
+          >
+            <template #prefix>
+              <el-icon><Search /></el-icon>
+            </template>
+          </el-input>
+          <el-button type="primary" @click="handleSearch">搜索</el-button>
       </div>
       
-      <el-table :data="menuData" style="width: 100%" row-key="id" border default-expand-all>
+      <el-table :data="filteredMenuData" style="width: 100%" row-key="id" border default-expand-all>
         <!-- <el-table-column prop="id" label="ID" width="80"></el-table-column> -->
         <el-table-column prop="name" label="菜单名称" width="180"></el-table-column>
         <el-table-column prop="path" label="路由路径" width="180"></el-table-column>
@@ -79,11 +91,50 @@
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import { Search } from '@element-plus/icons-vue'
 import request from '@/utils/request'
 import { listToTree } from '@/utils/treeUtils'
 
 // 菜单数据
 const menuData = ref([])
+
+// 搜索关键词
+const searchKeyword = ref('')
+
+// 过滤后的菜单数据
+const filteredMenuData = computed(() => {
+  if (!searchKeyword.value) {
+    return menuData.value
+  }
+  const keyword = searchKeyword.value.toLowerCase()
+  // 递归搜索菜单树
+  const filterMenuTree = (menus) => {
+    return menus.filter(menu => {
+      // 检查当前菜单是否匹配
+      const nameMatch = menu.name && menu.name.toLowerCase().includes(keyword)
+      const pathMatch = menu.path && menu.path.toLowerCase().includes(keyword)
+      const componentMatch = menu.component && menu.component.toLowerCase().includes(keyword)
+      
+      // 如果当前菜单匹配，直接返回true
+      if (nameMatch || pathMatch || componentMatch) {
+        return true
+      }
+      
+      // 如果有子菜单，递归搜索子菜单
+      if (menu.children && menu.children.length) {
+        const filteredChildren = filterMenuTree(menu.children)
+        if (filteredChildren.length) {
+          menu.children = filteredChildren
+          return true
+        }
+      }
+      
+      return false
+    })
+  }
+  
+  return filterMenuTree(JSON.parse(JSON.stringify(menuData.value)))
+})
 
 // 菜单树数据，用于选择上级菜单
 const menuTreeData = computed(() => {
@@ -211,6 +262,13 @@ const submitForm = () => {
   })
 }
 
+// 搜索处理
+const handleSearch = () => {
+  // 搜索关键词已经通过计算属性自动过滤了菜单数据
+  // 这里可以添加额外的搜索逻辑
+
+}
+
 // 获取菜单列表
 const fetchMenuList = async () => {
   try {
@@ -274,6 +332,15 @@ onMounted(() => {
 
 .operation-container {
   margin-bottom: 20px;
+  display: flex;
+  /* justify-content: space-between; */
+  align-items: center;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
 .dialog-footer {

@@ -1,6 +1,6 @@
 <template>
   <div class="query-log-container">
-    <el-card class="box-card">
+  
       <div class="filter-container">
         <el-form :inline="true" :model="filterForm">
           <el-form-item label="查询状态">
@@ -36,7 +36,7 @@
           </el-form-item>
         </el-form>
       </div>
-      
+
       <el-table :data="logData" style="width: 100%" border v-loading="loading">
         <el-table-column prop="id" label="ID" width="80"></el-table-column>
         <el-table-column prop="datasource_name" label="数据源" width="120"></el-table-column>
@@ -104,7 +104,6 @@
           :total="pagination.total">
         </el-pagination>
       </div>
-    </el-card>
 
     <!-- 查询详情对话框 -->
     <el-dialog
@@ -372,13 +371,13 @@ onMounted(() => {
   padding: 20px;
 }
 
-.box-card {
+/* .box-card {
   margin-top: 20px;
 }
 
 .filter-container {
   margin-bottom: 20px;
-}
+} */
 
 .pagination-container {
   margin-top: 20px;

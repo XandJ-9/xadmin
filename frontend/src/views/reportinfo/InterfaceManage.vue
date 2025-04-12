@@ -586,9 +586,9 @@ onMounted(() => {
   align-items: center;
 }
 
-.search-area {
+/* .search-area {
   margin-bottom: 20px;
-}
+} */
 
 .card-footer {
   display: flex;

@@ -8,9 +8,13 @@
         v-model="searchQuery"
         placeholder="搜索用户名"
         style="width: 200px; margin-left: 5px;"
-      />
+      >
+        <template #prefix>
+          <el-icon><Search /></el-icon>
+        </template>
+      </el-input>
       <el-button @click="fetchUsers" style="margin-left: 5px;">
-        <el-icon><Search /></el-icon>搜索
+        搜索
       </el-button>
     </div>
 
