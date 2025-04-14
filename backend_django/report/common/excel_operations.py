@@ -178,3 +178,35 @@ def handle_interface_import(full_filepath, user = None):
     # 在序列化模型对象时，会将选项字段转换
     ser.is_valid(raise_exception=True)
     ser.save()
+
+    # 导入字段信息
+    field_row_start = 6 
+    column_headers = [
+        {'label':'序号', 'code':'interface_para_position'},
+        {'label':'参数名称','code':'interface_para_name'},
+        {'label':'参数代码','code':'interface_para_code'},
+        {'label':'参数类型','code':'interface_para_type'},
+        {'label':'数据类型','code':'interface_data_type'},
+        {'label':'是否展示','code':'interface_show_flag'},
+        {'label':'是否导出','code':'interface_export_flag'},
+        {'label':'参数接口代码','code':'interface_para_interface_code'},
+        {'label':'参数默认值','code':'interface_para_default'},
+        {'label':'级联参数','code':'interface_cascade_para'},
+        {'label':'父表头名称','code':'interface_parent_name'},
+        {'label':'父表头位置','code':'interface_parent_position'},
+        {'label':'是否合并行','code':'interface_para_rowspan'},
+        {'label':'是否显示备注','code':'interface_show_desc'},
+        {'label':'参数描述','code':'interface_para_desc'}
+        ]
+    # 读取excel中的字段信息
+    interface_fields = []
+    for row_idx in range(field_row_start,ws.max_row+1):
+        field_info = {'interface':ser.data['id'],'creator':user.id,'updator':user.id}
+        for col_idx in range(min(len(column_headers),ws.max_column)):
+            field_info[column_headers[col_idx]['code']] = ws.cell(row=row_idx,column=col_idx+1).value
+        interface_fields.append(field_info)
+    
+    
+    field_ser = InterfaceFieldSerializer(data=interface_fields,many=True)
+    field_ser.is_valid(raise_exception=True)
+    field_ser.save()

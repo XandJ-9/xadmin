@@ -89,7 +89,7 @@ class InterfaceField(BizBaseModel):
     SHOW_FLAG_CHOICES = (('1', '是'),('0','否'))
     EXPORT_FLAG_CHOICES = (('1', '是'), ('0', '否'))
     PARA_TYPE_CHOICES =(('1','输入参数'),('2','输出参数'))
-
+    ROWSPAN_CHOICES = ((1, '是'), (0, '否'))
     interface = models.ForeignKey(InterfaceInfo,verbose_name="接口",on_delete=models.CASCADE)
     interface_para_code = models.CharField(max_length=255, verbose_name='接口参数编码')
     interface_para_name = models.CharField(max_length=255, verbose_name='接口参数名称')
@@ -98,7 +98,7 @@ class InterfaceField(BizBaseModel):
     interface_data_type = models.CharField(max_length=255, verbose_name='接口参数数据类型', choices=DATA_TYPE_CHOICES)
     interface_para_default = models.CharField(max_length=255, verbose_name='接口参数默认值', null=True, blank=True)
 
-    interface_para_rowspan = models.IntegerField(verbose_name='接口参数跨行', null=True, blank=True)
+    interface_para_rowspan = models.IntegerField(verbose_name='接口参数跨行', null=True, blank=True, choices=ROWSPAN_CHOICES)
     interface_parent_name = models.CharField(max_length=255, verbose_name='接口参数父级名称',null=True, blank=True)
     interface_parent_position = models.IntegerField(verbose_name='接口参数父级位置',null=True, blank=True)
     interface_para_interface_code = models.CharField(max_length=255, verbose_name='接口参数接口编码',null=True, blank=True)

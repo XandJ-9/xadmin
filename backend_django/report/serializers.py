@@ -68,3 +68,29 @@ class InterfaceFieldSerializer(BizModelSerializer):
         model = InterfaceField
         fields = '__all__'
         read_only_fields = ['id', 'creator', 'create_datetime', 'update_datetime']
+    
+    def to_internal_value(self, data):
+        for field_name in data.keys():
+            # 获取 选项类型内部实际存储的值
+            set_choice_field_internal_value(self.fields, field_name, data)
+        return super().to_internal_value(data)
+
+    def to_representation(self, instance):
+        for field_name in self.fields.keys():
+            set_choice_field_representation(self.fields, field_name ,instance)
+        return super().to_representation(instance)
+    
+    def update(self, instance, validated_data):
+        # print(f'update instance: {validated_data}')
+        return super().update(instance, validated_data)
+
+    def create(self, validated_data):
+        # return super().create(validated_data)
+        # 重写字段添加方法
+        # 先判断是否存在，存在则更新，否则添加
+        # print(f'create validated_data: {validated_data}')
+        interface_para_code_value = validated_data.pop('interface_para_code')
+        interface_para_type_value = validated_data.pop('interface_para_type')
+        instance , created = InterfaceField.objects.get_or_create(interface_para_code=interface_para_code_value, interface_para_type=interface_para_type_value, defaults=validated_data)
+        if not created:
+            self.update(instance, validated_data)
