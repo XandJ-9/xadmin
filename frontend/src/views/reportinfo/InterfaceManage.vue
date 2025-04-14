@@ -7,7 +7,8 @@
           <el-form-item label="平台名称">
             <el-select v-model="searchForm.platformId" placeholder="请选择平台" clearable 
             style="display: inline-block; width: 120px;"
-            @change="handlePlatformChange">
+            @change="handlePlatformChange"
+            @click="getPlatformList">
               <el-option
                 v-for="item in platformOptions"
                 :key="item.id"
@@ -47,17 +48,21 @@
             <el-button @click="resetSearch">重置</el-button>
           </el-form-item>
         </el-form>
-      </div>
+    </div>
 
       <!-- 数据表格 -->
-      <el-table :data="tableData" style="width: 100%" v-loading="loading">
-        <el-table-column prop="interface_code" label="接口编码" width="250" />
+      <el-table :data="tableData" style="width: 100%" v-loading="loading" border>
+        <el-table-column fixed prop="interface_code" label="接口编码" width="100" />
         <el-table-column prop="interface_name" label="接口名称" />
         <el-table-column prop="interface_desc" label="接口描述" show-overflow-tooltip >
             <template #default="scope">
                 {{ scope.row.interface_desc ? scope.row.interface_desc : scope.row.interface_name }}
             </template>
         </el-table-column>
+        <el-table-column prop="report_info.name" label="报表名称"/>
+        <el-table-column prop="report_info.module_info.name" label="模块名称"/>
+        <el-table-column prop="report_info.module_info.platform_info.name" label="平台名称"/>
+        <el-table-column prop="interface_url" label="接口地址" show-overflow-tooltip />
         <el-table-column prop="interface_db_type" label="数据库类型"/>
         <el-table-column prop="interface_db_name" label="数据库名称"/>
         <el-table-column prop="is_total" label="是否合计">
@@ -80,9 +85,19 @@
                 {{ scope.row.is_login_visit }}
             </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" min-width="200">
+        <el-table-column prop="update_time" label="更新时间" width="150">
           <template #default="scope">
-            <el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>
+            {{ scope.row.update_time }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="create_time" label="创建时间" width="150">
+          <template #default="scope">
+            {{ scope.row.create_time }}
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" fixed="right" min-width="300">
+          <template #default="scope">
+            <el-button size="small" type="primary" @click="handleEdit(scope.row)">编辑</el-button>
             <el-button size="small" type="danger" @click="handleDelete(scope.row)">删除</el-button>
             <el-button size="small" type="success" @click="handleFields(scope.row)">字段配置</el-button>
             <el-button size="small" type="info" @click="handleExport(scope.row)">导出</el-button>
@@ -93,20 +108,7 @@
       <div class="card-footer">
           <div class="add-btn">
             <el-button type="primary" @click="handleAdd">新增接口</el-button>
-            <!-- <el-button type="primary" @click="handleImporExcel">模板导入</el-button> -->
-            <el-upload
-                :file-list="fileList"
-                multiple
-                :on-preview="handlePreview"
-                :on-remove="handleRemove"
-                :before-remove="beforeRemove"
-                :limit="3"
-                :on-exceed="handleExceed"
-                @click="handleExport"
-                style="display: inline-block; margin: 5px;"
-            >
-                <el-button type="primary">Click to upload</el-button>
-            </el-upload>
+            <el-button type="primary" @click="handleImport">模板导入</el-button>
           </div>
             <!-- 分页 -->
             <div class="pagination-container">
@@ -121,6 +123,31 @@
                 />
             </div>
       </div>
+
+      <el-dialog
+        v-model="importVisible"
+        title="选择上传文件"
+        width="50%"
+      >
+          <el-upload
+              ref="uploadRef"
+              :action="importExcelUrl"
+              class="upload-demo"
+              :auto-upload="false"
+              :http-request="handleUpload"
+          >
+              <el-button type="primary">选择文件</el-button>
+              <template #tip>
+                <div class="el-upload__tip">只能上传xlsx/xls文件，且不超过10MB</div>
+              </template>
+          </el-upload>
+            <template #footer>
+          <span class="dialog-footer">
+            <el-button @click="importVisible = false">取消</el-button>
+            <el-button type="primary" @click="handleSubmitImport">确定</el-button>
+          </span>
+        </template>
+      </el-dialog>
 
       <!-- 接口表单对话框 -->
       <el-dialog
@@ -228,6 +255,7 @@
 <script setup>
 import { ref, onMounted, reactive, inject } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+// import { UploadProps, UploadRawFile } from 'element-plus'
 import request from '@/utils/request'
 import { useRouter } from 'vue-router'
 
@@ -491,7 +519,6 @@ const handleDelete = async (row) => {
     })
 }
 
-
 // 跳转到字段配置页面
 const handleFields = (row) => {
   router.push(`/interface-fields/${row.id}`)
@@ -505,13 +532,39 @@ const handleExport = (row) => {
     download(`/api/report/interfaces/exportInterfaceinfo/`, 'POST', {interface_id: row.id}, '接口信息.xlsx')
 }
 
+const uploadRef = ref(null)
+const importVisible = ref(false)
+const importExcelUrl = ref('/api/report/interfaces/importInterfaceinfo/')
 
-// 上传excel文件导入
-const handleImporExcel = () => {
-
+const handleImport = () => {
+    importExcelUrl.value = '/api/report/interfaces/importInterfaceinfo/'
+    importVisible.value = true
 }
 
+const handleSubmitImport = async () => {
+  uploadRef.value.submit()
+}
 
+const handleUpload = (options) => {
+  const formData = new FormData()
+  formData.append('file', options.file)
+  request.post(importExcelUrl.value, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  }).then((response) => {
+    ElMessage.success('导入成功')
+    options.onSuccess = () => {
+      console.log('上传成功')
+    }
+    importVisible.value = false
+    uploadRef.value.clearFiles()
+    getInterfaceList()
+  }).catch((error) => {
+    console.error('导入失败：', error)
+    ElMessage.error('导入失败')
+  })
+}
 
 // 页面加载时获取数据
 onMounted(() => {

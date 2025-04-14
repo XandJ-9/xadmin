@@ -2,7 +2,7 @@
   <div class="system-log-container">
       <div class="filter-container">
         <el-form :inline="true" :model="filterForm">
-          <el-form-item label="日志类型">
+          <el-form-item label="日志类型" style="width: 20%;">
             <el-select v-model="filterForm.logType" placeholder="请选择日志类型">
               <el-option label="全部" value=""></el-option>
               <el-option label="登录日志" value="login"></el-option>
@@ -132,13 +132,9 @@ onMounted(() => {
   padding: 20px;
 }
 
-.box-card {
-  margin-top: 20px;
-}
-
-.filter-container {
+/* .filter-container {
   margin-bottom: 20px;
-}
+} */
 
 .pagination-container {
   margin-top: 20px;
