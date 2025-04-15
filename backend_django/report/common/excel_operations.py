@@ -206,7 +206,11 @@ def handle_interface_import(full_filepath, user = None):
             field_info[column_headers[col_idx]['code']] = ws.cell(row=row_idx,column=col_idx+1).value
         interface_fields.append(field_info)
     
-    
+    existed_fields = InterfaceField.objects.filter(interface_id = ser.data['id'])
+
     field_ser = InterfaceFieldSerializer(data=interface_fields,many=True)
     field_ser.is_valid(raise_exception=True)
-    field_ser.save()
+    new_fields = field_ser.save()
+
+    need_delete_fields = existed_fields.exclude(id__in=[field.id for field in new_fields])
+    need_delete_fields.delete()

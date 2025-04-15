@@ -94,3 +94,4 @@ class InterfaceFieldSerializer(BizModelSerializer):
         instance , created = InterfaceField.objects.get_or_create(interface_para_code=interface_para_code_value, interface_para_type=interface_para_type_value, defaults=validated_data)
         if not created:
             self.update(instance, validated_data)
+        return instance
