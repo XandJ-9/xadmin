@@ -46,6 +46,7 @@
             <el-option label="MySQL" value="mysql" />
             <el-option label="PostgreSQL" value="postgresql" />
             <el-option label="StarRocks" value="starrocks" />
+            <el-option label="Presto" value="presto" />
           </el-select>
         </el-form-item>
         <el-form-item label="主机地址" prop="host">

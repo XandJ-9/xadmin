@@ -3,12 +3,14 @@ from .base import QueryExecutor
 from .mysql import MySQLQueryExecutor
 from .postgresql import PostgreSQLQueryExecutor
 from .starrocks import StarRocksQueryExecutor
+from .presto import PrestoQueryExecutor
 
 class QueryExecutorFactory:
     _executors: Dict[str, Type[QueryExecutor]] = {
         'mysql': MySQLQueryExecutor,
         'postgresql': PostgreSQLQueryExecutor,
-        'starrocks': StarRocksQueryExecutor
+        'starrocks': StarRocksQueryExecutor,
+        'presto': PrestoQueryExecutor,
     }
 
     @classmethod
