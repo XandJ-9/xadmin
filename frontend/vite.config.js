@@ -14,12 +14,15 @@ export default defineConfig({
             '@': fileURLToPath(new URL('./src', import.meta.url))
         }
     },
+    build: {
+        outDir: '../backend_django/statics/',
+    },
     server: {
         proxy: {
             '/api': {
                 target: 'http://127.0.0.1:8000',
                 changeOrigin: true,
-                rewrite: (path) => path.replace(/^\/api/, '')
+                // rewrite: (path) => path.replace(/^\/api/, '')
             }
         },
         // historyApiFallback: true // 启用HTML5 History API回退

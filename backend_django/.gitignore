@@ -8,4 +8,6 @@ __pycache__/
 .logs/
 .logs/*
 
+statics/
+
 import_files/

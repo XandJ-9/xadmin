@@ -69,7 +69,8 @@ ROOT_URLCONF = 'xadmin.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        # 指定模板文件路径
+        'DIRS': [BASE_DIR / 'statics'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -143,8 +144,13 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-STATIC_URL = 'static/'
+# 指定静态文件的url开头
+STATIC_URL = '/assets/'
 
+STATICFILES_DIRS = [
+    BASE_DIR,
+    BASE_DIR/'statics/assets'
+]
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
@@ -244,3 +250,6 @@ CSRF_TRUSTED_ORIGINS = ['http://localhost:5173']  # 添加前端开发服务器�
 IMPORT_FILE_PATH = os.path.join(BASE_DIR, 'import_files')
 if not os.path.exists(IMPORT_FILE_PATH):
     os.makedirs(IMPORT_FILE_PATH)
+
+
+#
