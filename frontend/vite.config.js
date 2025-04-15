@@ -15,6 +15,8 @@ export default defineConfig({
         }
     },
     build: {
+        // 指定输出结果
+        // 后端项目直接访问静态文件
         outDir: '../backend_django/statics/',
     },
     server: {
