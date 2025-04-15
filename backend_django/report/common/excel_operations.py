@@ -95,7 +95,11 @@ def generate_interface_workbook(interface, fields):
         cell.value = column_info.get('label')
     if fields:
         fields_data = InterfaceFieldSerializer(instance=fields,many=True).data
-        for row_index,field in enumerate(fields_data):
+        fields_data.sort(key=lambda x:x['interface_para_position'])
+        fields_type_input = [field for field in fields_data if field['interface_para_type'] == '输入参数']
+        fields_type_output = [field for field in fields_data if field['interface_para_type'] == '输出参数']
+
+        for row_index,field in enumerate([]+fields_type_input+fields_type_output):
             for col_index,column_info in enumerate(column_headers):
                 ws.cell(row=row_index+6,column=1+col_index).value = field[column_info['code']]
     set_area_border(ws,ws.min_row,ws.max_row,ws.min_column,ws.max_column)
