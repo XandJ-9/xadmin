@@ -8,14 +8,17 @@
 
 <style>
 /* 全局样式 */
-html, body {
+html,body{
+  width: 100% !important;
+  height: 100%;
+  overflow: hidden;
   margin: 0;
-  padding: 0;
-  height: 100%;
 }
-
-#app {
+#app{
+  width: 100%;
   height: 100%;
+  overflow-y: auto;
+  max-width: none !important;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 }
 </style>

@@ -18,7 +18,7 @@
         </el-icon>
       </router-link>
     </el-scrollbar>
-    <ul v-show="visible" :style="{left: left+'px', top: top+'px'}" class="contextmenu">
+    <ul v-show="visible" :style="{left: leftOffset+'px', top: topOffset+'px'}" class="contextmenu">
       <li @click="refreshSelectedTag(selectedTag)">刷新页面</li>
       <li @click="closeSelectedTag(selectedTag)">关闭当前</li>
       <li @click="closeOthersTags(selectedTag)">关闭其他</li>
@@ -34,40 +34,91 @@ import { useRoute, useRouter } from 'vue-router'
 const route = useRoute()
 const router = useRouter()
 
+// 提供TagView相关的状态和方法
+// provide('visitedViews', visitedViews)
+// provide('addView', addView)
+// provide('delView', delView)
+
 // 注入Layout组件提供的状态和方法
-const visitedViews = inject('visitedViews')
-const addView = inject('addView')
-const delView = inject('delView')
+// const visitedViews = inject('visitedViews')
+// const addView = inject('addView')
+// const delView = inject('delView')
 
 const visible = ref(false)
-const top = ref(0)
-const left = ref(0)
+const topOffset = ref(0)
+const leftOffset = ref(0)
 const selectedTag = ref(null)
+
+// TagView状态管理
+const visitedViews = ref([{
+  name: 'Dashboard',
+  path: '/dashboard',
+  title: '首页',
+  query: {}
+}])
+const addView = (view) => {
+  const isExists = visitedViews.value.some(v => v.path === view.path)
+  if (!isExists) {
+    visitedViews.value.push({
+      name: view.name,
+      path: view.path,
+      title: view.meta?.title || '未命名',
+      query: view.query
+    })
+  }
+}
+
+const delView = (view) => {
+  if(view.path === '/dashboard') return
+  const index = visitedViews.value.findIndex(v => v.path === view.path)
+  if (index > -1) {
+    visitedViews.value.splice(index, 1)
+  }
+}
 
 // 关闭选中标签
 const closeSelectedTag = (view) => {
   delView(view)
   if (isActive(view)) {
-    toLastView(visitedViews.value, view)
+    toLastView(visitedViews.value)
   }
 }
 
 // 关闭其他标签
 const closeOthersTags = (view) => {
-  visitedViews.value = visitedViews.value.filter(v => v.path === view.path)
+  visitedViews.value = visitedViews.value.filter(v => v.path === '/dashboard' || v.path === view.path)
+  visible.value = false
 }
 
 // 关闭所有标签
 const closeAllTags = () => {
-  visitedViews.value = []
-  router.push('/')
+  visitedViews.value = visitedViews.value.filter(v => v.path === '/dashboard')
+  toLastView(visitedViews.value)
+  // router.push('/dashboard')
+  visible.value = false
 }
 
 // 刷新选中标签
 const refreshSelectedTag = (view) => {
+  // 关闭右键菜单
+  visible.value = false
+  
+  // 创建一个新的query对象，添加时间戳参数触发组件重新渲染
+  const query = { ...view.query, _t: Date.now() }
+  
+  // 先跳转到一个空路径（但不存在的路径会导致404，所以使用重定向方式）
+  const { currentRoute } = router
+  const { fullPath } = currentRoute.value
+  
+  // 通过添加时间戳参数强制路由重新加载
   router.replace({
-    path: '/redirect' + view.path,
-    query: view.query
+    path: '/redirect',
+    query: { path: fullPath }
+  }).then(() => {
+    router.replace({
+      path: view.path,
+      query
+    })
   })
 }
 
@@ -83,8 +134,8 @@ const openMenu = (tag, e) => {
   const offsetWidth = document.querySelector('.tags-view-container').offsetWidth
   const maxLeft = offsetWidth - menuMinWidth
   const left = e.clientX - offsetLeft + 15
-  left.value = left > maxLeft ? maxLeft : left
-  top.value = e.clientY
+  leftOffset.value = left > maxLeft ? maxLeft : left
+  topOffset.value = e.clientY
   visible.value = true
   selectedTag.value = tag
 }
@@ -95,12 +146,12 @@ const closeMenu = () => {
 }
 
 // 跳转到最后一个标签
-const toLastView = (visitedViews, view) => {
+const toLastView = (visitedViews) => {
   const latestView = visitedViews.slice(-1)[0]
   if (latestView) {
     router.push(latestView.path)
   } else {
-    router.push('/')
+    router.push('/dashboard')
   }
 }
 

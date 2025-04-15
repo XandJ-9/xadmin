@@ -1,5 +1,6 @@
 <template>
-  <el-aside :width="sidebarWidth">
+  <div class="el-aside" :style="{ width: sidebarWidth }">
+    <!-- 侧边栏内容 -->
     <div class="logo" :class="{ 'collapsed': isCollapse }">{{ isCollapse ? 'X' : 'Xadmin' }}</div>
     <el-menu
       :default-active="$route.path"
@@ -17,7 +18,7 @@
         :base-path="'/'"
         />
     </el-menu>
-  </el-aside>
+    </div>
 </template>
 
 <script setup>

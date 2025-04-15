@@ -26,20 +26,20 @@ class PrestoQueryExecutor(QueryExecutor):
     def execute_query(self, sql: str, limit: Optional[int] = 10000) -> Dict[str, Any]:
         try:
             connection = self.connect()
-            with connection.cursor() as cursor:
-                cursor.execute(sql)
-                if sql.strip().lower().startswith('select'):
-                    results = cursor.fetchmany(limit)
-                    return {
-                        'data': results,
-                        'total': len(results)
-                    }
-                else:
-                    connection.commit()
-                    return {
-                        'message': '执行成功',
-                        'affected_rows': cursor.rowcount
-                    }
+            cursor = connection.cursor()
+            cursor.execute(sql)
+            if sql.strip().lower().startswith('select'):
+                results = cursor.fetchmany(limit)
+                return {
+                    'data': results,
+                    'total': len(results)
+                }
+            else:
+                connection.commit()
+                return {
+                    'message': '执行成功',
+                    'affected_rows': cursor.rowcount
+                }
         except Exception as e:
             raise Exception(f'执行失败: {str(e)}')
         finally:

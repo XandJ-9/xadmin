@@ -1,0 +1,12 @@
+version: '3'
+
+services:
+  presto:
+    image: prestodb/presto:latest
+    container_name: presto
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./prestodb/config.properties:/opt/presto-server/etc/config.properties
+      - ./prestodb/jvm.config:/opt/presto-server/etc/jvm.config
+    restart: unless-stopped
