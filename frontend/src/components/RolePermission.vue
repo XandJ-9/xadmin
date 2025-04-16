@@ -121,7 +121,7 @@ const fetchRolePermissions = async (roleId) => {
 // 处理选中变化
 const handleCheckChange = (data, checked) => {
   // 可以在这里添加一些自定义逻辑
-  console.log('选中变化:', data, checked)
+  // console.log('选中变化:', data, checked)
 }
 
 // 保存权限

@@ -15,6 +15,11 @@ const constantRoutes = [
     path: '/register',
     name: 'Register',
     component: () => import('@/views/Register.vue')
+  },
+  {
+    path: '/404',
+    name: '404',
+    component: () => import('@/views/NotFound.vue')
   }
 ]
 

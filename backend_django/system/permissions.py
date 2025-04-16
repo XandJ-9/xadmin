@@ -1,4 +1,5 @@
 from rest_framework import permissions
+from system.models import User
 
 class IsAdminUser(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -20,12 +21,11 @@ class IsOwnerOrAdmin(permissions.BasePermission):
         return obj.id == request.user.id
 
 class HasRolePermission(permissions.BasePermission):
-    def __init__(self, allowed_roles):
-        self.allowed_roles = allowed_roles
 
     def has_permission(self, request, view):
         if not request.user or not request.user.is_authenticated:
             return False
         if request.user.is_superuser:
             return True
-        return request.user.role and request.user.role.name in self.allowed_roles
+        
+        return request.user.role and request.user.role.name in ['admin']

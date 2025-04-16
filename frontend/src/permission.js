@@ -45,6 +45,8 @@ router.beforeEach(async (to, from, next) => {
       
       // 添加动态路由
       await routeStore.addDynamicRoutes()
+
+      // console.log('动态路由已加载', router.getRoutes())
       
       // 重新导航到目标路由，确保能匹配到新添加的路由
       return next({ ...to, replace: true })
@@ -55,9 +57,15 @@ router.beforeEach(async (to, from, next) => {
       return next(`/login?redirect=${to.path}`)
     }
   }
-  
+  // 判断访问的路由是否在动态路由中
+  if(router.getRoutes().find(route => route.path === to.path) === undefined) {
+    next('/404')
+  } else {
+    next()
+  }
   // 其他情况，直接放行
-  next()
+  // console.log('路由', router.getRoutes())
+  // next()
 }
 )
 

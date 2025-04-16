@@ -6,7 +6,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from .models import User, Role, Menu, SystemConfig
 from. serializers import MenuSerializer, SystemConfigSerializer,UserSerializer, RoleSerializer
-from .permissions import IsAdminUser, IsSuperUser, IsOwnerOrAdmin
+from .permissions import IsAdminUser, IsOwnerOrAdmin
 import logging
 
 logger = logging.getLogger('django')
@@ -14,7 +14,7 @@ logger = logging.getLogger('django')
 class RoleViewSet(viewsets.ModelViewSet):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
-    # permission_classes = [IsAdminUser]
+    permission_classes = [IsAdminUser]
     
     @action(detail=True, methods=['get'])
     def menus(self, request, pk=None):
@@ -99,11 +99,28 @@ class UserViewSet(viewsets.ModelViewSet):
                 'user': serializer.data
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    @action(detail=True, methods=['post'])
+    def reset_pwd(self, request, pk=None):
+        user = self.get_object()
+        user.set_password("123456")
+        user.save()
+        return Response({'message': '密码重置成功'}, status=status.HTTP_200_OK)
 
 class MenuViewSet(viewsets.ModelViewSet):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
-    permission_classes = [IsAdminUser]
+    # permission_classes = [IsAdminUser]
+
+    def get_permissions(self):
+        '''
+        自定义获取菜单数据的权限逻辑
+        '''
+        if self.action in ['create', 'update', 'partial_update', 'destroy','all']:
+            return [IsAdminUser()]
+        elif self.action == 'user_menus':
+            return []
+        return super().get_permissions()
     
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user)

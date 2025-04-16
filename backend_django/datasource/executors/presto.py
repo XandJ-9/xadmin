@@ -18,6 +18,8 @@ class PrestoQueryExecutor(QueryExecutor):
     def test_connection(self) -> bool:
         try:
             connection = self.connect()
+            cursor = connection.cursor()
+            cursor.execute("SELECT 1")
             connection.close()
             return True
         except Exception:

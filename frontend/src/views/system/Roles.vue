@@ -4,6 +4,9 @@
       <el-button type="primary" @click="handleAdd">
         <el-icon><Plus /></el-icon>添加角色
       </el-button>
+      <el-button @click="fetchRoles" style="margin-left: 5px;">
+        搜索
+      </el-button>
     </div>
 
     <el-table :data="roleList" style="width: 100%" v-loading="loading">

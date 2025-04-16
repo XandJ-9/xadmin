@@ -49,7 +49,7 @@ const visibleChildren = computed(() => {
 })
 
 const resolvePath = (routePath) => {
-  if (routePath.startsWith('/')) {
+  if (routePath && routePath.startsWith('/')) {
     return routePath
   }
   let fullPath = path.join(props.basePath, routePath)

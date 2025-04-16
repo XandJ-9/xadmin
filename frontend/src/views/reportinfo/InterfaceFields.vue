@@ -218,10 +218,12 @@ const getFieldList = async () => {
     }
     const response = await request.get('/api/report/interface-fields/list_all/', { params })
     const tempData = response.data.data
+    if (tempData) {
       const inputType = tempData.filter(item => item.interface_para_type === '输入参数').sort((a, b) => a.interface_para_position - b.interface_para_position)
-    const outputType = tempData.filter(item => item.interface_para_type === '输出参数').sort((a, b) => a.interface_para_position - b.interface_para_position)
-    tableData.value = [...inputType, ...outputType]
-    total.value = response.data.data.length
+      const outputType = tempData.filter(item => item.interface_para_type === '输出参数').sort((a, b) => a.interface_para_position - b.interface_para_position)
+      tableData.value = [...inputType, ...outputType]
+      total.value = response.data.data.length
+    }
   } catch (error) {
     console.error('获取字段列表失败：', error)
     ElMessage.error('获取字段列表失败')

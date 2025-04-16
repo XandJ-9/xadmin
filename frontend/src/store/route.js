@@ -94,6 +94,16 @@ export const useRouteStore = defineStore('route', {
     },
     
     /**
+     * 更新路由信息
+     */
+    updateRoutes() {
+      // 这里可以根据实际需求实现路由更新逻辑
+      // 例如，当菜单数据发生变化时，更新路由信息
+      // 你可能需要使用 Vuex 或其他状态管理库来存储和获取菜单数据
+      this.resetRouteState()
+      this.addDynamicRoutes()
+    },
+    /**
      * 重置路由状态
      */
     resetRouteState() {
