@@ -9,7 +9,6 @@
         style="width: 100%" 
         border 
         stripe
-        max-height="calc(100vh - 450px)"
         @sort-change="handleSortChange"
       >
         <el-table-column

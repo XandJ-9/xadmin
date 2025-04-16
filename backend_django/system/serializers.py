@@ -56,14 +56,15 @@ class MenuSerializer(serializers.ModelSerializer):
     class Meta:
         model = Menu
         fields = ['id', 'name', 'name_code', 'parent', 'parent_name', 'path', 'component', 'redirect', 
-                 'icon', 'sort', 'hidden', 'meta', 'creator', 'creator_info', 'created_at', 'updated_at']
+                 'icon', 'sort', 'hidden', 'meta', 'creator', 'creator_info', 'created_at', 'updated_at','meta_need_tagview']
         read_only_fields = ['id', 'created_at', 'updated_at']
     
     def get_meta(self, obj):
         """返回meta对象，包含前端路由需要的meta信息"""
         return {
             'title': obj.meta_title or obj.name,
-            'icon': obj.meta_icon or obj.icon
+            'icon': obj.meta_icon or obj.icon,
+            'needTagview': obj.meta_need_tagview or False,
         }
 
 class SystemConfigSerializer(serializers.ModelSerializer):

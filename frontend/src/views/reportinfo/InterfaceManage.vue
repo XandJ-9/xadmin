@@ -1,6 +1,6 @@
 <template>
   <div class="interface-manage">
-
+    <div v-if="route.path === '/reportinfo/interface'">
       <!-- 搜索区域 -->
     <div class="search-area">
         <el-form :inline="true" :model="searchForm" class="demo-form-inline">
@@ -51,7 +51,7 @@
     </div>
 
       <!-- 数据表格 -->
-      <el-table :data="tableData" style="width: 100%" v-loading="loading" border>
+      <el-table ref="tableRef" :data="tableData" style="width: 100%" v-loading="loading" border>
         <el-table-column fixed prop="interface_code" label="接口编码" width="100" />
         <el-table-column prop="interface_name" label="接口名称" />
         <el-table-column prop="interface_desc" label="接口描述" show-overflow-tooltip >
@@ -103,6 +103,11 @@
             <el-button size="small" type="info" @click="handleExport(scope.row)">导出</el-button>
           </template>
         </el-table-column>
+        <!-- <el-table-column type="expand" width="50">
+            <template>
+                <interface-fields-editor :table-data="interfaceFields" />
+            </template>
+        </el-table-column> -->
       </el-table>
 
       <div class="card-footer">
@@ -243,11 +248,11 @@
         </template>
       </el-dialog>
       
-
+    </div>
       <!-- 接口字段编辑窗口 -->
-      <div class="field-editor-view">
-        
-      </div>
+    <div class="field-editor-view">
+        <router-view />
+    </div>
   
   </div>
 </template>
@@ -255,12 +260,12 @@
 <script setup>
 import { ref, onMounted, reactive, inject } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-// import { UploadProps, UploadRawFile } from 'element-plus'
+import { useRoute, useRouter } from 'vue-router'
 import request from '@/utils/request'
-import { useRouter } from 'vue-router'
-
-
+// import InterfaceFields from './InterfaceFields.vue'
 const router = useRouter()
+const route = useRoute()
+
 // 搜索表单数据
 const searchForm = reactive({
   platformId: '',
@@ -269,6 +274,7 @@ const searchForm = reactive({
   interfaceCode: ''
 })
 
+const tableRef = ref(null)
 // 表格数据
 const tableData = ref([])
 const loading = ref(false)
@@ -519,9 +525,16 @@ const handleDelete = async (row) => {
     })
 }
 
+const interfaceFields = ref([])
+const fieldEditorVisible = ref(false)
 // 跳转到字段配置页面
-const handleFields = (row) => {
-  router.push(`/interface-fields/${row.id}`)
+const handleFields = async (row) => {
+    router.push({ path: '/reportinfo/interface/fields', query: { interface_id: row.id } })
+    // fieldEditorVisible.value = true
+    //   router.push(`/api/report/interface-fields/${row.id}`)
+    // tableRef.value.toggleRowExpansion(row, true)
+    // const response = await request.get(`/api/report/interface-fields/?noPage=1&interface=${row.id}`)
+    
 }
 
 const download = inject('download')
@@ -602,5 +615,9 @@ onMounted(() => {
 .pagination-container {
   display: flex;
   justify-content: flex-end;
+}
+
+.el-table__expand-icon{
+    display: none;
 }
 </style>

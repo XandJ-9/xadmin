@@ -40,7 +40,8 @@ const props = defineProps({
 })
 
 const hasChildren = computed(() => {
-  return props.route.children && props.route.children.length > 0
+    //   return props.route.children && props.route.children.length > 0
+    return visibleChildren.value.length > 0
 })
 
 const visibleChildren = computed(() => {

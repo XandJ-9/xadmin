@@ -58,7 +58,7 @@ const visitedViews = ref([{
 }])
 const addView = (view) => {
   const isExists = visitedViews.value.some(v => v.path === view.path)
-  if (!isExists) {
+  if (view.meta.needTagview && !isExists) {
     visitedViews.value.push({
       name: view.name,
       path: view.path,
@@ -124,7 +124,12 @@ const refreshSelectedTag = (view) => {
 
 // 判断是否是激活标签
 const isActive = (tag) => {
-  return tag.path === route.path
+    if (tag.path === route.path || (!route.meta.needTagview && route.path.includes(tag.path))) {
+        // 如果needTagview为false, 
+        console.log(tag.path, route)
+        return true
+    }
+  // 如果当前访问的是子路由
 }
 
 // 打开右键菜单

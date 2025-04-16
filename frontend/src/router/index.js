@@ -30,7 +30,8 @@ const asyncRoutes = [
         component: () => import('@/views/Dashboard.vue'),
         meta: {
           icon: DataBoard,
-          title: 'Dashboard'
+          title: 'Dashboard',
+          needTagview: true
         }
       }
     ]

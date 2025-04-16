@@ -54,6 +54,7 @@ class Menu(BaseModel):
     hidden = models.BooleanField(default=False, verbose_name='是否隐藏')
     meta_title = models.CharField(max_length=50, blank=True, null=True, verbose_name='菜单标题')
     meta_icon = models.CharField(max_length=50, blank=True, null=True, verbose_name='菜单图标')
+    meta_need_tagview = models.BooleanField(default=False, verbose_name='是否需要tagview')
     created_at = models.DateTimeField(default=timezone.now, verbose_name='创建时间')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_menus', verbose_name='创建者')

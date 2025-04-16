@@ -6,17 +6,16 @@
             v-model="searchKeyword"
             placeholder="请输入菜单名称或路径搜索"
             clearable
-            @clear="handleSearch"
             style="width: 200px; margin-left: 5px;"
           >
             <template #prefix>
               <el-icon><Search /></el-icon>
             </template>
           </el-input>
-          <el-button type="primary" @click="handleSearch">搜索</el-button>
+          <el-button type="primary" @click="fetchMenuList" style="margin-left: 5px;">搜索</el-button>
       </div>
       
-      <el-table :data="filteredMenuData" style="width: 100%" row-key="id" border default-expand-all>
+      <el-table :data="filteredMenuData" style="width: 100%" row-key="id" v-loading="loading" border default-expand-all>
         <!-- <el-table-column prop="id" label="ID" width="80"></el-table-column> -->
         <el-table-column prop="name" label="菜单名称" width="180"></el-table-column>
         <el-table-column prop="path" label="路由路径" width="180"></el-table-column>
@@ -35,6 +34,13 @@
               {{ row.hidden ? '隐藏' : '显示' }}
             </el-tag>
           </template>
+        </el-table-column>
+        <el-table-column prop="meta.needTagview" label="是否添加Tagview" width="100">
+            <template #default="{row}">
+                <el-tag :type="row.meta.needTagview ? 'success' : 'danger'">
+                    {{ row.meta.needTagview ? '是' : '否' }}
+                </el-tag>
+            </template>
         </el-table-column>
         <el-table-column label="操作" width="200">
           <template #default="{row}">
@@ -77,7 +83,10 @@
         <el-form-item label="是否隐藏">
           <el-switch v-model="menuForm.hidden"></el-switch>
         </el-form-item>
-      </el-form>
+        <el-form-item label="添加Tagview">
+            <el-switch v-model="menuForm.needTagview"></el-switch>
+        </el-form-item>
+        </el-form>
       <template #footer>
         <span class="dialog-footer">
           <el-button @click="dialogVisible = false">取消</el-button>
@@ -100,6 +109,8 @@ const menuData = ref([])
 
 // 搜索关键词
 const searchKeyword = ref('')
+
+const loading = ref(false)
 
 // 过滤后的菜单数据
 const filteredMenuData = computed(() => {
@@ -158,7 +169,8 @@ const menuForm = reactive({
   component: '',
   icon: '',
   sort: 0,
-  hidden: false
+  hidden: false,
+  needTagview: false
 })
 
 // 表单验证规则
@@ -181,7 +193,6 @@ const handleAdd = () => {
 // 编辑菜单
 const handleEdit = (row) => {
   dialogTitle.value = '编辑菜单'
-  console.log(row)
   // 设置表单数据
   Object.assign(menuForm, {
     id: row.id,
@@ -192,7 +203,8 @@ const handleEdit = (row) => {
     sort: row.sort,
     hidden: row.hidden,
     parentId: row.parent || 0 , // 如果parent为null，则设置为0（根菜单）
-    creator: row.creator
+      creator: row.creator,
+    needTagview: row.meta.needTagview
   })
   dialogVisible.value = true
 }
@@ -228,7 +240,8 @@ const resetForm = () => {
     component: '',
     icon: '',
     sort: 0,
-    hidden: false
+    hidden: false,
+    meta_need_tagview: true
   })
 }
 
@@ -245,15 +258,16 @@ const submitForm = () => {
         sort: menuForm.sort,
         hidden: menuForm.hidden,
         parent: menuForm.parentId === 0 ? null : menuForm.parentId,
-        creator: menuForm.creator
+          creator: menuForm.creator,
+          meta_need_tagview: menuForm.needTagview
       }
       
       // 如果是编辑，添加ID
       if (menuForm.id) {
         submitData.id = menuForm.id
       }
-      
-      // 调用保存菜单API
+
+        // 调用保存菜单API
       const success = await saveMenu(submitData)
       if (success) {
         dialogVisible.value = false
@@ -262,23 +276,19 @@ const submitForm = () => {
   })
 }
 
-// 搜索处理
-const handleSearch = () => {
-  // 搜索关键词已经通过计算属性自动过滤了菜单数据
-  // 这里可以添加额外的搜索逻辑
-
-}
 
 // 获取菜单列表
 const fetchMenuList = async () => {
+    loading.value = true
   try {
     const response = await request.get('/api/menus/all/')
     // menuData.value = response.data
     menuData.value = listToTree(response.data)
     // ElMessage.success('菜单数据加载成功')
   } catch (error) {
-    console.error('获取菜单列表失败:', error)
     ElMessage.error('获取菜单列表失败')
+  } finally {
+    loading.value = false
   }
 }
 
@@ -289,7 +299,6 @@ const deleteMenu = async (id) => {
     ElMessage.success('删除成功')
     fetchMenuList() // 重新加载菜单数据
   } catch (error) {
-    console.error('删除菜单失败:', error)
     ElMessage.error('删除菜单失败')
   }
 }
@@ -309,7 +318,6 @@ const saveMenu = async (menuData) => {
     fetchMenuList() // 重新加载菜单数据
     return true
   } catch (error) {
-    console.error('保存菜单失败:', error)
     ElMessage.error('保存菜单失败')
     return false
   }

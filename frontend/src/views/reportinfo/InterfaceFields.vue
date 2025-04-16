@@ -1,11 +1,11 @@
 <template>
   <div class="interface-fields">
-      <template>
         <div class="card-header">
-          <span>接口字段配置 - {{ interfaceInfo?.interface_name }}</span>
+          <el-button type="primary" @click="goInterfaceList">返回接口列表</el-button>
           <el-button type="primary" @click="handleAdd">新增字段</el-button>
         </div>
-      </template>
+    
+        <span style="margin-bottom: 10px;">接口字段配置 - {{ interfaceInfo?.interface_name }}</span>
 
       <!-- 数据表格 -->
       <el-table :data="tableData" style="width: 100%" v-loading="loading">
@@ -127,10 +127,11 @@
 
 <script setup>
 import { ref, onMounted, reactive } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute , useRouter} from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
 
+const router = useRouter()
 const route = useRoute()
 const interfaceId = route.params.id
 
@@ -196,9 +197,10 @@ const getDataTypeName = (type) => {
 
 // 获取接口信息
 const getInterfaceInfo = async () => {
-  try {
+    try {
+    const interfaceId = route.query.interface_id
     const response = await request.get(`/api/report/interfaces/${interfaceId}/`)
-    interfaceInfo.value = response.data
+    interfaceInfo.value = response.data.data
   } catch (error) {
     console.error('获取接口信息失败：', error)
     ElMessage.error('获取接口信息失败')
@@ -212,7 +214,7 @@ const getFieldList = async () => {
     const params = {
       page: currentPage.value,
       page_size: pageSize.value,
-      interface_id: interfaceId
+      interface: route.query.interface_id
     }
     const response = await request.get('/api/report/interface-fields/', { params })
     tableData.value = response.data.data.data
@@ -223,6 +225,12 @@ const getFieldList = async () => {
   } finally {
     loading.value = false
   }
+}
+
+const goInterfaceList = () => {
+    router.push({
+        path: '/reportinfo/interface'
+    })
 }
 
 // 重置表单
@@ -334,8 +342,9 @@ onMounted(() => {
 
 .card-header {
   display: flex;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   align-items: center;
+  margin-bottom: 10px;
 }
 
 .pagination-container {
