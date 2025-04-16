@@ -126,7 +126,7 @@ const refreshSelectedTag = (view) => {
 const isActive = (tag) => {
     if (tag.path === route.path || (!route.meta.needTagview && route.path.includes(tag.path))) {
         // 如果needTagview为false, 
-        console.log(tag.path, route)
+        // console.log(tag.path, route)
         return true
     }
   // 如果当前访问的是子路由
