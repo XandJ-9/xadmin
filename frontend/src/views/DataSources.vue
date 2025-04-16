@@ -19,7 +19,7 @@
         <template #default="scope">
           <div class="operation-buttons">
             <el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>
-            <el-button size="small" type="success" @click="handleTest(scope.row)">测试连接</el-button>
+            <el-button size="small" type="success" :loading="btnTestList.includes(scope.row)" @click="handleTest(scope.row)">测试连接</el-button>
             <el-button size="small" type="danger" @click="handleDelete(scope.row)">删除</el-button>
           </div>
         </template>
@@ -83,11 +83,12 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
 
 const loading = ref(false)
+const btnLoading = ref(false)
 const dataSources = ref([])
 const dialogVisible = ref(false)
 const dialogTitle = ref('')
@@ -137,13 +138,20 @@ const handleEdit = (row) => {
   dialogVisible.value = true
 }
 
+const btnTestList = ref([])
+
 const handleTest = async (row) => {
-    // console.log(row)
-  try {
+    console.log(row)
+    try {
+        // row.loading = true
+    btnTestList.value.push(row)
     await request.post(`/api/datasources/${row.id}/test/`)
-    ElMessage.success('连接测试成功')
+    ElMessage.success(`${row.name}连接测试成功`)
   } catch (error) {
-    ElMessage.error('连接测试失败')
+    ElMessage.error(`${row.name}连接测试失败: ${error.response.data.error}`)
+  } finally {
+        // row.loading = false
+        btnTestList.value = btnTestList.value.filter(item => item.id !== row.id)
   }
 }
 

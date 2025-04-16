@@ -16,10 +16,14 @@ class MySQLQueryExecutor(QueryExecutor):
     def test_connection(self) -> bool:
         try:
             connection = self.connect()
-            connection.close()
-            return True
-        except Exception:
-            return False
+            try:
+                connection.close()
+                return True
+            except:
+                return False
+        except Exception as e:
+            raise e
+            # return False
 
     def execute_query(self, sql: str, limit: Optional[int] = 10000) -> Dict[str, Any]:
         try:
