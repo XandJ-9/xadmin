@@ -48,10 +48,10 @@ request.interceptors.response.use(
           window.location.href = '/login'
           break
         case HTTP_STATUS.FORBIDDEN:
-            // alert(ERROR_MESSAGES.FORBIDDEN)
+            ElMessage.error(ERROR_MESSAGES.FORBIDDEN)
           break
         default:
-          // alert(ERROR_MESSAGES.DEFAULT)
+            ElMessage.error(ERROR_MESSAGES.DEFAULT)
           break
       }
     } else {

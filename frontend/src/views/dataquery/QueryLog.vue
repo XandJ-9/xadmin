@@ -261,7 +261,7 @@ const fetchDataSources = async () => {
     const response = await request.get('/api/datasources/')
     dataSources.value = response.data
   } catch (error) {
-    ElMessage.error('获取数据源列表失败')
+    // ElMessage.error('获取数据源列表失败')
   }
 }
 
@@ -287,7 +287,7 @@ const searchLogs = async () => {
     logData.value = response.data.data.data
     pagination.value.total = response.data.data.total
   } catch (error) {
-    ElMessage.error('获取查询日志失败')
+    // ElMessage.error('获取查询日志失败')
   } finally {
     loading.value = false
   }

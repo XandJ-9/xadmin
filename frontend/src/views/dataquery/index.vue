@@ -113,7 +113,7 @@ const fetchDataSources = async () => {
     const response = await request.get('/api/datasources/')
     dataSources.value = response.data
   } catch (error) {
-    ElMessage.error('获取数据源列表失败')
+    // ElMessage.error('获取数据源列表失败')
   }
 }
 

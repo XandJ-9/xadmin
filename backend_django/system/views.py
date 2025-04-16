@@ -6,7 +6,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from .models import User, Role, Menu, SystemConfig
 from. serializers import MenuSerializer, SystemConfigSerializer,UserSerializer, RoleSerializer
-from .permissions import IsAdminUser, IsOwnerOrAdmin
+from .permissions import IsAdminUser, IsOwnerOrAdmin,HasRolePermission
 import logging
 
 logger = logging.getLogger('django')
@@ -119,7 +119,7 @@ class MenuViewSet(viewsets.ModelViewSet):
         if self.action in ['create', 'update', 'partial_update', 'destroy','all']:
             return [IsAdminUser()]
         elif self.action == 'user_menus':
-            return []
+            return [HasRolePermission([self.request.user.role.name])]
         return super().get_permissions()
     
     def perform_create(self, serializer):
