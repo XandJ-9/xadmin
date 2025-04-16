@@ -14,7 +14,7 @@
         <el-table-column prop="interface_para_position" label="参数位置" width="80" />
         <el-table-column prop="interface_para_type" label="参数类型" width="100">
           <template #default="scope">
-            {{ scope.row.interface_para_type === '1' ? '输入参数' : '输出参数' }}
+            {{ scope.row.interface_para_type }}
           </template>
         </el-table-column>
         <el-table-column prop="interface_data_type" label="数据类型" width="100">
@@ -216,9 +216,12 @@ const getFieldList = async () => {
       page_size: pageSize.value,
       interface: route.query.interface_id
     }
-    const response = await request.get('/api/report/interface-fields/', { params })
-    tableData.value = response.data.data.data
-    total.value = response.data.data.total
+    const response = await request.get('/api/report/interface-fields/list_all/', { params })
+    const tempData = response.data.data
+      const inputType = tempData.filter(item => item.interface_para_type === '输入参数').sort((a, b) => a.interface_para_position - b.interface_para_position)
+    const outputType = tempData.filter(item => item.interface_para_type === '输出参数').sort((a, b) => a.interface_para_position - b.interface_para_position)
+    tableData.value = [...inputType, ...outputType]
+    total.value = response.data.data.length
   } catch (error) {
     console.error('获取字段列表失败：', error)
     ElMessage.error('获取字段列表失败')
