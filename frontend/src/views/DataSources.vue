@@ -141,7 +141,6 @@ const handleEdit = (row) => {
 const btnTestList = ref([])
 
 const handleTest = async (row) => {
-    console.log(row)
     try {
         // row.loading = true
     btnTestList.value.push(row)
