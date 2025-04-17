@@ -168,3 +168,16 @@ class TableColumnMapping(BizBaseModel):
         db_table = "report_table_column_mapping"
 
 
+# 导入文件信息记录
+class UploadFileInfo(BizBaseModel):
+    FILE_TYPE_CHOICES = (('1','TXT'),('2', 'Excel'),('3', 'CSV'), ('4', 'JSON'), ('5', 'SQL'))
+    source_file_name = models.CharField(max_length=255, verbose_name='源文件名', default='')
+    file_type = models.CharField(max_length=255, verbose_name='文件类型', choices=FILE_TYPE_CHOICES, default='1')
+    file_size = models.IntegerField(verbose_name='文件大小',default=0)
+    # file_content = models.TextField(verbose_name='文件内容',null=True)
+    # file_content = models.BinaryField(verbose_name='文件内容',null=True)
+    file = models.FileField(upload_to='upload_files', verbose_name='文件',null=True)
+    file_md5 = models.CharField(max_length=255, verbose_name='文件md5',unique=True)  # 校验文件上传是否重复 
+
+    class Meta:
+        db_table = "report_upload_file_info"

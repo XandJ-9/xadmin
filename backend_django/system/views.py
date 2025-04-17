@@ -62,13 +62,10 @@ class UserViewSet(viewsets.ModelViewSet):
 
     def get_permissions(self):
         if self.action in ['login', 'register']:
-            permission_classes = [AllowAny]
-            return [permission() for permission in permission_classes]
-        elif self.action == 'list':
+            return [AllowAny()]
+        if self.action in ['retrieve', 'update', 'partial_update', 'destroy']:
             return [IsAdminUser()]
-        elif self.action in ['retrieve', 'update', 'partial_update', 'destroy']:
-            return [IsOwnerOrAdmin()]
-        return super().get_permissions()
+        return [IsOwnerOrAdmin()]
 
     @action(detail=False, methods=['post'])
     def login(self, request):
@@ -119,7 +116,8 @@ class MenuViewSet(viewsets.ModelViewSet):
         if self.action in ['create', 'update', 'partial_update', 'destroy','all']:
             return [IsAdminUser()]
         elif self.action == 'user_menus':
-            return [HasRolePermission([self.request.user.role.name])]
+            if self.request.user.is_authenticated:
+                return [HasRolePermission([self.request.user.role.name])]
         return super().get_permissions()
     
     def perform_create(self, serializer):

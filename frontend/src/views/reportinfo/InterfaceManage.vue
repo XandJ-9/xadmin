@@ -542,7 +542,7 @@ const download = inject('download')
 // 导出接口到excel
 const handleExport = (row) => {
     // request.post(`/api/report/interfaces/exportInterfaceinfo/`,{interface_id: row.id}).then((response) => {})
-    download(`/api/report/interfaces/exportInterfaceinfo/`, 'POST', {interface_id: row.id}, '接口信息.xlsx')
+    download(`/api/report/export/Interfaceinfo/`, 'POST', {interface_id: row.id}, '接口信息.xlsx')
 }
 
 const uploadRef = ref(null)
@@ -550,7 +550,7 @@ const importVisible = ref(false)
 const importExcelUrl = ref('/api/report/interfaces/importInterfaceinfo/')
 
 const handleImport = () => {
-    importExcelUrl.value = '/api/report/interfaces/importInterfaceinfo/'
+    importExcelUrl.value = '/api/report/import/Interfaceinfo/'
     importVisible.value = true
 }
 

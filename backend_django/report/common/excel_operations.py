@@ -107,11 +107,11 @@ def generate_interface_workbook(interface, fields):
     return wb
 
 
-def handle_interface_import(full_filepath, user = None):
-    if not os.path.exists(full_filepath):
-        raise Exception(f'{full_filepath} not exists')
-    filename = os.path.basename(full_filepath)
-    wb = load_workbook(full_filepath)
+def handle_interface_import(file_path, user = None):
+    if not os.path.exists(file_path):
+        raise Exception(f'{file_path} not exists')
+    # filename = os.path.basename(full_filepath)
+    wb = load_workbook(file_path)
     ws = wb['report']
     platform_info = {
         'name':ws['F1'].value,

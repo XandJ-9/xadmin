@@ -6,7 +6,8 @@ from .views import (
     ModuleInfoViewSet,
     ReportInfoViewSet,
     InterfaceInfoViewSet,
-    InterfaceFieldViewSet
+    InterfaceFieldViewSet,
+    ImportExportViewSet
 )
 
 router = DefaultRouter()
@@ -15,6 +16,7 @@ router.register(r'modules', ModuleInfoViewSet)
 router.register(r'reports', ReportInfoViewSet)
 router.register(r'interfaces', InterfaceInfoViewSet)
 router.register(r'interface-fields', InterfaceFieldViewSet)
+router.register(r'', ImportExportViewSet, basename='import-export')
 
 urlpatterns = [
     path('report/', include(router.urls)),
