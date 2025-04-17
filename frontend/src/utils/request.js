@@ -55,7 +55,7 @@ request.interceptors.response.use(
           break
       }
     } else {
-      alert(ERROR_MESSAGES.NETWORK_ERROR)
+      ElMessage(ERROR_MESSAGES.NETWORK_ERROR)
     }
     return Promise.reject(error)
   }

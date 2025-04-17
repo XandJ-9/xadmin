@@ -1,11 +1,7 @@
 <template>
   <div class="interface-fields">
-        <div class="card-header">
-          <el-button type="primary" @click="goInterfaceList">返回接口列表</el-button>
-          <el-button type="primary" @click="handleAdd">新增字段</el-button>
-        </div>
     
-        <span style="margin-bottom: 10px;">接口字段配置 - {{ interfaceInfo?.interface_name }}</span>
+      <span style="margin-bottom: 10px;">接口字段配置 - {{ interfaceInfo?.interface_name }}</span>
 
       <!-- 数据表格 -->
       <el-table :data="tableData" style="width: 100%" v-loading="loading">
@@ -42,19 +38,26 @@
         </el-table-column>
       </el-table>
 
-      <!-- 分页 -->
-      <div class="pagination-container">
-        <el-pagination
-          :current-page="currentPage"
-          :page-size="pageSize"
-          :page-sizes="[10, 20, 50, 100]"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
-      </div>
 
+      <div class="card-footer">
+        <div>
+            <el-button type="primary" @click="goInterfaceList">返回接口列表</el-button>
+            <el-button type="primary" @click="handleAdd">新增字段</el-button>
+        </div>
+
+        <!-- 分页 -->
+        <div class="pagination-container">
+            <el-pagination
+            :current-page="currentPage"
+            :page-size="pageSize"
+            :page-sizes="[10, 20, 50, 100]"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="total"
+            @size-change="handleSizeChange"
+            @current-change="handleCurrentChange"
+            />
+        </div>
+      </div>
       <!-- 字段编辑对话框 -->
       <el-dialog
         v-model="dialogVisible"
@@ -352,8 +355,14 @@ onMounted(() => {
   margin-bottom: 10px;
 }
 
-.pagination-container {
+.card-footer {
+    display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-top: 20px;
+}
+
+.pagination-container {
   display: flex;
   justify-content: flex-end;
 }
