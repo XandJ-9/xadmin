@@ -18,7 +18,8 @@ class IsOwnerOrAdmin(permissions.BasePermission):
             return False
         if request.user.is_superuser or (request.user.role and request.user.role.name == 'admin'):
             return True
-        return obj.id == request.user.id
+        # 请求用户是否是创建者
+        return obj.creator == request.user
 
 class HasRolePermission(permissions.BasePermission):
     def __init__(self, allowed_roles=None):
