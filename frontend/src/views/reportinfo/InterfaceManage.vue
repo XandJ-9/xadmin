@@ -85,10 +85,14 @@
                 {{ scope.row.is_login_visit }}
             </template>
         </el-table-column>
+        <el-table-column prop="updator_username" label="更新用户">
+        </el-table-column>
         <el-table-column prop="update_time" label="更新时间" width="150">
           <template #default="scope">
             {{ scope.row.update_time }}
           </template>
+        </el-table-column>
+        <el-table-column prop="creator_username" label="创建用户">
         </el-table-column>
         <el-table-column prop="create_time" label="创建时间" width="150">
           <template #default="scope">
@@ -468,8 +472,8 @@ const handleEdit = (row) => {
     is_total: row.is_total,
     is_paging: row.is_paging,
     is_date_option: row.is_date_option,
-    platform: row.platform,
-    module: row.module,
+    platform: row.report_info.module_info.platform,
+    module: row.report_info.module,
     report: row.report
   })
   dialogVisible.value = true
@@ -481,7 +485,6 @@ const handleSubmit = async () => {
 
   await formRef.value.validate(async (valid) => {
     if (valid) {
-      try {
         if (dialogType.value === 'add') {
           await request.post('/api/report/interfaces/', formData)
           ElMessage.success('添加成功')
@@ -491,10 +494,6 @@ const handleSubmit = async () => {
         }
         dialogVisible.value = false
         getInterfaceList()
-      } catch (error) {
-        console.error('保存接口失败：', error)
-        ElMessage.error('保存失败')
-      }
     }
   })
 }
@@ -511,22 +510,12 @@ const handleDelete = async (row) => {
     }
   )
     .then(async () => {
-      try {
         await request.delete(`/api/report/interfaces/${row.id}/`)
         ElMessage.success('删除成功')
         getInterfaceList()
-      } catch (error) {
-        console.error('删除接口失败：', error)
-        ElMessage.error('删除失败')
-      }
-    })
-    .catch(() => {
-      ElMessage.info('已取消删除')
     })
 }
 
-const interfaceFields = ref([])
-const fieldEditorVisible = ref(false)
 // 跳转到字段配置页面
 const handleFields = async (row) => {
     router.push({ path: '/reportinfo/interface/fields', query: { interface_id: row.id } })

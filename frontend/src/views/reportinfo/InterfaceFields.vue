@@ -100,14 +100,14 @@
           </el-form-item>
           <el-form-item label="是否显示" prop="interface_show_flag">
             <el-radio-group v-model="formData.interface_show_flag">
-              <el-radio label="1">是</el-radio>
-              <el-radio label="0">否</el-radio>
+              <el-radio value="1">是</el-radio>
+              <el-radio value="0">否</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="是否导出" prop="interface_export_flag">
             <el-radio-group v-model="formData.interface_export_flag">
-              <el-radio label="1">是</el-radio>
-              <el-radio label="0">否</el-radio>
+              <el-radio value="1">是</el-radio>
+              <el-radio value="0">否</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="参数描述" prop="interface_para_desc">
@@ -136,7 +136,7 @@ import request from '@/utils/request'
 
 const router = useRouter()
 const route = useRoute()
-const interfaceId = route.params.id
+const interfaceId = route.query.interface_id
 
 // 接口信息
 const interfaceInfo = ref(null)
@@ -201,7 +201,7 @@ const getDataTypeName = (type) => {
 // 获取接口信息
 const getInterfaceInfo = async () => {
     try {
-    const interfaceId = route.query.interface_id
+    // const interfaceId = route.query.interface_id
     const response = await request.get(`/api/report/interfaces/${interfaceId}/`)
     interfaceInfo.value = response.data.data
   } catch (error) {

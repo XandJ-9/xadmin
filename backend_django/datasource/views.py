@@ -43,17 +43,16 @@ class DataSourceViewSet(viewsets.ModelViewSet):
         executor = QueryExecutorFactory.get_executor(datasource.type, host=datasource.host, port=datasource.port,database= datasource.database, username =datasource.username, password=datasource.password)
         try:
             if executor.test_connection():
-                return Response({'message': '连接成功'}, status=status.HTTP_200_OK)
+                return Response({'status':'success','msg': '连接成功'}, status=status.HTTP_200_OK)
             return Response(
-                {'error': '连接失败'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+                {'status':'error','msg': '请检查数据源配置是否正确'},
+                status=status.HTTP_200_OK
+                )
         except Exception as e:
-            logger.error(f'数据源连接测试失败: {str(e)}')
             return Response(
-                {'error': f'连接失败: {str(e)}'},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+                {'status':'error','msg': '请检查数据源配置是否正确'},
+                status=status.HTTP_200_OK
+                )
 
     @action(detail=True, methods=['post'], url_path='query')
     def execute_query(self, request, pk=None):

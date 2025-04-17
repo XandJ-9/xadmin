@@ -142,17 +142,15 @@ const handleEdit = (row) => {
 const btnTestList = ref([])
 
 const handleTest = async (row) => {
-    try {
-        // row.loading = true
     btnTestList.value.push(row)
-    await request.post(`/api/datasources/${row.id}/test/`)
-    ElMessage.success(`${row.name}连接测试成功`)
-  } catch (error) {
-    ElMessage.error(`${row.name}连接测试失败: ${error.response.data.error}`)
-  } finally {
-        // row.loading = false
-        btnTestList.value = btnTestList.value.filter(item => item.id !== row.id)
-  }
+    const response = await request.post(`/api/datasources/${row.id}/test/`)
+    if (response.data.status === 'success') {
+      ElMessage.success(`${row.name}连接测试成功`)
+    } else {
+      ElMessage.error(`${row.name}连接测试失败: ${response.data.msg}`)
+    }
+      // row.loading = false
+    btnTestList.value = btnTestList.value.filter(item => item.id !== row.id)
 }
 
 const handleDelete = (row) => {

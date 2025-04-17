@@ -50,6 +50,9 @@ request.interceptors.response.use(
         case HTTP_STATUS.FORBIDDEN:
             ElMessage.error(ERROR_MESSAGES.FORBIDDEN)
           break
+        case HTTP_STATUS.BAD_REQUEST:
+            ElMessage.error(ERROR_MESSAGES.BAD_REQUEST)
+          break
         default:
             ElMessage.error(ERROR_MESSAGES.DEFAULT)
           break

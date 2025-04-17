@@ -2,7 +2,7 @@ from django.core.paginator import Paginator
 from rest_framework.decorators import action
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny
-from system.permissions import IsOwnerOrAdmin,IsAdminUser
+from system.permissions import IsOwnerOrAdmin,IsAdminUser, HasRolePermission
 from .util_response import SuccessResponse, ErrorResponse, DetailResponse
 import logging
 
@@ -21,8 +21,8 @@ class CustomModelViewSet(ModelViewSet):
     # pagination_class = CustomPagination
 
     def get_permissions(self):
-        if self.action in ['create', 'update', 'partial_update', 'destroy']:
-            return [IsAdminUser()]
+        if self.action in ['list']:
+            return [AllowAny()]
         return [IsOwnerOrAdmin()]
     
     def filter_queryset(self, queryset):
