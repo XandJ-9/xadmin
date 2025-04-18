@@ -170,6 +170,8 @@
           :rules="rules"
           label-width="120px"
         >
+        <!-- 
+         报表的平台模块信息放在报表设计中修改
           <el-form-item label="平台名称" prop="platform">
             <el-select v-model="formData.platform" placeholder="请选择平台">
               <el-option
@@ -190,6 +192,7 @@
               />
             </el-select>
           </el-form-item>
+        -->
           <el-form-item label="报表名称" prop="report">
             <el-select v-model="formData.report" placeholder="请选择报表">
               <el-option

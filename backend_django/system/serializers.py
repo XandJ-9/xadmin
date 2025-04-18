@@ -1,3 +1,4 @@
+from rest_framework.utils.serializer_helpers import BindingDict
 from rest_framework import serializers
 from .models import User,Role,Menu, SystemConfig
 
@@ -77,6 +78,24 @@ class SystemConfigSerializer(serializers.ModelSerializer):
         fields = ['id', 'key', 'value', 'description', 'creator', 'creator_info', 'created_at', 'updated_at']
         read_only_fields = ['id', 'created_at', 'updated_at']
 
+
+def set_choice_field_internal_value(fields:BindingDict, field_name:str, data: dict):
+    # for field_name in fields:  这种方式无法获取到field_name
+        # print(f'{field_name}')
+    field = fields[field_name]
+    if not isinstance(field, serializers.ChoiceField):  # 判断是否为ChoiceField
+        return 
+    for internal_value, value in field.choices.items():
+        # 将传入的choice字段值修改为数据库中存储的内容
+        if data.get(field_name) == value:
+            data[field_name]= internal_value
+
+def set_choice_field_representation(fields:BindingDict, field_name:str, instance):
+    field = fields[field_name]
+    if not isinstance(field, serializers.ChoiceField):  # 判断是否为ChoiceField
+        return
+    instance.__dict__[field_name] = field.choices.get(instance.__dict__[field_name])
+
 class BizModelSerializer(serializers.ModelSerializer):
     """adding creator and updator fields to serializers."""
     creator_username = serializers.CharField(source='creator.username', read_only=True)
@@ -84,11 +103,16 @@ class BizModelSerializer(serializers.ModelSerializer):
     updator_username = serializers.CharField(source='updator.username', read_only=True)
     update_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True, source='updated_at')
     
-    # def create(self, validated_data):
-    #     # validated_data['creator'] = self.context['request'].user
-    #     # validated_data['updator'] = self.context['request'].user
-    #     return super().create(validated_data)
+    def to_internal_value(self, data):
+        ## 这里有一点迷惑，为什么在这里可以获取到self.fields中的key值，
+        ## 在set_choice_field_internal_value方法中却不能这样遍历 self.fields的值到field_name
+        for field_name in self.fields:
+            if field_name not in data.keys():
+                continue
+            set_choice_field_internal_value(self.fields, field_name, data)
+        return super().to_internal_value(data)
 
-    # def update(self, instance, validated_data):
-    #     # validated_data['updator'] = self.context['request'].user
-    #     return super().update(instance, validated_data)
+    def to_representation(self, instance):
+        for field_name in self.fields:
+            set_choice_field_representation(self.fields,field_name,instance)
+        return super().to_representation(instance)
