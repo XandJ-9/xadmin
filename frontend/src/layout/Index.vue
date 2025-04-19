@@ -63,7 +63,7 @@ const toggleCollapse = () => {
 }
 
 const handleLogout = () => {
-  localStorage.removeItem('token')
+  // localStorage.removeItem('token')
   const userStore = useUserStore()
   userStore.logout()
   router.push('/login')

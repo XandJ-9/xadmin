@@ -79,7 +79,8 @@ class UserViewSet(viewsets.ModelViewSet):
             return Response({
                 'token': str(refresh.access_token),
                 'user': UserSerializer(user).data
-            })
+            },
+            status=status.HTTP_200_OK)
         return Response(
             {'error': '用户名或密码错误'},
             status=status.HTTP_401_UNAUTHORIZED

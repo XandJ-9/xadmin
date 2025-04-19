@@ -27,6 +27,7 @@ router.beforeEach(async (to, from, next) => {
   
   // 未登录状态下，重定向到登录页
   if (!isLoggedIn) {
+    console.log('未登录或登录失败...')
     return next(`/login?redirect=${to.path}`)
   }
   

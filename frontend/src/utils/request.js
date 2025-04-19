@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { useUserStore } from '@/store/user'
 import { API_CONFIG, USER_STORAGE_KEYS, HTTP_STATUS, ERROR_MESSAGES } from './config'
 import { ElLoading, ElMessage } from 'element-plus'
 import { saveAs } from 'file-saver'
@@ -8,8 +9,12 @@ const request = axios.create(API_CONFIG)
 // 请求拦截器
 request.interceptors.request.use(
   config => {
-    const token = localStorage.getItem(USER_STORAGE_KEYS.TOKEN)
-    const user = JSON.parse(localStorage.getItem(USER_STORAGE_KEYS.USER) || '{}')
+    // const token = localStorage.getItem(USER_STORAGE_KEYS.TOKEN)
+    // const user = JSON.parse(localStorage.getItem(USER_STORAGE_KEYS.USER) || '{}')
+
+    const userStore = useUserStore()
+    const user = userStore.getUserInfo
+    const token = userStore.getToken
 
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`
@@ -39,13 +44,15 @@ request.interceptors.response.use(
     return response
   },
   error => {
+    console.error('响应错误:', error)
     if (error.response) {
       switch (error.response.status) {
         case HTTP_STATUS.UNAUTHORIZED:
           // 未授权，清除用户信息并跳转到登录页
-          localStorage.removeItem(USER_STORAGE_KEYS.TOKEN)
-          localStorage.removeItem(USER_STORAGE_KEYS.USER)
-          window.location.href = '/login'
+          // localStorage.removeItem(USER_STORAGE_KEYS.TOKEN)
+          // localStorage.removeItem(USER_STORAGE_KEYS.USER)
+          // window.location.href = '/login'
+          ElMessage.error(ERROR_MESSAGES.UNAUTHORIZED)
           break
         case HTTP_STATUS.FORBIDDEN:
             ElMessage.error(ERROR_MESSAGES.FORBIDDEN)

@@ -18,6 +18,7 @@ export const HTTP_STATUS = {
 
 // 错误消息配置
 export const ERROR_MESSAGES = {
+  UNAUTHORIZED: '登录信息错误，请重新登录',
   BAD_REQUEST: '请求失败，请稍后重试',
   NETWORK_ERROR: '网络错误，请检查您的网络连接',
   FORBIDDEN: '您没有权限访问此资源',
