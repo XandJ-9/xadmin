@@ -6,16 +6,16 @@ import { useRouteStore } from '@/store/route'
 // 不需要登录就可以访问的路由
 const whiteList = ['/login', '/register']
 
+  
 /**
  * 全局路由守卫
  * 处理权限验证和动态路由加载
  */
 router.beforeEach(async (to, from, next) => {
-  // 获取store
-  const userStore = useUserStore()
-  const menuStore = useMenuStore()
-  const routeStore = useRouteStore()
-  
+    // 获取store
+    const userStore = useUserStore()
+    const menuStore = useMenuStore()
+    const routeStore = useRouteStore()
   // 检查是否为白名单路由（登录、注册等不需要验证的页面）
   if (whiteList.includes(to.path)) {
     // 白名单路由直接放行
@@ -37,7 +37,8 @@ router.beforeEach(async (to, from, next) => {
   }
   
   // 检查动态路由是否已加载
-  if (!routeStore.getRoutesAddedStatus) {
+    if (!routeStore.getRoutesAddedStatus) {
+      console.log('动态路由未加载')
     try {
       // 确保菜单数据已加载
       if (!menuStore.isLoaded) {
@@ -60,7 +61,7 @@ router.beforeEach(async (to, from, next) => {
   }
     // 判断访问的路由是否在动态路由中,
     // 需要修改使用正则匹配
-  if(router.getRoutes().find(route => route.path === to.path) === undefined) {
+  if(router.resolve(to).matched.length === 0) {
     next('/404')
   } else {
     next()
