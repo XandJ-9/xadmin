@@ -112,6 +112,6 @@ export const useRouteStore = defineStore('route', {
       menuStore.resetMenuState()
       this.isRoutesAdded = false
       // 这里可以添加移除动态路由的逻辑
-    }
+      },
   }
 })

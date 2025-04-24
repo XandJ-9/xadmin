@@ -99,12 +99,13 @@
             {{ scope.row.create_time }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" min-width="300">
+        <el-table-column label="操作" fixed="right" min-width="350">
           <template #default="scope">
             <el-button size="small" type="primary" @click="handleEdit(scope.row)">编辑</el-button>
             <el-button size="small" type="danger" @click="handleDelete(scope.row)">删除</el-button>
             <el-button size="small" type="success" @click="handleFields(scope.row)">字段配置</el-button>
             <el-button size="small" type="info" @click="handleExport(scope.row)">导出</el-button>
+            <el-button size="small" type="warning" @click="handleTest(scope.row)">测试</el-button>
           </template>
         </el-table-column>
         <!-- <el-table-column type="expand" width="50">
@@ -569,6 +570,14 @@ const handleUpload = (options) => {
     console.error('导入失败：', error)
     ElMessage.error('导入失败')
   })
+}
+
+
+const handleTest = (row) => {
+    router.push({
+        path: `/reportinfo/interface/view/${row.id}`,
+        query: { interface_id: row.id , interface_code : row.interface_code , interface_name : row.interface_name }
+    })
 }
 
 // 页面加载时获取数据

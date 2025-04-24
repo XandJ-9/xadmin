@@ -58,7 +58,8 @@ router.beforeEach(async (to, from, next) => {
       return next(`/login?redirect=${to.path}`)
     }
   }
-  // 判断访问的路由是否在动态路由中
+    // 判断访问的路由是否在动态路由中,
+    // 需要修改使用正则匹配
   if(router.getRoutes().find(route => route.path === to.path) === undefined) {
     next('/404')
   } else {

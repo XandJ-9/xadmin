@@ -101,6 +101,7 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search } from '@element-plus/icons-vue'
+import { useUserStore } from '@/store/user'
 import request from '@/utils/request'
 import { listToTree } from '@/utils/treeUtils'
 
@@ -227,6 +228,8 @@ const handleDelete = (row) => {
   })
 }
 
+
+const user= useUserStore()
 // 重置表单
 const resetForm = () => {
   if (menuFormRef.value) {
@@ -240,7 +243,8 @@ const resetForm = () => {
     component: '',
     icon: '',
     sort: 0,
-    hidden: false,
+      hidden: false,
+    creator: user.getUserInfo.id,
     meta_need_tagview: true
   })
 }
