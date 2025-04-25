@@ -13,14 +13,14 @@ request.interceptors.request.use(
     // const user = JSON.parse(localStorage.getItem(USER_STORAGE_KEYS.USER) || '{}')
 
     const userStore = useUserStore()
-    const user = userStore.getUserInfo
     const token = userStore.getToken
+    const role = userStore.getRole
 
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`
     }
-    if (user.role) {
-      config.headers['X-User-Role'] = user.role
+    if (role) {
+      config.headers['X-User-Role'] = role
     }
 
     return config
@@ -32,44 +32,44 @@ request.interceptors.request.use(
 )
 
 // 响应拦截器
-request.interceptors.response.use(
-  response => {
-    // 如果是登录请求且成功，使用router进行导航
-    if (response.config.url.includes('/login/') && response.status === 200) {
-      const router = window._router
-      if (router) {
-        router.push('/dashboard')
-      }
-    }
-    return response
-  },
-  error => {
-    console.error('响应错误:', error)
-    if (error.response) {
-      switch (error.response.status) {
-        case HTTP_STATUS.UNAUTHORIZED:
-          // 未授权，清除用户信息并跳转到登录页
-          // localStorage.removeItem(USER_STORAGE_KEYS.TOKEN)
-          // localStorage.removeItem(USER_STORAGE_KEYS.USER)
-          // window.location.href = '/login'
-          ElMessage.error(ERROR_MESSAGES.UNAUTHORIZED)
-          break
-        case HTTP_STATUS.FORBIDDEN:
-            ElMessage.error(ERROR_MESSAGES.FORBIDDEN)
-          break
-        case HTTP_STATUS.BAD_REQUEST:
-            ElMessage.error(ERROR_MESSAGES.BAD_REQUEST)
-          break
-        default:
-            ElMessage.error(ERROR_MESSAGES.DEFAULT)
-          break
-      }
-    } else {
-      ElMessage(ERROR_MESSAGES.NETWORK_ERROR)
-    }
-    return Promise.reject(error)
-  }
-)
+// request.interceptors.response.use(
+//   response => {
+//     // 如果是登录请求且成功，使用router进行导航
+//     if (response.config.url.includes('/login/') && response.status === 200) {
+//         const router = window._router
+//         if (router) {
+//           router.push('/dashboard')
+//         }
+//       }
+//       return response
+//   },
+//   error => {
+//     console.error('响应错误:', error)
+//     if (error.response) {
+//       switch (error.response.status) {
+//         case HTTP_STATUS.UNAUTHORIZED:
+//           // 未授权，清除用户信息并跳转到登录页
+//           // localStorage.removeItem(USER_STORAGE_KEYS.TOKEN)
+//           // localStorage.removeItem(USER_STORAGE_KEYS.USER)
+//           // window.location.href = '/login'
+//           ElMessage.error(ERROR_MESSAGES.UNAUTHORIZED)
+//           break
+//         case HTTP_STATUS.FORBIDDEN:
+//             ElMessage.error(ERROR_MESSAGES.FORBIDDEN)
+//           break
+//         case HTTP_STATUS.BAD_REQUEST:
+//             ElMessage.error(ERROR_MESSAGES.BAD_REQUEST)
+//           break
+//         default:
+//             ElMessage.error(ERROR_MESSAGES.DEFAULT)
+//           break
+//       }
+//     } else {
+//       ElMessage(ERROR_MESSAGES.NETWORK_ERROR)
+//     }
+//     return Promise.reject(error)
+//   }
+// )
 
 
 export function download(url, method, params = {}, filename='文件导出.xlsx') {

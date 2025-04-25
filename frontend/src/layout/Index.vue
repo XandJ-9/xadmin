@@ -48,7 +48,7 @@ onMounted(() => {
   //   const userData = JSON.parse(user)
   //   username.value = userData.username
   // }
-  username.value = userStore.getUserInfo.username
+  username.value = userStore.getUsername
 })
 
 

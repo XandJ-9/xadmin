@@ -63,15 +63,15 @@ const handleLogin = () => {
             const formdata = new FormData()
             formdata.append('username', loginForm.username)
             formdata.append('password', loginForm.password)
-          // 使用Pinia store进行登录
+            // 使用Pinia store进行登录
             const result = await userStore.login(formdata)
-        
-        if (result.success) {
-          ElMessage.success('登录成功')
-          router.push('/dashboard')
-        } else {
-          router.push('/login')
-        }
+            if (result.success) {
+                ElMessage.success(result.message)
+                router.push('/dashboard')
+            } else {
+                ElMessage.error(result.message)
+                router.push('/login')
+            }
       } catch (error) {
         ElMessage.error('登录失败，请稍后重试')
       } finally {

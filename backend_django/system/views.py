@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate
 from .models import User, Role, Menu, SystemConfig
 from. serializers import MenuSerializer, SystemConfigSerializer,UserSerializer, RoleSerializer
 from .permissions import IsAdminUser, IsOwnerOrAdmin,HasRolePermission
+from .authentication import get_user_from_token
 import logging
 
 logger = logging.getLogger('django')
@@ -66,6 +67,11 @@ class UserViewSet(viewsets.ModelViewSet):
         if self.action in ['retrieve', 'update', 'partial_update', 'destroy']:
             return [IsAdminUser()]
         return [IsOwnerOrAdmin()]
+
+    @action(detail=False, methods=['get'], url_path='getUserInfo')
+    def get_user_info(self, request):
+        user = get_user_from_token(request)
+        return Response({"user": UserSerializer(user).data})
 
     @action(detail=False, methods=['post'])
     def login(self, request):
