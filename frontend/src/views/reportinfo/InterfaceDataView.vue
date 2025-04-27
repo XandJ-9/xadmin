@@ -5,28 +5,21 @@
                 <el-input v-model="interface_code" placeholder="接口代码" :disabled="true"></el-input>
             </el-form-item>
             <el-form-item label="接口参数">
-                <el-button type="text" icon="el-icon-edit"
+                <el-button type="primary" icon="el-icon-edit"
                     @click="showJsonFormat = !showJsonFormat">{{ showJsonFormat ? '表格' : 'JSON' }}</el-button>
                 <el-input v-model="queryForm.query_field_json" placeholder="接口参数" type="textarea" v-if="showJsonFormat"
-                    rows=10></el-input>
+                    rows="10"></el-input>
                 <el-table v-else :data="queryForm.query_field_list" border fit highlight-current-row>
-                    <el-table-column align="center" label="参数名称" value="">
-                        <template slot-scope="{row}">
-                            <span>{{ row.interface_para_name }}</span>
-                        </template>
-                    </el-table-column>
-                    <el-table-column align="center" label="参数编码" value="">
-                        <template slot-scope="{row}">
-                            <span>{{ row.interface_para_code }}</span>
-                        </template>
-                    </el-table-column>
+                    <el-table-column align="center" label="参数名称" prop="interface_para_name"/>
+                    <el-table-column align="center" label="参数编码" prop="interface_para_code"/>
+                    <!--
                     <el-table-column align="center" label="参数数值" value="">
-                        <template slot-scope="{row}">
-                            <!-- todo： 修改为行内编辑的样式  -->
+                        <template #default="{row}">
                             <el-input :placeholder="row.interface_para_code"
                                 v-model="queryForm.query_para_value[row.interface_para_code]"></el-input>
                         </template>
                     </el-table-column>
+                -->
                 </el-table>
             </el-form-item>
     </el-form>
@@ -107,7 +100,7 @@ const exportOptions = ref({
     autoWidth: true,
     bookType: 'xlsx'
 })
-const queryForm =ref({
+const queryForm =reactive({
     code: '',
     query_field_json: '',
     query_field_list: [],
@@ -136,7 +129,8 @@ const getInterfaceFields = async () => {
     queryFields.value = fields.filter(e => e.interface_para_type == '输入参数')
     columnsFields.value = fields.filter(e => e.interface_para_type == '输出参数')
     // console.log(queryFields, columnsFields)
-    queryForm.query_field_list = queryFields.value.map(e => { para_code: e.interface_para_code; para_name: e.interface_para_name; para_value: e.interface_para_default || '' })
+    queryForm.query_field_list = queryFields
+    console.log(queryForm)
 }
 // const queryData = (data) => {
 //             this.reset()
