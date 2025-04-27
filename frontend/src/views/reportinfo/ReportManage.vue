@@ -48,10 +48,10 @@
       <el-table-column prop="module_info.platform_info.name" label="所属平台" />
       <el-table-column prop="create_time" label="创建时间" width="180" />
       <el-table-column prop="update_time" label="更新时间" width="180" />
-      <el-table-column label="操作" width="200" fixed="right">
+      <el-table-column label="操作" width="100" fixed="right">
         <template #default="{ row }">
-          <el-button size="small" @click="handleEdit(row)">编辑</el-button>
-          <el-button size="small" type="danger" @click="handleDelete(row)">删除</el-button>
+          <el-button type="primary" size="small" @click="handleEdit(row)">编辑</el-button>
+          <!-- <el-button size="small" type="danger" @click="handleDelete(row)">删除</el-button> -->
         </template>
       </el-table-column>
     </el-table>
@@ -415,7 +415,7 @@ const handleEdit = (row) => {
 }
 
 const handleDelete = (row) => {
-  ElMessageBox.confirm('确认删除该报表?', '提示', {
+  ElMessageBox.confirm('删除报表会连带下属所有接口被清理，请仔细确认是否删除该报表?', '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning'

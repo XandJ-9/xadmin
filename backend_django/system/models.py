@@ -57,7 +57,8 @@ class Menu(BaseModel):
     meta_need_tagview = models.BooleanField(default=False, verbose_name='是否需要tagview')
     created_at = models.DateTimeField(default=timezone.now, verbose_name='创建时间')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
-    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_menus', verbose_name='创建者')
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_menus', verbose_name='创建者', null=True)
+    updator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='updated_menus', verbose_name='更新者', null=True)
 
     class Meta:
         verbose_name = '菜单'

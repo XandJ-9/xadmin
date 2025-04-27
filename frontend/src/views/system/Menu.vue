@@ -204,7 +204,6 @@ const handleEdit = (row) => {
     sort: row.sort,
     hidden: row.hidden,
     parentId: row.parent || 0 , // 如果parent为null，则设置为0（根菜单）
-      creator: row.creator,
     needTagview: row.meta.needTagview
   })
   dialogVisible.value = true
@@ -243,8 +242,7 @@ const resetForm = () => {
     component: '',
     icon: '',
     sort: 0,
-      hidden: false,
-    creator: user.getUserInfo.id,
+    hidden: false,
     meta_need_tagview: true
   })
 }
@@ -262,7 +260,6 @@ const submitForm = () => {
         sort: menuForm.sort,
         hidden: menuForm.hidden,
         parent: menuForm.parentId === 0 ? null : menuForm.parentId,
-          creator: menuForm.creator,
           meta_need_tagview: menuForm.needTagview
       }
       
@@ -270,7 +267,7 @@ const submitForm = () => {
       if (menuForm.id) {
         submitData.id = menuForm.id
       }
-
+      console.log('submitData ',submitData)
         // 调用保存菜单API
       const success = await saveMenu(submitData)
       if (success) {

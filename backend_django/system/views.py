@@ -128,7 +128,7 @@ class MenuViewSet(viewsets.ModelViewSet):
         return super().get_permissions()
     
     def perform_create(self, serializer):
-        serializer.save(creator=self.request.user)
+        serializer.save(creator=self.request.user, updator=self.request.user)
     
     def list(self, request, *args, **kwargs):
         # 获取顶级菜单

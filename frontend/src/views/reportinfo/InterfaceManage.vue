@@ -195,7 +195,8 @@
           </el-form-item>
         -->
           <el-form-item label="报表名称" prop="report">
-            <el-select v-model="formData.report" placeholder="请选择报表">
+            <el-select v-model="formData.report" placeholder="请选择报表"
+            @focus="getReportList">
               <el-option
                 v-for="item in reportOptions"
                 :key="item.id"
@@ -329,7 +330,7 @@ const getModuleList = async (platformId) => {
 // 获取报表列表
 const getReportList = async (moduleId) => {
   try {
-    const response = await request.get(`/api/report/reports/?module_id=${moduleId}&noPage=1`)
+    const response = await request.get(`/api/report/reports/?noPage=1`)
       reportOptions.value = response.data.data
   } catch (error) {
     console.error('获取报表列表失败：', error)

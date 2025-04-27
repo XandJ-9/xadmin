@@ -85,7 +85,10 @@ const open = async (roleData) => {
   // 设置选中状态
   nextTick(() => {
     if (menuTreeRef.value && selectedMenuIds.value.length > 0) {
-      menuTreeRef.value.setCheckedKeys(selectedMenuIds.value)
+      // menuTreeRef.value.setCheckedKeys(selectedMenuIds.value,true)
+      selectedMenuIds.value.forEach(id => {
+        menuTreeRef.value.setChecked(id, true, false)
+      })
     }
   })
 }
