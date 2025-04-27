@@ -5,8 +5,12 @@
                 <el-input v-model="interface_code" placeholder="接口代码" :disabled="true"></el-input>
             </el-form-item>
             <el-form-item label="接口参数">
-                <el-button type="primary" icon="el-icon-edit"
-                    @click="showJsonFormat = !showJsonFormat">{{ showJsonFormat ? '表格' : 'JSON' }}</el-button>
+                <el-icon :size="20">
+                    <Edit />
+                </el-icon>
+                <el-button type="link"
+                    @click="showJsonFormat = !showJsonFormat">{{ showJsonFormat ? '表格' : 'JSON' }}
+                </el-button>
                 <el-input v-model="queryForm.query_field_json" placeholder="接口参数" type="textarea" v-if="showJsonFormat"
                     rows="10"></el-input>
                 <el-table v-else :data="queryForm.query_field_list" border fit highlight-current-row>
