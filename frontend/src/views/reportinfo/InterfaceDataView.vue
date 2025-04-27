@@ -2,7 +2,7 @@
   <div id="interface-test-container">
     <el-form class="demo-form-inline" :model="queryForm">
             <el-form-item label="接口编码">
-                <el-input v-model="queryForm.code" placeholder="接口代码" :disabled="true"></el-input>
+                <el-input v-model="interface_code" placeholder="接口代码" :disabled="true"></el-input>
             </el-form-item>
             <el-form-item label="接口参数">
                 <el-button type="text" icon="el-icon-edit"
