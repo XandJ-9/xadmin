@@ -2,6 +2,8 @@ import router from './router/index'
 import { useUserStore } from '@/store/user'
 import { useRouteStore } from '@/store/route'
 import { getToken, removeToken } from '@/utils/auth'
+import NProgress from 'nprogress' // progress bar
+import 'nprogress/nprogress.css' // progress bar style
 
 // 不需要登录就可以访问的路由
 const whiteList = ['/login', '/register']
@@ -12,6 +14,7 @@ const whiteList = ['/login', '/register']
  * 处理权限验证和动态路由加载
  */
 router.beforeEach(async (to, from, next) => {
+    NProgress.start()
     // 获取store
     const routeStore = useRouteStore()
 
@@ -58,5 +61,9 @@ router.beforeEach(async (to, from, next) => {
     }
 }
 )
+
+router.afterEach(() => {
+    NProgress.done()
+})
 
 export default router

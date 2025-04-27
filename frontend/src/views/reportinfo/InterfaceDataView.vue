@@ -2,13 +2,13 @@
   <div id="interface-test-container">
     <el-form class="demo-form-inline" :model="queryForm">
             <el-form-item label="接口编码">
-                <el-input v-model="queryForm.code" placeholder="接口代码" :disabled="!codeEditable"></el-input>
+                <el-input v-model="queryForm.code" placeholder="接口代码" :disabled="true"></el-input>
             </el-form-item>
             <el-form-item label="接口参数">
                 <el-button type="text" icon="el-icon-edit"
                     @click="showJsonFormat = !showJsonFormat">{{ showJsonFormat ? '表格' : 'JSON' }}</el-button>
                 <el-input v-model="queryForm.query_field_json" placeholder="接口参数" type="textarea" v-if="showJsonFormat"
-                    :rows="textareaRows"></el-input>
+                    rows=10></el-input>
                 <el-table v-else :data="queryForm.query_field_list" border fit highlight-current-row>
                     <el-table-column align="center" label="参数名称" value="">
                         <template slot-scope="{row}">
@@ -29,8 +29,9 @@
                     </el-table-column>
                 </el-table>
             </el-form-item>
-        </el-form>
+    </el-form>
 
+    <!--
 
         <el-button @click="queryData({ env_type: 0 })" type="text" size="small">查询测试环境</el-button>
         <el-button @click="queryData({ env_type: 1 })" type="text" size="small">查询生产环境</el-button>
@@ -38,14 +39,10 @@
         <el-button @click="exportData({ env_type: 1 })" type="text" size="small">生产导出</el-button>
 
         <div v-loading="queryLoading || downloadLoading">
-            <!-- 
-            <el-alert v-if="this.page.total > 0" :title="`共有${this.page.total}条数据`" type="success" show-icon center
-                close-text="关闭" :closable="true"></el-alert>
-            -->
             <el-alert v-if="errorMsg.error" :title="errorMsg.msg" type="error" show-icon center close-text="关闭"
                 :closable="true"></el-alert>
 
-            <el-table v-show="visiable" :data="page.tableData" border highlight-current-row style="width: 100%">
+            <el-table v-show="visiable" :data="pageInfo.tableData" border highlight-current-row style="width: 100%">
                 <el-table-column align="center" v-for="item,index in columns" :key="index"
                     :label="item.paraDesc ? item.paraDesc : item.paraName" :show-overflow-tooltip="true" :min-width="100"
                     >
@@ -63,20 +60,227 @@
                     </template>
                 </el-table-column>
             </el-table>
-            <pagination v-show="page.total > 0" :total="page.total" :page.sync="page.page_no"
-                :limit.sync="page.page_size" @pagination="nextPage()" />
+            <pagination v-show="pageInfo.total > 0" :total="pageInfo.total" :page.sync="pageInfo.page_no"
+                :limit.sync="pageInfo.page_size" @pagination="nextPage()" />
 
         </div>
+    -->
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, computed, watch, onMounted } from 'vue'
-const props = defineProps({
-    interface_id: { type: Number, default: 0 },
-    interface_code: { type: String, default: '' },
-    interface_name: { type: String, default: '' },
+import { useRouter, useRoute } from 'vue-router'
+import request from '@/utils/request'
+// import { XLSX } from 'xlsx'
+import { parseTime } from '@/utils/index'
+// const props = defineProps({
+//     interface_id: { type: Number, default: 0 },
+//     interface_code: { type: String, default: '' },
+//     interface_name: { type: String, default: '' },
+// })
+
+const route = useRoute()
+const interface_id = ref(null)
+const interface_code = ref(null)
+const interface_name = ref(null)
+const queryFields = ref([])
+const columnsFields = ref([])
+
+
+const columns = ref([])
+const dataList = ref([])
+const totalDataList = ref([])
+const pageInfo = ref({
+    env_type: 0,
+    page_no: 1,
+    page_size: 10,
+    total: 0,
+    tableData:[]
 })
+const visiable=ref(false)
+const showJsonFormat=ref(false)
+const queryLoading = ref(false)
+const downloadLoading =ref(false)
+const exportOptions = ref({
+    filename: 'test.xlsx',
+    autoWidth: true,
+    bookType: 'xlsx'
+})
+const queryForm =ref({
+    code: '',
+    query_field_json: '',
+    query_field_list: [],
+    query_para_value: {}
+})
+
+onMounted(() => {
+    // const { interface_id, interface_code, interface_name } = route.query
+    interface_id.value = route.query.interface_id
+    interface_code.value = route.query.interface_code
+    interface_name.value = route.query.interface_name
+    getInterfaceFields()
+})
+const getInterfaceFields = async () => {
+            // getInterfaceFields({ interface_id: this.id, interface_para_type: '1' }).then(response => {
+            //     this.queryForm.query_field_list = response.data
+            //     this.queryForm.query_field_json = '{' + this.queryForm.query_field_list.map(e => `"${e.interface_para_code}":""`).join(',') + '}'
+            //     this.queryForm.query_para_value = JSON.parse(this.queryForm.query_field_json)
+            //     // console.log(this.queryForm.query_field_json)
+    // })
+    const resp = await request.get(`/api/report/interface-fields/?interface=${interface_id.value}&noPage=1`)
+    const fields = resp.data.data
+    if (!fields) {
+        return 
+    }
+    queryFields.value = fields.filter(e => e.interface_para_type == '输入参数')
+    columnsFields.value = fields.filter(e => e.interface_para_type == '输出参数')
+    // console.log(queryFields, columnsFields)
+    queryForm.query_field_list = queryFields.value.map(e => { para_code: e.interface_para_code; para_name: e.interface_para_name; para_value: e.interface_para_default || '' })
+}
+// const queryData = (data) => {
+//             this.reset()
+//             let interface_code = this.queryForm.code
+//             // 只拷贝数值，不修改被引用的对象值
+//             let payload = this.showJsonFormat ? JSON.parse(this.queryForm.query_field_json) : { ... this.queryForm.query_para_value }
+//             // console.log(this.showJsonFormat, payload)
+//             payload = Object.assign(payload, {
+//                 "export_type": "1",
+//                 "operate_type": "1",
+//                 "page_no": this.page.page_no,
+//                 "page_size": this.page.page_size
+//             })
+//             this.queryLoading = true
+
+//             getReportData({ interface_code, payload, env_type: data.env_type }).then(response => {
+//                 const res = response.data
+//                 try {
+//                         if (res.code == '-1') {
+//                             this.errorMsg.error = true
+//                             this.errorMsg.msg = res.message
+//                         } else {
+//                             const property = res.property
+//                             let columns = this.sortColumns(property);
+//                             this.columns = Object.assign({}, columns);
+//                             if (res.isPaging == '1') {
+//                                 this.dataList = res.data.list
+//                                 this.page.total = res.data.total
+//                                 if (res.isTotal == '1') {
+//                                 this.totalDataList = res.data.totalList
+//                                 }
+//                             } else {
+//                                 this.dataList = res.data
+//                                 this.page.total = this.dataList.length
+//                                 if (res.isTotal == '1') {
+//                                 this.totalDataList = res.totaldata
+//                                 }
+//                             }
+
+
+//                             this.prepareTableData(this.dataList);
+//                             this.visiable = true
+//                         }
+//                         this.queryLoading = false
+//                         this.page.env_type = data.env_type
+//                 } catch (e) {
+//                     this.errorMsg.error = true
+//                     this.errorMsg.msg = "接口返回数据失败"+ e
+//                 } finally {
+//                     this.queryLoading = false
+//                 }
+//             }
+//             ).finally(() => {
+//                 this.queryLoading = false
+//             })
+// }
+        
+// const exportData = (data) => {
+//             this.reset();
+//             // let interface_code = this.queryForm.code;
+//             // let payload = this.showJsonFormat ? JSON.parse(this.queryForm.query_field_json) : { ... this.queryForm.query_para_value };
+//             // payload = Object.assign(payload, {
+//             //     "export_type": "2",
+//             //     "operate_type": "2"
+//             // })
+//             // this.downloadLoading = true
+//             // // this.pageQueryEnv = data.env_type
+//             // getReportData({ interface_code, payload, env_type: data.env_type }).then(response => {
+//             //     try {
+//             //         if (response.data.code == '-1') {
+//             //             this.errorMsg.error = true;
+//             //             this.errorMsg.msg = response.data.message;
+//             //         } else {
+//             //             const row = response.data.data;
+//             //             this.dataList = response.data.data;
+//             //             if (response.data.isTotal == '1') {
+//             //                 row.push(...response.data.totaldata);
+//             //                 this.totalDataList = response.data.totaldata;
+//             //             }
+//             //             this.page.total = row.length;
+//             //             this.prepareTableData(this.dataList);
+
+//             //             const interfaceName = response.data.interfaceName;
+//             //             this.total = row.length;
+//             //             const tHeader = this.sortColumns(response.data.property, 2);
+//             //             const tHeaderCode = tHeader.map(col => col.paraCode);
+//             //             const worksheet = XLSX.utils.json_to_sheet(row, { header: tHeaderCode });
+//             //             const workbook = XLSX.utils.book_new();
+//             //             const tHeaderDesc = [];
+//             //             tHeaderDesc.push(tHeader.map(col => col.paraDesc));
+//             //             XLSX.utils.sheet_add_aoa(worksheet, tHeaderDesc);
+//             //             XLSX.utils.book_append_sheet(workbook, worksheet);
+//             //             const export_time = parseTime(new Date(), '{y}{m}{d}{h}{i}{s}');
+//             //             XLSX.writeFile(workbook, `${interfaceName}-${export_time}.xlsx`, { compression: true });
+//             //         }
+//             //         this.downloadLoading = false;
+//             //         this.visiable = true;
+//             //     } catch (e) {
+//             //         this.errorMsg.error = true
+//             //         this.errorMsg.msg = '导出失败'
+//             //     } finally {
+//             //         this.downloadLoading = false
+//             //     }
+//             // }).finally(() => {
+//             //     this.downloadLoading = false;
+//             // })
+//         }
+// const prepareTableData = (dataList)=> {
+//             if (dataList.length > this.page.page_size) {
+//                 this.page.tableData = dataList.slice((this.page.page_no - 1) * this.page.page_size, this.page.page_no * this.page.page_size);
+//             } else {
+//                 this.page.tableData = dataList;
+//             }
+
+//             if (this.totalDataList.length > 0) {
+//                 this.page.tableData = this.page.tableData.concat(this.totalDataList);
+//             }
+//         }
+// const sortColumns = (columns, flag = 1) => {
+//             return Object.entries(columns).filter(column => {
+//                 if (flag == '1') {
+//                     // 可查询
+//                     return column[1].showFlag == '1'
+//                 } else {
+//                     // 导出
+//                     return column[1].exportFlag == '1'
+//                 }
+//             }).sort(([k1, v1], [k2, v2]) => {
+//                 return v1.position - v2.position
+//             }).map(o => o[1])
+//         }
+// const reset = () => {
+//             this.errorMsg.error = false;
+//             this.visiable = false;
+//         }
+// const nextPage= () => {
+//             if (this.dataList.length > this.page.page_size) {
+//                 this.page.tableData = this.dataList.slice((this.page.page_no - 1) * this.page.page_size, this.page.page_no * this.page.page_size)
+//                 this.page.tableData = this.page.tableData.concat(this.totalDataList)
+//             } else {
+//                 this.queryData({ env_type: this.page.env_type })
+//             }
+//         }
+
 </script>
 
 <style>

@@ -105,7 +105,7 @@
             <el-button size="small" type="danger" @click="handleDelete(scope.row)">删除</el-button>
             <el-button size="small" type="success" @click="handleFields(scope.row)">字段配置</el-button>
             <el-button size="small" type="info" @click="handleExport(scope.row)">导出</el-button>
-            <el-button size="small" type="warning" @click="handleTest(scope.row)">测试</el-button>
+            <el-button size="small" type="warning" @click="handleDataview(scope.row)">查询</el-button>
           </template>
         </el-table-column>
         <!-- <el-table-column type="expand" width="50">
@@ -573,7 +573,7 @@ const handleUpload = (options) => {
 }
 
 
-const handleTest = (row) => {
+const handleDataview = (row) => {
     router.push({
         path: `/reportinfo/interface/view/${row.id}`,
         query: { interface_id: row.id , interface_code : row.interface_code , interface_name : row.interface_name }
