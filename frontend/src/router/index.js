@@ -1,12 +1,12 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import { User, Setting, DataBoard, Collection, Edit } from '@element-plus/icons-vue'
+import { DataBoard } from '@element-plus/icons-vue'
 import { useUserStore } from '@/store/user'
 
 const constantRoutes = [
-  // {
-  //   path: '/',
-  //   redirect: '/login'
-  // },
+  {
+    path: '/',
+    redirect: '/login'
+  },
   {
     path: '/login',
     name: 'Login',
@@ -57,17 +57,17 @@ const router = createRouter({
 
 
 
-router.beforeEach((to, from, next) => {
-  // const token = localStorage.getItem('token')
-  const userStore = useUserStore()
-  const token = userStore.getToken
-  if (to.path === '/login' || to.path === '/register') {
-    next()
-  } else if (!token) {
-    next('/login')
-  } else {
-    next()
-  }
-})
+// router.beforeEach((to, from, next) => {
+//   // const token = localStorage.getItem('token')
+//   const userStore = useUserStore()
+//   const token = userStore.getToken
+//   if (to.path === '/login' || to.path === '/register') {
+//     next()
+//   } else if (!token) {
+//     next('/login')
+//   } else {
+//     next()
+//   }
+// })
 
 export default router

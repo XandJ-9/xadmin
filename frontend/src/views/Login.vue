@@ -33,6 +33,7 @@ import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import { useUserStore } from '@/store/user'
+import { useRouteStore } from '@/store/route'
 
 const router = useRouter()
 const loginFormRef = ref(null)
@@ -53,7 +54,7 @@ const goToRegister = () => {
 }
 
 const userStore = useUserStore()
-
+const routeStore = useRouteStore()
 const handleLogin = () => {
   loginFormRef.value.validate(async (valid) => {
     if (valid) {

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import request from '@/utils/request'
-// import { getToken, removeToken, setToken } from '@/utils/auth'
+import { getToken, removeToken, setToken } from '@/utils/auth'
 
 /**
  * 用户状态管理
@@ -44,7 +44,7 @@ export const useUserStore = defineStore('user', {
     setUserToken(token) {
         this.token = token
         localStorage.setItem('token', token)
-        // setToken(token)
+        setToken(token)
     },
     /**
      * 用户登录
@@ -59,6 +59,9 @@ export const useUserStore = defineStore('user', {
             // 保存用户数据
             this.setUserData({ username: user.username, role: user.role_info.name })
             this.setUserToken(token)
+
+            // 获取登录路由
+
             return {
                 success: true,
                 message: '登录成功'
@@ -89,6 +92,7 @@ export const useUserStore = defineStore('user', {
         this.isLoggedIn = false
       
         // 清除本地存储
+        removeToken()
         // localStorage.removeItem('token')
         // localStorage.removeItem('user')
         }

@@ -6,9 +6,11 @@ import 'element-plus/dist/index.css'
 import './style.css'
 import App from './App.vue'
 import router from './router'
+import { download } from '@/utils/request'
 // 导入路由权限守卫
 import './permission'
-import { download } from '@/utils/request'
+
+
 const app = createApp(App)
 
 // 注册Element Plus图标

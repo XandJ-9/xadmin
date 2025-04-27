@@ -67,6 +67,11 @@ class Menu(BaseModel):
 
     def __str__(self):
         return self.name
+    
+# class UserMenu(BaseModel):
+#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_menus', verbose_name='用户')
+#     menu = models.ForeignKey(Menu, on_delete=models.CASCADE, related_name='user_menus', verbose_name='菜单')
+
 
 class RoleMenu(BaseModel):
     """角色菜单关联模型"""

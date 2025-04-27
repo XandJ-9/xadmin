@@ -154,6 +154,8 @@ class MenuViewSet(viewsets.ModelViewSet):
         role_menus = user.role.role_menus.all()
         menu_ids = [rm.menu_id for rm in role_menus]
         
+        # todo: 获取用户关联的菜单
+        
         # 获取所有菜单并按排序字段排序
         menus = Menu.objects.filter(id__in=menu_ids).order_by('sort')
         
