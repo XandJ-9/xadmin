@@ -103,22 +103,30 @@ const refreshSelectedTag = (view) => {
   // 关闭右键菜单
   visible.value = false
   
-  // 创建一个新的query对象，添加时间戳参数触发组件重新渲染
-  const query = { ...view.query, _t: Date.now() }
+
   
   // 先跳转到一个空路径（但不存在的路径会导致404，所以使用重定向方式）
   const { currentRoute } = router
   const { fullPath } = currentRoute.value
-  
-  // 通过添加时间戳参数强制路由重新加载
-  router.replace({
+
+// 创建一个新的query对象，添加时间戳参数触发组件重新渲染
+//   const query = { ...view.query, _t: Date.now() }
+// 通过添加时间戳参数强制路由重新加载
+//   router.replace({
+//     path: '/redirect',
+//     query: { path: fullPath }
+//   })
+//       .then(() => {
+//     router.replace({
+//       path: view.path,
+//       query
+//     })
+    //   })
+
+    // 路由到单独的重定向Redirect组件，在组件中跳转
+    router.replace({
     path: '/redirect',
     query: { path: fullPath }
-  }).then(() => {
-    router.replace({
-      path: view.path,
-      query
-    })
   })
 }
 

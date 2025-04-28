@@ -66,7 +66,7 @@
 
 <script setup>
 import { ref, reactive, computed, watch, onMounted } from 'vue'
-import { useRouter, useRoute } from 'vue-router'
+import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router'
 import request from '@/utils/request'
 // import { XLSX } from 'xlsx'
 import { parseTime } from '@/utils/index'
@@ -76,7 +76,11 @@ import { parseTime } from '@/utils/index'
 //     interface_code: { type: String, default: '' },
 //     interface_name: { type: String, default: '' },
 // })
-
+onBeforeRouteUpdate((to, from) => {
+    if (route.query.interface_name) {
+        to.meta?.title = to.meta.title + ' - ' + route.query.interface_name
+    }
+})
 const route = useRoute()
 const interface_id = ref(null)
 const interface_code = ref(null)
