@@ -4,14 +4,16 @@
               <el-form-item label="接口编码">
                   <el-input v-model="props.interface_code" placeholder="接口代码" :disabled="true"></el-input>
               </el-form-item>
-              <el-form-item label="接口参数">
-            
-                  <el-button link type="primary" @click="showJsonFormat = !showJsonFormat" icon="el-icon-edit">
-                    <el-icon :size="20">
-                      <Edit />
-                    </el-icon>
-                      {{ showJsonFormat ? '表格' : 'JSON' }}
-                  </el-button>
+              <el-form-item label="接口参数" class="param-item">
+                  <div class="param-header">
+                    <span class="param-label">接口参数</span>
+                    <el-button link type="primary" @click="showJsonFormat = !showJsonFormat" icon="el-icon-edit">
+                      <el-icon :size="20">
+                        <Edit />
+                      </el-icon>
+                        {{ showJsonFormat ? '表格' : 'JSON' }}
+                    </el-button>
+                  </div>
                   <el-input v-if="showJsonFormat" v-model="queryForm.query_field_json" placeholder="接口参数" type="textarea"  />
                   <el-table v-else :data="queryForm.query_field_list" border fit highlight-current-row>
                       <el-table-column align="center" label="参数名称" prop="interface_para_name"/>
@@ -277,4 +279,16 @@ onMounted(() => {
     left: 0;
     right: 0;
 }
-  </style>
+
+.param-item .el-form-item__label {
+  display: none;
+}
+
+.param-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+
+</style>

@@ -30,74 +30,40 @@
 </template>
 
 <script setup>
-import { ref, watch, onUnmounted, inject } from 'vue'
+import { ref, watch, onUnmounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { useTagViewsStore } from '@/store/tagviews'
 
 const route = useRoute()
 const router = useRouter()
-
-// 提供TagView相关的状态和方法
-// provide('visitedViews', visitedViews)
-// provide('addView', addView)
-// provide('delView', delView)
-
-// 注入Layout组件提供的状态和方法
-// const visitedViews = inject('visitedViews')
-// const addView = inject('addView')
-// const delView = inject('delView')
+const tagViewsStore = useTagViewsStore()
 
 const visible = ref(false)
 const topOffset = ref(0)
 const leftOffset = ref(0)
 const selectedTag = ref(null)
 
-// TagView状态管理
-const visitedViews = ref([{
-  name: 'Dashboard',
-  path: '/dashboard',
-  title: '首页',
-  query: {}
-}])
-const addView = (view) => {
-  const isExists = visitedViews.value.some(v => v.path === view.path)
-    if (view.meta.needTagview && !isExists) {
-        console.log('addView', view.name, view.meta.title, view.path)
-        visitedViews.value.push({
-        name: view.name,
-        path: view.path,
-        title: view.meta?.title || '未命名',
-        query: view.query
-        })
-  }
-}
-
-const delView = (view) => {
-  if(view.path === '/dashboard') return
-  const index = visitedViews.value.findIndex(v => v.path === view.path)
-  if (index > -1) {
-    visitedViews.value.splice(index, 1)
-  }
-}
+// 从store获取访问过的路由
+const visitedViews = computed(() => tagViewsStore.visitedViews)
 
 // 关闭选中标签
 const closeSelectedTag = (view) => {
-  delView(view)
+  const updatedViews = tagViewsStore.delVisitedView(view)
   if (isActive(view)) {
-    toLastView(visitedViews.value)
+    toLastView(updatedViews)
   }
 }
 
 // 关闭其他标签
 const closeOthersTags = (view) => {
-  visitedViews.value = visitedViews.value.filter(v => v.path === '/dashboard' || v.path === view.path)
+  tagViewsStore.delOthersVisitedViews(view)
   visible.value = false
 }
 
 // 关闭所有标签
 const closeAllTags = () => {
-  visitedViews.value = visitedViews.value.filter(v => v.path === '/dashboard')
-  toLastView(visitedViews.value)
-  // router.push('/dashboard')
+  const updatedViews = tagViewsStore.delAllVisitedViews()
+  toLastView(updatedViews)
   visible.value = false
 }
 
@@ -105,7 +71,7 @@ const closeAllTags = () => {
 const toLastView = (visitedViews) => {
   const latestView = visitedViews.slice(-1)[0]
   if (latestView) {
-    router.push(latestView.path)
+    router.push(latestView)
   } else {
     router.push('/dashboard')
   }
@@ -115,27 +81,15 @@ const toLastView = (visitedViews) => {
 const refreshSelectedTag = (view) => {
   // 关闭右键菜单
   visible.value = false
- 
-  // 先跳转到一个空路径（但不存在的路径会导致404，所以使用重定向方式）
+  
+  // 更新store中的视图
+  tagViewsStore.updateVisitedView(view)
+  
+  // 使用重定向组件刷新页面
   const { currentRoute } = router
   const { fullPath } = currentRoute.value
-
-// 创建一个新的query对象，添加时间戳参数触发组件重新渲染
-//   const query = { ...view.query, _t: Date.now() }
-// 通过添加时间戳参数强制路由重新加载
-//   router.replace({
-//     path: '/redirect',
-//     query: { path: fullPath }
-//   })
-//       .then(() => {
-//     router.replace({
-//       path: view.path,
-//       query
-//     })
-    //   })
-
-    // 路由到单独的重定向Redirect组件，在组件中跳转
-    router.replace({
+  
+  router.replace({
     path: '/redirect',
     query: { path: fullPath }
   })
@@ -146,9 +100,8 @@ const isActive = (tag) => {
     if (tag.path === route.path || (!route.meta.needTagview && route.path.includes(tag.path))) {
         // 如果needTagview为false, 
         // console.log(tag.path, route)
-        return true
-    }
-  // 如果当前访问的是子路由
+    return true
+  }
 }
 
 // 打开右键菜单
@@ -169,9 +122,9 @@ const closeMenu = () => {
   visible.value = false
 }
 
-// 监听路由变化
+// 监听路由变化，添加到访问记录
 watch(() => route.path, () => {
-    addView(route)
+  tagViewsStore.addVisitedView(route)
 }, { immediate: true })
 
 // 点击页面时关闭右键菜单
