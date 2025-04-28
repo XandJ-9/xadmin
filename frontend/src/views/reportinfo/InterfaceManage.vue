@@ -579,7 +579,7 @@ const handleDataview = (row) => {
     if (matched_routes.length > 0) {
         router.push({
             path: `/reportinfo/interface/view/${row.id}`,
-            query: { interface_id: row.id, interface_code: row.interface_code, interface_name: row.interface_name },
+            query: { interface_name: row.interface_name },
         })
     } else {
         ElMessage.warning('路由信息不存在')

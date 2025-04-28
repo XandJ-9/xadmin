@@ -1,8 +1,8 @@
 <template>
     <div id="interface-view-container">
       <el-form class="demo-form-inline" :model="queryForm" label-position="top">
-              <el-form-item label="接口编码">
-                  <el-input v-model="props.interface_code" placeholder="接口代码" :disabled="true"></el-input>
+              <el-form-item label="接口编码" style="font-weight: 15px;">
+                  <el-input v-model="interface_code" placeholder="" :disabled="true"></el-input>
               </el-form-item>
               <el-form-item label="接口参数" class="param-item">
                   <div class="param-header">
@@ -75,14 +75,10 @@
   
   const props = defineProps({
       interface_id: { type: Number, default: 0 },
-      interface_code: { type: String, default: '' },
       interface_name: { type: String, default: '' },
   })
   
-  const route = useRoute()
-  const interface_id = ref(null)
   const interface_code = ref(null)
-  const interface_name = ref(null)
   const queryFields = ref([])
   const columnsFields = ref([])
   
@@ -113,10 +109,13 @@
       query_para_value: {}
   })
   
-onMounted(() => {
-      getInterfaceFields()
+  onMounted(() => {
+      getInterfaceInfo()
   })
-  const getInterfaceFields = async () => {
+  const getInterfaceInfo = async () => {
+    const res = await request.get(`/api/report/interfaces/${props.interface_id}/`)
+      console.log(res)
+      interface_code.value = res.data.data.interface_code
       const resp = await request.get(`/api/report/interface-fields/?interface=${props.interface_id}&noPage=1`)
       const fields = resp.data.data
       if (!fields) {

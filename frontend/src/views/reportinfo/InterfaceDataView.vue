@@ -1,6 +1,6 @@
 <template>
   <div class="interface-data-view">
-    <interface-data-view-item :interface_id="interface_id" :interface_code="interface_code" :interface_name="interface_name"></interface-data-view-item>
+    <interface-data-view-item :interface_id="interface_id" :interface_name="interface_name"></interface-data-view-item>
   </div>
 </template>
 
@@ -16,8 +16,8 @@ export default {
   data: () => {
     const route = useRoute()
     return {
-      interface_id: parseInt(route.query.interface_id),
-      interface_code: route.query.interface_code,
+      interface_id: parseInt(route.params.id),
+      // interface_code: route.query.interface_code,
       interface_name: route.query.interface_name
     }
   },
