@@ -10,7 +10,6 @@ import { useRoute, useRouter } from 'vue-router'
 const router = useRouter()
 const route = useRoute()
 onMounted(() => {
-    console.log('redirect', route.query.path)
     router.replace(
         {
             path: route.query.path
