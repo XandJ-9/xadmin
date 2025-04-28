@@ -21,7 +21,7 @@
 
 .el-main {
   background-color: #f5f7fa;
-  border: 1px solid #e6e6e6;
+  border:none;
   padding: 0;
   height: calc(100vh - 60px);
   overflow-y: auto;

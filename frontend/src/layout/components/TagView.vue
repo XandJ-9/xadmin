@@ -7,6 +7,7 @@
         :class="isActive(tag) ? 'active' : ''"
         class="tags-view-item"
         :to="{ path: tag.path, query: tag.query }"
+        tag="span"
         @contextmenu.prevent="openMenu(tag, $event)"
       >
         {{ tag.title }}
@@ -58,13 +59,14 @@ const visitedViews = ref([{
 }])
 const addView = (view) => {
   const isExists = visitedViews.value.some(v => v.path === view.path)
-  if (view.meta.needTagview && !isExists) {
-    visitedViews.value.push({
-      name: view.name,
-      path: view.path,
-      title: view.meta?.title || '未命名',
-      query: view.query
-    })
+    if (view.meta.needTagview && !isExists) {
+        console.log('addView', view.name, view.meta.title, view.path)
+        visitedViews.value.push({
+        name: view.name,
+        path: view.path,
+        title: view.meta?.title || '未命名',
+        query: view.query
+        })
   }
 }
 
@@ -170,7 +172,7 @@ const toLastView = (visitedViews) => {
 
 // 监听路由变化
 watch(() => route.path, () => {
-  addView(route)
+    addView(route)
 }, { immediate: true })
 
 // 点击页面时关闭右键菜单
@@ -192,61 +194,87 @@ onUnmounted(() => {
 
 <style scoped lang="scss">
 .tags-view-container {
-  height: 34px;
+  height: 10%;
   width: 100%;
   background: #fff;
   border-bottom: 1px solid #d8dce5;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .12), 0 0 3px 0 rgba(0, 0, 0, .04);
-  padding-left: 20px;
+  .tags-view-wrapper {
+    .tags-view-item {
+      display: inline-block;
+      position: relative;
+      cursor: pointer;
+      height: 100%;
+      line-height: 26px;
+      border: 1px solid #d8dce5;
+      color: #495060;
+      background: #fff;
+      padding: 0 8px;
+      font-size: 12px;
+      margin-left: 5px;
+      margin-top: 4px;
+      overflow: hidden;
+    //   &:first-of-type {
+        // margin-left: 15px;
+    //   }
+      &:last-of-type {
+        margin-right: 15px;
+      }
+      &.active {
+        background-color: #42b983;
+        color: #fff;
+        border-color: #42b983;
+        &::before {
+          content: '';
+          background: #fff;
+          display: inline-block;
+          width: 8px;
+          height: 8px;
+          border-radius: 50%;
+          position: relative;
+          margin-right: 2px;
+        }
+      }
+    }
+  }
+  .contextmenu {
+    margin: 0;
+    background: #fff;
+    z-index: 3000;
+    position: absolute;
+    list-style-type: none;
+    padding: 5px 0;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 400;
+    color: #333;
+    box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, .3);
+    li {
+      margin: 0;
+      padding: 7px 16px;
+      cursor: pointer;
+      &:hover {
+        background: #eee;
+      }
+    }
+  }
 }
 
 .tags-view-wrapper {
   .tags-view-item {
-    display: inline-block;
-    position: relative;
-    cursor: pointer;
-    height: 26px;
-    line-height: 26px;
-    border: 1px solid #d8dce5;
-    color: #495060;
-    background: #fff;
-    padding: 0 8px;
-    font-size: 12px;
-    margin-right: 5px;
-    margin-top: 4px;
-    text-decoration: none;
-
-    &.active {
-      background-color: #42b983;
-      color: #fff;
-      border-color: #42b983;
-      &::before {
-        content: '';
-        background: #fff;
-        display: inline-block;
-        width: 8px;
-        height: 8px;
-        border-radius: 50%;
-        position: relative;
-        margin-right: 4px;
-      }
-    }
-
     .el-icon-close {
       width: 16px;
       height: 16px;
-      vertical-align: 2px;
+    //   vertical-align: 2px;
       border-radius: 50%;
       text-align: center;
       transition: all .3s cubic-bezier(.645, .045, .355, 1);
       transform-origin: 100% 50%;
-
       &:before {
         transform: scale(.6);
         display: inline-block;
         vertical-align: -3px;
       }
-
       &:hover {
         background-color: #b4bccc;
         color: #fff;
@@ -255,26 +283,91 @@ onUnmounted(() => {
   }
 }
 
-.contextmenu {
-  margin: 0;
-  background: #fff;
-  z-index: 3000;
-  position: absolute;
-  list-style-type: none;
-  padding: 5px 0;
-  border-radius: 4px;
-  font-size: 12px;
-  font-weight: 400;
-  color: #333;
-  box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, .3);
 
-  li {
-    margin: 0;
-    padding: 7px 16px;
-    cursor: pointer;
-    &:hover {
-      background: #eee;
-    }
-  }
-}
+// .tags-view-container {
+//   height: 34px;
+//   width: 100%;
+//   background: #fff;
+//   border-bottom: 1px solid #d8dce5;
+//   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .12), 0 0 3px 0 rgba(0, 0, 0, .04);
+//   padding-left: 20px;
+// }
+
+// .tags-view-wrapper {
+//   .tags-view-item {
+//     display: inline-block;
+//     position: relative;
+//     cursor: pointer;
+//     height: 26px;
+//     line-height: 26px;
+//     border: 1px solid #d8dce5;
+//     color: #495060;
+//     background: #fff;
+//     padding: 0 8px;
+//     font-size: 12px;
+//     margin-right: 5px;
+//     margin-top: 4px;
+//     text-decoration: none;
+
+//     &.active {
+//       background-color: #42b983;
+//       color: #fff;
+//       border-color: #42b983;
+//       &::before {
+//         content: '';
+//         background: #fff;
+//         display: inline-block;
+//         width: 8px;
+//         height: 8px;
+//         border-radius: 50%;
+//         position: relative;
+//         margin-right: 4px;
+//       }
+//     }
+//     // vertical-align: 2px;
+//     .el-icon-close {
+//       width: 16px;
+//       height: 16px;
+      
+//       border-radius: 50%;
+//       text-align: center;
+//       transition: all .3s cubic-bezier(.645, .045, .355, 1);
+//       transform-origin: 100% 50%;
+
+//       &:before {
+//         transform: scale(.6);
+//         display: inline-block;
+//         vertical-align: -3px;
+//       }
+
+//       &:hover {
+//         background-color: #b4bccc;
+//         color: #fff;
+//       }
+//     }
+//   }
+// }
+
+// .contextmenu {
+//   margin: 0;
+//   background: #fff;
+//   z-index: 3000;
+//   position: absolute;
+//   list-style-type: none;
+//   padding: 5px 0;
+//   border-radius: 4px;
+//   font-size: 12px;
+//   font-weight: 400;
+//   color: #333;
+//   box-shadow: 2px 2px 3px 0 rgba(0, 0, 0, .3);
+
+//   li {
+//     margin: 0;
+//     padding: 7px 16px;
+//     cursor: pointer;
+//     &:hover {
+//       background: #eee;
+//     }
+//   }
+// }
 </style>
