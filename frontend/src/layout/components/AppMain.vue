@@ -7,6 +7,9 @@
                 <component :is="Component" />
             </keep-alive>
         </router-view>
+        <!-- <keep-alive>
+            <router-view :key="key"/>
+        </keep-alive> -->
     </el-main>
   </div>
 </template>

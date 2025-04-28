@@ -9,6 +9,7 @@
         :to="{ path: tag.path, query: tag.query }"
         tag="span"
         @contextmenu.prevent="openMenu(tag, $event)"
+        @click.middle.prevent="closeSelectedTag(tag)"
       >
         {{ tag.title }}
         <el-icon v-if="tag.path !== '/dashboard'"
@@ -100,13 +101,21 @@ const closeAllTags = () => {
   visible.value = false
 }
 
+// 跳转到最后一个标签
+const toLastView = (visitedViews) => {
+  const latestView = visitedViews.slice(-1)[0]
+  if (latestView) {
+    router.push(latestView.path)
+  } else {
+    router.push('/dashboard')
+  }
+}
+
 // 刷新选中标签
 const refreshSelectedTag = (view) => {
   // 关闭右键菜单
   visible.value = false
-  
-
-  
+ 
   // 先跳转到一个空路径（但不存在的路径会导致404，所以使用重定向方式）
   const { currentRoute } = router
   const { fullPath } = currentRoute.value
@@ -158,16 +167,6 @@ const openMenu = (tag, e) => {
 // 关闭右键菜单
 const closeMenu = () => {
   visible.value = false
-}
-
-// 跳转到最后一个标签
-const toLastView = (visitedViews) => {
-  const latestView = visitedViews.slice(-1)[0]
-  if (latestView) {
-    router.push(latestView.path)
-  } else {
-    router.push('/dashboard')
-  }
 }
 
 // 监听路由变化

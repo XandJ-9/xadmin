@@ -15,11 +15,10 @@ const interface_id = ref(parseInt(route.query.interface_id))
 const interface_code = ref(route.query.interface_code)
 const interface_name = ref(route.query.interface_name)
 
-router.beforeResolve(async (to, from) => {
+router.beforeEach(async (to, from) => {
     if (to.query.interface_name) {
-        console.log('to.query.interface_name', route.query.interface_name)
-        const title = to.meta.title
-        to.meta.title = route.query.interface_name
+        to.meta.title = '接口查询-' + to.query.interface_name
+        console.log('meta title',from.path, to.path)
     }
 })
 
@@ -27,7 +26,7 @@ router.beforeResolve(async (to, from) => {
 //       console.log('onBeforeRouteUpdate to', to)
 //       if (route.query.interface_name) {
 //           const title = to.meta.title
-//           to.meta.title = title + ' - ' + route.query.interface_name
+//           to.meta.title = title + ' - ' + to.query.interface_name
 //           console.log('meta title', to.meta.title)
 //       }
 //   })
