@@ -3,8 +3,8 @@
     
     <el-main>
         <router-view v-slot="{ Component }" :key="key">
-            <keep-alive>
-                <component :is="Component" />
+            <keep-alive :include="cachedViews">
+                <component :is="Component"/>
             </keep-alive>
         </router-view>
     </el-main>
@@ -20,7 +20,7 @@ const tagViewsStore = useTagViewsStore()
 
 // 从visitedViews中提取组件名称，用于keep-alive的include属性
 const cachedViews = computed(() => {
-  return tagViewsStore.visitedViews.map(view => view.name)
+  return tagViewsStore.visitedViews.map(view => view.path)
 })
 
 // 动态设置组件的key，用于keep-alive的include属性
