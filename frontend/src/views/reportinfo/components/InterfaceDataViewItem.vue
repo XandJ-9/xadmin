@@ -31,18 +31,19 @@
   
   
           <el-button @click="queryData({ env_type: 0 })" type="primary" link size="small">查询测试环境</el-button>
-          <el-button @click="queryData({ env_type: 1 })" type="primary" link size="small">查询生产环境</el-button>
+          <!-- <el-button @click="queryData({ env_type: 1 })" type="primary" link size="small">查询生产环境</el-button> -->
           <!-- <el-button @click="exportData({ env_type: 0 })" type="primary" link size="small">测试导出</el-button> -->
           <!-- <el-button @click="exportData({ env_type: 1 })" type="primary" link size="small">生产导出</el-button> -->
           <!-- :label="item.interface_para_name ? item.interface_para_name : item.interface_para_desc"  -->
           <el-table :data="pageInfo.tableData" border highlight-current-row style="width: 100%">
-                  <el-table-column align="center" v-for="item,index in columnsFields" :key="index"
-                :show-overflow-tooltip="true" :min-width="100"
-                      >
+                  <el-table-column align="center" v-for="item,index in columnsFields" 
+                  :key="index"
+                  :show-overflow-tooltip="true" 
+                  :min-width="100"
+                >
                       <template #header>
                           <span>{{ item.interface_para_name }}</span>
                           <el-tooltip class="item" effect="light"  placement="top">
-                              <!-- <i class="el-icon-question" style="font-size: 14px; vertical-align: middle;"></i> -->
                               <el-icon>
                                 <InfoFilled />
                               </el-icon>
@@ -51,7 +52,7 @@
                               </template>
                           </el-tooltip>
                       </template>
-                      <template #default="{row}">
+                      <template #default="{ row }">
                           <span>{{ row[item.interface_para_code] }}</span>
                       </template>
                   </el-table-column>
@@ -62,6 +63,17 @@
             :page.sync="pageInfo.page_no"
             :limit.sync="pageInfo.page_size" @pagination="nextPage()" />
           -->
+          <div class="pagination-container">
+            <el-pagination
+            :current-page="pageInfo.page_no"
+            :page-size="pageInfo.page_size"
+            :page-sizes="[10, 20, 50, 100]"
+            layout="total, sizes, prev, pager, next, jumper"
+            :total="pageInfo.total"
+            @size-change="nextPage"
+            @current-change="nextPage"
+            />
+        </div>
   
     </div>
   </template>
@@ -84,26 +96,13 @@
   
   
   const columns = ref([])
-  const dataList = ref([])
-  const totalDataList = ref([])
-  const pageInfo = ref({
-      env_type: 0,
-      page_no: 1,
-      page_size: 10,
-      total: 0,
-      tableData:[]
-  })
+  const resDataList = ref([])
+  const totalresDataList = ref([])
+
   const visiable=ref(false)
   const showJsonFormat=ref(false)
-  const queryLoading = ref(false)
-  const downloadLoading =ref(false)
-  const exportOptions = ref({
-      filename: 'test.xlsx',
-      autoWidth: true,
-      bookType: 'xlsx'
-  })
+ 
   const queryForm =reactive({
-      code: '',
       query_field_json: '',
       query_field_list: [],
       query_para_value: {}
@@ -130,10 +129,25 @@
 // const getReportData = async ({ interface_code, payload, env_type }) => {
 //     request.post(`/api/report/execute-query/?interface_code=${interface_code}`, data).then(response => {})
 // }
+
+const queryLoading = ref(false)
+const downloadLoading =ref(false)
+const exportOptions = ref({
+    filename: 'test.xlsx',
+    autoWidth: true,
+    bookType: 'xlsx'
+})
+
+const pageInfo = reactive({
+      env_type: 0,
+      page_no: 1,
+      page_size: 10,
+      total: 0,
+      tableData:[]
+  })
 const queryData = (data) => {
               reset()
-              let interface_code = queryForm.code
-              // 只拷贝数值，不修改被引用的对象值
+    // 只拷贝数值，不修改被引用的对象值
               let payload = showJsonFormat ? JSON.parse(queryForm.query_field_json) : { ... queryForm.query_para_value }
               // console.log(this.showJsonFormat, payload)
               payload = Object.assign(payload, {
@@ -142,48 +156,47 @@ const queryData = (data) => {
                   "page_no": pageInfo.page_no,
                   "page_size": pageInfo.page_size
               })
-              this.queryLoading = true
+              queryLoading.value = true
   
     //   getReportData({ interface_code, payload, env_type: data.env_type }).then(response => {
-            request.post(`/api/report/execute-query/?interface_code=${interface_code}`, payload).then(response => {
+            request.post(`/api/report/execute-query/?interface_code=${interface_code.value}`, payload).then(response => {
                   const res = response.data
                   try {
                           if (res.code == '-1') {
-                              this.errorMsg.error = true
-                              this.errorMsg.msg = res.message
+                              errorMsg.error = true
+                              errorMsg.msg = res.message
                           } else {
-                              const property = res.property
+                            //   const property = res.property
                             //   let columns = this.sortColumns(property);
                             //   this.columns = Object.assign({}, columns);
                               if (res.isPaging == '1') {
-                                  dataList = res.data.list
+                                  resDataList.value = res.data.list
                                   pageInfo.total = res.data.total
                                   if (res.isTotal == '1') {
-                                  totalDataList = res.data.totalList
+                                    totalresDataList.value = res.data.totalList
                                   }
                               } else {
-                                  dataList = res.data
-                                  pageInfo.total = this.dataList.length
+                                  resDataList.value = res.data
+                                  pageInfo.total = resDataList.value.length
                                   if (res.isTotal == '1') {
-                                  totalDataList = res.totaldata
+                                    totalresDataList.value = res.totaldata
                                   }
                               }
-  
-  
-                              prepareTableData(this.dataList);
-                              visiable = true
+                              prepareTableData(resDataList.value);
+                              visiable.value = true
                           }
-                          queryLoading = false
+                          queryLoading.value = false
                           pageInfo.env_type = data.env_type
                   } catch (e) {
                       errorMsg.error = true
-                      errorMsg.msg = "接口返回数据失败"+ e
+                      errorMsg.msg = "接口返回数据失败" + e
+                      console.log(errorMsg)
                   } finally {
-                      queryLoading = false
+                      queryLoading.value = false
                   }
               }
               ).finally(() => {
-                  queryLoading = false
+                  queryLoading.value = false
               })
   }
   // const exportData = (data) => {
@@ -203,13 +216,13 @@ const queryData = (data) => {
   //             //             this.errorMsg.msg = response.data.message;
   //             //         } else {
   //             //             const row = response.data.data;
-  //             //             this.dataList = response.data.data;
+  //             //             this.resDataList = response.data.data;
   //             //             if (response.data.isTotal == '1') {
   //             //                 row.push(...response.data.totaldata);
-  //             //                 this.totalDataList = response.data.totaldata;
+  //             //                 this.totalresDataList = response.data.totaldata;
   //             //             }
   //             //             this.page.total = row.length;
-  //             //             this.prepareTableData(this.dataList);
+  //             //             this.prepareTableData(this.resDataList);
   
   //             //             const interfaceName = response.data.interfaceName;
   //             //             this.total = row.length;
@@ -236,18 +249,22 @@ const queryData = (data) => {
   //             //     this.downloadLoading = false;
   //             // })
   //         }
-  const prepareTableData = (dataList)=> {
-              if (dataList.length > this.page.page_size) {
-                  pageInfo.tableData = dataList.slice((this.page.page_no - 1) * pageInfo.page_size, pageInfo.page_no * pageInfo.page_size);
-              } else {
-                  pageInfo.tableData = dataList;
-              }
+const prepareTableData = (data) => {
+        if (data.length > pageInfo.page_size) {
+            pageInfo.tableData = data.slice((pageInfo.page_no - 1) * pageInfo.page_size, pageInfo.page_no * pageInfo.page_size);
+            console.log(pageInfo.tableData)
 
-              // 将合计行追加到最后一行
-              if (totalDataList.length > 0) {
-                pageInfo.tableData = pageInfo.tableData.concat(totalDataList);
-              }
-  }
+        } else {
+            pageInfo.tableData = resDataList;
+            console.log(pageInfo.tableData)
+
+        }
+
+        // 将合计行追加到最后一行
+        if (totalresDataList.length > 0) {
+        pageInfo.tableData = pageInfo.tableData.concat(totalresDataList);
+    }
+}
   const sortColumns = (columns, flag = 1) => {
               return Object.entries(columns).filter(column => {
                   if (flag == '1') {
@@ -260,17 +277,22 @@ const queryData = (data) => {
               }).sort(([k1, v1], [k2, v2]) => {
                   return v1.position - v2.position
               }).map(o => o[1])
-  }
+}
+
+const errorMsg = ref({
+    error: false,
+    msg: ''
+})
   const reset = () => {
-              errorMsg.error = false;
-              visiable = false;
+              errorMsg.value.error = false;
+              visiable.value = false;
   }
   const nextPage= () => {
-              if (this.dataList.length > this.page.page_size) {
-                  this.page.tableData = this.dataList.slice((this.page.page_no - 1) * this.page.page_size, this.page.page_no * this.page.page_size)
-                  this.page.tableData = this.page.tableData.concat(this.totalDataList)
+              if (resDataList.length > pageInfo.page_size) {
+                pageInfo.tableData = resDataList.slice((pageInfo.page_no - 1) * pageInfo.page_size, pageInfo.page_no * pageInfo.page_size)
+                pageInfo.tableData = pageInfo.tableData.concat(totalresDataList)
               } else {
-                  this.queryData({ env_type: this.page.env_type })
+                  queryData({ env_type: pageInfo.env_type })
               }
   }
   
