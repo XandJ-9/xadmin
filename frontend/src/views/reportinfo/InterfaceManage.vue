@@ -248,6 +248,14 @@
               <el-radio label="0">否</el-radio>
             </el-radio-group>
           </el-form-item>
+          <el-form-item label="接口sql" prop="interface_sql">
+            <el-input
+              v-model="formData.interface_sql"
+              type="textarea"
+              :rows="3"
+              placeholder="请输入接口sql"
+            />
+          </el-form-item>
         </el-form>
         <template #footer>
           <span class="dialog-footer">
@@ -417,6 +425,7 @@ const formData = reactive({
   interface_desc: '',
   interface_db_type: '',
   interface_db_name: '',
+  interface_sql: '',
   is_total: '0',
   is_paging: '0',
   is_date_option: '0',
@@ -448,7 +457,8 @@ const resetForm = () => {
   formData.interface_name = ''
   formData.interface_desc = ''
   formData.interface_db_type = ''
-  formData.interface_db_name = ''
+    formData.interface_db_name = ''
+  formData.interface_sql = ''
   formData.is_total = '0'
   formData.is_paging = '0'
   formData.is_date_option = '0'
@@ -473,7 +483,8 @@ const handleEdit = (row) => {
     interface_name: row.interface_name,
     interface_desc: row.interface_desc,
     interface_db_type: row.interface_db_type,
-    interface_db_name: row.interface_db_name,
+      interface_db_name: row.interface_db_name,
+    interface_sql: row.interface_sql,
     is_total: row.is_total,
     is_paging: row.is_paging,
     is_date_option: row.is_date_option,

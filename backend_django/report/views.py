@@ -10,8 +10,8 @@ from .serializers import (
     InterfaceInfoSerializer,
     InterfaceFieldSerializer
 )
-from .common.excel_import_export import ExcelImportExportMixin
-
+from .common.mixin_excel_import_export import ExcelImportExportMixin
+from .common.mixin_interface_query import InterfaceQueryMixin 
 
 class PlatformInfoViewSet(CustomModelViewSet):
     queryset = PlatformInfo.objects.all()
@@ -53,4 +53,10 @@ class InterfaceFieldViewSet(CustomModelViewSet):
     ordering_fields = ['id', 'create_datetime', 'update_datetime', 'field_order']
 
 class ImportExportViewSet(ExcelImportExportMixin, ViewSet):
+    queryset = None
+
+class InterfaceQueryViewSet(InterfaceQueryMixin,ViewSet):
+    '''
+    接口查询视图
+    '''
     queryset = None

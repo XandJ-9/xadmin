@@ -127,24 +127,25 @@
       queryForm.query_para_value = JSON.parse(queryForm.query_field_json)
 }
 
-const getReportData = async (data) => {
-
-}
+// const getReportData = async ({ interface_code, payload, env_type }) => {
+//     request.post(`/api/report/execute-query/?interface_code=${interface_code}`, data).then(response => {})
+// }
 const queryData = (data) => {
-              this.reset()
-              let interface_code = this.queryForm.code
+              reset()
+              let interface_code = queryForm.code
               // 只拷贝数值，不修改被引用的对象值
-              let payload = this.showJsonFormat ? JSON.parse(this.queryForm.query_field_json) : { ... this.queryForm.query_para_value }
+              let payload = showJsonFormat ? JSON.parse(queryForm.query_field_json) : { ... queryForm.query_para_value }
               // console.log(this.showJsonFormat, payload)
               payload = Object.assign(payload, {
                   "export_type": "1",
                   "operate_type": "1",
-                  "page_no": this.page.page_no,
-                  "page_size": this.page.page_size
+                  "page_no": pageInfo.page_no,
+                  "page_size": pageInfo.page_size
               })
               this.queryLoading = true
   
-              getReportData({ interface_code, payload, env_type: data.env_type }).then(response => {
+    //   getReportData({ interface_code, payload, env_type: data.env_type }).then(response => {
+            request.post(`/api/report/execute-query/?interface_code=${interface_code}`, payload).then(response => {
                   const res = response.data
                   try {
                           if (res.code == '-1') {
@@ -152,37 +153,37 @@ const queryData = (data) => {
                               this.errorMsg.msg = res.message
                           } else {
                               const property = res.property
-                              let columns = this.sortColumns(property);
-                              this.columns = Object.assign({}, columns);
+                            //   let columns = this.sortColumns(property);
+                            //   this.columns = Object.assign({}, columns);
                               if (res.isPaging == '1') {
-                                  this.dataList = res.data.list
-                                  this.page.total = res.data.total
+                                  dataList = res.data.list
+                                  pageInfo.total = res.data.total
                                   if (res.isTotal == '1') {
-                                  this.totalDataList = res.data.totalList
+                                  totalDataList = res.data.totalList
                                   }
                               } else {
-                                  this.dataList = res.data
-                                  this.page.total = this.dataList.length
+                                  dataList = res.data
+                                  pageInfo.total = this.dataList.length
                                   if (res.isTotal == '1') {
-                                  this.totalDataList = res.totaldata
+                                  totalDataList = res.totaldata
                                   }
                               }
   
   
-                              this.prepareTableData(this.dataList);
-                              this.visiable = true
+                              prepareTableData(this.dataList);
+                              visiable = true
                           }
-                          this.queryLoading = false
-                          this.page.env_type = data.env_type
+                          queryLoading = false
+                          pageInfo.env_type = data.env_type
                   } catch (e) {
-                      this.errorMsg.error = true
-                      this.errorMsg.msg = "接口返回数据失败"+ e
+                      errorMsg.error = true
+                      errorMsg.msg = "接口返回数据失败"+ e
                   } finally {
-                      this.queryLoading = false
+                      queryLoading = false
                   }
               }
               ).finally(() => {
-                  this.queryLoading = false
+                  queryLoading = false
               })
   }
   // const exportData = (data) => {
@@ -237,13 +238,14 @@ const queryData = (data) => {
   //         }
   const prepareTableData = (dataList)=> {
               if (dataList.length > this.page.page_size) {
-                  this.page.tableData = dataList.slice((this.page.page_no - 1) * this.page.page_size, this.page.page_no * this.page.page_size);
+                  pageInfo.tableData = dataList.slice((this.page.page_no - 1) * pageInfo.page_size, pageInfo.page_no * pageInfo.page_size);
               } else {
-                  this.page.tableData = dataList;
+                  pageInfo.tableData = dataList;
               }
-  
-              if (this.totalDataList.length > 0) {
-                  this.page.tableData = this.page.tableData.concat(this.totalDataList);
+
+              // 将合计行追加到最后一行
+              if (totalDataList.length > 0) {
+                pageInfo.tableData = pageInfo.tableData.concat(totalDataList);
               }
   }
   const sortColumns = (columns, flag = 1) => {
@@ -260,8 +262,8 @@ const queryData = (data) => {
               }).map(o => o[1])
   }
   const reset = () => {
-              this.errorMsg.error = false;
-              this.visiable = false;
+              errorMsg.error = false;
+              visiable = false;
   }
   const nextPage= () => {
               if (this.dataList.length > this.page.page_size) {
