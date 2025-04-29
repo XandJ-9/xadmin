@@ -15,7 +15,7 @@
                     </el-button>
                   </div>
                   <el-input v-if="showJsonFormat" v-model="queryForm.query_field_json" placeholder="接口参数" type="textarea"  />
-                  <el-table v-else :data="queryForm.query_field_list" border fit highlight-current-row>
+                  <el-table v-else :data="queryForm.query_field_list" border fit>
                       <el-table-column align="center" label="参数名称" prop="interface_para_name"/>
                       <el-table-column align="center" label="参数编码" prop="interface_para_code"/>
                       <el-table-column align="center" label="参数数值" value="">
@@ -113,8 +113,7 @@
       getInterfaceInfo()
   })
   const getInterfaceInfo = async () => {
-    const res = await request.get(`/api/report/interfaces/${props.interface_id}/`)
-      console.log(res)
+      const res = await request.get(`/api/report/interfaces/${props.interface_id}/`)
       interface_code.value = res.data.data.interface_code
       const resp = await request.get(`/api/report/interface-fields/?interface=${props.interface_id}&noPage=1`)
       const fields = resp.data.data
@@ -126,8 +125,12 @@
       queryForm.query_field_list = queryFields
       queryForm.query_field_json = '{' + queryFields.value.map(e => `"${e.interface_para_code}":""`).join(',') + '}'
       queryForm.query_para_value = JSON.parse(queryForm.query_field_json)
-  }
-  const queryData = (data) => {
+}
+
+const getReportData = async (data) => {
+
+}
+const queryData = (data) => {
               this.reset()
               let interface_code = this.queryForm.code
               // 只拷贝数值，不修改被引用的对象值

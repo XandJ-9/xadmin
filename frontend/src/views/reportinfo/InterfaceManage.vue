@@ -51,7 +51,7 @@
     </div>
 
       <!-- 数据表格 -->
-      <el-table ref="tableRef" :data="tableData" style="width: 100%" v-loading="loading" border>
+      <el-table ref="tableRef" :data="tableData" style="width: 100%" v-loading="loading" border fit>
         <el-table-column fixed prop="interface_code" label="接口编码" width="100" />
         <el-table-column prop="interface_name" label="接口名称" />
         <el-table-column prop="interface_desc" label="接口描述" show-overflow-tooltip >

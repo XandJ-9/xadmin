@@ -3,7 +3,7 @@
     
     <el-main>
         <router-view v-slot="{ Component }" :key="key">
-            <keep-alive :include="cachedViews">
+            <keep-alive>
                 <component :is="Component" />
             </keep-alive>
         </router-view>

@@ -31,7 +31,7 @@ class InterfaceInfoSerializer(BizModelSerializer):
     class Meta:
         model = InterfaceInfo
         fields = '__all__'
-        read_only_fields = ['id', 'creator', 'create_datetime', 'update_datetime']
+        read_only_fields = ['id', 'create_datetime', 'update_datetime']
 
 
     

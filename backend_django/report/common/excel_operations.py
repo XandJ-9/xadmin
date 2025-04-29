@@ -170,14 +170,15 @@ def handle_interface_import(file_path, user = None):
         'is_paging':ws['B4'].value,
         'is_total':ws['D4'].value,
         'total_sql':ws['F4'].value,
-        'report':report.id,
-        'creator':user.id,
-        'updator':user.id
+        'report':report.id
     }
     interface = InterfaceInfo.objects.filter(interface_code = interface_info['interface_code'])
     if interface:
+        interface_info['updator']=user.id
         ser = InterfaceInfoSerializer(instance = interface[0],data=interface_info)
     else:
+        interface_info['creator']=user.id
+        interface_info['updator']=user.id
         ser = InterfaceInfoSerializer(data=interface_info)
     # 在序列化模型对象时，会将选项字段转换
     ser.is_valid(raise_exception=True)
