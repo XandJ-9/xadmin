@@ -8,7 +8,8 @@ from .views import (
     InterfaceInfoViewSet,
     InterfaceFieldViewSet,
     ImportExportViewSet,
-    InterfaceQueryViewSet
+    InterfaceQueryViewSet,
+    InterfaceQueryLogViewSet
 )
 
 router = DefaultRouter()
@@ -19,6 +20,7 @@ router.register(r'interfaces', InterfaceInfoViewSet)
 router.register(r'interface-fields', InterfaceFieldViewSet)
 router.register(r'', ImportExportViewSet, basename='import-export')
 router.register(r'', InterfaceQueryViewSet, basename='interface-query')
+router.register(r'interface-logs', InterfaceQueryLogViewSet, basename='interface-logs')
 
 urlpatterns = [
     path('report/', include(router.urls)),

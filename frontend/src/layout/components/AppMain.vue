@@ -1,14 +1,11 @@
 <template>
-  <div class="app-main" >
-    
-    <el-main>
+  <section class="app-main" >
         <router-view v-slot="{ Component }" :key="key">
-            <keep-alive :include="cachedViews">
+            <!-- <keep-alive :include="cachedViews"> -->
                 <component :is="Component"/>
-            </keep-alive>
+            <!-- </keep-alive> -->
         </router-view>
-    </el-main>
-  </div>
+  </section>
 </template>
 
 <script setup>
@@ -33,17 +30,13 @@ const key = computed(() => {
 <style scoped>
 
 
-
-.el-main {
-  background-color: #f5f7fa;
-  border:none;
-  padding: 0;
-  height: calc(100vh - 60px);
-  overflow-y: auto;
-}
-
 .app-main {
-  height: 100%;
+  /* 50= navbar  50  */
+  min-height: calc(100vh - 50px);
+  width: 100%;
+  position: relative;
+  overflow: hidden;
 }
+
 
 </style>

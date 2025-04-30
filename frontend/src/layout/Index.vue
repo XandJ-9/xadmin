@@ -1,7 +1,7 @@
 <template>
-  <div class="layout-container">
-    <Sidebar :is-collapse="isCollapse" :sidebar-width="sidebarWidth"/>
-    <div class="main-container" :style="{ width: mainWidth}">
+  <div class="app-wrapper">
+    <Sidebar class="sidebar-container"/>
+    <div class="main-container">
     <el-header>
       <div class="header-left">
         <el-icon class="fold-btn" @click="toggleCollapse">
@@ -33,6 +33,7 @@ import AppMain from './components/AppMain.vue'
 import { ref, computed, provide, onMounted } from 'vue'
 import TagView from './components/TagView.vue'
 import { useUserStore } from '@/store/user'
+import { useAppStore } from '@/store/app'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -41,7 +42,7 @@ const sidebarWidth = computed(() => isCollapse.value ? '64px' : '200px')
 const username = ref('')
 
 const userStore = useUserStore()
-
+const appStore = useAppStore()
 onMounted(() => {
   // const user = localStorage.getItem('user')
   // if (user) {
@@ -59,11 +60,11 @@ const mainWidth = computed(() => {
 
 
 const toggleCollapse = () => {
-  isCollapse.value = !isCollapse.value
+    appStore.toggleSidebar()
+    isCollapse.value = appStore.getSidebar.opened
 }
 
 const handleLogout = () => {
-  // localStorage.removeItem('token')
   const userStore = useUserStore()
   userStore.logout()
   router.push('/login')
@@ -120,4 +121,48 @@ const handleLogout = () => {
   width: 100%;
   
 }
+</style>
+
+<style lang="scss" scoped>
+  @import "@/styles/mixin.scss";
+  @import "@/styles/variables.scss";
+
+  .app-wrapper {
+    @include clearfix;
+    position: relative;
+    height: 100%;
+    width: 100%;
+
+    &.mobile.openSidebar {
+      position: fixed;
+      top: 0;
+    }
+  }
+
+  .drawer-bg {
+    background: #000;
+    opacity: 0.3;
+    width: 100%;
+    top: 0;
+    height: 100%;
+    position: absolute;
+    z-index: 999;
+  }
+
+  .fixed-header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 9;
+    width: calc(100% - #{$sideBarWidth});
+    transition: width 0.28s;
+  }
+
+  .hideSidebar .fixed-header {
+    width: calc(100% - 54px)
+  }
+
+  .mobile .fixed-header {
+    width: 100%;
+  }
 </style>

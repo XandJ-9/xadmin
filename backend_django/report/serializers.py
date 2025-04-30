@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from system.serializers import BizModelSerializer
-from .models import PlatformInfo, ModuleInfo, ReportInfo, InterfaceInfo, InterfaceField
+from .models import PlatformInfo, ModuleInfo, ReportInfo, InterfaceInfo, InterfaceField, InterfaceQueryLog
 
 
 class PlatformInfoSerializer(BizModelSerializer):
@@ -56,3 +56,9 @@ class InterfaceFieldSerializer(BizModelSerializer):
         if not created:
             self.update(instance, validated_data)
         return instance
+
+
+class InterfaceQueryLogSerializer(BizModelSerializer):
+    class Meta:
+        model = InterfaceQueryLog
+        fields = '__all__'

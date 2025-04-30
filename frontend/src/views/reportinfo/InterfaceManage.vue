@@ -171,29 +171,6 @@
           :rules="rules"
           label-width="120px"
         >
-        <!-- 
-         报表的平台模块信息放在报表设计中修改
-          <el-form-item label="平台名称" prop="platform">
-            <el-select v-model="formData.platform" placeholder="请选择平台">
-              <el-option
-                v-for="item in platformOptions"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="模块名称" prop="module">
-            <el-select v-model="formData.module" placeholder="请选择模块">
-              <el-option
-                v-for="item in moduleOptions"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              />
-            </el-select>
-          </el-form-item>
-        -->
           <el-form-item label="报表名称" prop="report">
             <el-select v-model="formData.report" placeholder="请选择报表"
             @focus="getReportList">
@@ -457,7 +434,7 @@ const resetForm = () => {
   formData.interface_name = ''
   formData.interface_desc = ''
   formData.interface_db_type = ''
-    formData.interface_db_name = ''
+  formData.interface_db_name = ''
   formData.interface_sql = ''
   formData.is_total = '0'
   formData.is_paging = '0'

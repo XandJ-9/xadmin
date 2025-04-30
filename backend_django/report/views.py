@@ -2,13 +2,14 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ViewSet
 from utils.viewset import CustomModelViewSet
-from .models import PlatformInfo, ModuleInfo, ReportInfo, InterfaceInfo, InterfaceField
+from .models import PlatformInfo, ModuleInfo, ReportInfo, InterfaceInfo, InterfaceField,InterfaceQueryLog
 from .serializers import (
     PlatformInfoSerializer,
     ModuleInfoSerializer,
     ReportInfoSerializer,
     InterfaceInfoSerializer,
-    InterfaceFieldSerializer
+    InterfaceFieldSerializer,
+    InterfaceQueryLogSerializer
 )
 from .common.mixin_excel_import_export import ExcelImportExportMixin
 from .common.mixin_interface_query import InterfaceQueryMixin 
@@ -60,3 +61,10 @@ class InterfaceQueryViewSet(InterfaceQueryMixin,ViewSet):
     接口查询视图
     '''
     queryset = None
+
+class InterfaceQueryLogViewSet(CustomModelViewSet):
+    '''
+    接口查询日志视图
+    '''
+    queryset = InterfaceQueryLog.objects.all()
+    serializer_class = InterfaceQueryLogSerializer
