@@ -1,9 +1,9 @@
 <template>
   <section class="app-main" >
-        <router-view v-slot="{ Component }" :key="key">
-            <!-- <keep-alive :include="cachedViews"> -->
-                <component :is="Component"/>
-            <!-- </keep-alive> -->
+        <router-view #default="{ Component, route }" :key="key">
+            <keep-alive :include="cachedViews">
+                <component :is="Component" :key="route.fullPath"/>
+            </keep-alive>
         </router-view>
   </section>
 </template>
@@ -17,7 +17,7 @@ const tagViewsStore = useTagViewsStore()
 
 // 从visitedViews中提取组件名称，用于keep-alive的include属性
 const cachedViews = computed(() => {
-  return tagViewsStore.visitedViews.map(view => view.path)
+  return tagViewsStore.visitedViews.map(view => view.name)
 })
 
 // 动态设置组件的key，用于keep-alive的include属性

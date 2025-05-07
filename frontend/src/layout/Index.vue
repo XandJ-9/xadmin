@@ -1,7 +1,7 @@
 <template>
-  <div class="app-wrapper">
-    <Sidebar class="sidebar-container" :style="{ width: sidebarWidth }"/>
-    <div class="main-container" :style="{ width: mainWidth }">
+  <div class="app-wrapper" :class="{'hideSidebar': !appStore.getSidebar.opened}">
+    <Sidebar class="sidebar-container" />
+    <div class="main-container">
     <el-header>
       <div class="header-left">
         <el-icon class="fold-btn" @click="toggleCollapse">
@@ -61,7 +61,7 @@ const mainWidth = computed(() => {
 
 const toggleCollapse = () => {
     appStore.toggleSidebar()
-    isCollapse.value = appStore.getSidebar.opened
+    isCollapse.value = !appStore.getSidebar.opened
 }
 
 const handleLogout = () => {
@@ -126,11 +126,11 @@ const handleLogout = () => {
 </style>
 
 <style lang="scss" scoped>
-  @import "@/styles/mixin.scss";
-  @import "@/styles/variables.scss";
+  @use "@/styles/mixin.scss" as mixin;
+  @use "@/styles/variables.scss" as variables;
 
   .app-wrapper {
-    @include clearfix;
+    @include mixin.clearfix;
     position: relative;
     height: 100%;
     width: 100%;
@@ -156,7 +156,7 @@ const handleLogout = () => {
     top: 0;
     right: 0;
     z-index: 9;
-    width: calc(100% - #{$sideBarWidth});
+    width: calc(100% - #{variables.$sideBarWidth});
     transition: width 0.28s;
   }
 

@@ -27,12 +27,14 @@
 </template>
 
 <script setup>
-import * as variables from '@/styles/variables.scss'
 import { useRouter } from 'vue-router'
 import SidebarItem from './SidebarItem.vue'
 import { useMenuStore } from '@/store/menu'
 import { useAppStore } from '@/store/app'
 import { computed } from 'vue'
+
+// 使用正确的方式导入样式变量
+import * as variables from '@/styles/variables.scss'
 
 const menuStore = useMenuStore()
 const router = useRouter()
@@ -46,7 +48,6 @@ const sidebarRouters = [ ...constantRouters, ...menuStore.menuTree ]
 const menuVariables = computed(() => variables)
 
 const isCollapse = computed(() => !appStore.getSidebar.opened)
-
 </script>
 
 <style scoped>
@@ -84,48 +85,4 @@ const isCollapse = computed(() => !appStore.getSidebar.opened)
 .logo.collapsed {
   font-size: 24px;
 }
-</style>
-
-<style lang="scss" scoped>
-  @import "@/styles/mixin.scss";
-  @import "@/styles/variables.scss";
-
-  .app-wrapper {
-    @include clearfix;
-    position: relative;
-    height: 100%;
-    width: 100%;
-
-    &.mobile.openSidebar {
-      position: fixed;
-      top: 0;
-    }
-  }
-
-  .drawer-bg {
-    background: #000;
-    opacity: 0.3;
-    width: 100%;
-    top: 0;
-    height: 100%;
-    position: absolute;
-    z-index: 999;
-  }
-
-  .fixed-header {
-    position: fixed;
-    top: 0;
-    right: 0;
-    z-index: 9;
-    width: calc(100% - #{$sideBarWidth});
-    transition: width 0.28s;
-  }
-
-  .hideSidebar .fixed-header {
-    width: calc(100% - 54px)
-  }
-
-  .mobile .fixed-header {
-    width: 100%;
-  }
 </style>
