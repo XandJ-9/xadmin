@@ -1,5 +1,5 @@
 <template>
-  <div class="el-aside">
+  <div class="sidebar-wrapper">
     <!-- 侧边栏内容 -->
     <div class="logo" :class="{ 'collapsed': isCollapse }">{{ isCollapse ? 'X' : 'Xadmin' }}</div>
     <el-scrollbar wrap-class="scrollbar-wrapper">

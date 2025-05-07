@@ -1,3 +1,4 @@
+import traceback
 from django.http.response import HttpResponseNotFound, JsonResponse
 from django.template import Template, Context
 from rest_framework.decorators import action
@@ -6,7 +7,11 @@ from ..models  import InterfaceInfo,InterfaceField,InterfaceQueryLog
 from .operation_interface_query import wrap_query_result
 from datasource.models import DataSource
 from datasource.executors.factory import QueryExecutorFactory
-import time
+import time,logging
+
+
+logger = logging.getLogger(__name__)
+
 class InterfaceQueryMixin:
 
     @action(detail=False, methods=['POST'], url_path='execute-query')
@@ -36,14 +41,17 @@ class InterfaceQueryMixin:
         # 结果包装
         result = wrap_query_result(query_result, interface_fields, interface_info)
         # 记录查询日志
-        interface_query_log = InterfaceQueryLog.objects.create(interface_code=interface_code,
-                                         interface_sql=interface_sql,
-                                         execute_time=execute_time,
-                                         execute_start_time=execute_start_time,
-                                         execute_end_time=execute_end_time,
-                                         execute_result="success",
-                                         creator = request.user)
-        interface_query_log.save()
+        try:
+            interface_query_log = InterfaceQueryLog.objects.create(interface_code=interface_code,
+                                            interface_sql=interface_sql,
+                                            execute_time=execute_time,
+                                            execute_start_time=execute_start_time,
+                                            execute_end_time=execute_end_time,
+                                            execute_result="success",
+                                            creator = request.user)
+            interface_query_log.save()
+        except:
+            logger.error(traceback.format_exc())
         return JsonResponse(result)
     
     def get_executor(self, interface_db_type, interface_db_name):

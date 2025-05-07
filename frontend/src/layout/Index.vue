@@ -1,7 +1,7 @@
 <template>
   <div class="app-wrapper">
-    <Sidebar class="sidebar-container"/>
-    <div class="main-container">
+    <Sidebar class="sidebar-container" :style="{ width: sidebarWidth }"/>
+    <div class="main-container" :style="{ width: mainWidth }">
     <el-header>
       <div class="header-left">
         <el-icon class="fold-btn" @click="toggleCollapse">
@@ -79,6 +79,15 @@ const handleLogout = () => {
   width: 100vw;
 }
 
+
+/* .main-container {
+    position: fixed;
+    right: 0;
+    top: 0;
+    transition: width 0.3s;
+    width: 100%;
+} */
+
 .el-header {
   background-color: #ffffff;
   border-bottom: 1px solid #e6e6e6;
@@ -113,14 +122,7 @@ const handleLogout = () => {
   color: #303133;
 }
 
-.main-container {
-  position: fixed;
-  right: 0;
-  top: 0;
-  transition: width 0.3s;
-  width: 100%;
-  
-}
+
 </style>
 
 <style lang="scss" scoped>
