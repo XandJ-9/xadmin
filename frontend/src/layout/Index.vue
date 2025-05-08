@@ -2,8 +2,7 @@
   <div class="app-wrapper" :class="{'hideSidebar': !appStore.getSidebar.opened}">
     <Sidebar class="sidebar-container" />
     <div class="main-container">
-    <div class="fixed-header">
-        <el-header>
+    <el-header class="fixed-header">
         <div class="header-left">
             <el-icon class="fold-btn" @click="toggleCollapse">
             <component :is="isCollapse ? 'Expand' : 'Fold'" />
@@ -21,10 +20,9 @@
             </template>
             </el-dropdown>
         </div>
-        </el-header>
-        <tags-view />
-    </div>
-    <app-main/>
+    </el-header>
+    <tags-view class="tags-view-container" />
+    <app-main class="app-main"/>
   </div>
   </div>
 </template>
@@ -97,13 +95,13 @@ const handleLogout = () => {
   align-items: center;
   justify-content: space-between;
   padding: 0 20px;
-  height: 50px !important;
+  height: 60px !important;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
 }
 
 .fold-btn {
-  font-size: 18px;
+  font-size: 30px;
   cursor: pointer;
   color: #303133;
   padding: 5px;
@@ -176,14 +174,32 @@ const handleLogout = () => {
     right: 0;
     z-index: 9;
     width: calc(100% - #{variables.$sideBarWidth});
-    height: 90px;
     transition: all 0.28s ease;
   }
 
   .hideSidebar .fixed-header {
     width: calc(100% - 54px)
   }
-
+  .tags-view-container {
+    // position: relative;
+    height: 40px;
+    width: 100%;
+    background: #fff;
+    border-bottom: 1px solid #e6e6e6;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .08);
+    margin-top: 60px;
+  }
+  .app-main {
+    /* 调整内容区域，适应新的header和tagsview高度 */
+    min-height: calc(100vh - 90px);
+    height: 100%;
+    width: 100%;
+    position: relative;
+    overflow: auto;
+    padding: 15px;
+    // margin-top: 90px;
+    transition: all 0.3s ease;
+  }
   .mobile .fixed-header {
     width: 100%;
   }

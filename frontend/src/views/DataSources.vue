@@ -12,10 +12,10 @@
       <el-table-column prop="port" label="端口" width="100" />
       <el-table-column prop="database" label="数据库" width="120" />
       <el-table-column prop="username" label="用户名" width="120" />
-      <el-table-column prop="description" label="描述" />
+      <el-table-column prop="description" label="描述" width="150" />
       <el-table-column prop="creator_username" label="创建者" width="120" />
       <el-table-column prop="create_time" label="创建时间" width="180" />
-      <el-table-column fixed="right" label="操作" width="250">
+      <el-table-column label="操作" width="250">
         <template #default="scope">
           <div class="operation-buttons">
             <el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>

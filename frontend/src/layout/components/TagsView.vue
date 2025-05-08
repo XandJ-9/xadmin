@@ -127,13 +127,10 @@ const closeMenu = () => {
 watch(() => route.path, () => {
   const { name, meta, path, query } = route
   if (name) {
-    tagsViewStore.addView({
-      name,
-      meta,
-      path,
-      query
-    })
+    tagsViewStore.addView(route)
   }
+  console.log('visitedViews', tagsViewStore.visitedViews)
+  console.log('cachedViews', tagsViewStore.cachedViews)
 }, { immediate: true })
 
 // 点击页面时关闭右键菜单
@@ -165,7 +162,7 @@ onUnmounted(() => {
       display: inline-block;
       position: relative;
       cursor: pointer;
-      height: 28px;
+      // height: 28px;
       line-height: 28px;
       border: 1px solid #e0e3e9;
       color: #495060;

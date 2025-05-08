@@ -52,7 +52,7 @@
 
       <!-- 数据表格 -->
       <el-table ref="tableRef" :data="tableData" style="width: 100%" v-loading="loading" border fit>
-        <el-table-column fixed prop="interface_code" label="接口编码" width="100" />
+        <el-table-column fixed prop="interface_code" label="接口编码" width="200" />
         <el-table-column prop="interface_name" label="接口名称" />
         <el-table-column prop="interface_desc" label="接口描述" show-overflow-tooltip >
             <template #default="scope">
@@ -99,7 +99,7 @@
             {{ scope.row.create_time }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" min-width="350">
+        <el-table-column label="操作" min-width="350">
           <template #default="scope">
             <el-button size="small" type="primary" @click="handleEdit(scope.row)">编辑</el-button>
             <el-button size="small" type="danger" @click="handleDelete(scope.row)">删除</el-button>
