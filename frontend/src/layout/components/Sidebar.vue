@@ -29,8 +29,8 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import SidebarItem from './SidebarItem.vue'
-import { useMenuStore } from '@/store/menu'
-import { useAppStore } from '@/store/app'
+import { useMenuStore } from '@/store/modules/menu'
+import { useAppStore } from '@/store/modules/app'
 import { computed } from 'vue'
 
 // 使用正确的方式导入样式变量

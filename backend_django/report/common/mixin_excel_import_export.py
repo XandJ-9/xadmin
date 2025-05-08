@@ -5,7 +5,7 @@ from django.conf import settings
 
 from utils.util_response import DetailResponse
 from ..models import *
-from .operation_excel import generate_interface_workbook, handle_interface_import
+from .operation_excel import generate_interface_workbook, handle_import_interface, handle_import_tableinfo
 from hashlib import md5
 
 import os,logging 
@@ -30,25 +30,29 @@ class ExcelImportExportMixin:
         """
         # Implement the logic to read the Excel file and import data
         try:
-            file = request.FILES['file']
+            file_obj = request.FILES['file']
             # logger.info(uploadfile._name)
             # full_filepath = os.path.join(settings.IMPORT_FILE_PATH,file._name)
             # with open(full_filepath,'wb+') as outfile:
                 # for chunk in uploadfile.chunks():
                     # outfile.write(chunk)
-            file_md5 = md5(file.read()).hexdigest()
+            file_md5 = md5(file_obj.read()).hexdigest()
             upload_file, created = UploadFileInfo.objects.get_or_create(file_md5=file_md5, 
                                                                         defaults={
-                                                                            'source_file_name': file.name,
-                                                                            'file': file,
-                                                                            'file_size': file.size
+                                                                            'source_file_name': file_obj.name,
+                                                                            'file': file_obj,
+                                                                            'file_size': file_obj.size,
+                                                                            'biz_type': '1'
                                                                         })
             if not created:
-                upload_file.source_file_name = file.name
-                upload_file.file = file
-                upload_file.file_size = file.size
+                upload_file.source_file_name = file_obj.name
+                upload_file.file = file_obj
+                upload_file.file_size = file_obj.size
+                upload_file.biz_type = '1'
+                upload_file.creator = request.user
+                upload_file.updator = request.user
                 upload_file.save()
-            handle_interface_import(upload_file.file.name, request.user)
+            handle_import_interface(upload_file.file.name, request.user)
             return DetailResponse(
             msg='Import interface information from Excel file',
             status=200,
@@ -93,9 +97,29 @@ class ExcelImportExportMixin:
         Import table information from an Excel file.
         """
         # Implement the logic to read the Excel file and import data
-        file = request.FILES['file']
-        upload_file = UploadFileInfo(source_file_name=file.name, file=file, file_size=file.size)
-        upload_file.save()
+        file_obj = request.FILES['file']
+        # logger.info(uploadfile._name)
+        # full_filepath = os.path.join(settings.IMPORT_FILE_PATH,file._name)
+        # with open(full_filepath,'wb+') as outfile:
+            # for chunk in uploadfile.chunks():
+                # outfile.write(chunk)
+        file_md5 = md5(file_obj.read()).hexdigest()
+        upload_file, created = UploadFileInfo.objects.get_or_create(file_md5=file_md5, 
+                                                                    defaults={
+                                                                        'source_file_name': file_obj.name,
+                                                                        'file': file_obj,
+                                                                        'file_size': file_obj.size,
+                                                                        'biz_type': '2'
+                                                                    })
+        if not created:
+            upload_file.source_file_name = file_obj.name
+            upload_file.file = file_obj
+            upload_file.file_size = file_obj.size
+            upload_file.biz_type = '1'
+            upload_file.creator = request.user
+            upload_file.updator = request.user
+            upload_file.save()
+        handle_import_tableinfo(upload_file.file.name, request.user)
         return DetailResponse(msg='Import table information from Excel file', status=200)
 
         

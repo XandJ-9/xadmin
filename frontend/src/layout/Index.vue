@@ -2,26 +2,28 @@
   <div class="app-wrapper" :class="{'hideSidebar': !appStore.getSidebar.opened}">
     <Sidebar class="sidebar-container" />
     <div class="main-container">
-    <el-header>
-      <div class="header-left">
-        <el-icon class="fold-btn" @click="toggleCollapse">
-          <component :is="isCollapse ? 'Expand' : 'Fold'" />
-        </el-icon>
-      </div>
-      <div class="header-right">
-        <el-dropdown>
-          <span class="el-dropdown-link">
-            {{ username }}<el-icon class="el-icon--right"><arrow-down /></el-icon>
-          </span>
-          <template #dropdown>
-            <el-dropdown-menu>
-              <el-dropdown-item @click="handleLogout">退出登录</el-dropdown-item>
-            </el-dropdown-menu>
-          </template>
-        </el-dropdown>
-      </div>
-    </el-header>
-    <tag-view />
+    <div class="fixed-header">
+        <el-header>
+        <div class="header-left">
+            <el-icon class="fold-btn" @click="toggleCollapse">
+            <component :is="isCollapse ? 'Expand' : 'Fold'" />
+            </el-icon>
+        </div>
+        <div class="header-right">
+            <el-dropdown>
+            <span class="el-dropdown-link">
+                {{ username }}<el-icon class="el-icon--right"><arrow-down /></el-icon>
+            </span>
+            <template #dropdown>
+                <el-dropdown-menu>
+                <el-dropdown-item @click="handleLogout">退出登录</el-dropdown-item>
+                </el-dropdown-menu>
+            </template>
+            </el-dropdown>
+        </div>
+        </el-header>
+        <tags-view />
+    </div>
     <app-main/>
   </div>
   </div>
@@ -30,10 +32,10 @@
 <script setup>
 import Sidebar from './components/Sidebar.vue'
 import AppMain from './components/AppMain.vue'
-import { ref, computed, provide, onMounted } from 'vue'
-import TagView from './components/TagView.vue'
-import { useUserStore } from '@/store/user'
-import { useAppStore } from '@/store/app'
+import { ref, computed, onMounted } from 'vue'
+import TagsView from './components/TagsView.vue'
+import { useUserStore } from '@/store/modules/user'
+import { useAppStore } from '@/store/modules/app'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -157,6 +159,7 @@ const handleLogout = () => {
     right: 0;
     z-index: 9;
     width: calc(100% - #{variables.$sideBarWidth});
+    height: 80px;
     transition: width 0.28s;
   }
 

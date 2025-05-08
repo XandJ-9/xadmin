@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { useUserStore } from '@/store/user'
+import { useUserStore } from '@/store/modules/user'
 import { API_CONFIG, USER_STORAGE_KEYS, HTTP_STATUS, ERROR_MESSAGES } from './config'
 import { ElLoading, ElMessage } from 'element-plus'
 import { saveAs } from 'file-saver'

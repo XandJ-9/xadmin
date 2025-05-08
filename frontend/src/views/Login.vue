@@ -32,8 +32,8 @@
 import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
-import { useUserStore } from '@/store/user'
-import { useRouteStore } from '@/store/route'
+import { useUserStore } from '@/store/modules/user'
+import { useRouteStore } from '@/store/modules/permission'
 
 const router = useRouter()
 const loginFormRef = ref(null)

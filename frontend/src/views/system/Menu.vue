@@ -101,7 +101,7 @@
 import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { Search } from '@element-plus/icons-vue'
-import { useUserStore } from '@/store/user'
+import { useUserStore } from '@/store/modules/user'
 import request from '@/utils/request'
 import { listToTree } from '@/utils/treeUtils'
 

@@ -40,8 +40,8 @@ import { User, Lock } from '@element-plus/icons-vue'
 import { useRouter } from 'vue-router'
 import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
-import { useUserStore } from '@/store/user'
-import { useMenuStore } from '@/store/menu'
+import { useUserStore } from '@/store/modules/user'
+import { useMenuStore } from '@/store/modules/menu'
 
 const router = useRouter()
 const registerFormRef = ref(null)

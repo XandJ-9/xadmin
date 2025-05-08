@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { DataBoard } from '@element-plus/icons-vue'
-import { useUserStore } from '@/store/user'
 
 const constantRoutes = [
   {
@@ -42,7 +41,8 @@ const asyncRoutes = [
         meta: {
           icon: DataBoard,
           title: 'Dashboard',
-          needTagview: true
+            needTagview: true,
+            affix: true
         }
       }
     ]

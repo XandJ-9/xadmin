@@ -10,14 +10,11 @@
 
 <script setup>
 import { computed } from 'vue'
-import { useTagViewsStore } from '@/store/tagviews'
 import { useRoute } from 'vue-router'
-
-const tagViewsStore = useTagViewsStore()
 
 // 从visitedViews中提取组件名称，用于keep-alive的include属性
 const cachedViews = computed(() => {
-  return tagViewsStore.visitedViews.map(view => view.name)
+  return []
 })
 
 // 动态设置组件的key，用于keep-alive的include属性
@@ -32,7 +29,8 @@ const key = computed(() => {
 
 .app-main {
   /* 50= navbar  50  */
-  min-height: calc(100vh - 50px);
+  /* min-height: calc(100vh - 80px); */
+  height: 100%;
   width: 100%;
   position: relative;
   overflow: hidden;

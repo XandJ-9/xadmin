@@ -1,6 +1,6 @@
 import router from './router/index'
-import { useUserStore } from '@/store/user'
-import { useRouteStore } from '@/store/route'
+import { useUserStore } from '@/store/modules/user'
+import { useRouteStore } from '@/store/modules/permission'
 import { getToken, removeToken } from '@/utils/auth'
 import NProgress from 'nprogress' // progress bar
 import 'nprogress/nprogress.css' // progress bar style

@@ -107,7 +107,7 @@ def generate_interface_workbook(interface, fields):
     return wb
 
 
-def handle_interface_import(file_path, user = None):
+def handle_import_interface(file_path, user = None):
     if not os.path.exists(file_path):
         raise Exception(f'{file_path} not exists')
     # filename = os.path.basename(full_filepath)
@@ -219,3 +219,7 @@ def handle_interface_import(file_path, user = None):
 
     need_delete_fields = existed_fields.exclude(id__in=[field.id for field in new_fields])
     need_delete_fields.delete()
+
+
+def handle_import_tableinfo(file_path, user = None):
+    pass
