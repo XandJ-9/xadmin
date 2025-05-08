@@ -97,16 +97,23 @@ const handleLogout = () => {
   align-items: center;
   justify-content: space-between;
   padding: 0 20px;
+  height: 50px !important;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
 }
 
 .fold-btn {
-  font-size: 20px;
+  font-size: 18px;
   cursor: pointer;
   color: #303133;
+  padding: 5px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
 }
 
 .fold-btn:hover {
   color: #409EFF;
+  background-color: rgba(64, 158, 255, 0.1);
 }
 
 .header-left {
@@ -116,12 +123,22 @@ const handleLogout = () => {
 
 .header-right {
   cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 
 .el-dropdown-link {
   display: flex;
   align-items: center;
   color: #303133;
+  font-size: 14px;
+  padding: 5px 8px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.el-dropdown-link:hover {
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 
@@ -159,8 +176,8 @@ const handleLogout = () => {
     right: 0;
     z-index: 9;
     width: calc(100% - #{variables.$sideBarWidth});
-    height: 80px;
-    transition: width 0.28s;
+    height: 90px;
+    transition: all 0.28s ease;
   }
 
   .hideSidebar .fixed-header {
