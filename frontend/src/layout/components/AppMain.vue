@@ -1,6 +1,6 @@
 <template>
   <section class="app-main" >
-        <router-view #default="{ Component, route }" :key="key">
+        <router-view #default="{ Component, route }">
             <keep-alive :include="cachedViews">
                 <component :is="Component" :key="route.fullPath"/>
             </keep-alive>
