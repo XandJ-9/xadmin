@@ -251,6 +251,12 @@
   </div>
 </template>
 
+<script>
+export default {
+    name: 'InterfaceManage'
+}
+</script>
+
 <script setup>
 import { ref, onMounted, reactive, inject } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'

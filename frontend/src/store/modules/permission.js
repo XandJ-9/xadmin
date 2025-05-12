@@ -53,6 +53,8 @@ export const useRouteStore = defineStore('route', {
       menuTree.forEach(item => {
           // 使用静态路径映射替代动态导入
           // console.log(`@/views/${item.component}.vue`)
+          // 原菜单名称修改为组件名称，因为keep-alive需要组件名称，因此将路由的name字段设置为组件名称
+          item.name = item.component_name
           item.component = dynamicImport(viewsModules ,item.component)
           // item.component = () => import(`@/views/${item.component}.vue`)
           // item.component = (resolve) => require([`@/views/${item.component}.vue`],resolve)

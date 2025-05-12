@@ -47,6 +47,7 @@ class Menu(BaseModel):
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children', verbose_name='父菜单')
     path = models.CharField(max_length=100, verbose_name='路由路径')
     component = models.CharField(max_length=100, verbose_name='组件路径', default='index')
+    component_name = models.CharField(max_length=100, blank=True, null=True, verbose_name='组件名称')
     redirect = models.CharField(max_length=100, blank=True, null=True, verbose_name='重定向路径')
     name_code = models.CharField(max_length=50, blank=True, null=True, verbose_name='路由名称代码')
     icon = models.CharField(max_length=50, blank=True, null=True, verbose_name='图标')

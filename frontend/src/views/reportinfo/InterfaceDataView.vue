@@ -4,6 +4,8 @@
   </div>
 </template>
 
+
+
 <script>
 import { useRoute } from 'vue-router'
 import InterfaceDataViewItem from './components/InterfaceDataViewItem.vue'

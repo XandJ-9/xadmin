@@ -1,23 +1,19 @@
 <template>
   <section class="app-main" >
         <router-view #default="{ Component, route }">
-            <!-- <keep-alive> -->
+            <keep-alive :include="tagsViewStore.cachedViewss">
                 <component :is="Component" :key="route.fullPath"/>
-            <!-- </keep-alive> -->
+            </keep-alive>
         </router-view>
   </section>
 </template>
 
 <script setup>
-import { computed } from 'vue'
 import { useTagsViewStore } from '@/store/modules/tagsView'
 
 const tagsViewStore = useTagsViewStore()
 
 // 从visitedViews中提取组件名称，用于keep-alive的include属性
-const cachedViews = computed(() => {
-  return tagsViewStore.cachedViews
-})
 
 </script>
 

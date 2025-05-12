@@ -24,6 +24,9 @@
   </div>
 </template>
 
+<script>
+export default { name: 'SysConfig' }
+</script>
 <script setup>
 import { ref } from 'vue'
 import { ElMessage } from 'element-plus'

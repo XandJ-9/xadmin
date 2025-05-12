@@ -191,6 +191,12 @@
   </div>
 </template>
 
+<script>
+export default {
+    name: 'ReportManage',
+}
+</script>
+
 <script setup>
 import { ref, onMounted, reactive, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'

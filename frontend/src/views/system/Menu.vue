@@ -97,6 +97,12 @@
   </div>
 </template>
 
+<script>
+export default {
+    name: 'SysMenu',
+}
+</script>
+
 <script setup>
 import { ref, reactive, computed, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'

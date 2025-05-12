@@ -128,6 +128,12 @@
   </div>
 </template>
 
+<script>
+export default {
+    name: 'InterfaceFields'
+}
+</script>
+
 <script setup>
 import { ref, onMounted, reactive } from 'vue'
 import { useRoute , useRouter} from 'vue-router'

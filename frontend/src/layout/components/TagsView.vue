@@ -88,8 +88,6 @@ const refreshSelectedTag = (view) => {
   // 将缓存中的tags删除，重新添加
     tagsViewStore.delVisitedView(view).then(() => {
         const currentRoute = router.currentRoute.value
-        console.log('current route ', currentRoute)
-
         // 使用重定向组件刷新页面
     router.replace({
         path: '/redirect',
@@ -134,7 +132,7 @@ watch(() => route.path, () => {
     //   path,
     //   query
       // })
-    tagsViewStore.addView(route)
+      tagsViewStore.addView(route)
   }
 }, { immediate: true })
 

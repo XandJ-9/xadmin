@@ -127,6 +127,13 @@
   </div>
 </template>
 
+
+<script>
+export default {
+    name: 'InterfaceQueryLog',
+}
+</script>
+
 <script setup>
 import { ref, onMounted, nextTick } from 'vue'
 import { ElMessage } from 'element-plus'

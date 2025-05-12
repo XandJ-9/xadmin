@@ -57,6 +57,12 @@
   </div>
 </template>
 
+<script>
+export default {
+    name: 'DataQuery',
+}
+</script>
+
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { ElMessage } from 'element-plus'

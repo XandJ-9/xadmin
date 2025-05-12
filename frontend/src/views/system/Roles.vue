@@ -49,6 +49,13 @@
   </div>
 </template>
 
+
+<script>
+export default {
+    name: 'SysRoles',
+}
+</script>
+
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { Plus } from '@element-plus/icons-vue'

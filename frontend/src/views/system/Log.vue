@@ -49,6 +49,12 @@
   </div>
 </template>
 
+<script>
+export default {
+    name: 'SysLog',
+}
+</script>
+
 <script setup>
 import { ref, onMounted } from 'vue'
 

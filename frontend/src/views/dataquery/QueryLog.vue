@@ -178,6 +178,12 @@
   </div>
 </template>
 
+<script>
+export default {
+    name: 'DataQueryLog',
+}
+</script>
+
 <script setup>
 import { ref, onMounted, nextTick, watch } from 'vue'
 import { ElMessage } from 'element-plus'

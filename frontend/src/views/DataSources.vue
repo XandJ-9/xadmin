@@ -82,6 +82,12 @@
   </div>
 </template>
 
+<script>
+export default {
+    name: 'DataSources',
+}
+</script>
+
 <script setup>
 import { ref, onMounted, reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'

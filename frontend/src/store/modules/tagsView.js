@@ -39,10 +39,17 @@ export const useTagsViewStore = defineStore(
                    }
         },
         addCachedView(view) {
-          if (this.cachedViews.includes(view.name)) return
-            this.visitedViews.forEach(item => {
-            this.cachedViews.push(item.name)
-        })
+            if (this.cachedViews.includes(view.name)) return
+            this.cachedViews.push(view.name)
+        //   this.visitedViews.forEach(item => {
+        //     this.cachedViews.push(item.name)
+            //   }
+            // for (let i = 0; i < this.visitedViews.length; i++){
+            //     if (this.cachedViews.includes(this.visitedViews[i].name)) return
+            //     else {
+            //         this.cachedViews.push(this.visitedViews[i].name)
+            //     }
+            // }
         },
         delView(view) {
           return new Promise(resolve => {

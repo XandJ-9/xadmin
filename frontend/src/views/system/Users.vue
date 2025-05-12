@@ -59,6 +59,12 @@
   </div>
 </template>
 
+<script>
+export default {
+    name: 'SysUsers',
+}
+</script>
+
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import { Plus } from '@element-plus/icons-vue'
