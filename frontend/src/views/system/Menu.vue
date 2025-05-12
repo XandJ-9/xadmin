@@ -20,6 +20,7 @@
         <el-table-column prop="name" label="菜单名称" width="180"></el-table-column>
         <el-table-column prop="path" label="路由路径" width="180"></el-table-column>
         <el-table-column prop="component" label="组件路径"></el-table-column>
+        <el-table-column prop="component_name" label="组件名称"></el-table-column>
         <el-table-column prop="icon" label="图标" width="100">
           <template #default="{row}">
             <el-icon v-if="row.icon">
@@ -73,6 +74,9 @@
         </el-form-item>
         <el-form-item label="组件路径">
           <el-input v-model="menuForm.component"></el-input>
+        </el-form-item>
+        <el-form-item label="组件名称">
+          <el-input v-model="menuForm.component_name"></el-input>
         </el-form-item>
         <el-form-item label="菜单图标">
           <el-input v-model="menuForm.icon"></el-input>
@@ -174,6 +178,7 @@ const menuForm = reactive({
   name: '',
   path: '',
   component: '',
+  component_name: '',
   icon: '',
   sort: 0,
   hidden: false,
@@ -206,6 +211,7 @@ const handleEdit = (row) => {
     name: row.name,
     path: row.path,
     component: row.component,
+    component_name: row.component_name,
     icon: row.icon,
     sort: row.sort,
     hidden: row.hidden,
@@ -246,6 +252,7 @@ const resetForm = () => {
     name: '',
     path: '',
     component: '',
+    component_name: '',
     icon: '',
     sort: 0,
     hidden: false,
@@ -262,6 +269,7 @@ const submitForm = () => {
         name: menuForm.name,
         path: menuForm.path,
         component: menuForm.component,
+        component_name: menuForm.component_name,
         icon: menuForm.icon,
         sort: menuForm.sort,
         hidden: menuForm.hidden,

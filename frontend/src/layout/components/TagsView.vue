@@ -124,16 +124,17 @@ const closeMenu = () => {
 
 // 监听路由变化，添加到访问记录
 watch(() => route.path, () => {
-  const { name, meta, path, query } = route
-  if (name) {
-    // tagsViewStore.addView({
-    //   name,
-    //   meta,
-    //   path,
-    //   query
-      // })
-      tagsViewStore.addView(route)
-  }
+  tagsViewStore.addView(route)
+  // const { name, meta, path, query } = route
+  // if (name) {
+  //   // tagsViewStore.addView({
+  //   //   name,
+  //   //   meta,
+  //   //   path,
+  //   //   query
+  //     // })
+  //     tagsViewStore.addView(route)
+  // }
 }, { immediate: true })
 
 // 点击页面时关闭右键菜单
