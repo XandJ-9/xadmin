@@ -51,10 +51,15 @@ const isCollapse = computed(() => !appStore.getSidebar.opened)
 </script>
 
 <style scoped>
+
+.sidebar-wrapper {
+    border-right: solid 1px #e6e6e6;
+}
+
 .el-aside {
   height: 100vh;
   background-color: #ffffff;
-  border-right: 1px solid #e6e6e6;
+  border-right: 1px solid #1c1b1b;
   transition: width 0.3s;
   padding: 0;
   margin: 0;

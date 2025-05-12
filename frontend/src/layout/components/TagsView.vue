@@ -86,13 +86,14 @@ const refreshSelectedTag = (view) => {
   visible.value = false
   
   // 将缓存中的tags删除，重新添加
-  tagsViewStore.delVisitedView(view).then(() => {
-    // 使用重定向组件刷新页面
-    const { fullPath } = router.currentRoute.value
-    
+    tagsViewStore.delVisitedView(view).then(() => {
+        const currentRoute = router.currentRoute.value
+        console.log('current route ', currentRoute)
+
+        // 使用重定向组件刷新页面
     router.replace({
-      path: '/redirect',
-      query: { path: fullPath }
+        path: '/redirect',
+        query: {...currentRoute.query , redirect_to: route.path}
     })
   })
 }
@@ -127,12 +128,13 @@ const closeMenu = () => {
 watch(() => route.path, () => {
   const { name, meta, path, query } = route
   if (name) {
-    tagsViewStore.addView({
-      name,
-      meta,
-      path,
-      query
-    })
+    // tagsViewStore.addView({
+    //   name,
+    //   meta,
+    //   path,
+    //   query
+      // })
+    tagsViewStore.addView(route)
   }
 }, { immediate: true })
 

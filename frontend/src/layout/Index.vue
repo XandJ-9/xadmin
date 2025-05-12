@@ -97,16 +97,16 @@ const handleLogout = () => {
   align-items: center;
   justify-content: space-between;
   padding: 0 20px;
-  height: 50px !important;
+  height: 60px !important;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
 }
 
 .fold-btn {
-  font-size: 18px;
+  font-size: 20px;
   cursor: pointer;
   color: #303133;
-  padding: 5px;
+  padding: 0px;
   border-radius: 4px;
   transition: all 0.2s ease;
 }

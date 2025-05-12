@@ -1,16 +1,15 @@
 <template>
   <section class="app-main" >
         <router-view #default="{ Component, route }">
-            <keep-alive :include="cachedViews">
+            <!-- <keep-alive> -->
                 <component :is="Component" :key="route.fullPath"/>
-            </keep-alive>
+            <!-- </keep-alive> -->
         </router-view>
   </section>
 </template>
 
 <script setup>
 import { computed } from 'vue'
-import { useRoute } from 'vue-router'
 import { useTagsViewStore } from '@/store/modules/tagsView'
 
 const tagsViewStore = useTagsViewStore()

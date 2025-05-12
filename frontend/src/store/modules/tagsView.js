@@ -22,18 +22,27 @@ export const useTagsViewStore = defineStore(
           )
         },
         addVisitedView(view) {
-          if (this.visitedViews.some(v => v.path === view.path)) return
-          this.visitedViews.push(
-            Object.assign({}, view, {
-              title: view.meta.title || 'no-name'
-            })
-          )
+                   let matchedViews = view.matched
+                   //  获取最近一个needTagview的view添加到visitedViews
+                 for (let i = matchedViews.length - 1; i >= 0; i--) {
+                   if (this.visitedViews.some(v => v.path === matchedViews[i].path)) break
+            
+                     if (matchedViews[i].meta && matchedViews[i].meta.needTagview) {
+            
+                       this.visitedViews.push(
+                         Object.assign({}, matchedViews[i], {
+                           title: matchedViews[i].meta.title || 'no-name'
+                         })
+                       )
+                       break
+                     }
+                   }
         },
         addCachedView(view) {
           if (this.cachedViews.includes(view.name)) return
-          if (!view.meta.noCache) {
-            this.cachedViews.push(view.name)
-          }
+            this.visitedViews.forEach(item => {
+            this.cachedViews.push(item.name)
+        })
         },
         delView(view) {
           return new Promise(resolve => {
