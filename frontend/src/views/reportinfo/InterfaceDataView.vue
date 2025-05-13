@@ -29,7 +29,8 @@ export default {
   beforeRouteEnter(to, from, next) {
     if (to.query.interface_name) {
         const title = to.meta.title
-        to.meta.title = title +'-'+ to.query.interface_name
+        to.meta.title = title + '-' + to.query.interface_name
+        console.log('route enter ', to)
     }
     next()
   }
