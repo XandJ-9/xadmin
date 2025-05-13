@@ -51,17 +51,18 @@ const initTags = () => {
     tagsViewStore.addView(route)
 }
 const addTags = () => {
-    let { name } = route;
-    let currentTagView = null;
-    let parent = route.matched[route.matched.length - 1].parent;
-    if (name) {
-        if (!route.meta.newTagview) {
-            currentTagView = parent;
-        } else {
-            currentTagView = route;
-        }
-        tagsViewStore.addView(currentTagView)
-    }
+  tagsViewStore.addView(route)
+  // let { name } = route;
+  // let currentTagView = null;
+    // let parent = route.matched[route.matched.length - 1].parent;
+    // if (name) {
+    //     if (!route.meta.newTagview) {
+    //         currentTagView = parent;
+    //     } else {
+    //         currentTagView = route;
+    //     }
+    //     tagsViewStore.addView(currentTagView)
+    // }
     return false
 }
 
@@ -120,7 +121,8 @@ const refreshSelectedTag = (view) => {
 
 // 判断是否是激活标签
 const isActive = (tag) => {
-  if (tag.path === route.path || (!route.meta.needTagview && route.path.includes(tag.path))) {
+  // if (tag.path === route.path || (!route.meta.needTagview && route.path.includes(tag.path))) {
+    if (tag.path === route.path) {
     return true
   }
   return false

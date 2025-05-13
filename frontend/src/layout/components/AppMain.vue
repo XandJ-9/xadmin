@@ -1,7 +1,7 @@
 <template>
   <section class="app-main" >
         <router-view #default="{ Component, route }">
-            <keep-alive :include="tagsViewStore.cachedViewss">
+            <keep-alive :include="tagsViewStore.cachedViews">
                 <component :is="Component" :key="route.fullPath"/>
             </keep-alive>
         </router-view>
