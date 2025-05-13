@@ -60,7 +60,7 @@ const addTags = () => {
         } else {
             currentTagView = route;
         }
-        tagsViewStore.addView(route)
+        tagsViewStore.addView(currentTagView)
     }
     return false
 }
