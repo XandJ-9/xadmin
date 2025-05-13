@@ -6,7 +6,7 @@
         :key="tag.path"
         :class="isActive(tag) ? 'active' : ''"
         class="tags-view-item"
-        :to="{ path: tag.path, query: tag.query }"
+        :to="{ path: tag.path, query: tag.query, fullPath: tag.fullPath }"
         tag="span"
         @contextmenu.prevent="openMenu(tag, $event)"
         @click.middle.prevent="closeSelectedTag(tag)"
@@ -45,6 +45,26 @@ const selectedTag = ref(null)
 // 从store获取访问过的路由
 const visitedViews = computed(() => tagsViewStore.visitedViews)
 
+
+const initTags = () => {
+    if (tagsViewStore.visitedViews.length === 0)
+    tagsViewStore.addView(route)
+}
+const addTags = () => {
+    let { name } = route;
+    let currentTagView = null;
+    let parent = route.matched[route.matched.length - 1].parent;
+    if (name) {
+        if (!route.meta.newTagview) {
+            currentTagView = parent;
+        } else {
+            currentTagView = route;
+        }
+        tagsViewStore.addView(route)
+    }
+    return false
+}
+
 // 关闭选中标签
 const closeSelectedTag = (view) => {
   tagsViewStore.delView(view).then(({ visitedViews }) => {
@@ -72,28 +92,30 @@ const closeAllTags = () => {
 
 // 跳转到最后一个标签
 const toLastView = (visitedViews) => {
-  const latestView = visitedViews.slice(-1)[0]
-  if (latestView) {
-    router.push(latestView)
-  } else {
-    router.push('/dashboard')
-  }
+    const latestView = visitedViews.slice(-1)[0]
+      if (latestView) {
+        router.push(latestView.fullPath)
+      } else {
+        // now the default is to redirect to the home page if there is no tags-view,
+        // you can adjust it according to your needs.
+        if (view.name === 'Dashboard') {
+          // to reload home page
+          router.replace({ path: '/redirect' + view.fullPath })
+        } else {
+          router.push('/')
+        }
+      }
 }
 
 // 刷新选中标签
 const refreshSelectedTag = (view) => {
   // 关闭右键菜单
   visible.value = false
-  
-  // 将缓存中的tags删除，重新添加
     tagsViewStore.delVisitedView(view).then(() => {
-        const currentRoute = router.currentRoute.value
-        // 使用重定向组件刷新页面
-    router.replace({
-        path: '/redirect',
-        query: {...currentRoute.query , redirect_to: route.path}
+        router.replace({
+            path: '/redirect' + view.fullPath
+        })
     })
-  })
 }
 
 // 判断是否是激活标签
@@ -124,17 +146,8 @@ const closeMenu = () => {
 
 // 监听路由变化，添加到访问记录
 watch(() => route.path, () => {
-  tagsViewStore.addView(route)
-  // const { name, meta, path, query } = route
-  // if (name) {
-  //   // tagsViewStore.addView({
-  //   //   name,
-  //   //   meta,
-  //   //   path,
-  //   //   query
-  //     // })
-  //     tagsViewStore.addView(route)
-  // }
+    // tagsViewStore.addView(route)
+    addTags()
 }, { immediate: true })
 
 // 点击页面时关闭右键菜单

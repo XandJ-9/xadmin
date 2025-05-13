@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { DataBoard } from '@element-plus/icons-vue'
+import Layout from '@/layout/index.vue'
 
 const constantRoutes = [
   {
@@ -21,11 +22,17 @@ const constantRoutes = [
     name: '404',
     component: () => import('@/views/NotFound.vue')
   },
-  {
-    path: '/redirect',
-    name: 'Redirect',
-    component: () => import('@/views/Redirect.vue')
-  }
+//   {
+//     path: '/redirect',
+//     name: 'Redirect',
+//     component: () => import('@/views/Redirect.vue')
+    //   }
+    {
+        name: 'Redirect',
+        path: '/redirect/:path(.*)',
+        component: () => import('@/views/redirect/index.vue')
+
+    }
 ]
 
 const asyncRoutes = [
