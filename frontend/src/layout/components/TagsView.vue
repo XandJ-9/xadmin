@@ -189,10 +189,10 @@ onUnmounted(() => {
     transition: all 0.3s ease;
 
   .tags-view-wrapper {
-    height: 100%;
-    width: 100%;
-    // overflow-x: auto;
-    white-space: nowrap;
+    height: 100%; /* 确保标签栏占满容器高度 */
+    width: 100%; /* 确保标签栏占满容器宽度 */
+    // overflow-x: auto; /* 允许水平滚动，当标签过多时可以滚动查看 */
+    white-space: nowrap; /* 防止标签换行，确保所有标签在同一行显示 */
     .tags-view-item {
       display: inline-block;
       cursor: pointer;
