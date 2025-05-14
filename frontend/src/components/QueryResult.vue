@@ -24,13 +24,11 @@
           </template>
         </el-table-column>
       </el-table>
-      <div class="pagination-container">
-        <el-pagination
+      <div class="card-footer">
+        <Pagination
+          :total="queryResult.length"
           :current-page="currentPage"
           :page-size="pageSize"
-          :page-sizes="[10, 20, 50, 100]"
-          :total="queryResult.length"
-          layout="total, sizes, prev, pager, next, jumper"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
         />
@@ -44,6 +42,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import Pagination from '@/components/Pagination.vue'
 
 const props = defineProps({
   queryResult: {
@@ -117,12 +116,6 @@ const formatCellValue = (value) => {
   flex-direction: column;
   height: 100%;
   gap: 16px;
-}
-
-.pagination-container {
-  padding: 16px 0;
-  display: flex;
-  justify-content: flex-end;
 }
 
 .error-message {

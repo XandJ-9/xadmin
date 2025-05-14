@@ -56,11 +56,14 @@
             </el-table-column>
         </el-table>
 
-        <div class="pagination-container">
-            <el-pagination :current-page="pageInfo.page_no" :page-size="pageInfo.page_size"
-                :page-sizes="[10, 20, 50, 100]" layout="total, sizes, prev, pager, next, jumper" :total="pageInfo.total"
+        <div class="card-footer">
+            <Pagination
+                :total="pageInfo.total"
+                :current-page="pageInfo.page_no"
+                :page-size="pageInfo.page_size"
                 @size-change="handleSizeChange"
-                @current-change="handleCurrentChange" />
+                @current-change="handleCurrentChange"
+            />
         </div>
 
     </div>
@@ -72,6 +75,7 @@ import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router'
 import request from '@/utils/request'
 // import { XLSX } from 'xlsx'
 import { parseTime } from '@/utils/index'
+import Pagination from '@/components/Pagination.vue'
 
 const props = defineProps({
     interface_id: { type: Number, default: 0 },
@@ -260,8 +264,4 @@ const handleCurrentChange = (val) => {
     margin-bottom: 10px;
 }
 
-.pagination-container {
-    display: flex;
-    justify-content: flex-end;
-}
 </style>

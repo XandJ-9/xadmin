@@ -75,7 +75,7 @@ button:focus-visible {
 #app {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  /* padding: 2rem; */
   /* text-align: center; */
 }
 
@@ -92,10 +92,28 @@ button:focus-visible {
   }
 }
 
+
+.card-footer {
+  /* 创建弹性布局容器，使子元素可以灵活排列 */
+  display: flex;
+  /* 在主轴上均匀分配空间，项目之间留有空白，两端对齐 */
+  justify-content: space-between;
+  /* 在交叉轴（垂直方向）上居中对齐所有子元素 */
+  align-items: center;
+  /* 在顶部添加20px的外边距，与上方内容分隔 */
+  margin-top: 20px;
+}
+
+
+
+/* element-ui自定义样式修改 */
 .el-button:focus {
     outline: none;
 }
 
-.el-menu {
-    border: none;
+.el-dialog {
+    transform: none;
+    left: 0;
+    position: relative;
+    margin: 0 auto;
 }

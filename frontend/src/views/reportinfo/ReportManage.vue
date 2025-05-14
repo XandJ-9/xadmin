@@ -62,17 +62,13 @@
           </div>
 
             <!-- 分页 -->
-            <div class="pagination-container">
-                <el-pagination
+            <Pagination
+                :total="total"
                 :current-page="currentPage"
                 :page-size="pageSize"
-                :page-sizes="[10, 20, 50, 100]"
-                layout="total, sizes, prev, pager, next, jumper"
-                :total="total"
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
-                />
-            </div>
+            />
       </div>
     <el-dialog
       :title="dialogTitle"
@@ -201,6 +197,7 @@ export default {
 import { ref, onMounted, reactive, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
+import Pagination from '@/components/Pagination.vue'
 
 const reportList = ref([])
 const dialogVisible = ref(false)
@@ -566,17 +563,8 @@ onMounted(() => {
   gap: 10px;
 }
 
-.card-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 20px;
-}
 .add-btn {
   margin-bottom: 20px;
 }
-.pagination-container {
-  display: flex;
-  justify-content: flex-end;
-}
+
 </style>

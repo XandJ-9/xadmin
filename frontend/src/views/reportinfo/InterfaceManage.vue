@@ -121,19 +121,16 @@
             <el-button type="primary" @click="handleImport">模板导入</el-button>
           </div>
             <!-- 分页 -->
-            <div class="pagination-container">
-                <el-pagination
+            <Pagination
+                :total="total"
                 :current-page="currentPage"
                 :page-size="pageSize"
-                :page-sizes="[10, 20, 50, 100]"
-                layout="total, sizes, prev, pager, next, jumper"
-                :total="total"
                 @size-change="handleSizeChange"
                 @current-change="handleCurrentChange"
-                />
-            </div>
+            />
       </div>
-
+       
+      <!-- 文件上传对话框 -->
       <el-dialog
         v-model="importVisible"
         title="选择上传文件"
@@ -262,6 +259,7 @@ import { ref, onMounted, reactive, inject } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
 import request from '@/utils/request'
+import Pagination from '@/components/Pagination.vue'
 // import InterfaceFields from './InterfaceFields.vue'
 const router = useRouter()
 const route = useRoute()
@@ -592,30 +590,17 @@ onMounted(() => {
 <style scoped>
 .interface-manage {
   padding: 20px;
+  /* height: 100%; */
+  /* display: flex; */
+  /* flex-direction: column; */
 }
 
-.card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-/* .search-area {
+.search-area {
   margin-bottom: 20px;
-} */
-
-.card-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 20px;
 }
+
 .add-btn {
   margin-bottom: 20px;
-}
-.pagination-container {
-  display: flex;
-  justify-content: flex-end;
 }
 
 .el-table__expand-icon{

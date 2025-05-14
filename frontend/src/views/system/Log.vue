@@ -35,16 +35,14 @@
         <el-table-column prop="createTime" label="创建时间" width="180"></el-table-column>
       </el-table>
       
-      <div class="pagination-container">
-        <el-pagination
+      <div class="card-footer">
+        <Pagination
+          :total="pagination.total"
+          :current-page="pagination.currentPage"
+          :page-size="pagination.pageSize"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="pagination.currentPage"
-          :page-sizes="[10, 20, 50, 100]"
-          :page-size="pagination.pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="pagination.total">
-        </el-pagination>
+        />
       </div>
   </div>
 </template>
@@ -57,6 +55,7 @@ export default {
 
 <script setup>
 import { ref, onMounted } from 'vue'
+import Pagination from '@/components/Pagination.vue'
 
 // 过滤表单
 const filterForm = ref({
@@ -142,8 +141,5 @@ onMounted(() => {
   margin-bottom: 20px;
 } */
 
-.pagination-container {
-  margin-top: 20px;
-  text-align: right;
-}
+
 </style>

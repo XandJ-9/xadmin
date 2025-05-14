@@ -21,17 +21,19 @@ export const useTagsViewStore = defineStore(
             })
           )
         },
-          addVisitedView(view) {
-            if (this.visitedViews.some(v => v.path === view.path)) return
-            this.visitedViews.push(
-                Object.assign({}, view, {
-                    title: view.meta.title || 'no-name'
-                })
-            )
-          },
+        addVisitedView(view) {
+          if (this.visitedViews.some(v => v.path === view.path)) return
+          this.visitedViews.push(
+            Object.assign({}, view, {
+              title: view.meta.title || 'no-name'
+            })
+          )
+        },
         addCachedView(view) {
-            if (this.cachedViews.includes(view.name)) return
+          if (this.cachedViews.includes(view.name)) return
+          if (!view.meta.noCache) {
             this.cachedViews.push(view.name)
+          }
         },
         delView(view) {
           return new Promise(resolve => {
@@ -98,17 +100,17 @@ export const useTagsViewStore = defineStore(
             resolve([...this.cachedViews])
           })
         },
-        delAllViews() {
+        delAllViews(view) {
           return new Promise(resolve => {
-            this.delAllVisitedViews()
-            this.delAllCachedViews()
+            this.delAllVisitedViews(view)
+            this.delAllCachedViews(view)
             resolve({
               visitedViews: [...this.visitedViews],
               cachedViews: [...this.cachedViews]
             })
           })
         },
-        delAllVisitedViews() {
+        delAllVisitedViews(view) {
           return new Promise(resolve => {
             const affixTags = this.visitedViews.filter(tag => tag.meta.affix)
             this.visitedViews = affixTags

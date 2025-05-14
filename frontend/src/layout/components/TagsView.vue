@@ -1,7 +1,8 @@
 <template>
   <div class="tags-view-container">
-    <el-scrollbar class="tags-view-wrapper">
-      <router-link
+    <!-- <el-scrollbar class="tags-view-wrapper"> -->
+    <div class="tags-view-wrapper">
+        <router-link
         v-for="tag in visitedViews"
         :key="tag.path"
         :class="isActive(tag) ? 'active' : ''"
@@ -12,14 +13,15 @@
         @click.middle.prevent="closeSelectedTag(tag)"
       >
         {{ tag.title }}
-        <el-icon v-if="tag.path !== '/dashboard'"
+        <el-icon v-if="!isAffix(tag)"
           class="el-icon-close"
           @click.prevent.stop="closeSelectedTag(tag)"
         >
           <Close />
         </el-icon>
       </router-link>
-    </el-scrollbar>
+    </div>
+    <!-- </el-scrollbar> -->
     <ul v-show="visible" :style="{left: leftOffset+'px', top: topOffset+'px'}" class="contextmenu">
       <li @click="refreshSelectedTag(selectedTag)">刷新页面</li>
       <li @click="closeSelectedTag(selectedTag)">关闭当前</li>
@@ -64,6 +66,10 @@ const addTags = () => {
     //     tagsViewStore.addView(currentTagView)
     // }
     return false
+}
+
+const isAffix = (tag) => {
+    return tag.meta && tag.meta.affix
 }
 
 // 关闭选中标签
@@ -171,12 +177,15 @@ onUnmounted(() => {
 
 <style scoped lang="scss">
 .tags-view-container {
-  height: 40px;
-  width: 100%;
+  height: 50px;
+//   width: 100%;
   background: #fff;
-  border-bottom: 1px solid #e6e6e6;
+  border: 1px solid #e6e6e6;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, .08);
+  padding-left: 10px;
   .tags-view-wrapper {
+    height: 100%;
+    overflow-y: auto;
     .tags-view-item {
       display: inline-block;
       position: relative;
@@ -187,15 +196,37 @@ onUnmounted(() => {
       color: #495060;
       background: #fff;
       padding: 0 10px;
-      font-size: 12px;
       margin-left: 5px;
-      margin-top: 6px;
+      margin-top: 4px;
+      font-size: 12px;
       overflow: hidden;
       border-radius: 3px;
       transition: all 0.2s ease;
-    //   &:first-of-type {
-        // margin-left: 15px;
-    //   }
+
+    &:hover {
+      background-color: #f5f7fa;
+    }
+    
+    .el-icon-close {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      vertical-align: middle;
+      text-align: center;
+      transition: all .2s ease;
+      transform-origin: 100% 50%;
+      margin-left: 2px;
+      &:before {
+        transform: scale(.6);
+        display: inline-block;
+        vertical-align: -3px;
+      }
+      &:hover {
+        background-color: #909399;
+        color: #fff;
+      }
+    }
+
       &:last-of-type {
         margin-right: 15px;
       }
@@ -240,34 +271,6 @@ onUnmounted(() => {
     }
   }
 }
-
-.tags-view-wrapper {
-  .tags-view-item {
-    &:hover {
-      background-color: #f5f7fa;
-    }
-    
-    .el-icon-close {
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      text-align: center;
-      transition: all .2s ease;
-      transform-origin: 100% 50%;
-      margin-left: 2px;
-      &:before {
-        transform: scale(.6);
-        display: inline-block;
-        vertical-align: -3px;
-      }
-      &:hover {
-        background-color: #909399;
-        color: #fff;
-      }
-    }
-  }
-}
-
 
 // .tags-view-container {
 //   height: 34px;

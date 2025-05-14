@@ -2,30 +2,30 @@
   <div class="app-wrapper" :class="{'hideSidebar': !appStore.getSidebar.opened}">
     <Sidebar class="sidebar-container" />
     <div class="main-container">
-    <div class="fixed-header">
-        <el-header>
-        <div class="header-left">
-            <el-icon class="fold-btn" @click="toggleCollapse">
-            <component :is="isCollapse ? 'Expand' : 'Fold'" />
-            </el-icon>
+        <div class="fixed-header">
+            <el-header>
+            <div class="header-left">
+                <el-icon class="fold-btn" @click="toggleCollapse">
+                <component :is="isCollapse ? 'Expand' : 'Fold'" />
+                </el-icon>
+            </div>
+            <div class="header-right">
+                <el-dropdown>
+                <span class="el-dropdown-link">
+                    {{ username }}<el-icon class="el-icon--right"><arrow-down /></el-icon>
+                </span>
+                <template #dropdown>
+                    <el-dropdown-menu>
+                    <el-dropdown-item @click="handleLogout">退出登录</el-dropdown-item>
+                    </el-dropdown-menu>
+                </template>
+                </el-dropdown>
+            </div>
+            </el-header>
+            <tags-view />
         </div>
-        <div class="header-right">
-            <el-dropdown>
-            <span class="el-dropdown-link">
-                {{ username }}<el-icon class="el-icon--right"><arrow-down /></el-icon>
-            </span>
-            <template #dropdown>
-                <el-dropdown-menu>
-                <el-dropdown-item @click="handleLogout">退出登录</el-dropdown-item>
-                </el-dropdown-menu>
-            </template>
-            </el-dropdown>
-        </div>
-        </el-header>
-        <tags-view />
+        <app-main/>
     </div>
-    <app-main/>
-  </div>
   </div>
 </template>
 
@@ -141,26 +141,88 @@ const handleLogout = () => {
   background-color: rgba(0, 0, 0, 0.05);
 }
 
-
 </style>
 
 <style lang="scss" scoped>
-  @use "@/styles/mixin.scss" as mixin;
-  @use "@/styles/variables.scss" as variables;
+@use "@/styles/mixin.scss" as mixin;
+@use "@/styles/variables.scss" as variables;
 
-  .app-wrapper {
+.app-wrapper {
     @include mixin.clearfix;
     position: relative;
-    height: 100%;
-    width: 100%;
+    // height: 100%;
+    // width: 100%;
+    height: 100vh;
+    width: 100vw;
 
     &.mobile.openSidebar {
-      position: fixed;
-      top: 0;
+        position: fixed;
+        top: 0;
     }
-  }
+}
 
-  .drawer-bg {
+.sidebar-container {
+    width: variables.$sideBarWidth;
+    transition: width 0.28s;
+    height: 100%;
+    position: fixed;
+    font-size: 0px;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 1001;
+    overflow: hidden;
+}
+
+.main-container {
+    position: fixed;
+    right: 0;
+    top: 0;
+    transition: width 0.3s;
+    height: 100vh;
+    width: calc(100% - variables.$sideBarWidth);
+}
+
+.fixed-header {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 9;
+    width: calc(100% - #{variables.$sideBarWidth});
+    height: 100px; /* 调整为el-header(60px)和tags-view(40px)的实际高度总和 */
+    transition: all 0.28s ease;
+}
+
+
+// .v-modal {
+//     left : variables.$sideBarWidth;
+// }
+
+.hideSidebar {
+    .fixed-header {
+        width: calc(100% - 54px);
+    }
+    
+    .main-container {
+        width: calc(100% - 54px);
+    }
+
+    .sidebar-container {
+        width: 54px;
+    }
+    
+    // .v-modal {
+    //     left : 54px;
+    // }
+}
+
+.mobile .fixed-header {
+    width: 100%;
+}
+
+
+// 未使用的样式
+.drawer-bg {
     background: #000;
     opacity: 0.3;
     width: 100%;
@@ -168,23 +230,5 @@ const handleLogout = () => {
     height: 100%;
     position: absolute;
     z-index: 999;
-  }
-
-  .fixed-header {
-    position: fixed;
-    top: 0;
-    right: 0;
-    z-index: 9;
-    width: calc(100% - #{variables.$sideBarWidth});
-    height: 90px;
-    transition: all 0.28s ease;
-  }
-
-  .hideSidebar .fixed-header {
-    width: calc(100% - 54px)
-  }
-
-  .mobile .fixed-header {
-    width: 100%;
-  }
+}
 </style>

@@ -21,16 +21,12 @@ const tagsViewStore = useTagsViewStore()
 
 
 .app-main {
-  /* 调整内容区域，适应新的header和tagsview高度 */
-  min-height: calc(100vh - 90px);
-  height: 100%;
-  width: 100%;
-  position: relative;
-  overflow: auto;
-  padding: 15px;
-  margin-top: 90px;
-  transition: all 0.3s ease;
+    /* min-height: calc(100vh - 100px); */
+    height: calc(100vh - 120px);
+    margin-top: 100px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    overflow: auto;
 }
-
 
 </style>

@@ -56,23 +56,11 @@ const isCollapse = computed(() => !appStore.getSidebar.opened)
     border-right: solid 1px #e6e6e6;
 }
 
-.el-aside {
-  height: 100vh;
-  background-color: #ffffff;
-  border-right: 1px solid #1c1b1b;
-  transition: width 0.3s;
-  padding: 0;
-  margin: 0;
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 1000;
-}
-
 .el-menu {
   border-right: none;
   padding: 0;
   margin: 0;
+  background-color: transparent;
 }
 
 .logo {

@@ -1,6 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import { DataBoard } from '@element-plus/icons-vue'
-import Layout from '@/layout/index.vue'
 
 const constantRoutes = [
   {

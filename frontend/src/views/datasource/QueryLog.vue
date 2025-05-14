@@ -93,16 +93,14 @@
         </el-table-column>
       </el-table>
       
-      <div class="pagination-container">
-        <el-pagination
+      <div class="card-footer">
+        <Pagination
+          :total="pagination.total"
+          :current-page="pagination.currentPage"
+          :page-size="pagination.pageSize"
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
-          :current-page="pagination.currentPage"
-          :page-sizes="[10, 20, 50, 100]"
-          :page-size="pagination.pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="pagination.total">
-        </el-pagination>
+        />
       </div>
 
     <!-- 查询详情对话框 -->
@@ -193,6 +191,7 @@ import hljs from 'highlight.js/lib/core'
 import sql from 'highlight.js/lib/languages/sql'
 import 'highlight.js/styles/atom-one-dark.css'
 import { Document } from '@element-plus/icons-vue'
+import Pagination from '@/components/Pagination.vue'
 
 // 注册SQL语言高亮
 hljs.registerLanguage('sql', sql)
@@ -384,11 +383,6 @@ onMounted(() => {
 .filter-container {
   margin-bottom: 20px;
 } */
-
-.pagination-container {
-  margin-top: 20px;
-  text-align: right;
-}
 
 .sql-content {
   white-space: nowrap;
