@@ -117,3 +117,15 @@ button:focus-visible {
     position: relative;
     margin: 0 auto;
 }
+
+/* .scrollbar-wrapper {
+  overflow-x: hidden !important;
+}
+
+.el-scrollbar__bar.is-vertical {
+  right: 0px;
+}
+
+.el-scrollbar {
+  height: 100%;
+} */
