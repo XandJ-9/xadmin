@@ -1,7 +1,7 @@
 <template>
   <div class="tags-view-container">
-    <!-- <el-scrollbar class="tags-view-wrapper"> -->
-    <div class="tags-view-wrapper">
+    <el-scrollbar class="tags-view-wrapper">
+    <!-- <div class="tags-view-wrapper"> -->
         <router-link
         v-for="tag in visitedViews"
         :key="tag.path"
@@ -20,8 +20,8 @@
           <Close />
         </el-icon>
       </router-link>
-    </div>
-    <!-- </el-scrollbar> -->
+    <!-- </div> -->
+    </el-scrollbar>
     <ul v-show="visible" :style="{left: leftOffset+'px', top: topOffset+'px'}" class="contextmenu">
       <li @click="refreshSelectedTag(selectedTag)">刷新页面</li>
       <li @click="closeSelectedTag(selectedTag)">关闭当前</li>
@@ -191,7 +191,7 @@ onUnmounted(() => {
   .tags-view-wrapper {
     height: 100%;
     width: 100%;
-    overflow-x: auto;
+    // overflow-x: auto;
     white-space: nowrap;
     .tags-view-item {
       display: inline-block;
