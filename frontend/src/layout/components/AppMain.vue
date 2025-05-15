@@ -12,10 +12,19 @@
 
 <script setup>
 import { useTagsViewStore } from '@/store/modules/tagsView'
+import { useRoute } from 'vue-router'
+import { watch } from 'vue';
 
 const tagsViewStore = useTagsViewStore()
 
-// 从visitedViews中提取组件名称，用于keep-alive的include属性
+const route = useRoute()
+watch(
+  () => route.path,
+  () => {
+    console.log('cachedViews:', tagsViewStore.cachedViews);
+  },
+  { immediate: true }
+)
 
 </script>
 

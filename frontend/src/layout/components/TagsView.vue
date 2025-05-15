@@ -155,7 +155,6 @@ const closeMenu = () => {
 // 监听路由变化，添加到访问记录
 watch(() => route.path, () => {
     addTags()
-    console.log('cachedVIews', tagsViewStore.cachedViews)
 }, { immediate: true })
 
 // 点击页面时关闭右键菜单
