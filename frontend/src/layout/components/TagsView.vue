@@ -1,10 +1,10 @@
 <template>
   <div class="tags-view-container">
-    <el-scrollbar class="tags-view-wrapper">
-    <!-- <div class="tags-view-wrapper"> -->
+    <!-- <el-scrollbar class="tags-view-wrapper"> -->
+    <div class="tags-view-wrapper">
         <router-link
         v-for="tag in visitedViews"
-        :key="tag.fullPath"
+        :key="tag.path"
         :class="isActive(tag) ? 'active' : ''"
         class="tags-view-item"
         :to="{ path: tag.path, query: tag.query, fullPath: tag.fullPath }"
@@ -20,8 +20,8 @@
           <Close />
         </el-icon>
       </router-link>
-    <!-- </div> -->
-    </el-scrollbar>
+    </div>
+    <!-- </el-scrollbar> -->
     <ul v-show="visible" :style="{left: leftOffset+'px', top: topOffset+'px'}" class="contextmenu">
       <li @click="refreshSelectedTag(selectedTag)">刷新页面</li>
       <li @click="closeSelectedTag(selectedTag)">关闭当前</li>
@@ -154,8 +154,8 @@ const closeMenu = () => {
 
 // 监听路由变化，添加到访问记录
 watch(() => route.path, () => {
-    // tagsViewStore.addView(route)
     addTags()
+    console.log('cachedVIews', tagsViewStore.cachedViews)
 }, { immediate: true })
 
 // 点击页面时关闭右键菜单
@@ -189,9 +189,8 @@ onUnmounted(() => {
     transition: all 0.3s ease;
 
   .tags-view-wrapper {
-    height: 100%; /* 确保标签栏占满容器高度 */
     width: 100%; /* 确保标签栏占满容器宽度 */
-    // overflow-x: auto; /* 允许水平滚动，当标签过多时可以滚动查看 */
+    overflow-x: auto; /* 允许水平滚动，当标签过多时可以滚动查看 */
     white-space: nowrap; /* 防止标签换行，确保所有标签在同一行显示 */
     .tags-view-item {
       display: inline-block;

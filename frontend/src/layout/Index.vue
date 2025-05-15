@@ -36,6 +36,7 @@ import { ref, computed, onMounted } from 'vue'
 import TagsView from './components/TagsView.vue'
 import { useUserStore } from '@/store/modules/user'
 import { useAppStore } from '@/store/modules/app'
+import { useTagsViewStore } from '@/store/modules/tagsView'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
@@ -67,6 +68,8 @@ const toggleCollapse = () => {
 }
 
 const handleLogout = () => {
+  const tagsViewStore = useTagsViewStore()
+  tagsViewStore.delAllViews()
   const userStore = useUserStore()
   userStore.logout()
   router.push('/login')
