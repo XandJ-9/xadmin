@@ -21,10 +21,10 @@
       </el-form>
     </div>
 
-    <el-table :data="logData" style="width: 100%" border v-loading="loading">
+    <el-table :data="pageInfo.data" style="width: 100%" border v-loading="loading">
       <el-table-column prop="id" label="ID" width="80"></el-table-column>
       <el-table-column prop="interface_code" label="接口编码" width="150"></el-table-column>
-      <el-table-column prop="creator_name" label="创建用户" width="120"></el-table-column>
+      <el-table-column prop="creator_username" label="创建用户" width="120"></el-table-column>
       <el-table-column prop="execute_time" label="执行时间(ms)" width="120"></el-table-column>
       <el-table-column prop="interface_sql" label="SQL语句">
         <template #default="scope">
@@ -62,9 +62,9 @@
     
     <div class="card-footer">
       <Pagination
-        :total="pagination.total"
-        :current-page="pagination.currentPage"
-        :page-size="pagination.pageSize"
+        :total="pageInfo.total"
+        :current-page="pageInfo.currentPage"
+        :page-size="pageInfo.pageSize"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
@@ -83,7 +83,7 @@
         </div>
         <div class="detail-item">
           <span class="label">创建用户：</span>
-          <span>{{ currentQuery.creator_name }}</span>
+          <span>{{ currentQuery.creator_username }}</span>
         </div>
         <div class="detail-item">
           <span class="label">开始时间：</span>
@@ -133,7 +133,7 @@ export default {
 </script>
 
 <script setup>
-import { ref, onMounted, nextTick } from 'vue'
+import { reactive, ref, onMounted, nextTick } from 'vue'
 import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
 import hljs from 'highlight.js/lib/core'
@@ -146,7 +146,8 @@ import Pagination from '@/components/Pagination.vue'
 hljs.registerLanguage('sql', sql)
 
 // 过滤表单
-const filterForm = ref({
+// 表单相关的多个字段用 reactive
+const filterForm = reactive({
   interface_code: '',
   dateRange: []
 })
@@ -156,7 +157,8 @@ const logData = ref([])
 const loading = ref(false)
 
 // 分页
-const pagination = ref({
+const pageInfo = reactive({
+  data: [],
   currentPage: 1,
   pageSize: 10,
   total: 0
@@ -172,15 +174,15 @@ const fetchLogs = async () => {
   loading.value = true
   try {
     const params = {
-      page: pagination.value.currentPage,
-      page_size: pagination.value.pageSize,
-      interface_code: filterForm.value.interface_code || undefined
+      page: pageInfo.currentPage,
+      page_size: pageInfo.pageSize,
+      interface_code: filterForm.interface_code || undefined
     }
     
     // 添加日期范围过滤
-    if (filterForm.value.dateRange && filterForm.value.dateRange.length === 2) {
-      const startDate = filterForm.value.dateRange[0]
-      const endDate = filterForm.value.dateRange[1]
+    if (filterForm.dateRange && filterForm.dateRange.length === 2) {
+      const startDate = filterForm.dateRange[0]
+      const endDate = filterForm.dateRange[1]
       if (startDate) {
         params.start_time = startDate.toISOString().split('T')[0]
       }
@@ -189,9 +191,13 @@ const fetchLogs = async () => {
       }
     }
     
-    const response = await request.get('/api/report/interface-query-logs/', { params })
-    logData.value = response.data.results
-    pagination.value.total = response.data.count
+    const response = await request.get('/api/report/interface-logs/', { params })
+      // logData.value = response.data.data
+      pageInfo.data = response.data.data.data
+      pageInfo.total = response.data.data.total
+      pageInfo.currentPage = response.data.data.page
+      pageInfo.pageSize = response.data.data.limit
+      console.log('接口查询日志:', pageInfo)
   } catch (error) {
     console.error('获取接口查询日志失败:', error)
     ElMessage.error('获取接口查询日志失败')
@@ -203,8 +209,8 @@ const fetchLogs = async () => {
 // 查看详情
 const viewQueryDetail = async (row) => {
   try {
-    const response = await request.get(`/api/report/interface-query-logs/${row.id}/`)
-    currentQuery.value = response.data
+    const response = await request.get(`/api/report/interface-logs/${row.id}/`)
+    currentQuery.value = response.data.data
     dialogVisible.value = true
     
     // 等待DOM更新后应用代码高亮
@@ -234,13 +240,13 @@ const copySql = () => {
 
 // 搜索日志
 const searchLogs = () => {
-  pagination.value.currentPage = 1
+  pageInfo.currentPage = 1
   fetchLogs()
 }
 
 // 重置过滤器
 const resetFilter = () => {
-  filterForm.value = {
+  filterForm = {
     interface_code: '',
     dateRange: []
   }
@@ -249,12 +255,12 @@ const resetFilter = () => {
 
 // 分页处理
 const handleSizeChange = (size) => {
-  pagination.value.pageSize = size
+  pageInfo.pageSize = size
   fetchLogs()
 }
 
 const handleCurrentChange = (page) => {
-  pagination.value.currentPage = page
+  pageInfo.currentPage = page
   fetchLogs()
 }
 

@@ -75,8 +75,9 @@ class CustomModelViewSet(ModelViewSet):
             page_no = request.query_params.get('page', 1)
             page_size = request.query_params.get('page_size',10)
             p = Paginator(ser.data, page_size)
-            page_data = p.get_page(page_no).object_list
-            return SuccessResponse(data=page_data, total=p.count,page=page_no,limit=page_size, msg="获取成功")
+            page_obj = p.get_page(page_no)
+            page_data = page_obj.object_list
+            return SuccessResponse(data=page_data, total=p.count,page=page_obj.number,limit=p.per_page, msg="获取成功")
         # page = self.paginate_queryset(queryset)
         # p = Paginator(serializer_data, page_size)
         # if p is not None:

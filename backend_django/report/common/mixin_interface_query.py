@@ -7,7 +7,8 @@ from ..models  import InterfaceInfo,InterfaceField,InterfaceQueryLog
 from .operation_interface_query import wrap_query_result
 from datasource.models import DataSource
 from datasource.executors.factory import QueryExecutorFactory
-import time,logging
+from utils.util_datetime import getNowTimestamp
+import logging
 
 
 logger = logging.getLogger(__name__)
@@ -36,7 +37,7 @@ class InterfaceQueryMixin:
         interface_sql_template = Template(interface_info.interface_sql)
         interface_sql = interface_sql_template.render(Context(request.data))
         # 获取数据源
-        execute_start_time = time.time()
+        execute_start_time = getNowTimestamp()
         execute_result = str()
         execute_msg = None
         try:
@@ -55,7 +56,7 @@ class InterfaceQueryMixin:
             }
             execute_result = "error"
         finally:
-            execute_end_time = time.time()
+            execute_end_time = getNowTimestamp()
             execute_time = execute_end_time - execute_start_time
             # 记录查询日志
             interface_query_log = InterfaceQueryLog.objects.create(interface_code=interface_code,

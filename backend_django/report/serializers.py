@@ -59,6 +59,8 @@ class InterfaceFieldSerializer(BizModelSerializer):
 
 
 class InterfaceQueryLogSerializer(BizModelSerializer):
+    execute_start_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
+    execute_end_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
     class Meta:
         model = InterfaceQueryLog
         fields = '__all__'
