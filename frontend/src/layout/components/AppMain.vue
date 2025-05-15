@@ -1,10 +1,12 @@
 <template>
   <section class="app-main" >
-        <router-view #default="{ Component, route }">
-            <keep-alive :include="tagsViewStore.cachedViews">
-                <component :is="Component" :key="route.fullPath"/>
-            </keep-alive>
-        </router-view>
+  <router-view v-slot="{ Component, route }">
+      <transition name="fade-transform" mode="out-in">
+        <keep-alive :include="tagsViewStore.cachedViews">
+          <component :is="Component" :key="route.fullPath"/>
+        </keep-alive>
+      </transition>
+    </router-view>
   </section>
 </template>
 

@@ -5,10 +5,10 @@
         <router-link
         v-for="tag in visitedViews"
         :key="tag.path"
+        :data-path="tag.path"
         :class="isActive(tag) ? 'active' : ''"
         class="tags-view-item"
         :to="{ path: tag.path, query: tag.query, fullPath: tag.fullPath }"
-        tag="span"
         @contextmenu.prevent="openMenu(tag, $event)"
         @click.middle.prevent="closeSelectedTag(tag)"
       >
