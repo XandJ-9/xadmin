@@ -164,14 +164,14 @@ const handleLogout = () => {
 .sidebar-container {
     width: variables.$sideBarWidth;
     transition: width 0.28s;
-    height: 100%;
+    height: 100vh;
     position: fixed;
     font-size: 0px;
     top: 0;
     bottom: 0;
-    left: 0;
+    // left: 0;
     z-index: 1001;
-    overflow: hidden;
+    // overflow: hidden;
 }
 
 .main-container {

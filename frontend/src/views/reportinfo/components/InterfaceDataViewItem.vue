@@ -56,6 +56,11 @@
             </el-table-column>
         </el-table>
 
+        <el-alert v-show="errorMsg.error" title="查询失败" type="error" :closable="true">
+            <template #default>
+                <span style="color: red;">{{ errorMsg.msg }}</span>
+            </template>
+        </el-alert>
         <div class="card-footer">
             <Pagination
                 :total="pageInfo.total"
@@ -87,7 +92,6 @@ const queryFields = ref([])
 const columnsFields = ref([])
 
 
-const columns = ref([])
 const resDataList = ref([])
 const totalresDataList = ref([])
 
@@ -137,6 +141,11 @@ const pageInfo = reactive({
     total: 0,
     tableData: []
 })
+
+const errorMsg = ref({
+    error: false,
+    msg: ''
+})
 const queryData = (data) => {
     reset()
     // 只拷贝数值，不修改被引用的对象值
@@ -155,8 +164,9 @@ const queryData = (data) => {
         const res = response.data
         try {
             if (res.code == '-1') {
-                errorMsg.error = true
-                errorMsg.msg = res.message
+                errorMsg.value.error = true
+                errorMsg.value.msg = res.message
+                console.log(errorMsg)
             } else {
                 //   const property = res.property
                 //   let columns = this.sortColumns(property);
@@ -217,10 +227,6 @@ const sortColumns = (columns, flag = 1) => {
     }).map(o => o[1])
 }
 
-const errorMsg = ref({
-    error: false,
-    msg: ''
-})
 const reset = () => {
     errorMsg.value.error = false;
     visiable.value = false;

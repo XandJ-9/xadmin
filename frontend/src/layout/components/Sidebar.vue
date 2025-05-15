@@ -2,7 +2,7 @@
   <div class="sidebar-wrapper">
     <!-- 侧边栏内容 -->
     <div class="logo" :class="{ 'collapsed': isCollapse }">{{ isCollapse ? 'X' : 'Xadmin' }}</div>
-    <el-scrollbar wrap-class="scrollbar-wrapper">
+    <el-scrollbar class="scrollbar-wrapper">
     <el-menu
       class="el-menu-vertical"
       :default-active="$route.path"
@@ -55,6 +55,13 @@ const isCollapse = computed(() => !appStore.getSidebar.opened)
 .sidebar-wrapper {
     border-right: solid 1px #e6e6e6;
 }
+
+.scrollbar-wrapper {
+    /* 窗口高度-logo高度 */
+    height: calc(100vh - 60px);
+    overflow: auto;
+}
+
 
 .el-menu {
   border-right: none;

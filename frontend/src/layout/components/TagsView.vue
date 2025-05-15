@@ -4,7 +4,7 @@
     <!-- <div class="tags-view-wrapper"> -->
         <router-link
         v-for="tag in visitedViews"
-        :key="tag.path"
+        :key="tag.fullPath"
         :class="isActive(tag) ? 'active' : ''"
         class="tags-view-item"
         :to="{ path: tag.path, query: tag.query, fullPath: tag.fullPath }"

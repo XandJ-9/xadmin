@@ -12,6 +12,9 @@ import time,logging
 
 logger = logging.getLogger(__name__)
 
+class InterfaceQueryException(Exception):
+    pass
+
 class InterfaceQueryMixin:
 
     @action(detail=False, methods=['POST'], url_path='execute-query')
@@ -29,33 +32,46 @@ class InterfaceQueryMixin:
         interface_db_type = interface_info.interface_db_type
         interface_db_name = interface_info.interface_db_name
         interface_fields = InterfaceField.objects.filter(interface=interface_info)
-        # 获取数据源
-        execute_start_time = time.time()
-        executor = self.get_executor(interface_db_type, interface_db_name)
         # 解析查询sql，并执行查询
         interface_sql_template = Template(interface_info.interface_sql)
         interface_sql = interface_sql_template.render(Context(request.data))
-        execute_end_time = time.time()
-        execute_time = execute_end_time - execute_start_time
-        query_result = executor.execute_query(interface_sql)
-        # 结果包装
-        result = wrap_query_result(query_result, interface_fields, interface_info)
-        # 记录查询日志
+        # 获取数据源
+        execute_start_time = time.time()
+        execute_result = str()
+        execute_msg = None
         try:
+            executor = self.get_executor(interface_db_type, interface_db_name)
+            query_result = executor.execute_query(interface_sql)
+            # 结果包装
+            data_result = wrap_query_result(query_result, interface_fields, interface_info)
+            data_result['code'] = "0"
+            data_result['message'] = "success"
+            execute_result = "success"
+        except InterfaceQueryException as e:
+            logger.error(traceback.format_exc())
+            data_result = {
+                "code": "-1",
+                "message": str(e),
+            }
+            execute_result = "error"
+        finally:
+            execute_end_time = time.time()
+            execute_time = execute_end_time - execute_start_time
+            # 记录查询日志
             interface_query_log = InterfaceQueryLog.objects.create(interface_code=interface_code,
                                             interface_sql=interface_sql,
                                             execute_time=execute_time,
                                             execute_start_time=execute_start_time,
                                             execute_end_time=execute_end_time,
-                                            execute_result="success",
+                                            execute_result=execute_result,
                                             creator = request.user)
             interface_query_log.save()
-        except:
-            logger.error(traceback.format_exc())
-        return JsonResponse(result)
+        return JsonResponse(data_result)
     
     def get_executor(self, interface_db_type, interface_db_name):
         datasource = DataSource.objects.filter(type=interface_db_type,database=interface_db_name).first()
+        if datasource is None:
+            raise InterfaceQueryException("数据源类型%s或者数据库%s不存在"%(interface_db_type, interface_db_name))
         executor =QueryExecutorFactory.get_executor(datasource_type=datasource.type,
                                             host=datasource.host, 
                                             port=datasource.port,
