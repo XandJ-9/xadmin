@@ -166,7 +166,6 @@ const queryData = (data) => {
             if (res.code == '-1') {
                 errorMsg.value.error = true
                 errorMsg.value.msg = res.message
-                console.log(errorMsg)
             } else {
                 //   const property = res.property
                 //   let columns = this.sortColumns(property);

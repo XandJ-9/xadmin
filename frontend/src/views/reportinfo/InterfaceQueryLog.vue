@@ -103,6 +103,12 @@
             {{ currentQuery.execute_result === 'success' ? '成功' : '失败' }}
           </el-tag>
         </div>
+        <div class="detail-item full-width" v-if="currentQuery.execute_result === 'error'">
+          <span class="label">错误信息：</span>
+          <div class="error-box">
+            <pre>{{ currentQuery.error_message}}</pre>
+          </div>
+        </div>
         <div class="detail-item full-width">
           <span class="label">SQL语句：</span>
           <div class="sql-code">
@@ -197,7 +203,6 @@ const fetchLogs = async () => {
       pageInfo.total = response.data.data.total
       pageInfo.currentPage = response.data.data.page
       pageInfo.pageSize = response.data.data.limit
-      console.log('接口查询日志:', pageInfo)
   } catch (error) {
     console.error('获取接口查询日志失败:', error)
     ElMessage.error('获取接口查询日志失败')

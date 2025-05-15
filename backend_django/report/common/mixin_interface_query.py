@@ -39,7 +39,7 @@ class InterfaceQueryMixin:
         # 获取数据源
         execute_start_time = getNowTimestamp()
         execute_result = str()
-        execute_msg = None
+        error_message = None
         try:
             executor = self.get_executor(interface_db_type, interface_db_name)
             query_result = executor.execute_query(interface_sql)
@@ -50,9 +50,10 @@ class InterfaceQueryMixin:
             execute_result = "success"
         except InterfaceQueryException as e:
             logger.error(traceback.format_exc())
+            error_message = str(e)
             data_result = {
                 "code": "-1",
-                "message": str(e),
+                "message": error_message
             }
             execute_result = "error"
         finally:
@@ -65,6 +66,7 @@ class InterfaceQueryMixin:
                                             execute_start_time=execute_start_time,
                                             execute_end_time=execute_end_time,
                                             execute_result=execute_result,
+                                            error_message=error_message,
                                             creator = request.user)
             interface_query_log.save()
         return JsonResponse(data_result)

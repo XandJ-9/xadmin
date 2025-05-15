@@ -191,6 +191,8 @@ class InterfaceQueryLog(BizBaseModel):
     execute_end_time = models.DateTimeField(verbose_name='结束时间', auto_now_add=True, null=True)
     execute_time = models.IntegerField(verbose_name='执行时间', default=0)
     execute_result = models.TextField(verbose_name='执行结果', null=True)
+    error_message = models.TextField(verbose_name='错误信息', null=True)
 
     class Meta:
         db_table = "report_interface_query_log"
+        ordering = ('-execute_start_time',)
