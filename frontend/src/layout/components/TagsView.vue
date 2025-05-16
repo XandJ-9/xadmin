@@ -3,9 +3,8 @@
     <!-- <el-scrollbar class="tags-view-wrapper"> -->
     <div class="tags-view-wrapper">
         <router-link
-        v-for="tag in visitedViews"
+        v-for="tag in tagsViewStore.visitedViews"
         :key="tag.path"
-        :data-path="tag.path"
         :class="isActive(tag) ? 'active' : ''"
         class="tags-view-item"
         :to="{ path: tag.path, query: tag.query, fullPath: tag.fullPath }"
@@ -43,9 +42,6 @@ const visible = ref(false)
 const topOffset = ref(0)
 const leftOffset = ref(0)
 const selectedTag = ref(null)
-
-// 从store获取访问过的路由
-const visitedViews = computed(() => tagsViewStore.visitedViews)
 
 
 const initTags = () => {

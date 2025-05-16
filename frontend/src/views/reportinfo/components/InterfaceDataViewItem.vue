@@ -75,8 +75,7 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch, onMounted } from 'vue'
-import { useRouter, useRoute, onBeforeRouteUpdate } from 'vue-router'
+import { ref, reactive, onMounted } from 'vue'
 import request from '@/utils/request'
 // import { XLSX } from 'xlsx'
 import { parseTime } from '@/utils/index'

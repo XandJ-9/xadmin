@@ -567,15 +567,23 @@ const handleUpload = (options) => {
 
 
 const handleDataview = (row) => {
-    const matched_routes = router.resolve({ path: `/reportinfo/interface/view/${row.id}` }).matched
-    if (matched_routes.length > 0) {
-        router.push({
-            path: `/reportinfo/interface/view/${row.id}`,
-            query: { interface_name: row.interface_name },
-        })
-    } else {
+    // const matched_routes = router.resolve({ path: `/reportinfo/interface/view/${row.id}` }).matched
+    // if (matched_routes.length > 0) {
+    //     console.log('跳转路由', matched_routes)
+    //     router.push({
+    //         path: `/reportinfo/interface/view/${row.id}`,
+    //         query: { interface_name: row.interface_name },
+    //     })
+    // } else {
+    // }
+    router.push({ path: `/reportinfo/interface/view/${row.id}`, query: { interface_name: row.interface_name } })
+    .then(() => {
+        console.log('跳转成功')
+    })
+    .catch((error) => {
+        console.error('跳转失败', error)
         ElMessage.warning('路由信息不存在')
-    }
+    })
 }
 
 // 页面加载时获取数据

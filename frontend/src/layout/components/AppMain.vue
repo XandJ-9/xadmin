@@ -2,8 +2,8 @@
   <section class="app-main" >
   <router-view v-slot="{ Component, route }">
       <transition name="fade-transform" mode="out-in">
-        <keep-alive :include="tagsViewStore.cachedViews">
-          <component :is="Component" :key="route.fullPath"/>
+        <keep-alive>
+          <component :is="Component" :key="route.path"/>
         </keep-alive>
       </transition>
     </router-view>
@@ -12,19 +12,9 @@
 
 <script setup>
 import { useTagsViewStore } from '@/store/modules/tagsView'
-import { useRoute } from 'vue-router'
-import { watch } from 'vue';
 
 const tagsViewStore = useTagsViewStore()
 
-const route = useRoute()
-watch(
-  () => route.path,
-  () => {
-    console.log('cachedViews:', tagsViewStore.cachedViews);
-  },
-  { immediate: true }
-)
 
 </script>
 
