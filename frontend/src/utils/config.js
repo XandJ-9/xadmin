@@ -1,6 +1,6 @@
 // API配置
 export const API_CONFIG = {
-  timeout: 5000
+  timeout: 50000
 }
 
 // 用户信息相关配置
