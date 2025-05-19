@@ -36,7 +36,6 @@ router.beforeEach(async (to, from, next) => {
                 await menuStore.fetchUserMenus()
                 
                 // 获取动态路由
-                console.log('menuTreeData', menuStore.menuTree)
                 await routeStore.addDynamicRoutes(menuStore.menuTree)
 
                 // 重新导航到目标路由，确保能匹配到新添加的路由

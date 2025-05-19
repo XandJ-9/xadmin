@@ -98,7 +98,7 @@ const visiable = ref(false)
 const showJsonFormat = ref(false)
 
 const queryForm = reactive({
-    query_field_json: {},
+    query_field_json: '',
     query_field_list: [],
     query_para_value: {}
 })
@@ -117,17 +117,13 @@ const getInterfaceInfo = async () => {
     queryFields.value = fields.filter(e => e.interface_para_type == '输入参数')
     columnsFields.value = fields.filter(e => e.interface_para_type == '输出参数')
     queryForm.query_field_list = queryFields
-    // queryForm.query_field_json = '{' + queryFields.value.map(e => `"${e.interface_para_code}":""`).join(',') + '}'
-    // queryForm.query_para_value = JSON.parse(queryForm.query_field_json)
 
     queryFields.value.forEach((item) => {
         if (item.interface_para_type == '输入参数') {
             queryForm.query_para_value[item.interface_para_code] = ''
         }
     })
-    console.log(queryForm.query_para_value)
     queryForm.query_field_json = JSON.stringify(queryForm.query_para_value, null, 2)
-    console.log(queryForm.query_field_json)
     
 }
 

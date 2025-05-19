@@ -113,13 +113,17 @@ const toLastView = (visitedViews) => {
 // 刷新选中标签
 const refreshSelectedTag = (view) => {
   // 关闭右键菜单
-  visible.value = false
-    tagsViewStore.delVisitedView(view).then(() => {
+    visible.value = false
+    // 记录当前标签索引
+    const index = tagsViewStore.visitedViews.findIndex(item => item.path === view.path)
+    tagsViewStore.delView(view).then(() => {
         router.replace({
             path: '/redirect' + view.fullPath,
             query: view.query
         })
     })
+    // 将刷新的标签插入到原位置
+    tagsViewStore.visitedViews.splice(index, 0, view)
 }
 
 // 判断是否是激活标签
