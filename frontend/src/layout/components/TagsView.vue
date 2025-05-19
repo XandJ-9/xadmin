@@ -116,7 +116,8 @@ const refreshSelectedTag = (view) => {
   visible.value = false
     tagsViewStore.delVisitedView(view).then(() => {
         router.replace({
-            path: '/redirect' + view.fullPath
+            path: '/redirect' + view.fullPath,
+            query: view.query
         })
     })
 }

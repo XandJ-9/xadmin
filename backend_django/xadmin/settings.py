@@ -102,6 +102,12 @@ DATABASES = {
             'options': '-c search_path=public'
         }
     }
+
+    # 使用sqlite数据库
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
 }
 
 # 数据库路由设置

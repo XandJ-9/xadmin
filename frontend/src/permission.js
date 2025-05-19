@@ -1,5 +1,6 @@
 import router from './router/index'
 import { useUserStore } from '@/store/modules/user'
+import { useMenuStore } from './store/modules/menu'
 import { useRouteStore } from '@/store/modules/permission'
 import { getToken, removeToken } from '@/utils/auth'
 import NProgress from 'nprogress' // progress bar
@@ -29,8 +30,15 @@ router.beforeEach(async (to, from, next) => {
                 // 获取用户信息
                 const userStore = useUserStore()
                 await userStore.getUserInfo()
-                // 添加动态路由
-                await routeStore.addDynamicRoutes()
+
+                // 获取菜单
+                const menuStore = useMenuStore()
+                await menuStore.fetchUserMenus()
+                
+                // 获取动态路由
+                console.log('menuTreeData', menuStore.menuTree)
+                await routeStore.addDynamicRoutes(menuStore.menuTree)
+
                 // 重新导航到目标路由，确保能匹配到新添加的路由
                 next({ ...to, replace: true })
             } catch (error) {

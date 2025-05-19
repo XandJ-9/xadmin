@@ -56,7 +56,7 @@ class MenuSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Menu
-        fields = ['id', 'name', 'name_code', 'parent', 'parent_name', 'path', 'component','component_name', 'redirect', 
+        fields = ['id', 'name','menu_type', 'name_code', 'parent', 'parent_name', 'path', 'component','component_name', 'redirect', 
                  'icon', 'sort', 'hidden', 'meta', 'creator', 'creator_info', 'created_at', 'updated_at','meta_need_tagview']
         read_only_fields = ['id', 'created_at', 'updated_at']
     

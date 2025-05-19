@@ -1,5 +1,4 @@
 import { defineStore } from 'pinia'
-import { useMenuStore } from './menu'
 import router from '@/router'
 
 // 动态导入所有的视图组件， ES推荐使用
@@ -51,19 +50,20 @@ export const useRouteStore = defineStore('route', {
 
       // 处理菜单数据，转换为路由格式
       menuTree.forEach(item => {
+          const tmp = {...item}
           // 使用静态路径映射替代动态导入
           // console.log(`@/views/${item.component}.vue`)
           // 原菜单名称修改为组件名称，因为keep-alive需要组件名称，因此将路由的name字段设置为组件名称
-          item.name = item.component_name
-          item.component = dynamicImport(viewsModules ,item.component)
+          tmp.name = tmp.component_name
+          tmp.component = dynamicImport(viewsModules ,tmp.component)
           // item.component = () => import(`@/views/${item.component}.vue`)
           // item.component = (resolve) => require([`@/views/${item.component}.vue`],resolve)
         
-        if (item.children) {
-          item.children = this.generateRoutes(item.children)
+        if (tmp.children) {
+          tmp.children = this.generateRoutes(tmp.children)
         }
         
-        result.push(item)
+        result.push(tmp)
       })
 
       // 返回系统路由配置，确保它能被正确添加到路由中
@@ -73,19 +73,13 @@ export const useRouteStore = defineStore('route', {
     /**
      * 添加动态路由
      */
-    async addDynamicRoutes() {
+    async addDynamicRoutes(menuTree) {
       if (this.isRoutesAdded) {
         return
       }
       
-      // 获取菜单数据
-      const menuStore = useMenuStore()
-      if (!menuStore.isLoaded) {
-        await menuStore.fetchUserMenus()
-      }
-      
       // 生成路由配置
-      const routes = this.generateRoutes(menuStore.getMenuTree)
+      const routes = this.generateRoutes(menuTree)
 
       // // 添加路由
       routes.forEach(route => {

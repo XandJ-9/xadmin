@@ -46,7 +46,7 @@ class Menu(BaseModel):
     name = models.CharField(max_length=50, verbose_name='菜单名称')
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children', verbose_name='父菜单')
     path = models.CharField(max_length=100, verbose_name='路由路径')
-    component = models.CharField(max_length=100, verbose_name='组件路径', default='index')
+    component = models.CharField(max_length=100, verbose_name='组件路径', default='layout/index')
     component_name = models.CharField(max_length=100, blank=True, null=True, verbose_name='组件名称')
     redirect = models.CharField(max_length=100, blank=True, null=True, verbose_name='重定向路径')
     name_code = models.CharField(max_length=50, blank=True, null=True, verbose_name='路由名称代码')
@@ -60,6 +60,7 @@ class Menu(BaseModel):
     updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_menus', verbose_name='创建者', null=True)
     updator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='updated_menus', verbose_name='更新者', null=True)
+    menu_type = models.CharField(max_length=1,choices=(("C","菜单"),("F","按钮"),("M","目录")),default="M")
 
     class Meta:
         verbose_name = '菜单'

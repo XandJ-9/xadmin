@@ -33,15 +33,6 @@ export const useMenuStore = defineStore('menu', {
   },
   
   actions: {
-    /**
-     * 设置菜单数据
-     * @param {Array} menuList 扁平结构的菜单数据
-     */
-    setMenus(menuList) {
-      this.menuList = menuList
-      this.menuTree = listToTree(menuList)
-      this.loaded = true
-    },
     
     /**
      * 从服务器获取用户菜单数据
@@ -50,11 +41,12 @@ export const useMenuStore = defineStore('menu', {
       try {
         const response = await request.get('/api/menus/user_menus/')
         const menuList = response.data
-        this.setMenus(menuList)
-        return this.menuTree
+        this.menuList = menuList
+        this.menuTree = listToTree(menuList)
+        this.loaded = true
+        // return this.menuTree
       } catch (error) {
         console.error('获取用户菜单失败:', error)
-        return []
       }
     },
     

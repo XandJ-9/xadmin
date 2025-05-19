@@ -6,6 +6,7 @@ const route = useRoute()
 onMounted(() => {
     const { params, query } = route 
     const { path } = params
+    console.log('redirect to: ', path, 'params: ', params, 'query: ', query)
     router.replace({
         path: '/' + path,
         query

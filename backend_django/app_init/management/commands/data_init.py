@@ -4,8 +4,10 @@ from django.db import transaction
 from django.contrib.auth.hashers import make_password
 from system.models import User, Role, Menu, RoleMenu
 from datasource.models import DataSource
-
+import json 
 logger = logging.getLogger('django')
+
+data_json=json.load(open('export_data.json', 'r', encoding='utf-8'))
 
 class Command(BaseCommand):
     help = '初始化系统数据，包括默认角色、管理员用户和示例数据源'
@@ -180,133 +182,9 @@ class Command(BaseCommand):
             return
         
         # 定义菜单数据
-        menu_data = [
-            # 系统管理
-            {
-                'name': '系统管理',
-                'path': 'system',
-                'component': 'system/index',
-                'icon': 'Setting',
-                'sort': 2,
-                'hidden': False,
-                'parent': None
-            },
-            # 系统管理子菜单
-            {
-                'name': '角色管理',
-                'path': 'system-role',
-                'component': 'system/Roles',
-                'icon': 'Setting',
-                'sort': 1,
-                'hidden': False,
-                'parent_name': '系统管理'
-            },
-            {
-                'name': '用户管理',
-                'path': 'system-user',
-                'component': 'system/Users',
-                'icon': 'Setting',
-                'sort': 2,
-                'hidden': False,
-                'parent_name': '系统管理'
-            },
-            {
-                'name': '菜单管理',
-                'path': 'system-menu',
-                'component': 'system/Menu',
-                'icon': 'Menu',
-                'sort': 3,
-                'hidden': False,
-                'parent_name': '系统管理'
-            },
-            {
-                'name': '系统配置',
-                'path': 'system-config',
-                'component': 'system/Config',
-                'icon': 'Setting',
-                'sort': 4,
-                'hidden': False,
-                'parent_name': '系统管理'
-            },
-            {
-                'name': '系统日志',
-                'path': 'system-log',
-                'component': 'system/Log',
-                'icon': 'Setting',
-                'sort': 5,
-                'hidden': False,
-                'parent_name': '系统管理'
-            },
-            # 数据源管理
-            {
-                'name': '数据源管理',
-                'path': 'datasources',
-                'component': 'DataSources',
-                'icon': 'Collection',
-                'sort': 6,
-                'hidden': False,
-                'parent': None
-            },
-            # 数据开发
-            {
-                'name': '数据开发',
-                'path': 'dataquery',
-                'component': 'index',
-                'icon': 'Edit',
-                'sort': 7,
-                'hidden': False,
-                'parent': None
-            },
-            # 数据开发子菜单
-            {
-                'name': '数据查询',
-                'path': 'index',
-                'component': 'dataquery/index',
-                'icon': 'Edit',
-                'sort': 1,
-                'hidden': False,
-                'parent_name': '数据开发'
-            },
-            {
-                'name': '查询日志',
-                'path': 'querylog',
-                'component': 'dataquery/QueryLog',
-                'icon': 'Edit',
-                'sort': 2,
-                'hidden': False,
-                'parent_name': '数据开发'
-            },
-            # 报表信息
-            {
-                'name': '报表信息',
-                'path': 'reportinfo',
-                'component': 'index',
-                'icon': 'Edit',
-                'sort': 5,
-                'hidden': False,
-                'parent': None
-            },
-            # 报表信息子菜单
-            {
-                'name': '报表设计',
-                'path': 'report',
-                'component': 'reportinfo/ReportManage',
-                'icon': 'Edit',
-                'sort': 3,
-                'hidden': False,
-                'parent_name': '报表信息'
-            },
-            {
-                'name': '接口管理',
-                'path': 'interface',
-                'component': 'reportinfo/InterfaceManage',
-                'icon': 'Edit',
-                'sort': 4,
-                'hidden': False,
-                'parent_name': '报表信息'
-            }
-        ]
+        menu_data = data_json['menus']
         
+
         # 创建父菜单字典，用于关联子菜单
         parent_menus = {}
         

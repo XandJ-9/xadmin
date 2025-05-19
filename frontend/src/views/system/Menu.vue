@@ -18,6 +18,13 @@
       <el-table :data="filteredMenuData" style="width: 100%" row-key="id" v-loading="loading" border default-expand-all>
         <!-- <el-table-column prop="id" label="ID" width="80"></el-table-column> -->
         <el-table-column prop="name" label="菜单名称" width="180"></el-table-column>
+        <el-table-column prop="menu_type" label="菜单类型" width="100">
+          <template #default="{row}">
+            <el-tag v-if="row.menu_type === 'M'" type="success">目录</el-tag>
+            <el-tag v-else-if="row.menu_type === 'C'" type="info">菜单</el-tag>
+            <el-tag v-else-if="row.menu_type === 'F'" type="warning">按钮</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column prop="path" label="路由路径" width="180"></el-table-column>
         <el-table-column prop="component" label="组件路径"></el-table-column>
         <el-table-column prop="component_name" label="组件名称"></el-table-column>
@@ -69,11 +76,20 @@
         <el-form-item label="菜单名称" prop="name">
           <el-input v-model="menuForm.name"></el-input>
         </el-form-item>
+        <el-form-item label="菜单类型">
+          <el-select v-model="menuForm.menu_type" placeholder="请选择菜单类型">
+            <el-option label="目录" value="M"></el-option>
+            <el-option label="菜单" value="C"></el-option>
+            <el-option label="按钮" value="F"></el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="路由路径" prop="path">
           <el-input v-model="menuForm.path"></el-input>
         </el-form-item>
         <el-form-item label="组件路径">
-          <el-input v-model="menuForm.component"></el-input>
+          <el-input v-if="menuForm.menu_type==='M'" value="layout/index" disabled ></el-input>
+          <el-input v-else-if="menuForm.menu_type==='C'" v-model="menuForm.component"></el-input>
+          <el-input v-else-if="menuForm.menu_type==='F'" disabled ></el-input>
         </el-form-item>
         <el-form-item label="组件名称">
           <el-input v-model="menuForm.component_name"></el-input>
@@ -114,6 +130,7 @@ import { Search } from '@element-plus/icons-vue'
 import { useUserStore } from '@/store/modules/user'
 import request from '@/utils/request'
 import { listToTree } from '@/utils/treeUtils'
+import { el } from 'element-plus/es/locale/index.mjs'
 
 // 菜单数据
 const menuData = ref([])
@@ -176,6 +193,7 @@ const menuForm = reactive({
   id: null,
   parentId: 0,
   name: '',
+  menu_type: '',
   path: '',
   component: '',
   component_name: '',
@@ -209,6 +227,7 @@ const handleEdit = (row) => {
   Object.assign(menuForm, {
     id: row.id,
     name: row.name,
+    menu_type: row.menu_type,
     path: row.path,
     component: row.component,
     component_name: row.component_name,
@@ -240,7 +259,6 @@ const handleDelete = (row) => {
 }
 
 
-const user= useUserStore()
 // 重置表单
 const resetForm = () => {
   if (menuFormRef.value) {
@@ -267,6 +285,7 @@ const submitForm = () => {
       // 准备提交的数据
       const submitData = {
         name: menuForm.name,
+        menu_type: menuForm.menu_type,
         path: menuForm.path,
         component: menuForm.component,
         component_name: menuForm.component_name,
@@ -274,14 +293,19 @@ const submitForm = () => {
         sort: menuForm.sort,
         hidden: menuForm.hidden,
         parent: menuForm.parentId === 0 ? null : menuForm.parentId,
-          meta_need_tagview: menuForm.needTagview
-      }
+        meta_need_tagview: menuForm.needTagview
+        }
+
+        // 提交修改前检查菜单类型
+        if (menuForm.menu_type === 'M') {
+            submitData.component = 'layout/index'
+            submitData.component_name = 'Layout'
+        }
       
       // 如果是编辑，添加ID
       if (menuForm.id) {
         submitData.id = menuForm.id
       }
-      console.log('submitData ',submitData)
         // 调用保存菜单API
       const success = await saveMenu(submitData)
       if (success) {
