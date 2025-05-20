@@ -23,5 +23,5 @@ router.register(r'', InterfaceQueryViewSet, basename='interface-query')
 router.register(r'interface-logs', InterfaceQueryLogViewSet, basename='interface-logs')
 
 urlpatterns = [
-    path('report/', include(router.urls)),
+    path('', include(router.urls)),
 ]

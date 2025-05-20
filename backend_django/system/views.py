@@ -4,6 +4,10 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
+from django.http import JsonResponse
+from django.utils.crypto import get_random_string
+from PIL import Image, ImageDraw, ImageFont
+import random
 from .models import User, Role, Menu, SystemConfig
 from. serializers import MenuSerializer, SystemConfigSerializer,UserSerializer, RoleSerializer
 from .permissions import IsAdminUser, IsOwnerOrAdmin,HasRolePermission
@@ -11,6 +15,82 @@ from .authentication import get_user_from_token
 import logging
 
 logger = logging.getLogger('django')
+
+
+class LoginViewSet(viewsets.ViewSet):
+
+    @action(detail=False, methods=['get'], url_path='captchaImage')
+    def captchaImage(self, request):
+        """
+        生成验证码图片
+        :param request:
+        :return:
+        """
+
+
+        # 生成随机字符串
+        code = get_random_string(length=4, allowed_chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
+        
+        # 创建图片
+        image = Image.new('RGB', (100, 40), (255, 255, 255))
+        draw = ImageDraw.Draw(image)
+        
+        # 设置字体和大小
+        font = ImageFont.truetype("arial.ttf", 24)
+        
+        # 绘制验证码
+        draw.text((10, 5), code, fill=(0, 0, 0), font=font)
+        
+        # 保存验证码到内存中
+        from io import BytesIO
+        buffer = BytesIO()
+        image.save(buffer, format='PNG')
+        
+        # 返回验证码图片和验证码字符串
+        import base64
+        base64_code = base64.encodebytes(buffer.getvalue()).decode('utf-8')
+        return JsonResponse({'code': 200, 'img': base64_code,'uuid':str(random.randint(1000, 9999))})
+
+    @action(detail=False, methods=['get'], url_path='getInfo')
+    def get_user_info(self, request):
+        user = get_user_from_token(request)
+        return Response({"user": UserSerializer(user).data})
+
+    @action(detail=False, methods=['post'], url_path='login')
+    def login(self, request):
+        username = request.data.get('username')
+        password = request.data.get('password')
+        # 根据用户名和密码判断用户是否存在
+        user = authenticate(username=username, password=password)
+
+        if user:
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'token': str(refresh.access_token),
+                'user': UserSerializer(user).data
+            },
+            status=status.HTTP_200_OK)
+        return Response(
+            {'error': '用户名或密码错误'},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
+    
+    @action(detail=False, methods=['post'], url_path='logout')
+    def logout(self, request):
+        """登出"""
+        return Response()
+
+    @action(detail=False, methods=['post'], url_path='register')
+    def register(self, request):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            user = serializer.save()
+            refresh = RefreshToken.for_user(user)
+            return Response({
+                'token': str(refresh.access_token),
+                'user': serializer.data
+            }, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class RoleViewSet(viewsets.ModelViewSet):
     queryset = Role.objects.all()
@@ -67,42 +147,6 @@ class UserViewSet(viewsets.ModelViewSet):
         if self.action in ['retrieve', 'update', 'partial_update', 'destroy']:
             return [IsAdminUser()]
         return [IsOwnerOrAdmin()]
-
-    @action(detail=False, methods=['get'], url_path='getUserInfo')
-    def get_user_info(self, request):
-        user = get_user_from_token(request)
-        return Response({"user": UserSerializer(user).data})
-
-    @action(detail=False, methods=['post'])
-    def login(self, request):
-        username = request.data.get('username')
-        password = request.data.get('password')
-        # 根据用户名和密码判断用户是否存在
-        user = authenticate(username=username, password=password)
-
-        if user:
-            refresh = RefreshToken.for_user(user)
-            return Response({
-                'token': str(refresh.access_token),
-                'user': UserSerializer(user).data
-            },
-            status=status.HTTP_200_OK)
-        return Response(
-            {'error': '用户名或密码错误'},
-            status=status.HTTP_401_UNAUTHORIZED
-        )
-
-    @action(detail=False, methods=['post'])
-    def register(self, request):
-        serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
-            user = serializer.save()
-            refresh = RefreshToken.for_user(user)
-            return Response({
-                'token': str(refresh.access_token),
-                'user': serializer.data
-            }, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     @action(detail=True, methods=['post'])
     def reset_pwd(self, request, pk=None):

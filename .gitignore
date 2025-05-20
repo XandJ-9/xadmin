@@ -60,3 +60,7 @@ db.sqlite3
 # System
 .DS_Store
 Thumbs.db
+
+
+ruoyi-ui
+vue-element-plus-admin
