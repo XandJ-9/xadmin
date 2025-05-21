@@ -140,7 +140,6 @@ function handleLogin() {
 
 function getCode() {
     getCodeImg().then(res => {
-        console.log(res)
     captchaEnabled.value = res.captchaEnabled === undefined ? true : res.captchaEnabled
     if (captchaEnabled.value) {
       codeUrl.value = "data:image/gif;base64," + res.img

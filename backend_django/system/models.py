@@ -4,6 +4,20 @@ from django.utils import timezone
 from xadmin.models_base import BaseModel
 
 
+class Captcha(models.Model):
+    """验证码模型"""
+    code = models.CharField(max_length=10, verbose_name='验证码')
+    uuid = models.CharField(max_length=50, unique=True, verbose_name='UUID')
+    created_at = models.DateTimeField(default=timezone.now, verbose_name='创建时间')
+
+    class Meta:
+        verbose_name = '验证码'
+        verbose_name_plural = verbose_name
+        db_table = 'sys_captcha'
+
+    def __str__(self):
+        return self.code
+
 class Role(BaseModel):
     name = models.CharField(max_length=50, unique=True, verbose_name='角色名称')
     description = models.TextField(blank=True, verbose_name='角色描述')

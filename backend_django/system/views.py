@@ -7,12 +7,12 @@ from django.contrib.auth import authenticate
 from django.http import JsonResponse
 from django.utils.crypto import get_random_string
 from PIL import Image, ImageDraw, ImageFont
-import random
-from .models import User, Role, Menu, SystemConfig
+from .models import User, Role, Menu, SystemConfig, Captcha
 from. serializers import MenuSerializer, SystemConfigSerializer,UserSerializer, RoleSerializer
 from .permissions import IsAdminUser, IsOwnerOrAdmin,HasRolePermission
 from .authentication import get_user_from_token
 import logging
+import uuid
 
 logger = logging.getLogger('django')
 
@@ -26,8 +26,8 @@ class LoginViewSet(viewsets.ViewSet):
         :param request:
         :return:
         """
-
-
+        # 生成唯一uuid
+        uuid_str = uuid.uuid4()
         # 生成随机字符串
         code = get_random_string(length=4, allowed_chars='ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789')
         
@@ -46,10 +46,16 @@ class LoginViewSet(viewsets.ViewSet):
         buffer = BytesIO()
         image.save(buffer, format='PNG')
         
+        captcha = Captcha.objects.create()
+        # 保存验证码到数据库
+        captcha.code = code
+        captcha.uuid = uuid_str
+        captcha.save()
+
         # 返回验证码图片和验证码字符串
         import base64
         base64_code = base64.encodebytes(buffer.getvalue()).decode('utf-8')
-        return JsonResponse({'code': 200, 'img': base64_code,'uuid':str(random.randint(1000, 9999))})
+        return JsonResponse({'code': status.HTTP_200_OK, 'img': base64_code,'uuid':uuid_str})
 
     @action(detail=False, methods=['get'], url_path='getInfo')
     def get_user_info(self, request):
@@ -60,6 +66,12 @@ class LoginViewSet(viewsets.ViewSet):
     def login(self, request):
         username = request.data.get('username')
         password = request.data.get('password')
+        code = request.data.get('code')
+        uuid = request.data.get('uuid')
+        # 验证验证码
+        if not Captcha.objects.filter(uuid=uuid, code=code).exists():
+            return Response({'error': '验证码错误'}, status=status.HTTP_400_BAD_REQUEST)
+
         # 根据用户名和密码判断用户是否存在
         user = authenticate(username=username, password=password)
 
