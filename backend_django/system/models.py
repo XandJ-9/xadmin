@@ -39,7 +39,7 @@ class User(AbstractUser, BaseModel):
     is_active = models.BooleanField(default=True, verbose_name='是否激活')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
-    role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True, related_name='users', verbose_name='角色')
+    # role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True, related_name='users', verbose_name='角色')
     
     # 移除默认的groups和user_permissions字段
     groups = None
@@ -54,6 +54,20 @@ class User(AbstractUser, BaseModel):
     def __str__(self):
         return self.username
 
+class UserRole(BaseModel):
+    """用户角色关联模型"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_roles', verbose_name='用户')
+    role = models.ForeignKey(Role, on_delete=models.CASCADE, related_name='user_roles', verbose_name='角色')
+    created_at = models.DateTimeField(default=timezone.now, verbose_name='创建时间')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
+
+    class Meta:
+        verbose_name = '用户角色关联'
+        verbose_name_plural = verbose_name
+        db_table = 'sys_user_role'
+
+    def __str__(self):
+        return f"{self.user.username} - {self.role.name}"
         
 class Menu(BaseModel):
     """系统菜单模型"""

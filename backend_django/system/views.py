@@ -4,10 +4,9 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
-from django.http import JsonResponse
 from django.utils.crypto import get_random_string
 from PIL import Image, ImageDraw, ImageFont
-from .models import User, Role, Menu, SystemConfig, Captcha
+from .models import User, Role, Menu, SystemConfig, Captcha, UserRole
 from. serializers import MenuSerializer, SystemConfigSerializer,UserSerializer, RoleSerializer
 from .permissions import IsAdminUser, IsOwnerOrAdmin,HasRolePermission
 from .authentication import get_user_from_token
@@ -55,12 +54,15 @@ class LoginViewSet(viewsets.ViewSet):
         # 返回验证码图片和验证码字符串
         import base64
         base64_code = base64.encodebytes(buffer.getvalue()).decode('utf-8')
-        return JsonResponse({'code': status.HTTP_200_OK, 'img': base64_code,'uuid':uuid_str})
+        # return JsonResponse({'code': status.HTTP_200_OK, 'img': base64_code,'uuid':uuid_str})
+        return Response({'img': base64_code,'uuid':uuid_str}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['get'], url_path='getInfo')
     def get_user_info(self, request):
         user = get_user_from_token(request)
-        return Response({"user": UserSerializer(user).data})
+        user_roles = user.user_roles.all()
+        role_ids = [user_role.role.name for user_role in user_roles]
+        return Response({"user": UserSerializer(user).data,"roles": role_ids})
 
     @action(detail=False, methods=['post'], url_path='login')
     def login(self, request):
@@ -166,6 +168,41 @@ class UserViewSet(viewsets.ModelViewSet):
         user.set_password("123456")
         user.save()
         return Response({'message': '密码重置成功'}, status=status.HTTP_200_OK)
+    
+    @action(detail=True, methods=['post'], url_path='authRole')
+    def authRole(self, request, pk=None):
+        """
+        授权用户角色
+        :param request:
+        :return:
+        """
+        # userId = request.query_params.get('userId')
+        # user = User.objects.get(id=userId)
+        user = self.get_object()
+        if not user:
+            return Response({'error': '用户不存在'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        roleIds = request.data.get('roleIds')
+        # rIds = roleIds.split(",")
+        # 验证用户ID是否有效
+        if not all(isinstance(rid, int) for rid in roleIds):
+            return Response({'error': f'角色ID必须为整数 {roleIds}'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # 判断角色id是否都存在
+        existed_role_ids= set(Role.objects.filter(id__in=roleIds).values_list('id', flat=True))
+        invalid_ids = set(roleIds) - existed_role_ids
+        if invalid_ids:
+            return Response({'error': f'角色ID不存在: {list(invalid_ids)}'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # 删除原有的用户角色关联
+        user.user_roles.all().delete()
+
+        for roleId in roleIds:
+            # 关联用户和角色
+             UserRole.objects.create(user=user, role_id=roleId)
+        return Response({'message': '授权成功'}, status=status.HTTP_200_OK)
+        
+
 
 class MenuViewSet(viewsets.ModelViewSet):
     queryset = Menu.objects.all()
