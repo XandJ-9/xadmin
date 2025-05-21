@@ -1,6 +1,7 @@
 import { createWebHistory, createRouter } from 'vue-router'
 /* Layout */
 import Layout from '@/layout'
+import { menu as system_menu } from './menu'
 
 /**
  * Note: 路由配置项
@@ -83,7 +84,8 @@ export const constantRoutes = [
         meta: { title: '个人中心', icon: 'user' }
       }
     ]
-  }
+  },
+  system_menu
 ]
 
 // 动态路由，基于用户权限动态去加载
@@ -120,7 +122,8 @@ export const dynamicRoutes = [
     path: '/system/dict-data',
     component: Layout,
     hidden: true,
-    permissions: ['system:dict:list'],
+    // permissions: ['system:dict:list'],
+    permissions: ['*:*:*'],
     children: [
       {
         path: 'index/:dictId(\\d+)',

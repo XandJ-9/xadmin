@@ -303,9 +303,10 @@ watch(deptName, val => {
 function getList() {
   loading.value = true
   listUser(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
+    console.log('查询用户列表',res)
     loading.value = false
-    userList.value = res.rows
-    total.value = res.total
+    userList.value = res.data.data
+    total.value = res.data.total
   })
 }
 

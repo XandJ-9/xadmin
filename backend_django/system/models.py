@@ -1,7 +1,15 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
-from xadmin.models_base import BaseModel
+
+
+class BaseModel(models.Model):
+
+    """所有模型的基类，用于设置统一的表前缀"""
+    class Meta:
+        abstract = True
+        db_table = settings.DATABASE_TABLE_PREFIX
 
 
 class Captcha(models.Model):
@@ -84,6 +92,12 @@ class Menu(BaseModel):
     meta_title = models.CharField(max_length=50, blank=True, null=True, verbose_name='菜单标题')
     meta_icon = models.CharField(max_length=50, blank=True, null=True, verbose_name='菜单图标')
     meta_need_tagview = models.BooleanField(default=False, verbose_name='是否需要tagview')
+    perms = models.CharField(max_length=100, blank=True, null=True, verbose_name='权限标识')
+    query = models.CharField(max_length=255, blank=True, null=True, verbose_name='路由参数')
+    isFrame = models.BooleanField(default=False, verbose_name='是否外链')
+    isCache = models.BooleanField(default=True, verbose_name='是否缓存')
+    visible = models.BooleanField(default=True, verbose_name='显示状态')
+    status = models.BooleanField(default=True, verbose_name='菜单状态')
     created_at = models.DateTimeField(default=timezone.now, verbose_name='创建时间')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_menus', verbose_name='创建者', null=True)
@@ -136,6 +150,22 @@ class SystemConfig(BaseModel):
     def __str__(self):
         return f"{self.key}: {self.value}"
 
+
+class SystemDict(BaseModel):
+    """系统字典模型"""
+    dict_name = models.CharField(max_length=50, verbose_name='字典名称')
+    dict_type = models.CharField(max_length=100, unique=True, verbose_name='字典类型')
+    status = models.CharField(max_length=1, default='0', verbose_name='状态')
+    remark = models.TextField(blank=True, null=True, verbose_name='备注')
+
+    
+    class Meta:
+        verbose_name = '字典类型'
+        verbose_name_plural = verbose_name
+        db_table = 'sys_dict'
+        
+    def __str__(self):
+        return self.dict_name
 
 class BizBaseModel(BaseModel):
     """业务公共字段模型"""

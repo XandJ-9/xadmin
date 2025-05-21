@@ -2,7 +2,7 @@ import logging
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.contrib.auth.hashers import make_password
-from system.models import User, Role, Menu, RoleMenu
+from system.models import User, Role,UserRole, Menu, RoleMenu
 from datasource.models import DataSource
 import json 
 logger = logging.getLogger('django')
@@ -30,14 +30,17 @@ class Command(BaseCommand):
         # 初始化管理员用户
         self._init_admin_user(force)
         
-        # 初始化菜单
-        self._init_menus(force)
+        # 初始化用户角色关系
+        self._init_user_roles(force)
         
-        # 初始化示例数据源
-        self._init_sample_datasource(force)
+        # # 初始化菜单
+        # self._init_menus(force)
+        
+        # # 初始化示例数据源
+        # self._init_sample_datasource(force)
 
-        # 初始化角色关联菜单
-        self._init_role_menu(force)
+        # # 初始化角色关联菜单
+        # self._init_role_menu(force)
 
 
         self.stdout.write(self.style.SUCCESS('系统数据初始化完成！'))
@@ -71,13 +74,6 @@ class Command(BaseCommand):
         """初始化管理员用户"""
         self.stdout.write('初始化管理员用户...')
         
-        # 获取管理员角色
-        try:
-            admin_role = Role.objects.get(name='admin')
-        except Role.DoesNotExist:
-            self.stdout.write(self.style.ERROR('管理员角色不存在，请先初始化角色'))
-            return
-        
         # 默认管理员用户信息
         admin_data = {
             'username': 'admin',
@@ -97,7 +93,6 @@ class Command(BaseCommand):
                 'nickname': admin_data['nickname'],
                 'is_staff': admin_data['is_staff'],
                 'is_superuser': admin_data['is_superuser'],
-                'role': admin_role,
             }
         )
         
@@ -109,12 +104,33 @@ class Command(BaseCommand):
             admin_user.nickname = admin_data['nickname']
             admin_user.is_staff = admin_data['is_staff']
             admin_user.is_superuser = admin_data['is_superuser']
-            admin_user.role = admin_role
+            # admin_user.role = admin_role
             admin_user.save()
             self.stdout.write(self.style.WARNING(f'更新管理员用户: {admin_user.username}'))
         else:
             self.stdout.write(f'管理员用户已存在: {admin_user.username}')
     
+    def _init_user_roles(self, force):
+        """初始化用户角色关系"""
+        self.stdout.write('初始化用户角色关系...')
+        
+        # 获取管理员角色和管理员用户
+        try:
+            admin_role = Role.objects.get(name='admin')
+            admin_user = User.objects.get(username='admin')
+        except (Role.DoesNotExist, User.DoesNotExist):
+            self.stdout.write(self.style.ERROR('管理员角色或用户不存在，请先初始化角色和用户'))
+            return
+        
+        user_role, created = UserRole.objects.get_or_create(
+            user=admin_user,
+            role=admin_role
+        )
+        if not created:
+            self.stdout.write(f'用户角色关系已存在: {user_role}')
+        else:
+            self.stdout.write(self.style.SUCCESS(f'创建用户角色关系: {user_role}'))
+
     def _init_sample_datasource(self, force):
         """初始化示例数据源"""
         self.stdout.write('初始化示例数据源...')
@@ -174,85 +190,7 @@ class Command(BaseCommand):
         """初始化菜单数据"""
         self.stdout.write('初始化菜单数据...')
         
-        # 获取管理员用户
-        try:
-            admin_user = User.objects.get(username='admin')
-        except User.DoesNotExist:
-            self.stdout.write(self.style.ERROR('管理员用户不存在，请先初始化管理员用户'))
-            return
-        
-        # 定义菜单数据
-        menu_data = data_json['menus']
-        
 
-        # 创建父菜单字典，用于关联子菜单
-        parent_menus = {}
-        
-        # 首先创建所有父菜单
-        for item in menu_data:
-            if item.get('parent') is None and not item.get('parent_name'):
-                menu, created = Menu.objects.get_or_create(
-                    name=item['name'],
-                    defaults={
-                        'path': item['path'],
-                        'component': item['component'],
-                        'icon': item['icon'],
-                        'sort': item['sort'],
-                        'hidden': item['hidden'],
-                        'creator': admin_user
-                    }
-                )
-                
-                if created:
-                    self.stdout.write(self.style.SUCCESS(f'创建菜单: {menu.name}'))
-                elif force:
-                    menu.path = item['path']
-                    menu.component = item['component']
-                    menu.icon = item['icon']
-                    menu.sort = item['sort']
-                    menu.hidden = item['hidden']
-                    menu.save()
-                    self.stdout.write(self.style.WARNING(f'更新菜单: {menu.name}'))
-                else:
-                    self.stdout.write(f'菜单已存在: {menu.name}')
-                
-                # 将父菜单添加到字典中
-                parent_menus[menu.name] = menu
-        
-        # 然后创建所有子菜单
-        for item in menu_data:
-            if item.get('parent_name'):
-                parent = parent_menus.get(item['parent_name'])
-                if not parent:
-                    self.stdout.write(self.style.ERROR(f'父菜单不存在: {item["parent_name"]}，无法创建子菜单: {item["name"]}'))
-                    continue
-                
-                menu, created = Menu.objects.get_or_create(
-                    name=item['name'],
-                    defaults={
-                        'path': item['path'],
-                        'component': item['component'],
-                        'icon': item['icon'],
-                        'sort': item['sort'],
-                        'hidden': item['hidden'],
-                        'parent': parent,
-                        'creator': admin_user
-                    }
-                )
-                
-                if created:
-                    self.stdout.write(self.style.SUCCESS(f'创建子菜单: {menu.name}'))
-                elif force:
-                    menu.path = item['path']
-                    menu.component = item['component']
-                    menu.icon = item['icon']
-                    menu.sort = item['sort']
-                    menu.hidden = item['hidden']
-                    menu.parent = parent
-                    menu.save()
-                    self.stdout.write(self.style.WARNING(f'更新子菜单: {menu.name}'))
-                else:
-                    self.stdout.write(f'子菜单已存在: {menu.name}')
 
     def _init_role_menu(self, force=False):
         """初始化角色菜单权限"""
