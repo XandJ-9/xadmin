@@ -39,13 +39,13 @@ class Command(BaseCommand):
         self._init_menus(force)
         
         # 初始化角色关联菜单
-        self._init_role_menu(force)
+        # self._init_role_menu(force)
 
-        # 初始化角色部门关系
-        self._init_role_dept(force)
+        # # 初始化角色部门关系
+        # self._init_role_dept(force)
 
-        # 初始化示例数据源
-        self._init_sample_datasource(force)
+        # # 初始化示例数据源
+        # self._init_sample_datasource(force)
 
         self.stdout.write(self.style.SUCCESS('系统数据初始化完成！'))
     
@@ -139,7 +139,7 @@ class Command(BaseCommand):
                     'phonenumber': user_item['phonenumber'],
                     'sex': user_item['sex'],
                     'avatar': user_item['avatar'],
-                    'password': user_item['password'],  # 已经是加密的密码
+                    'password': '123456',  # 已经是加密的密码
                     'is_active': user_item['status'] == '0',  # 0表示正常
                     'del_flag': user_item['del_flag'],
                     'login_ip': user_item['login_ip'],
@@ -231,7 +231,6 @@ class Command(BaseCommand):
                     'status': menu_item['status'],
                     'perms': menu_item.get('perms', ''),
                     'icon': menu_item['icon'],
-                    'created_at': self._process_date_value(menu_item['create_time']),
                     'remark': menu_item.get('remark', '')
                 }
             )
@@ -264,7 +263,7 @@ class Command(BaseCommand):
         
         # 第二次遍历，设置父菜单关系
         for menu_item in menu_data['sys_menu']:
-            if menu_item['parent_id'] > 0:  # 有父菜单
+            if menu_item['parent_id']:  # 有父菜单
                 try:
                     menu = menu_objects[menu_item['menu_id']]
                     parent_menu = menu_objects[menu_item['parent_id']]

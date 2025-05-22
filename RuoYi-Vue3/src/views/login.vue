@@ -69,6 +69,7 @@ import { getCodeImg } from "@/api/login"
 import Cookies from "js-cookie"
 import { encrypt, decrypt } from "@/utils/jsencrypt"
 import useUserStore from '@/store/modules/user'
+import { ElMessage } from "element-plus"
 
 const title = import.meta.env.VITE_APP_TITLE
 const userStore = useUserStore()

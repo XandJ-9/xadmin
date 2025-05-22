@@ -160,8 +160,8 @@ class Menu(BaseModel):
     icon = models.CharField(max_length=100, default='#', verbose_name='菜单图标')
     created_at = models.DateTimeField(default=timezone.now, verbose_name='创建时间')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
-    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_menus', verbose_name='创建者', null=True)
-    updator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='updated_menus', verbose_name='更新者', null=True)
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='menu_creator', verbose_name='创建者', null=True)
+    updator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='menu_updator', verbose_name='更新者', null=True)
     remark = models.CharField(max_length=500, default='', verbose_name='备注')
 
     class Meta:
