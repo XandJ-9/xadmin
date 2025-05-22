@@ -27,10 +27,32 @@ class Captcha(models.Model):
         return self.code
 
 class Role(BaseModel):
-    name = models.CharField(max_length=50, unique=True, verbose_name='角色名称')
-    description = models.TextField(blank=True, verbose_name='角色描述')
+    DATA_SCOPE_CHOICES = [
+        ('1', '全部数据权限'),
+        ('2', '自定数据权限'),
+        ('3', '本部门数据权限'),
+        ('4', '本部门及以下数据权限'),
+    ]
+    STATUS_CHOICES = [
+        ('0', '正常'),
+        ('1', '停用'),
+    ]
+    DEL_FLAG_CHOICES = [
+        ('0', '存在'),
+        ('2', '删除'),
+    ]
+    
+    role_name = models.CharField(max_length=30, verbose_name='角色名称')
+    role_key = models.CharField(max_length=100, verbose_name='角色权限字符串')
+    role_sort = models.IntegerField(verbose_name='显示顺序')
+    data_scope = models.CharField(max_length=1, default='1', choices=DATA_SCOPE_CHOICES, verbose_name='数据范围')
+    menu_check_strictly = models.BooleanField(default=True, verbose_name='菜单树选择项是否关联显示')
+    dept_check_strictly = models.BooleanField(default=True, verbose_name='部门树选择项是否关联显示')
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES, verbose_name='角色状态')
+    del_flag = models.CharField(max_length=1, default='0', choices=DEL_FLAG_CHOICES, verbose_name='删除标志')
     created_at = models.DateTimeField(default=timezone.now, verbose_name='创建时间')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
+    remark = models.CharField(max_length=500, null=True, blank=True, verbose_name='备注')
 
     class Meta:
         verbose_name = '角色'
@@ -38,16 +60,37 @@ class Role(BaseModel):
         db_table = 'sys_role'
 
     def __str__(self):
-        return self.name
+        return self.role_name
 
 class User(AbstractUser, BaseModel):
     """自定义用户模型"""
+    USER_TYPE_CHOICES = [
+        ('00', '系统用户'),
+    ]
+    SEX_CHOICES = [
+        ('0', '男'),
+        ('1', '女'),
+        ('2', '未知'),
+    ]
+    DEL_FLAG_CHOICES = [
+        ('0', '存在'),
+        ('2', '删除'),
+    ]
+    
+    dept_id = models.BigIntegerField(null=True, blank=True, verbose_name='部门ID')
     nickname = models.CharField(max_length=50, blank=True, null=True, verbose_name='昵称')
+    user_type = models.CharField(max_length=2, default='00', choices=USER_TYPE_CHOICES, verbose_name='用户类型')
+    email = models.EmailField(max_length=50, blank=True, default='', verbose_name='用户邮箱')
+    phonenumber = models.CharField(max_length=11, blank=True, default='', verbose_name='手机号码')
+    sex = models.CharField(max_length=1, default='0', choices=SEX_CHOICES, verbose_name='用户性别')
     avatar = models.CharField(max_length=200, blank=True, null=True, verbose_name='头像')
     is_active = models.BooleanField(default=True, verbose_name='是否激活')
+    del_flag = models.CharField(max_length=1, default='0', choices=DEL_FLAG_CHOICES, verbose_name='删除标志')
+    login_ip = models.CharField(max_length=128, blank=True, default='', verbose_name='最后登录IP')
+    login_date = models.DateTimeField(null=True, blank=True, verbose_name='最后登录时间')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
-    # role = models.ForeignKey(Role, on_delete=models.SET_NULL, null=True, related_name='users', verbose_name='角色')
+    remark = models.CharField(max_length=500, null=True, blank=True, verbose_name='备注')
     
     # 移除默认的groups和user_permissions字段
     groups = None
@@ -79,39 +122,56 @@ class UserRole(BaseModel):
         
 class Menu(BaseModel):
     """系统菜单模型"""
-    name = models.CharField(max_length=50, verbose_name='菜单名称')
+    IS_FRAME_CHOICES = [
+        (0, '是'),
+        (1, '否'),
+    ]
+    IS_CACHE_CHOICES = [
+        (0, '缓存'),
+        (1, '不缓存'),
+    ]
+    MENU_TYPE_CHOICES = [
+        ('M', '目录'),
+        ('C', '菜单'),
+        ('F', '按钮'),
+    ]
+    VISIBLE_CHOICES = [
+        ('0', '显示'),
+        ('1', '隐藏'),
+    ]
+    STATUS_CHOICES = [
+        ('0', '正常'),
+        ('1', '停用'),
+    ]
+    
+    menu_name = models.CharField(max_length=50, verbose_name='菜单名称')
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children', verbose_name='父菜单')
-    path = models.CharField(max_length=100, verbose_name='路由路径')
-    component = models.CharField(max_length=100, verbose_name='组件路径', default='layout/index')
-    component_name = models.CharField(max_length=100, blank=True, null=True, verbose_name='组件名称')
-    redirect = models.CharField(max_length=100, blank=True, null=True, verbose_name='重定向路径')
-    name_code = models.CharField(max_length=50, blank=True, null=True, verbose_name='路由名称代码')
-    icon = models.CharField(max_length=50, blank=True, null=True, verbose_name='图标')
-    sort = models.IntegerField(default=0, verbose_name='排序')
-    hidden = models.BooleanField(default=False, verbose_name='是否隐藏')
-    meta_title = models.CharField(max_length=50, blank=True, null=True, verbose_name='菜单标题')
-    meta_icon = models.CharField(max_length=50, blank=True, null=True, verbose_name='菜单图标')
-    meta_need_tagview = models.BooleanField(default=False, verbose_name='是否需要tagview')
-    perms = models.CharField(max_length=100, blank=True, null=True, verbose_name='权限标识')
-    query = models.CharField(max_length=255, blank=True, null=True, verbose_name='路由参数')
-    isFrame = models.BooleanField(default=False, verbose_name='是否外链')
-    isCache = models.BooleanField(default=True, verbose_name='是否缓存')
-    visible = models.BooleanField(default=True, verbose_name='显示状态')
-    status = models.BooleanField(default=True, verbose_name='菜单状态')
+    order_num = models.IntegerField(default=0, verbose_name='显示顺序')
+    path = models.CharField(max_length=200, default='', verbose_name='路由地址')
+    component = models.CharField(max_length=255, null=True, blank=True, verbose_name='组件路径')
+    query = models.CharField(max_length=255, null=True, blank=True, verbose_name='路由参数')
+    route_name = models.CharField(max_length=50, default='', verbose_name='路由名称')
+    is_frame = models.IntegerField(default=1, choices=IS_FRAME_CHOICES, verbose_name='是否为外链')
+    is_cache = models.IntegerField(default=0, choices=IS_CACHE_CHOICES, verbose_name='是否缓存')
+    menu_type = models.CharField(max_length=1, default='', choices=MENU_TYPE_CHOICES, verbose_name='菜单类型')
+    visible = models.CharField(max_length=1, default='0', choices=VISIBLE_CHOICES, verbose_name='菜单状态')
+    status = models.CharField(max_length=1, default='0', choices=STATUS_CHOICES, verbose_name='菜单状态')
+    perms = models.CharField(max_length=100, null=True, blank=True, verbose_name='权限标识')
+    icon = models.CharField(max_length=100, default='#', verbose_name='菜单图标')
     created_at = models.DateTimeField(default=timezone.now, verbose_name='创建时间')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_menus', verbose_name='创建者', null=True)
     updator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='updated_menus', verbose_name='更新者', null=True)
-    menu_type = models.CharField(max_length=1,choices=(("C","菜单"),("F","按钮"),("M","目录")),default="M")
+    remark = models.CharField(max_length=500, default='', verbose_name='备注')
 
     class Meta:
         verbose_name = '菜单'
         verbose_name_plural = verbose_name
         db_table = 'sys_menu'
-        ordering = ['sort']
+        ordering = ['order_num']
 
     def __str__(self):
-        return self.name
+        return self.menu_name
     
 # class UserMenu(BaseModel):
 #     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_menus', verbose_name='用户')
@@ -131,16 +191,24 @@ class RoleMenu(BaseModel):
         verbose_name_plural = verbose_name
         db_table ='sys_role_menu'
     def __str__(self):
-        return f"{self.role.name} - {self.menu.name}"
+        return f"{self.role.role_name} - {self.menu.menu_name}"
 
 class SystemConfig(BaseModel):
     """系统配置模型"""
-    key = models.CharField(max_length=50, unique=True, verbose_name='配置键')
-    value = models.TextField(verbose_name='配置值')
-    description = models.TextField(blank=True, null=True, verbose_name='配置描述')
+    CONFIG_TYPE_CHOICES = [
+        ('Y', '是'),
+        ('N', '否'),
+    ]
+    
+    config_name = models.CharField(max_length=100, default='', verbose_name='参数名称')
+    config_key = models.CharField(max_length=100, default='', verbose_name='参数键名')
+    config_value = models.CharField(max_length=500, default='', verbose_name='参数键值')
+    config_type = models.CharField(max_length=1, default='N', choices=CONFIG_TYPE_CHOICES, verbose_name='系统内置')
     created_at = models.DateTimeField(default=timezone.now, verbose_name='创建时间')
     updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
-    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_configs', verbose_name='创建者')
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_configs', verbose_name='创建者', null=True)
+    updator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='updated_configs', verbose_name='更新者', null=True)
+    remark = models.CharField(max_length=500, null=True, blank=True, verbose_name='备注')
 
     class Meta:
         verbose_name = '系统配置'
@@ -148,24 +216,65 @@ class SystemConfig(BaseModel):
         db_table = 'sys_config'
 
     def __str__(self):
-        return f"{self.key}: {self.value}"
+        return f"{self.config_key}"
 
 
 class SystemDict(BaseModel):
     """系统字典模型"""
-    dict_name = models.CharField(max_length=50, verbose_name='字典名称')
-    dict_type = models.CharField(max_length=100, unique=True, verbose_name='字典类型')
-    status = models.CharField(max_length=1, default='0', verbose_name='状态')
-    remark = models.TextField(blank=True, null=True, verbose_name='备注')
-
+    STATUS_CHOICES = [
+        ('0', '正常'),
+        ('1', '停用'),
+    ]
     
+    dict_name = models.CharField(max_length=100, default='', verbose_name='字典名称')
+    dict_type = models.CharField(max_length=100, default='', verbose_name='字典类型', unique=True)
+    status = models.CharField(max_length=1, default='0', choices=STATUS_CHOICES, verbose_name='状态')
+    created_at = models.DateTimeField(default=timezone.now, verbose_name='创建时间')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_dicts', verbose_name='创建者', null=True)
+    updator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='updated_dicts', verbose_name='更新者', null=True)
+    remark = models.CharField(max_length=500, null=True, blank=True, verbose_name='备注')
+
     class Meta:
         verbose_name = '字典类型'
         verbose_name_plural = verbose_name
-        db_table = 'sys_dict'
+        db_table = 'sys_dict_type'
         
     def __str__(self):
         return self.dict_name
+
+class SystemDictData(BaseModel):
+    """字典数据模型"""
+    IS_DEFAULT_CHOICES = [
+        ('Y', '是'),
+        ('N', '否'),
+    ]
+    STATUS_CHOICES = [
+        ('0', '正常'),
+        ('1', '停用'),
+    ]
+    
+    dict_sort = models.IntegerField(default=0, verbose_name='字典排序')
+    dict_label = models.CharField(max_length=100, default='', verbose_name='字典标签')
+    dict_value = models.CharField(max_length=100, default='', verbose_name='字典键值')
+    dict_type = models.CharField(max_length=100, default='', verbose_name='字典类型')
+    css_class = models.CharField(max_length=100, null=True, blank=True, verbose_name='样式属性（其他样式扩展）')
+    list_class = models.CharField(max_length=100, null=True, blank=True, verbose_name='表格回显样式')
+    is_default = models.CharField(max_length=1, default='N', choices=IS_DEFAULT_CHOICES, verbose_name='是否默认')
+    status = models.CharField(max_length=1, default='0', choices=STATUS_CHOICES, verbose_name='状态')
+    created_at = models.DateTimeField(default=timezone.now, verbose_name='创建时间')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
+    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_dict_datas', verbose_name='创建者', null=True)
+    updator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='updated_dict_datas', verbose_name='更新者', null=True)
+    remark = models.CharField(max_length=500, null=True, blank=True, verbose_name='备注')
+
+    class Meta:
+        verbose_name = '字典数据'
+        verbose_name_plural = verbose_name
+        db_table = 'sys_dict_data'
+
+    def __str__(self):
+        return self.dict_label
 
 class BizBaseModel(BaseModel):
     """业务公共字段模型"""

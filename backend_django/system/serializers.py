@@ -1,7 +1,7 @@
 from rest_framework.utils.serializer_helpers import BindingDict
 from rest_framework import serializers
 from .models import User,Role,Menu, SystemConfig
-
+from utils.serializer import set_choice_field_internal_value, set_choice_field_representation
 
 class RoleSerializer(serializers.ModelSerializer):
     create_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
@@ -79,22 +79,7 @@ class SystemConfigSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'created_at', 'updated_at']
 
 
-def set_choice_field_internal_value(fields:BindingDict, field_name:str, data: dict):
-    # for field_name in fields:  这种方式无法获取到field_name
-        # print(f'{field_name}')
-    field = fields[field_name]
-    if not isinstance(field, serializers.ChoiceField):  # 判断是否为ChoiceField
-        return 
-    for internal_value, value in field.choices.items():
-        # 将传入的choice字段值修改为数据库中存储的内容
-        if data.get(field_name) == value:
-            data[field_name]= internal_value
 
-def set_choice_field_representation(fields:BindingDict, field_name:str, instance):
-    field = fields[field_name]
-    if not isinstance(field, serializers.ChoiceField):  # 判断是否为ChoiceField
-        return
-    instance.__dict__[field_name] = field.choices.get(instance.__dict__[field_name])
 
 class BizModelSerializer(serializers.ModelSerializer):
     """adding creator and updator fields to serializers."""

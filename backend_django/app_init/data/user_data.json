@@ -1,0 +1,46 @@
+{
+  "sys_user": [
+    {
+      "user_id": 1,
+      "dept_id": 103,
+      "user_name": "admin",
+      "nick_name": "若依",
+      "user_type": "00",
+      "email": "ry@163.com",
+      "phonenumber": "15888888888",
+      "sex": "1",
+      "avatar": "",
+      "password": "$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2",
+      "status": "0",
+      "del_flag": "0",
+      "login_ip": "127.0.0.1",
+      "login_date": "sysdate()",
+      "create_by": "admin",
+      "create_time": "sysdate()",
+      "update_by": "",
+      "update_time": null,
+      "remark": "管理员"
+    },
+    {
+      "user_id": 2,
+      "dept_id": 105,
+      "user_name": "ry",
+      "nick_name": "若依",
+      "user_type": "00",
+      "email": "ry@qq.com",
+      "phonenumber": "15666666666",
+      "sex": "1",
+      "avatar": "",
+      "password": "$2a$10$7JB720yubVSZvUI0rEqK/.VqGOZTH.ulu33dHOiBE8ByOhJIrdAu2",
+      "status": "0",
+      "del_flag": "0",
+      "login_ip": "127.0.0.1",
+      "login_date": "sysdate()",
+      "create_by": "admin",
+      "create_time": "sysdate()",
+      "update_by": "",
+      "update_time": null,
+      "remark": "测试员"
+    }
+  ]
+}
