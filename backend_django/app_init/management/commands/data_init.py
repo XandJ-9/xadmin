@@ -36,7 +36,7 @@ class Command(BaseCommand):
         self._init_user_roles(force)
         
         # 初始化菜单
-        # self._init_menus(force)
+        self._init_menus(force)
         
         # 初始化角色关联菜单
         # self._init_role_menu(force)
