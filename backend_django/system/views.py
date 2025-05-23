@@ -6,12 +6,11 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from django.utils.crypto import get_random_string
 from PIL import Image, ImageDraw, ImageFont
-from .models import User, Role, Menu, SystemConfig, Captcha, UserRole, SystemDict
+from .models import User, Role, Menu, SystemConfig, Captcha, UserRole, SystemDictType,SystemDictData
 from. serializers import MenuSerializer, SystemConfigSerializer,UserSerializer, RoleSerializer
 from .permissions import IsAdminUser, IsOwnerOrAdmin,HasRolePermission
-from .authentication import get_user_from_token
-import logging
-import uuid
+from .authentication import get_user_from_token,get_token_from_request
+import logging, uuid, datetime
 from utils.viewset import CustomModelViewSet
 
 logger = logging.getLogger('django')
@@ -127,9 +126,11 @@ class UserViewSet(CustomModelViewSet):
         user = authenticate(username=username, password=password)
 
         if user:
-            refresh = RefreshToken.for_user(user)
+            refresh_token = RefreshToken.for_user(user)
+            refresh_token['uuid'] = uuid
+            token = refresh_token.access_token
             return Response({
-                'token': str(refresh.access_token),
+                'token': str(token),
                 'user': UserSerializer(user).data
             },
             status=status.HTTP_200_OK)
@@ -141,7 +142,15 @@ class UserViewSet(CustomModelViewSet):
     @action(detail=False, methods=['post'])
     def logout(self, request):
         """登出"""
-        return Response()
+        token = get_token_from_request(request)
+        if token:
+            uuid_str = token.get('uuid')
+            # 删除验证码
+            Captcha.objects.filter(uuid=uuid_str).delete()
+            # 要想限制用户有效退出登录，将token加入黑名单
+            # token.blacklist()
+
+        return Response({'message': '登出成功'}, status=status.HTTP_200_OK)
     
     @action(detail=False, methods=['post'])
     def register(self, request):
@@ -158,10 +167,14 @@ class UserViewSet(CustomModelViewSet):
     @action(detail=False, methods=['get'])
     def getInfo(self, request):
         user = get_user_from_token(request)
-        user_roles = user.user_roles.all()
-        role_ids = [user_role.role.name for user_role in user_roles]
-        permissions = ['*:*:*']
-        return Response({"user": UserSerializer(user).data,"roles": role_ids, "permissions": permissions})
+        if user.is_authenticated:
+            # 获取用户角色
+            user_roles = user.user_roles.all()
+            role_ids = [user_role.role.id for user_role in user_roles]
+            permissions = ['*:*:*']
+            return Response({"user": UserSerializer(user).data,"roles": role_ids, "permissions": permissions})
+        else:
+            return Response({'error': '用户未登录'}, status=status.HTTP_401_UNAUTHORIZED)
     
     @action(detail=True, methods=['post'])
     def reset_pwd(self, request, pk=None):
@@ -216,6 +229,7 @@ class MenuViewSet(viewsets.ModelViewSet):
             return [IsAdminUser()]
         elif self.action == 'user_menus':
             if self.request.user.is_authenticated:
+                user = self.request.user.user_roles.all()
                 return [HasRolePermission([self.request.user.role.name])]
         return super().get_permissions()
     
@@ -239,17 +253,20 @@ class MenuViewSet(viewsets.ModelViewSet):
     def user_menus(self, request):
         """根据当前登录用户的角色返回菜单列表（扁平结构）"""
         user = request.user
-        if not user.role:
+        
+        user_roles = user.user_roles.all()
+        if not user_roles.exists():
             return Response({'error': '用户没有分配角色'}, status=status.HTTP_403_FORBIDDEN)
         
+        role_menus = []
+        for user_role in user_roles:
+            # 获取用户角色关联的所有菜单ID
+            role_menus.extend(user_role.role.role_menus.all())
+        
         # 获取用户角色关联的所有菜单ID
-        role_menus = user.role.role_menus.all()
         menu_ids = [rm.menu_id for rm in role_menus]
-        
-        # todo: 获取用户关联的菜单
-        
         # 获取所有菜单并按排序字段排序
-        menus = Menu.objects.filter(id__in=menu_ids).order_by('sort')
+        menus = Menu.objects.filter(id__in=set(menu_ids)).order_by('sort')
         
         # 序列化菜单数据，返回扁平结构
         serializer = self.get_serializer(menus, many=True)
@@ -267,14 +284,18 @@ class MenuViewSet(viewsets.ModelViewSet):
         # 获取用户角色关联的所有菜单ID
         menu_ids = []
         for user_role in user_roles:
-            role_menus = user_role.role.role_menus.all()
-            menu_ids.extend([rm.menu_id for rm in role_menus])
+            # 如果是admin角色，则拥有所有菜单权限
+            if user_role.role.role_key == 'admin':
+                menu_ids = [menu.id for menu in Menu.objects.all()]
+            else:
+                role_menus = user_role.role.role_menus.all()
+                menu_ids.extend([rm.menu_id for rm in role_menus])
         
         # 去重
         menu_ids = list(set(menu_ids))
         
         # 获取所有菜单并按排序字段排序
-        all_menus = Menu.objects.filter(id__in=menu_ids).order_by('sort')
+        all_menus = Menu.objects.filter(id__in=menu_ids).order_by('order_num')
         
         # 获取顶级菜单
         top_menus = [menu for menu in all_menus if menu.parent is None]
@@ -282,14 +303,14 @@ class MenuViewSet(viewsets.ModelViewSet):
         # 构建树形结构
         def build_menu_tree(menu):
             menu_dict = {
-                'name': menu.name_code,
+                'name': menu.route_name,
                 'path': menu.path,
-                'hidden': menu.hidden,
+                'hidden': not menu.visible,
                 'component': menu.component,
                 'meta': {
-                    'title': menu.meta_title or menu.name,
-                    'icon': menu.meta_icon or menu.icon,
-                    'noCache': not menu.meta_need_tagview
+                    'title': menu.menu_name,
+                    'icon':  menu.icon,
+                    'noCache': not menu.is_cache
                 }
             }
             
@@ -330,8 +351,8 @@ class SystemConfigViewSet(viewsets.ModelViewSet):
         except SystemConfig.DoesNotExist:
             return Response({'error': f'未找到配置项: {key}'}, status=status.HTTP_404_NOT_FOUND)
 
+class SystemDictTypeViewSet(viewsets.ModelViewSet):
+    queryset = SystemDictType.objects.all()
 
-class SystemDictViewSet(viewsets.ModelViewSet):
-    queryset = SystemDict.objects.all()
-
-    
+class SystemDictDataViewSet(viewsets.ModelViewSet):
+    queryset = SystemDictData.objects.all()

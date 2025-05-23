@@ -3,7 +3,7 @@
     {
       "menu_id": 1,
       "menu_name": "系统管理",
-      "parent_id": 0,
+      "parent_id": null,
       "order_num": 1,
       "path": "system",
       "component": null,
@@ -25,7 +25,7 @@
     {
       "menu_id": 2,
       "menu_name": "系统监控",
-      "parent_id": 0,
+      "parent_id": null,
       "order_num": 2,
       "path": "monitor",
       "component": null,
@@ -47,7 +47,7 @@
     {
       "menu_id": 3,
       "menu_name": "系统工具",
-      "parent_id": 0,
+      "parent_id": null,
       "order_num": 3,
       "path": "tool",
       "component": null,
@@ -69,7 +69,7 @@
     {
       "menu_id": 4,
       "menu_name": "若依官网",
-      "parent_id": 0,
+      "parent_id": null,
       "order_num": 4,
       "path": "http://ruoyi.vip",
       "component": null,

@@ -36,7 +36,7 @@ class Command(BaseCommand):
         self._init_user_roles(force)
         
         # 初始化菜单
-        self._init_menus(force)
+        # self._init_menus(force)
         
         # 初始化角色关联菜单
         # self._init_role_menu(force)
@@ -139,7 +139,7 @@ class Command(BaseCommand):
                     'phonenumber': user_item['phonenumber'],
                     'sex': user_item['sex'],
                     'avatar': user_item['avatar'],
-                    'password': '123456',  # 已经是加密的密码
+                    'password': make_password(user_item['password']),  # 已经是加密的密码
                     'is_active': user_item['status'] == '0',  # 0表示正常
                     'del_flag': user_item['del_flag'],
                     'login_ip': user_item['login_ip'],
@@ -156,6 +156,7 @@ class Command(BaseCommand):
             elif force:
                 # 更新用户信息（不更新密码）
                 user.nickname = user_item['nick_name']
+                user.password = make_password(user_item['password'])  # 确保密码是加密的
                 user.dept_id = user_item['dept_id']
                 user.user_type = user_item['user_type']
                 user.email = user_item['email']

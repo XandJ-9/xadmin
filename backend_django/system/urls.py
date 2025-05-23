@@ -1,13 +1,14 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from .views import UserViewSet,RoleViewSet,MenuViewSet, SystemConfigViewSet
+from .views import UserViewSet,RoleViewSet,MenuViewSet, SystemConfigViewSet,SystemDictTypeViewSet,SystemDictDataViewSet
 
 router = DefaultRouter()
 router.register('users', UserViewSet)
 router.register('roles', RoleViewSet)
 router.register('menus', MenuViewSet)
 router.register('configs', SystemConfigViewSet)
-router.register('/system/dict/type/', SystemConfigViewSet, basename='system-dict-type')
+router.register('dict/type/', SystemDictTypeViewSet, basename='system-dict-type')
+router.register('dict/data/', SystemDictDataViewSet, basename='system-dict-data')
 
 urlpatterns = [
     path('system/', include(router.urls)),

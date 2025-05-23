@@ -148,13 +148,14 @@ class Menu(BaseModel):
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children', verbose_name='父菜单')
     order_num = models.IntegerField(default=0, verbose_name='显示顺序')
     path = models.CharField(max_length=200, default='', verbose_name='路由地址')
+    redirect = models.CharField(max_length=200, null=True, blank=True, verbose_name='重定向地址')
     component = models.CharField(max_length=255, null=True, blank=True, verbose_name='组件路径')
     query = models.CharField(max_length=255, null=True, blank=True, verbose_name='路由参数')
     route_name = models.CharField(max_length=50, default='', verbose_name='路由名称')
     is_frame = models.IntegerField(default=1, choices=IS_FRAME_CHOICES, verbose_name='是否为外链')
     is_cache = models.IntegerField(default=0, choices=IS_CACHE_CHOICES, verbose_name='是否缓存')
     menu_type = models.CharField(max_length=1, default='', choices=MENU_TYPE_CHOICES, verbose_name='菜单类型')
-    visible = models.CharField(max_length=1, default='0', choices=VISIBLE_CHOICES, verbose_name='菜单状态')
+    visible = models.CharField(max_length=1, default='0', choices=VISIBLE_CHOICES, verbose_name='菜单可见')
     status = models.CharField(max_length=1, default='0', choices=STATUS_CHOICES, verbose_name='菜单状态')
     perms = models.CharField(max_length=100, null=True, blank=True, verbose_name='权限标识')
     icon = models.CharField(max_length=100, default='#', verbose_name='菜单图标')
@@ -219,7 +220,7 @@ class SystemConfig(BaseModel):
         return f"{self.config_key}"
 
 
-class SystemDict(BaseModel):
+class SystemDictType(BaseModel):
     """系统字典模型"""
     STATUS_CHOICES = [
         ('0', '正常'),
