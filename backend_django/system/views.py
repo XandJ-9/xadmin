@@ -6,8 +6,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from django.utils.crypto import get_random_string
 from PIL import Image, ImageDraw, ImageFont
-from .models import User, Role, Menu, SystemConfig, Captcha, UserRole, SystemDictType,SystemDictData
-from. serializers import MenuSerializer, SystemConfigSerializer,UserSerializer, RoleSerializer
+from .models import Dept,User, Role, Menu, SystemConfig, Captcha, UserRole, SystemDictType,SystemDictData
+from. serializers import *
 from .permissions import IsAdminUser, IsOwnerOrAdmin,HasRolePermission
 from .authentication import get_user_from_token,get_token_from_request
 import logging, uuid, datetime
@@ -15,10 +15,15 @@ from utils.viewset import CustomModelViewSet
 
 logger = logging.getLogger('django')
 
+class DeptViewSet(viewsets.ModelViewSet):
+    queryset = Dept.objects.all()
+    serializer_class = DeptSerializer
+    # permission_classes = [IsAdminUser]
+
 class RoleViewSet(viewsets.ModelViewSet):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
-    permission_classes = [IsAdminUser]
+    # permission_classes = [IsAdminUser]
     
     @action(detail=True, methods=['get'])
     def menus(self, request, pk=None):
@@ -236,16 +241,16 @@ class MenuViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user, updator=self.request.user)
     
-    def list(self, request, *args, **kwargs):
-        # 获取顶级菜单
-        queryset = Menu.objects.filter(parent=None).order_by('sort')
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+    # def list(self, request, *args, **kwargs):
+    #     # 获取顶级菜单
+    #     queryset = Menu.objects.filter(parent=None).order_by('order_num')
+    #     serializer = self.get_serializer(queryset, many=True)
+    #     return Response(serializer.data)
     
     @action(detail=False, methods=['get'])
     def all(self, request):
         # 获取所有菜单
-        queryset = Menu.objects.all().order_by('sort')
+        queryset = Menu.objects.all().order_by('order_num')
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
     
@@ -266,7 +271,7 @@ class MenuViewSet(viewsets.ModelViewSet):
         # 获取用户角色关联的所有菜单ID
         menu_ids = [rm.menu_id for rm in role_menus]
         # 获取所有菜单并按排序字段排序
-        menus = Menu.objects.filter(id__in=set(menu_ids)).order_by('sort')
+        menus = Menu.objects.filter(id__in=set(menu_ids)).order_by('order_num')
         
         # 序列化菜单数据，返回扁平结构
         serializer = self.get_serializer(menus, many=True)
@@ -305,7 +310,7 @@ class MenuViewSet(viewsets.ModelViewSet):
             menu_dict = {
                 'name': menu.route_name,
                 'path': menu.path,
-                'hidden': not menu.visible,
+                'hidden': not int(menu.visible),
                 'component': menu.component,
                 'meta': {
                     'title': menu.menu_name,
@@ -353,6 +358,13 @@ class SystemConfigViewSet(viewsets.ModelViewSet):
 
 class SystemDictTypeViewSet(viewsets.ModelViewSet):
     queryset = SystemDictType.objects.all()
+    serializer_class = SystemDictTypeSerializer
+
+    @action(detail=False, methods=['get'])
+    def by_dict_type(self, request):
+        dict_type = request.query_params.get('dict_type')
+        return Response(self.get_queryset().filter(dict_type=dict_type))
 
 class SystemDictDataViewSet(viewsets.ModelViewSet):
     queryset = SystemDictData.objects.all()
+    serializer_class = SystemDictDataSerializer

@@ -85,7 +85,7 @@ export const constantRoutes = [
       }
     ]
   },
-  system_menu
+  // system_menu
 ]
 
 // 动态路由，基于用户权限动态去加载

@@ -6,7 +6,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.contrib.auth.hashers import make_password
 from django.utils import timezone
-from system.models import User, Role, UserRole, Menu, RoleMenu
+from system.models import User, Role, UserRole, Menu, RoleMenu,Dept
 from datasource.models import DataSource
 
 logger = logging.getLogger('django')
@@ -37,6 +37,9 @@ class Command(BaseCommand):
         
         # 初始化菜单
         self._init_menus(force)
+        
+        # 初始化部门数据
+        self._init_dept(force)
         
         # 初始化角色关联菜单
         # self._init_role_menu(force)
@@ -71,6 +74,38 @@ class Command(BaseCommand):
             return timezone.now()
         return value
     
+    def _init_dept(self, force):
+        """初始化部门数据"""
+        self.stdout.write('初始化部门数据...')
+
+        dept_data = self._load_json_data('dept_data.json')
+        if not dept_data or 'sys_dept' not in dept_data:
+            self.stdout.write(self.style.WARNING('未找到部门数据，跳过初始化'))
+            return
+        
+        for dept_item in dept_data['sys_dept']:
+            dept, created = Dept.objects.get_or_create(
+                id=dept_item['dept_id'],
+                defaults={
+                    'ancestors': dept_item['ancestors'],
+                    'dept_name': dept_item['dept_name'],
+                    'order_num': dept_item['order_num'],
+                    'leader': dept_item['leader'],
+                    'parent_id': dept_item['parent_id'] if dept_item['parent_id'] !=0 else None
+                }
+            )
+            if created:
+                self.stdout.write(self.style.SUCCESS(f'创建部门: {dept.dept_name}'))
+            elif force:
+                # 更新部门信息
+                dept.ancestors = dept_item['ancestors']
+                dept.dept_name = dept_item['dept_name']
+                dept.order_num = dept_item['order_num']
+                dept.leader = dept_item['leader']
+                dept.parent_id = dept_item['parent_id'] if dept_item['parent_id'] !=0 else None
+                dept.save()
+            else:
+                self.stdout.write(f'部门已存在: {dept.dept_name}')
     def _init_roles(self, force):
         """初始化角色数据"""
         self.stdout.write('初始化角色数据...')
@@ -216,10 +251,10 @@ class Command(BaseCommand):
         menu_objects = {}
         for menu_item in menu_data['sys_menu']:
             menu, created = Menu.objects.get_or_create(
-                id=menu_item['menu_id'],
+                id=menu_item['id'],
                 defaults={
                     'menu_name': menu_item['menu_name'],
-                    'parent_id': menu_item['parent_id'],  # 先存储parent_id
+                    'parent_id': menu_item['parent'],  # 先存储parent_id
                     'order_num': menu_item['order_num'],
                     'path': menu_item['path'],
                     'component': menu_item['component'],
@@ -236,14 +271,14 @@ class Command(BaseCommand):
                 }
             )
             
-            menu_objects[menu_item['menu_id']] = menu
+            menu_objects[menu_item['id']] = menu
             
             if created:
                 self.stdout.write(self.style.SUCCESS(f'创建菜单: {menu.menu_name}'))
             elif force:
                 # 更新菜单信息
                 menu.menu_name = menu_item['menu_name']
-                menu.parent_id = menu_item['parent_id']  # 先存储parent_id
+                menu.parent_id = menu_item['parent']  # 先存储parent_id
                 menu.order_num = menu_item['order_num']
                 menu.path = menu_item['path']
                 menu.component = menu_item['component']
@@ -264,10 +299,10 @@ class Command(BaseCommand):
         
         # 第二次遍历，设置父菜单关系
         for menu_item in menu_data['sys_menu']:
-            if menu_item['parent_id']:  # 有父菜单
+            if menu_item['parent']:  # 有父菜单
                 try:
-                    menu = menu_objects[menu_item['menu_id']]
-                    parent_menu = menu_objects[menu_item['parent_id']]
+                    menu = menu_objects[menu_item['id']]
+                    parent_menu = menu_objects[menu_item['parent']]
                     menu.parent = parent_menu
                     menu.save()
                 except (KeyError, Exception) as e:

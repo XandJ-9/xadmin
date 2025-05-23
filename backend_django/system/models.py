@@ -62,6 +62,29 @@ class Role(BaseModel):
     def __str__(self):
         return self.role_name
 
+class Dept(BaseModel):
+    DEPT_CHOICES = [
+        ('1', '正常'),
+        ('2', '停用'),
+    ]
+
+    parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='children', null=True, blank=True, verbose_name='父部门')
+    dept_name = models.CharField(max_length=30, verbose_name='部门名称')
+    ancestors = models.CharField(max_length=50, default='', verbose_name='祖级列表')
+    order_num = models.IntegerField(verbose_name='显示顺序')
+    leader = models.CharField(max_length=20, blank=True, null=True, verbose_name='负责人')
+    phone = models.CharField(max_length=11, blank=True, null=True, verbose_name='联系电话')
+    email = models.EmailField(max_length=50, blank=True, null=True, verbose_name='邮箱')
+    status = models.CharField(max_length=1, default='0', choices=DEPT_CHOICES, verbose_name='部门状态')
+    del_flag = models.CharField(max_length=1, default='0', verbose_name='删除标志')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
+    remark = models.CharField(max_length=500, null=True, blank=True, verbose_name='备注')
+    class Meta:
+        verbose_name = '部门'
+        verbose_name_plural = verbose_name
+        db_table = 'sys_dept'
+
 class User(AbstractUser, BaseModel):
     """自定义用户模型"""
     USER_TYPE_CHOICES = [
@@ -77,7 +100,7 @@ class User(AbstractUser, BaseModel):
         ('2', '删除'),
     ]
     
-    dept_id = models.BigIntegerField(null=True, blank=True, verbose_name='部门ID')
+    dept = models.ForeignKey(Dept, on_delete=models.CASCADE,null=True, blank=True, verbose_name='部门ID')
     nickname = models.CharField(max_length=50, blank=True, null=True, verbose_name='昵称')
     user_type = models.CharField(max_length=2, default='00', choices=USER_TYPE_CHOICES, verbose_name='用户类型')
     email = models.EmailField(max_length=50, blank=True, default='', verbose_name='用户邮箱')
