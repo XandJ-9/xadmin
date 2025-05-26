@@ -6,7 +6,11 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.contrib.auth.hashers import make_password
 from django.utils import timezone
+<<<<<<< HEAD
 from system.models import *
+=======
+from system.models import User, Role, UserRole, Menu, RoleMenu,Dept
+>>>>>>> a75da1e936109ddacbf370d222ce4a7ca542a9f9
 from datasource.models import DataSource
 
 logger = logging.getLogger('django')
@@ -40,11 +44,11 @@ class Command(BaseCommand):
         
         # 初始化部门数据
         self._init_dept(force)
-        
 
         # 初始化字典表
         self._init_dict_type(force)
         self._init_dict_data(force)
+        
         # 初始化角色关联菜单
         # self._init_role_menu(force)
 
