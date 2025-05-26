@@ -338,7 +338,8 @@ class MenuViewSet(CustomModelViewSet):
     @action(detail=True, methods=['get'])
     def deptTree(self, request):
         dept_id = request.data.get('deptId')
-        
+        return Response({"dept_id":dept_id}, status=status.HTTP_200_OK)
+
 
 class SystemConfigViewSet(CustomModelViewSet):
     queryset = SystemConfig.objects.all()
