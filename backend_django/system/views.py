@@ -340,7 +340,6 @@ class MenuViewSet(CustomModelViewSet):
         dept_id = request.data.get('deptId')
         return Response({"dept_id":dept_id}, status=status.HTTP_200_OK)
 
-
 class SystemConfigViewSet(CustomModelViewSet):
     queryset = SystemConfig.objects.all()
     serializer_class = SystemConfigSerializer
