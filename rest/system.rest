@@ -1,0 +1,36 @@
+@host = http://localhost:8000
+
+# @name getCaptcha
+GET {{host}}/api/captchaImage HTTP/1.1
+
+###
+# @name login
+POST {{host}}/api/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "123456",
+  "code": "CEG0",
+  "uuid": "04c76263-0893-4ad1-a242-8570c0a7ede2"
+}
+
+@token = {{login.response.body.token}}
+
+###
+GET {{host}}/api/system/menus/user_menus/ HTTP/1.1
+Authorization: Bearer {{token}}
+
+
+###
+GET {{host}}/api/getRouters HTTP/1.1
+Authorization: Bearer {{token}}
+
+
+###
+GET {{host}}/api/system/dict/type/ HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+GET {{host}}/api/system/dict/data/type/sys_normal_disable HTTP/1.1
+Authorization: Bearer {{token}}

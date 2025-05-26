@@ -1,9 +1,17 @@
 from rest_framework import permissions
-from system.models import User
+from system.models import *
+
+
+def check_user_role(user, role_key):
+    roles = Role.objects.filter(id__in=user.user_role.values_list('role_id'))
+    if role_key in roles.values_list('name', flat=True):
+        return True
+    else:
+        return False
 
 class IsAdminUser(permissions.BasePermission):
     def has_permission(self, request, view):
-        return request.user and request.user.is_authenticated and request.user.role and request.user.role.name == 'admin'
+        return request.user and request.user.is_authenticated and check_user_role(request.user, 'admin')
 
 class IsSuperUser(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -16,7 +24,7 @@ class IsOwnerOrAdmin(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         if not request.user.is_authenticated:
             return False
-        if request.user.is_superuser or (request.user.role and request.user.role.name == 'admin'):
+        if request.user.is_superuser or check_user_role(request.user, 'admin'):
             return True
         # 请求用户是否是创建者
         return obj.creator == request.user
@@ -29,5 +37,8 @@ class HasRolePermission(permissions.BasePermission):
             return False
         if request.user.is_superuser:
             return True
-        
-        return request.user.role and request.user.role.name in self.allowed_roles
+        roles = Role.objects.filter(id__in=request.user.user_role.values_list('role_id'))
+        for role in roles:
+            if role.role_name in self.allowed_roles:
+                return True
+        return False

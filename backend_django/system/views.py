@@ -10,8 +10,9 @@ from .models import Dept,User, Role, Menu, SystemConfig, Captcha, UserRole, Syst
 from. serializers import *
 from .permissions import IsAdminUser, IsOwnerOrAdmin,HasRolePermission
 from .authentication import get_user_from_token,get_token_from_request
-import logging, uuid, datetime
+
 from utils.viewset import CustomModelViewSet
+import logging, uuid
 
 logger = logging.getLogger('django')
 
@@ -19,6 +20,7 @@ class DeptViewSet(viewsets.ModelViewSet):
     queryset = Dept.objects.all()
     serializer_class = DeptSerializer
     # permission_classes = [IsAdminUser]
+
 
 class RoleViewSet(viewsets.ModelViewSet):
     queryset = Role.objects.all()
@@ -75,7 +77,7 @@ class UserViewSet(CustomModelViewSet):
         if self.action in ['retrieve', 'update', 'partial_update', 'destroy']:
             return [IsAdminUser()]
         return [IsOwnerOrAdmin()]
-  
+
     @action(detail=False, methods=['get'])
     def captchaImage(self, request):
         """
@@ -143,7 +145,7 @@ class UserViewSet(CustomModelViewSet):
             {'error': '用户名或密码错误'},
             status=status.HTTP_401_UNAUTHORIZED
         )
-    
+
     @action(detail=False, methods=['post'])
     def logout(self, request):
         """登出"""
@@ -156,7 +158,7 @@ class UserViewSet(CustomModelViewSet):
             # token.blacklist()
 
         return Response({'message': '登出成功'}, status=status.HTTP_200_OK)
-    
+
     @action(detail=False, methods=['post'])
     def register(self, request):
         serializer = self.get_serializer(data=request.data)
@@ -168,7 +170,7 @@ class UserViewSet(CustomModelViewSet):
                 'user': serializer.data
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
+
     @action(detail=False, methods=['get'])
     def getInfo(self, request):
         user = get_user_from_token(request)
@@ -180,14 +182,14 @@ class UserViewSet(CustomModelViewSet):
             return Response({"user": UserSerializer(user).data,"roles": role_ids, "permissions": permissions})
         else:
             return Response({'error': '用户未登录'}, status=status.HTTP_401_UNAUTHORIZED)
-    
+
     @action(detail=True, methods=['post'])
     def reset_pwd(self, request, pk=None):
         user = self.get_object()
         user.set_password("123456")
         user.save()
         return Response({'message': '密码重置成功'}, status=status.HTTP_200_OK)
-    
+
     @action(detail=True, methods=['post'], url_path='authRole')
     def authRole(self, request, pk=None):
         """
@@ -221,7 +223,7 @@ class UserViewSet(CustomModelViewSet):
              UserRole.objects.create(user=user, role_id=roleId)
         return Response({'message': '授权成功'}, status=status.HTTP_200_OK)
 
-class MenuViewSet(viewsets.ModelViewSet):
+class MenuViewSet(CustomModelViewSet):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
     # permission_classes = [IsAdminUser]
@@ -234,26 +236,21 @@ class MenuViewSet(viewsets.ModelViewSet):
             return [IsAdminUser()]
         elif self.action == 'user_menus':
             if self.request.user.is_authenticated:
-                user = self.request.user.user_roles.all()
-                return [HasRolePermission([self.request.user.role.name])]
+                role_ids = self.request.user.user_roles.values_list('role_id', flat=True)
+                role_keys = Role.objects.filter(id__in=role_ids).values_list('role_key', flat=True)
+                return [HasRolePermission(allowed_roles = [role_key for role_key in role_keys])]
         return super().get_permissions()
-    
+
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user, updator=self.request.user)
-    
-    # def list(self, request, *args, **kwargs):
-    #     # 获取顶级菜单
-    #     queryset = Menu.objects.filter(parent=None).order_by('order_num')
-    #     serializer = self.get_serializer(queryset, many=True)
-    #     return Response(serializer.data)
-    
+
     @action(detail=False, methods=['get'])
     def all(self, request):
         # 获取所有菜单
         queryset = Menu.objects.all().order_by('order_num')
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
-    
+
     @action(detail=False, methods=['get'])
     def user_menus(self, request):
         """根据当前登录用户的角色返回菜单列表（扁平结构）"""
@@ -265,11 +262,14 @@ class MenuViewSet(viewsets.ModelViewSet):
         
         role_menus = []
         for user_role in user_roles:
+            # admin角色的用户获取所有菜单
+            if user_role.role.role_key == 'admin':
+                menu_ids = Menu.objects.all().values_list('id', flat=True)
+                break
             # 获取用户角色关联的所有菜单ID
             role_menus.extend(user_role.role.role_menus.all())
-        
-        # 获取用户角色关联的所有菜单ID
-        menu_ids = [rm.menu_id for rm in role_menus]
+            # 获取用户角色关联的所有菜单ID
+            menu_ids = [rm.id for rm in role_menus]
         # 获取所有菜单并按排序字段排序
         menus = Menu.objects.filter(id__in=set(menu_ids)).order_by('order_num')
         
@@ -304,7 +304,7 @@ class MenuViewSet(viewsets.ModelViewSet):
         
         # 获取顶级菜单
         top_menus = [menu for menu in all_menus if menu.parent is None]
-        
+
         # 构建树形结构
         def build_menu_tree(menu):
             menu_dict = {
@@ -335,7 +335,12 @@ class MenuViewSet(viewsets.ModelViewSet):
         
         return Response(router_data, status=status.HTTP_200_OK)
 
-class SystemConfigViewSet(viewsets.ModelViewSet):
+    @action(detail=True, methods=['get'])
+    def deptTree(self, request):
+        dept_id = request.data.get('deptId')
+        
+
+class SystemConfigViewSet(CustomModelViewSet):
     queryset = SystemConfig.objects.all()
     serializer_class = SystemConfigSerializer
     permission_classes = [IsAdminUser]
@@ -356,15 +361,16 @@ class SystemConfigViewSet(viewsets.ModelViewSet):
         except SystemConfig.DoesNotExist:
             return Response({'error': f'未找到配置项: {key}'}, status=status.HTTP_404_NOT_FOUND)
 
-class SystemDictTypeViewSet(viewsets.ModelViewSet):
+class SystemDictTypeViewSet(CustomModelViewSet):
     queryset = SystemDictType.objects.all()
     serializer_class = SystemDictTypeSerializer
 
-    @action(detail=False, methods=['get'])
-    def by_dict_type(self, request):
-        dict_type = request.query_params.get('dict_type')
-        return Response(self.get_queryset().filter(dict_type=dict_type))
-
-class SystemDictDataViewSet(viewsets.ModelViewSet):
+class SystemDictDataViewSet(CustomModelViewSet):
     queryset = SystemDictData.objects.all()
     serializer_class = SystemDictDataSerializer
+
+    @action(detail=False, methods=['get'])
+    def get_data_by_type(self, request,dict_type=None):
+        dict_type_items = SystemDictData.objects.filter(dict_type=dict_type)
+        serializer = self.get_serializer(dict_type_items, many=True)
+        return Response({"data": serializer.data})

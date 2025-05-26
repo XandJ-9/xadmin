@@ -6,7 +6,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.contrib.auth.hashers import make_password
 from django.utils import timezone
-from system.models import User, Role, UserRole, Menu, RoleMenu,Dept
+from system.models import *
 from datasource.models import DataSource
 
 logger = logging.getLogger('django')
@@ -41,6 +41,10 @@ class Command(BaseCommand):
         # 初始化部门数据
         self._init_dept(force)
         
+
+        # 初始化字典类型
+        self._init_dict_type(force)
+        self._init_dict_data(force)
         # 初始化角色关联菜单
         # self._init_role_menu(force)
 
@@ -73,6 +77,50 @@ class Command(BaseCommand):
         if value == 'sysdate()':
             return timezone.now()
         return value
+    
+    def _init_dict_data(self, force):
+        self.stdout.write('初始化字典数据...')
+        dict_data_data = self._load_json_data('sys_dict_data.json')
+        for dict_data_item in dict_data_data['sys_dict_data']:
+            dict_id = dict_data_item.pop('dict_code')
+            dict_data_item.pop('create_time')
+            dict_data_item.pop('update_time')
+            dict_data_item.pop('create_by')
+            dict_data_item.pop('update_by')
+            dict_data, created = SystemDictData.objects.update_or_create(
+                id=dict_id,
+                defaults=dict_data_item
+            )
+            if created:
+                self.stdout.write(self.style.SUCCESS(f'创建字典数据: {dict_data.dict_label}'))
+            elif force:
+                # 更新字典数据信息
+                SystemDictData.objects.filter(dict_id=dict_id).update(**dict_data_item)
+                self.stdout.write(self.style.SUCCESS(f'更新字典数据: {dict_data.dict_label}'))
+            else:
+                self.stdout.write(f'字典数据已存在: {dict_data.dict_label}')
+    def _init_dict_type(self, force):
+        self.stdout.write('初始化字典类型数据...')
+        dict_type_data = self._load_json_data('sys_dict_type.json')
+        for dict_type_item in dict_type_data['sys_dict_type']:
+            dict_id = dict_type_item.pop('dict_id')
+            dict_type_item.pop('create_time')
+            dict_type_item.pop('update_time')
+            dict_type_item.pop('create_by')
+            dict_type_item.pop('update_by')
+
+            dict_type, created = SystemDictType.objects.get_or_create(
+                id=dict_id,
+                defaults=dict_type_item
+            )
+            if created:
+                self.stdout.write(self.style.SUCCESS(f'创建字典类型: {dict_type.dict_name}'))
+            elif force:
+                # 更新字典类型信息
+                SystemDictType.objects.filter(id=dict_id).update(**dict_type_item)
+                self.stdout.write(self.style.SUCCESS(f'更新字典类型: {dict_type.dict_name}'))
+            else:
+                self.stdout.write(f'字典类型已存在: {dict_type.dict_name}')
     
     def _init_dept(self, force):
         """初始化部门数据"""
