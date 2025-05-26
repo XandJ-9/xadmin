@@ -6,7 +6,7 @@ from django.core.management.base import BaseCommand
 from django.db import transaction
 from django.contrib.auth.hashers import make_password
 from django.utils import timezone
-from system.models import User, Role, UserRole, Menu, RoleMenu,Dept
+from system.models import *
 from datasource.models import DataSource
 
 logger = logging.getLogger('django')
@@ -41,6 +41,10 @@ class Command(BaseCommand):
         # 初始化部门数据
         self._init_dept(force)
         
+
+        # 初始化字典表
+        self._init_dict_type(force)
+        self._init_dict_data(force)
         # 初始化角色关联菜单
         # self._init_role_menu(force)
 
@@ -73,6 +77,61 @@ class Command(BaseCommand):
         if value == 'sysdate()':
             return timezone.now()
         return value
+
+    def _init_dict_data(self, force):
+        """初始化字典表"""
+        self.stdout.write('初始化字典数据表')
+
+        dict_data = self._load_json_data('sys_dict_data.json')
+        if not dict_data or 'sys_dict_data' not in dict_data:
+            self.stdout.write(self.style.WARNING('未找到部门数据，跳过初始化'))
+            return
+        
+        for item in dict_data['sys_dict_data']:
+            dict_id = item.pop('dict_code', None)  # 确保没有dict_id字段
+            item.pop('create_by')
+            item.pop('create_time')
+            item.pop('update_by')
+            item.pop('update_time')
+            dict_data, created = SystemDictData.objects.get_or_create(
+                id=dict_id,
+                defaults=item
+            )
+            if created:
+                self.stdout.write(self.style.SUCCESS(f'创建字典类型: {dict_data.dict_label}'))
+            elif force:
+                SystemDictData.objects.filter(id=dict_id).update(**item)
+                self.stdout.write(self.style.WARNING(f'更新字典类型: {dict_data.dict_label}'))
+            else:
+                self.stdout.write(f'字典值已存在: {dict_data.dict_label}')
+
+    def _init_dict_type(self,force):
+        """初始化字典表"""
+        self.stdout.write('初始化字典类型表')
+
+        dict_type_data = self._load_json_data('sys_dict_type.json')
+        if not dict_type_data or 'sys_dict_type' not in dict_type_data:
+            self.stdout.write(self.style.WARNING('未找到部门数据，跳过初始化'))
+            return
+        
+        for item in dict_type_data['sys_dict_type']:
+            dict_id = item.pop('dict_id', None)  # 确保没有dict_id字段
+            item.pop('create_by')
+            item.pop('create_time')
+            item.pop('update_by')
+            item.pop('update_time')
+            dict_type, created = SystemDictType.objects.get_or_create(
+                id=dict_id,
+                defaults=item
+            )
+            if created:
+                self.stdout.write(self.style.SUCCESS(f'创建字典类型: {dict_type.dict_name}'))
+            elif force:
+                SystemDictType.objects.filter(id=dict_id).update(**item)
+                self.stdout.write(self.style.WARNING(f'更新字典类型: {dict_type.dict_name}'))
+            else:
+                self.stdout.write(f'字典类型已存在: {dict_type.dict_name}')
+
     
     def _init_dept(self, force):
         """初始化部门数据"""
