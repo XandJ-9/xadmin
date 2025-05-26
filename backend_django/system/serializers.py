@@ -59,17 +59,16 @@ class UserSerializer(serializers.ModelSerializer):
         return super().update(instance, validated_data)
 
 class MenuSerializer(serializers.ModelSerializer):
-    # creator_info = UserSerializer(source='creator', read_only=True)
-    # parent_name = serializers.CharField(source='parent.name', read_only=True)
-    # created_at = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
-    # updated_at = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
+    creator_info = UserSerializer(source='creator', read_only=True)
+    parent_name = serializers.CharField(source='parent.name', read_only=True)
+    created_at = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
+    updated_at = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
     
     class Meta:
         model = Menu
-        # fields = "__all__"
-        exclude = ['creator','updator','created_at', 'updated_at']
+        fields = "__all__"
         read_only_fields = ['id', 'created_at', 'updated_at']
-    
+
 
 class SystemConfigSerializer(serializers.ModelSerializer):
     creator_info = UserSerializer(source='creator', read_only=True)
