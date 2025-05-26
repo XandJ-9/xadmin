@@ -52,21 +52,12 @@ class MenuSerializer(serializers.ModelSerializer):
     parent_name = serializers.CharField(source='parent.name', read_only=True)
     created_at = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
     updated_at = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
-    meta = serializers.SerializerMethodField()
     
     class Meta:
         model = Menu
-        fields = ['id', 'name','menu_type', 'name_code', 'parent', 'parent_name', 'path', 'component','component_name', 'redirect', 
-                 'icon', 'sort', 'hidden', 'meta', 'creator', 'creator_info', 'created_at', 'updated_at','meta_need_tagview']
+        fields = "__all__"
         read_only_fields = ['id', 'created_at', 'updated_at']
-    
-    def get_meta(self, obj):
-        """返回meta对象，包含前端路由需要的meta信息"""
-        return {
-            'title': obj.meta_title or obj.name,
-            'icon': obj.meta_icon or obj.icon,
-            'needTagview': obj.meta_need_tagview or False,
-        }
+
 
 class SystemConfigSerializer(serializers.ModelSerializer):
     creator_info = UserSerializer(source='creator', read_only=True)

@@ -1,0 +1,30 @@
+# @name login
+POST http://localhost:8000/api/login HTTP/1.1
+# Authorization: Bearer {{access_token}}
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "123456",
+  "code":"S94Z",
+  "uuid":"a709cda2-95ff-48b0-9104-9a46249034fe"
+}
+
+###
+
+@access_token = {{login.response.body.token}}
+
+# 用户请求
+GET http://localhost:8000/api/system/users/ HTTP/1.1
+Authorization: Bearer {{access_token}}
+
+###
+# 用户详情
+GET http://localhost:8000/api/system/users/1/ HTTP/1.1
+Authorization: Bearer {{access_token}}
+
+
+###
+# 用户菜单列表
+GET http://localhost:8000/api/system/menus/user_menus/ HTTP/1.1
+Authorization: Bearer {{access_token}}

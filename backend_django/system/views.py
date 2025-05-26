@@ -119,7 +119,7 @@ class UserViewSet(CustomModelViewSet):
         uuid = request.data.get('uuid')
 
         # 验证验证码
-        if not Captcha.objects.filter(uuid=uuid, code=code.upper()).exists():
+        if not code or not Captcha.objects.filter(uuid=uuid, code=code.upper()).exists():
             return Response({'error': '验证码错误'}, status=status.HTTP_400_BAD_REQUEST)
 
         # 根据用户名和密码判断用户是否存在
@@ -229,9 +229,10 @@ class MenuViewSet(viewsets.ModelViewSet):
             return [IsAdminUser()]
         elif self.action == 'user_menus':
             if self.request.user.is_authenticated:
-                user = self.request.user.user_roles.all()
-                return [HasRolePermission([self.request.user.role.name])]
-        return super().get_permissions()
+                # roles = self.request.user.user_roles.all()
+                roles = Role.objects.filter(id__in=self.request.user.user_roles.values_list('role_id', flat=True))
+                return [HasRolePermission(allowed_roles = [role.role_key for role in roles])]
+        return [IsAdminUser()]
     
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user, updator=self.request.user)
@@ -245,7 +246,7 @@ class MenuViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['get'])
     def all(self, request):
         # 获取所有菜单
-        queryset = Menu.objects.all().order_by('sort')
+        queryset = Menu.objects.all().order_by('order_num')
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
     
@@ -253,20 +254,23 @@ class MenuViewSet(viewsets.ModelViewSet):
     def user_menus(self, request):
         """根据当前登录用户的角色返回菜单列表（扁平结构）"""
         user = request.user
-        
         user_roles = user.user_roles.all()
         if not user_roles.exists():
             return Response({'error': '用户没有分配角色'}, status=status.HTTP_403_FORBIDDEN)
         
         role_menus = []
         for user_role in user_roles:
+            # 如果是admin角色，则拥有所有菜单权限
+            if user_role.role.role_key == 'admin':
+                role_menus = Menu.objects.all()
+                break
             # 获取用户角色关联的所有菜单ID
             role_menus.extend(user_role.role.role_menus.all())
         
         # 获取用户角色关联的所有菜单ID
-        menu_ids = [rm.menu_id for rm in role_menus]
+        menu_ids = [rm.id for rm in role_menus]
         # 获取所有菜单并按排序字段排序
-        menus = Menu.objects.filter(id__in=set(menu_ids)).order_by('sort')
+        menus = Menu.objects.filter(id__in=set(menu_ids)).order_by('order_num')
         
         # 序列化菜单数据，返回扁平结构
         serializer = self.get_serializer(menus, many=True)
