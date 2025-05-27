@@ -10,14 +10,6 @@
 		"list_class" : "",
 		"is_default" : "Y",
 		"status" : "0",
-		"create_by" : "admin",
-<<<<<<< HEAD
-		"create_time" : "2025-05-26 17:39:11",
-=======
-		"create_time" : "2025-05-26 21:07:14",
->>>>>>> origin/dev-ruoyi-mac
-		"update_by" : "",
-		"update_time" : null,
 		"remark" : "性别男"
 	},
 	{
@@ -30,14 +22,6 @@
 		"list_class" : "",
 		"is_default" : "N",
 		"status" : "0",
-		"create_by" : "admin",
-<<<<<<< HEAD
-		"create_time" : "2025-05-26 17:39:11",
-=======
-		"create_time" : "2025-05-26 21:07:14",
->>>>>>> origin/dev-ruoyi-mac
-		"update_by" : "",
-		"update_time" : null,
 		"remark" : "性别女"
 	},
 	{
@@ -50,14 +34,6 @@
 		"list_class" : "",
 		"is_default" : "N",
 		"status" : "0",
-		"create_by" : "admin",
-<<<<<<< HEAD
-		"create_time" : "2025-05-26 17:39:11",
-=======
-		"create_time" : "2025-05-26 21:07:14",
->>>>>>> origin/dev-ruoyi-mac
-		"update_by" : "",
-		"update_time" : null,
 		"remark" : "性别未知"
 	},
 	{
@@ -70,14 +46,6 @@
 		"list_class" : "primary",
 		"is_default" : "Y",
 		"status" : "0",
-		"create_by" : "admin",
-<<<<<<< HEAD
-		"create_time" : "2025-05-26 17:39:11",
-=======
-		"create_time" : "2025-05-26 21:07:14",
->>>>>>> origin/dev-ruoyi-mac
-		"update_by" : "",
-		"update_time" : null,
 		"remark" : "显示菜单"
 	},
 	{
@@ -90,14 +58,6 @@
 		"list_class" : "danger",
 		"is_default" : "N",
 		"status" : "0",
-		"create_by" : "admin",
-<<<<<<< HEAD
-		"create_time" : "2025-05-26 17:39:11",
-=======
-		"create_time" : "2025-05-26 21:07:14",
->>>>>>> origin/dev-ruoyi-mac
-		"update_by" : "",
-		"update_time" : null,
 		"remark" : "隐藏菜单"
 	},
 	{
@@ -110,14 +70,6 @@
 		"list_class" : "primary",
 		"is_default" : "Y",
 		"status" : "0",
-		"create_by" : "admin",
-<<<<<<< HEAD
-		"create_time" : "2025-05-26 17:39:11",
-=======
-		"create_time" : "2025-05-26 21:07:14",
->>>>>>> origin/dev-ruoyi-mac
-		"update_by" : "",
-		"update_time" : null,
 		"remark" : "正常状态"
 	},
 	{
@@ -130,14 +82,6 @@
 		"list_class" : "danger",
 		"is_default" : "N",
 		"status" : "0",
-		"create_by" : "admin",
-<<<<<<< HEAD
-		"create_time" : "2025-05-26 17:39:11",
-=======
-		"create_time" : "2025-05-26 21:07:14",
->>>>>>> origin/dev-ruoyi-mac
-		"update_by" : "",
-		"update_time" : null,
 		"remark" : "停用状态"
 	},
 	{
@@ -150,9 +94,6 @@
 		"list_class" : "primary",
 		"is_default" : "Y",
 		"status" : "0",
-		"create_by" : "admin",
-		"update_by" : "",
-		"update_time" : null,
 		"remark" : "正常状态"
 	},
 	{
@@ -165,9 +106,6 @@
 		"list_class" : "danger",
 		"is_default" : "N",
 		"status" : "0",
-		"create_by" : "admin",
-		"update_by" : "",
-		"update_time" : null,
 		"remark" : "停用状态"
 	},
 	{
@@ -180,9 +118,6 @@
 		"list_class" : "",
 		"is_default" : "Y",
 		"status" : "0",
-		"create_by" : "admin",
-		"update_by" : "",
-		"update_time" : null,
 		"remark" : "默认分组"
 	},
 	{
@@ -195,9 +130,6 @@
 		"list_class" : "",
 		"is_default" : "N",
 		"status" : "0",
-		"create_by" : "admin",
-		"update_by" : "",
-		"update_time" : null,
 		"remark" : "系统分组"
 	},
 	{
@@ -210,9 +142,6 @@
 		"list_class" : "primary",
 		"is_default" : "Y",
 		"status" : "0",
-		"create_by" : "admin",
-		"update_by" : "",
-		"update_time" : null,
 		"remark" : "系统默认是"
 	},
 	{
@@ -225,9 +154,6 @@
 		"list_class" : "danger",
 		"is_default" : "N",
 		"status" : "0",
-		"create_by" : "admin",
-		"update_by" : "",
-		"update_time" : null,
 		"remark" : "系统默认否"
 	},
 	{
@@ -240,9 +166,6 @@
 		"list_class" : "warning",
 		"is_default" : "Y",
 		"status" : "0",
-		"create_by" : "admin",
-		"update_by" : "",
-		"update_time" : null,
 		"remark" : "通知"
 	},
 	{
@@ -255,9 +178,6 @@
 		"list_class" : "success",
 		"is_default" : "N",
 		"status" : "0",
-		"create_by" : "admin",
-		"update_by" : "",
-		"update_time" : null,
 		"remark" : "公告"
 	},
 	{
@@ -270,9 +190,6 @@
 		"list_class" : "primary",
 		"is_default" : "Y",
 		"status" : "0",
-		"create_by" : "admin",
-		"update_by" : "",
-		"update_time" : null,
 		"remark" : "正常状态"
 	},
 	{
@@ -285,9 +202,6 @@
 		"list_class" : "danger",
 		"is_default" : "N",
 		"status" : "0",
-		"create_by" : "admin",
-		"update_by" : "",
-		"update_time" : null,
 		"remark" : "关闭状态"
 	},
 	{
@@ -300,9 +214,6 @@
 		"list_class" : "info",
 		"is_default" : "N",
 		"status" : "0",
-		"create_by" : "admin",
-		"update_by" : "",
-		"update_time" : null,
 		"remark" : "其他操作"
 	},
 	{
@@ -315,9 +226,6 @@
 		"list_class" : "info",
 		"is_default" : "N",
 		"status" : "0",
-		"create_by" : "admin",
-		"update_by" : "",
-		"update_time" : null,
 		"remark" : "新增操作"
 	},
 	{
@@ -330,9 +238,6 @@
 		"list_class" : "info",
 		"is_default" : "N",
 		"status" : "0",
-		"create_by" : "admin",
-		"update_by" : "",
-		"update_time" : null,
 		"remark" : "修改操作"
 	},
 	{
@@ -345,9 +250,6 @@
 		"list_class" : "danger",
 		"is_default" : "N",
 		"status" : "0",
-		"create_by" : "admin",
-		"update_by" : "",
-		"update_time" : null,
 		"remark" : "删除操作"
 	},
 	{
@@ -360,9 +262,6 @@
 		"list_class" : "primary",
 		"is_default" : "N",
 		"status" : "0",
-		"create_by" : "admin",
-		"update_by" : "",
-		"update_time" : null,
 		"remark" : "授权操作"
 	},
 	{
@@ -375,9 +274,6 @@
 		"list_class" : "warning",
 		"is_default" : "N",
 		"status" : "0",
-		"create_by" : "admin",
-		"update_by" : "",
-		"update_time" : null,
 		"remark" : "导出操作"
 	},
 	{
@@ -390,9 +286,6 @@
 		"list_class" : "warning",
 		"is_default" : "N",
 		"status" : "0",
-		"create_by" : "admin",
-		"update_by" : "",
-		"update_time" : null,
 		"remark" : "导入操作"
 	},
 	{
@@ -405,9 +298,6 @@
 		"list_class" : "danger",
 		"is_default" : "N",
 		"status" : "0",
-		"create_by" : "admin",
-		"update_by" : "",
-		"update_time" : null,
 		"remark" : "强退操作"
 	},
 	{
@@ -420,9 +310,6 @@
 		"list_class" : "warning",
 		"is_default" : "N",
 		"status" : "0",
-		"create_by" : "admin",
-		"update_by" : "",
-		"update_time" : null,
 		"remark" : "生成操作"
 	},
 	{
@@ -435,9 +322,6 @@
 		"list_class" : "danger",
 		"is_default" : "N",
 		"status" : "0",
-		"create_by" : "admin",
-		"update_by" : "",
-		"update_time" : null,
 		"remark" : "清空操作"
 	},
 	{
@@ -450,9 +334,6 @@
 		"list_class" : "primary",
 		"is_default" : "N",
 		"status" : "0",
-		"create_by" : "admin",
-		"update_by" : "",
-		"update_time" : null,
 		"remark" : "正常状态"
 	},
 	{
@@ -465,9 +346,6 @@
 		"list_class" : "danger",
 		"is_default" : "N",
 		"status" : "0",
-		"create_by" : "admin",
-		"update_by" : "",
-		"update_time" : null,
 		"remark" : "停用状态"
 	}
 ]}

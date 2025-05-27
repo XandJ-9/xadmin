@@ -11,9 +11,8 @@ Content-Type: application/json
 {
   "username": "admin",
   "password": "123456",
-<<<<<<< HEAD
-  "code":"S94Z",
-  "uuid":"a709cda2-95ff-48b0-9104-9a46249034fe"
+  "code":"A3BS",
+  "uuid":"1f3df7a4-9b7e-4816-8c76-8ac41205d88f"
 }
 
 ###

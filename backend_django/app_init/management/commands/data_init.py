@@ -143,10 +143,10 @@ class Command(BaseCommand):
         dict_data_data = self._load_json_data('sys_dict_data.json')
         for dict_data_item in dict_data_data['sys_dict_data']:
             dict_id = dict_data_item.pop('dict_code')
-            dict_data_item.pop('create_time')
-            dict_data_item.pop('update_time')
-            dict_data_item.pop('create_by')
-            dict_data_item.pop('update_by')
+            dict_data_item.pop('create_time',None)
+            dict_data_item.pop('update_time',None)
+            dict_data_item.pop('create_by',None)
+            dict_data_item.pop('update_by',None)
             dict_data, created = SystemDictData.objects.update_or_create(
                 id=dict_id,
                 defaults=dict_data_item
@@ -164,10 +164,10 @@ class Command(BaseCommand):
         dict_type_data = self._load_json_data('sys_dict_type.json')
         for dict_type_item in dict_type_data['sys_dict_type']:
             dict_id = dict_type_item.pop('dict_id')
-            dict_type_item.pop('create_time')
-            dict_type_item.pop('update_time')
-            dict_type_item.pop('create_by')
-            dict_type_item.pop('update_by')
+            dict_type_item.pop('create_time',None)
+            dict_type_item.pop('update_time',None)
+            dict_type_item.pop('create_by',None)
+            dict_type_item.pop('update_by',None)
 
             dict_type, created = SystemDictType.objects.get_or_create(
                 id=dict_id,

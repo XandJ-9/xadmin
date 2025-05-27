@@ -3,7 +3,7 @@ from system.models import *
 
 
 def check_user_role(user, role_key):
-    roles = Role.objects.filter(id__in=user.user_role.values_list('role_id'))
+    roles = Role.objects.filter(id__in=user.user_roles.values_list('role_id'))
     if role_key in roles.values_list('role_key', flat=True):
         return True
     else:
