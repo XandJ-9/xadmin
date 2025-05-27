@@ -11,7 +11,11 @@
 		"is_default" : "Y",
 		"status" : "0",
 		"create_by" : "admin",
+<<<<<<< HEAD
 		"create_time" : "2025-05-26 17:39:11",
+=======
+		"create_time" : "2025-05-26 21:07:14",
+>>>>>>> origin/dev-ruoyi-mac
 		"update_by" : "",
 		"update_time" : null,
 		"remark" : "性别男"
@@ -27,7 +31,11 @@
 		"is_default" : "N",
 		"status" : "0",
 		"create_by" : "admin",
+<<<<<<< HEAD
 		"create_time" : "2025-05-26 17:39:11",
+=======
+		"create_time" : "2025-05-26 21:07:14",
+>>>>>>> origin/dev-ruoyi-mac
 		"update_by" : "",
 		"update_time" : null,
 		"remark" : "性别女"
@@ -43,7 +51,11 @@
 		"is_default" : "N",
 		"status" : "0",
 		"create_by" : "admin",
+<<<<<<< HEAD
 		"create_time" : "2025-05-26 17:39:11",
+=======
+		"create_time" : "2025-05-26 21:07:14",
+>>>>>>> origin/dev-ruoyi-mac
 		"update_by" : "",
 		"update_time" : null,
 		"remark" : "性别未知"
@@ -59,7 +71,11 @@
 		"is_default" : "Y",
 		"status" : "0",
 		"create_by" : "admin",
+<<<<<<< HEAD
 		"create_time" : "2025-05-26 17:39:11",
+=======
+		"create_time" : "2025-05-26 21:07:14",
+>>>>>>> origin/dev-ruoyi-mac
 		"update_by" : "",
 		"update_time" : null,
 		"remark" : "显示菜单"
@@ -75,7 +91,11 @@
 		"is_default" : "N",
 		"status" : "0",
 		"create_by" : "admin",
+<<<<<<< HEAD
 		"create_time" : "2025-05-26 17:39:11",
+=======
+		"create_time" : "2025-05-26 21:07:14",
+>>>>>>> origin/dev-ruoyi-mac
 		"update_by" : "",
 		"update_time" : null,
 		"remark" : "隐藏菜单"
@@ -91,7 +111,11 @@
 		"is_default" : "Y",
 		"status" : "0",
 		"create_by" : "admin",
+<<<<<<< HEAD
 		"create_time" : "2025-05-26 17:39:11",
+=======
+		"create_time" : "2025-05-26 21:07:14",
+>>>>>>> origin/dev-ruoyi-mac
 		"update_by" : "",
 		"update_time" : null,
 		"remark" : "正常状态"
@@ -107,7 +131,11 @@
 		"is_default" : "N",
 		"status" : "0",
 		"create_by" : "admin",
+<<<<<<< HEAD
 		"create_time" : "2025-05-26 17:39:11",
+=======
+		"create_time" : "2025-05-26 21:07:14",
+>>>>>>> origin/dev-ruoyi-mac
 		"update_by" : "",
 		"update_time" : null,
 		"remark" : "停用状态"
@@ -123,7 +151,6 @@
 		"is_default" : "Y",
 		"status" : "0",
 		"create_by" : "admin",
-		"create_time" : "2025-05-26 17:39:11",
 		"update_by" : "",
 		"update_time" : null,
 		"remark" : "正常状态"
@@ -139,7 +166,6 @@
 		"is_default" : "N",
 		"status" : "0",
 		"create_by" : "admin",
-		"create_time" : "2025-05-26 17:39:11",
 		"update_by" : "",
 		"update_time" : null,
 		"remark" : "停用状态"
@@ -155,7 +181,6 @@
 		"is_default" : "Y",
 		"status" : "0",
 		"create_by" : "admin",
-		"create_time" : "2025-05-26 17:39:11",
 		"update_by" : "",
 		"update_time" : null,
 		"remark" : "默认分组"
@@ -171,7 +196,6 @@
 		"is_default" : "N",
 		"status" : "0",
 		"create_by" : "admin",
-		"create_time" : "2025-05-26 17:39:11",
 		"update_by" : "",
 		"update_time" : null,
 		"remark" : "系统分组"
@@ -187,7 +211,6 @@
 		"is_default" : "Y",
 		"status" : "0",
 		"create_by" : "admin",
-		"create_time" : "2025-05-26 17:39:11",
 		"update_by" : "",
 		"update_time" : null,
 		"remark" : "系统默认是"
@@ -203,7 +226,6 @@
 		"is_default" : "N",
 		"status" : "0",
 		"create_by" : "admin",
-		"create_time" : "2025-05-26 17:39:11",
 		"update_by" : "",
 		"update_time" : null,
 		"remark" : "系统默认否"
@@ -219,7 +241,6 @@
 		"is_default" : "Y",
 		"status" : "0",
 		"create_by" : "admin",
-		"create_time" : "2025-05-26 17:39:11",
 		"update_by" : "",
 		"update_time" : null,
 		"remark" : "通知"
@@ -235,7 +256,6 @@
 		"is_default" : "N",
 		"status" : "0",
 		"create_by" : "admin",
-		"create_time" : "2025-05-26 17:39:11",
 		"update_by" : "",
 		"update_time" : null,
 		"remark" : "公告"
@@ -251,7 +271,6 @@
 		"is_default" : "Y",
 		"status" : "0",
 		"create_by" : "admin",
-		"create_time" : "2025-05-26 17:39:11",
 		"update_by" : "",
 		"update_time" : null,
 		"remark" : "正常状态"
@@ -267,7 +286,6 @@
 		"is_default" : "N",
 		"status" : "0",
 		"create_by" : "admin",
-		"create_time" : "2025-05-26 17:39:11",
 		"update_by" : "",
 		"update_time" : null,
 		"remark" : "关闭状态"
@@ -283,7 +301,6 @@
 		"is_default" : "N",
 		"status" : "0",
 		"create_by" : "admin",
-		"create_time" : "2025-05-26 17:39:11",
 		"update_by" : "",
 		"update_time" : null,
 		"remark" : "其他操作"
@@ -299,7 +316,6 @@
 		"is_default" : "N",
 		"status" : "0",
 		"create_by" : "admin",
-		"create_time" : "2025-05-26 17:39:11",
 		"update_by" : "",
 		"update_time" : null,
 		"remark" : "新增操作"
@@ -315,7 +331,6 @@
 		"is_default" : "N",
 		"status" : "0",
 		"create_by" : "admin",
-		"create_time" : "2025-05-26 17:39:11",
 		"update_by" : "",
 		"update_time" : null,
 		"remark" : "修改操作"
@@ -331,7 +346,6 @@
 		"is_default" : "N",
 		"status" : "0",
 		"create_by" : "admin",
-		"create_time" : "2025-05-26 17:39:11",
 		"update_by" : "",
 		"update_time" : null,
 		"remark" : "删除操作"
@@ -347,7 +361,6 @@
 		"is_default" : "N",
 		"status" : "0",
 		"create_by" : "admin",
-		"create_time" : "2025-05-26 17:39:11",
 		"update_by" : "",
 		"update_time" : null,
 		"remark" : "授权操作"
@@ -363,7 +376,6 @@
 		"is_default" : "N",
 		"status" : "0",
 		"create_by" : "admin",
-		"create_time" : "2025-05-26 17:39:11",
 		"update_by" : "",
 		"update_time" : null,
 		"remark" : "导出操作"
@@ -379,7 +391,6 @@
 		"is_default" : "N",
 		"status" : "0",
 		"create_by" : "admin",
-		"create_time" : "2025-05-26 17:39:11",
 		"update_by" : "",
 		"update_time" : null,
 		"remark" : "导入操作"
@@ -395,7 +406,6 @@
 		"is_default" : "N",
 		"status" : "0",
 		"create_by" : "admin",
-		"create_time" : "2025-05-26 17:39:11",
 		"update_by" : "",
 		"update_time" : null,
 		"remark" : "强退操作"
@@ -411,7 +421,6 @@
 		"is_default" : "N",
 		"status" : "0",
 		"create_by" : "admin",
-		"create_time" : "2025-05-26 17:39:11",
 		"update_by" : "",
 		"update_time" : null,
 		"remark" : "生成操作"
@@ -427,7 +436,6 @@
 		"is_default" : "N",
 		"status" : "0",
 		"create_by" : "admin",
-		"create_time" : "2025-05-26 17:39:11",
 		"update_by" : "",
 		"update_time" : null,
 		"remark" : "清空操作"
@@ -443,7 +451,6 @@
 		"is_default" : "N",
 		"status" : "0",
 		"create_by" : "admin",
-		"create_time" : "2025-05-26 17:39:11",
 		"update_by" : "",
 		"update_time" : null,
 		"remark" : "正常状态"
@@ -459,7 +466,6 @@
 		"is_default" : "N",
 		"status" : "0",
 		"create_by" : "admin",
-		"create_time" : "2025-05-26 17:39:11",
 		"update_by" : "",
 		"update_time" : null,
 		"remark" : "停用状态"

@@ -4,6 +4,7 @@ from .models import User,Role,Menu, SystemConfig, Dept, SystemDictType,SystemDic
 from utils.serializer import set_choice_field_internal_value, set_choice_field_representation
 
 class SystemDictTypeSerializer(serializers.ModelSerializer):
+    create_time = serializers.DateTimeField(source='created_at',format='%Y-%m-%d %H:%M:%S', read_only=True)
     class Meta:
         model = SystemDictType
         fields = "__all__"

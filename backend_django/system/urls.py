@@ -1,6 +1,6 @@
-from django.urls import path, include
+from django.urls import path, include,re_path
 from rest_framework.routers import DefaultRouter
-from .views import UserViewSet,RoleViewSet,MenuViewSet, SystemConfigViewSet,SystemDictTypeViewSet,SystemDictDataViewSet,DeptViewSet
+from .views import *
 
 router = DefaultRouter()
 router.register('dept', DeptViewSet)
@@ -19,5 +19,5 @@ urlpatterns = [
     path('register', UserViewSet.as_view({'post': 'register',})),
     path('logout', UserViewSet.as_view({'post': 'logout',})),
     path('getRouters', MenuViewSet.as_view({'get': 'getRouters',})),
-    path('dict/type/(?P<dict_type>[^/.]+)', SystemDictTypeViewSet.as_view({'get': 'by_dict_type',}))
+    path('system/dict/data/type/<str:dict_type>', SystemDictDataViewSet.as_view({'get': 'get_data_by_type',}))
 ]

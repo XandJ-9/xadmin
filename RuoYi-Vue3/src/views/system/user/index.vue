@@ -75,7 +75,7 @@
               </el-table-column>
               <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[6].visible" width="160">
                 <template #default="scope">
-                  <span>{{ parseTime(scope.row.createTime) }}</span>
+                  <span>{{ parseTime(scope.row.create_time) }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
@@ -303,10 +303,9 @@ watch(deptName, val => {
 function getList() {
   loading.value = true
   listUser(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
-    console.log('查询用户列表',res)
     loading.value = false
-    userList.value = res.data.data
-    total.value = res.data.total
+    userList.value = res.data
+    total.value = res.total
   })
 }
 
