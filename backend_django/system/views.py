@@ -12,6 +12,7 @@ from .permissions import IsAdminUser, IsOwnerOrAdmin,HasRolePermission
 from .authentication import get_user_from_token,get_token_from_request
 
 from utils.viewset import CustomModelViewSet
+from utils.filters import SearchFilterBackend
 import logging, uuid
 
 logger = logging.getLogger('django')
@@ -66,10 +67,17 @@ class RoleViewSet(CustomModelViewSet):
         
         return Response({'menu_ids': menu_ids}, status=status.HTTP_200_OK)
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(CustomModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    filter_fields = ['status','username']
 
+    def filter_queryset(self, queryset):
+        for field in self.filter_fields:
+            filter_kwargs = {field+'__icontains': self.request.query_params.get(field, '')}
+            queryset = queryset.filter(**filter_kwargs)
+        return queryset
+    
     def get_permissions(self):
         if self.action in ['login', 'register', 'captchaImage']:
             return [AllowAny()]
@@ -254,6 +262,18 @@ class UserViewSet(viewsets.ModelViewSet):
         
         dept_tree = build_tree(serializer.data)
         return Response(dept_tree, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['put'], url_path='changeStatus')
+    def changeStatus(self, request):
+        """
+        修改用户状态
+        """
+        user_id = self.request.data.get('userId')
+        user_status = self.request.data.get('status')
+        user = User.objects.get(id=user_id)
+        user.status = user_status
+        user.save()
+        return Response({'message': '修改成功'}, status=status.HTTP_200_OK)
 
 class MenuViewSet(CustomModelViewSet):
     queryset = Menu.objects.all()

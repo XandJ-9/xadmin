@@ -57,6 +57,11 @@ Authorization: Bearer {{token}}
 }
 
 ###
+# 搜索用户
+GET {{host}}/api/system/users?pageNum=3&pageSize=10&deptId=104 HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
 # 用户菜单列表
 GET {{host}}/api/system/menus/user_menus HTTP/1.1
 Authorization: Bearer {{token}}

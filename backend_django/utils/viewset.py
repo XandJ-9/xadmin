@@ -18,6 +18,7 @@ class CustomModelViewSet(ModelViewSet):
     search_fields = ()
     import_field_dict = {}
     export_field_label = {}
+
     # pagination_class = CustomPagination
 
     def get_permissions(self):
@@ -72,8 +73,8 @@ class CustomModelViewSet(ModelViewSet):
         if noPage == '1':
             return DetailResponse(data=ser.data, msg="获取数据")
         else:
-            page_no = request.query_params.get('page', 1)
-            page_size = request.query_params.get('page_size',10)
+            page_no = request.query_params.get('pageNum', 1)
+            page_size = request.query_params.get('pageSize',10)
             p = Paginator(ser.data, page_size)
             page_obj = p.get_page(page_no)
             page_data = page_obj.object_list
