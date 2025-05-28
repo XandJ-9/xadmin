@@ -31,23 +31,20 @@ class DeptSerializer(serializers.ModelSerializer):
         read_only_fields = ['id', 'create_time']
 
 class UserSerializer(serializers.ModelSerializer):
+    dept_id = serializers.IntegerField(write_only=True, required=False)
     password = serializers.CharField(write_only=True, required=False)
     create_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True, source='created_at')
     dept = DeptSerializer(read_only=True)
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'password', 'dept', 'create_time','avatar']
+        fields = ['id', 'username', 'password', 'dept', 'create_time','avatar','status','dept_id']
+        # fields = '__all__'
         read_only_fields = ['id', 'create_time']
 
-    def create(self, validated_data):
-        role_instance = Role.objects.get(name=validated_data.get('role'))
-        user = User.objects.create_user(
-            username=validated_data['username'],
-            password=validated_data['password'],
-            role=role_instance
-        )
-        return user
+    # def create(self, validated_data):
+    #     validated_data['dept'] = Dept.objects.get(id=validated_data.pop('dept_id', None))
+    #     return super().create(validated_data)
 
     def update(self, instance, validated_data):
         if 'password' in validated_data:

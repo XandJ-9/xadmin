@@ -2,7 +2,7 @@ from django.urls import path, include,re_path
 from rest_framework.routers import DefaultRouter
 from .views import *
 
-router = DefaultRouter()
+router = DefaultRouter(trailing_slash=False)
 router.register('dept', DeptViewSet)
 router.register('users', UserViewSet)
 router.register('roles', RoleViewSet)
@@ -21,3 +21,5 @@ urlpatterns = [
     path('getRouters', MenuViewSet.as_view({'get': 'getRouters',})),
     path('system/dict/data/type/<str:dict_type>', SystemDictDataViewSet.as_view({'get': 'get_data_by_type',}))
 ]
+
+print("system urls: ")

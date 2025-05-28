@@ -19,25 +19,52 @@ Content-Type: application/json
 
 @token = {{login.response.body.token}}
 
+###
+GET {{host}}/api/system/dept HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
 # 用户请求
-GET http://localhost:8000/api/system/users/ HTTP/1.1
+GET {{host}}/api/system/users HTTP/1.1
 Authorization: Bearer {{token}}
 
 ###
 # 用户详情
-GET http://localhost:8000/api/system/users/1/ HTTP/1.1
+GET {{host}}/api/system/users/1 HTTP/1.1
 Authorization: Bearer {{token}}
 
+###
+# 添加用户
+POST {{host}}/api/system/users HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "username": "xxxx",
+  "password": "12345c6"
+}
+
+###
+# 更新用户
+PUT {{host}}/api/system/users/3 HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "username": "testusexr",
+  "password": "newpassword",
+  "dept_id": 103
+}
 
 ###
 # 用户菜单列表
-GET http://localhost:8000/api/system/menus/user_menus/ HTTP/1.1
+GET {{host}}/api/system/menus/user_menus HTTP/1.1
 Authorization: Bearer {{token}}
 
 
 ###
 # 用户角色列表
-GET http://localhost:8000/api/system/roles/ HTTP/1.1
+GET {{host}}/api/system/roles HTTP/1.1
 Authorization: Bearer {{token}}
 
 
@@ -47,9 +74,14 @@ Authorization: Bearer {{token}}
 
 
 ###
-GET {{host}}/api/system/dict/type/ HTTP/1.1
+GET {{host}}/api/system/dict/type HTTP/1.1
 Authorization: Bearer {{token}}
 
 ###
 GET {{host}}/api/system/dict/data/type/sys_normal_disable HTTP/1.1
+Authorization: Bearer {{token}}
+
+
+###
+GET {{host}}/api/system/users/deptTree HTTP/1.1
 Authorization: Bearer {{token}}

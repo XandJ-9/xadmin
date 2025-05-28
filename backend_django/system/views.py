@@ -16,13 +16,12 @@ import logging, uuid
 
 logger = logging.getLogger('django')
 
-class DeptViewSet(viewsets.ModelViewSet):
+class DeptViewSet(CustomModelViewSet):
     queryset = Dept.objects.all()
     serializer_class = DeptSerializer
     # permission_classes = [IsAdminUser]
 
-
-class RoleViewSet(viewsets.ModelViewSet):
+class RoleViewSet(CustomModelViewSet):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
     # permission_classes = [IsAdminUser]
@@ -67,7 +66,7 @@ class RoleViewSet(viewsets.ModelViewSet):
         
         return Response({'menu_ids': menu_ids}, status=status.HTTP_200_OK)
 
-class UserViewSet(CustomModelViewSet):
+class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
@@ -77,6 +76,14 @@ class UserViewSet(CustomModelViewSet):
         if self.action in ['retrieve', 'update', 'partial_update', 'destroy']:
             return [IsAdminUser()]
         return [IsOwnerOrAdmin()]
+
+    def perform_create(self, serializer):
+        """
+        在创建用户之前，添加部门
+        """
+        user = self.request.user
+        dept_id = self.request.data.get('dept_id',user.dept.id)
+        serializer.save(dept_id=dept_id)
 
     @action(detail=False, methods=['get'])
     def captchaImage(self, request):
@@ -223,6 +230,31 @@ class UserViewSet(CustomModelViewSet):
              UserRole.objects.create(user=user, role_id=roleId)
         return Response({'message': '授权成功'}, status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=['get'])
+    def deptTree(self, request):
+        """
+        获取部门树形结构
+        :param request:
+        :return:
+        """
+        depts = Dept.objects.all()
+        serializer = DeptSerializer(depts, many=True)
+        
+        def build_tree(dept_list, parent_id=None):
+            tree = []
+            for dept in dept_list:
+                if dept['parent'] == parent_id:
+                    children = build_tree(dept_list, dept['id'])
+                    if children:
+                        dept['children'] = children
+                    else:
+                        dept['children'] = []
+                    tree.append(dept)
+            return tree
+        
+        dept_tree = build_tree(serializer.data)
+        return Response(dept_tree, status=status.HTTP_200_OK)
+
 class MenuViewSet(CustomModelViewSet):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
@@ -335,11 +367,6 @@ class MenuViewSet(CustomModelViewSet):
         router_data = [build_menu_tree(menu) for menu in top_menus]
         
         return Response(router_data, status=status.HTTP_200_OK)
-
-    @action(detail=True, methods=['get'])
-    def deptTree(self, request):
-        dept_id = request.data.get('deptId')
-        return Response({"dept_id":dept_id}, status=status.HTTP_200_OK)
 
 class SystemConfigViewSet(CustomModelViewSet):
     queryset = SystemConfig.objects.all()

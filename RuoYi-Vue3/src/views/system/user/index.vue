@@ -9,7 +9,7 @@
               <el-input v-model="deptName" placeholder="请输入部门名称" clearable prefix-icon="Search" style="margin-bottom: 20px" />
             </div>
             <div class="head-container">
-              <el-tree :data="deptOptions" :props="{ label: 'label', children: 'children' }" :expand-on-click-node="false" :filter-node-method="filterNode" ref="deptTreeRef" node-key="id" highlight-current default-expand-all @node-click="handleNodeClick" />
+              <el-tree :data="deptOptions" :props="{ label: 'dept_name', children: 'children' }" :expand-on-click-node="false" :filter-node-method="filterNode" ref="deptTreeRef" node-key="id" highlight-current default-expand-all @node-click="handleNodeClick" />
             </div>
           </el-col>
         </pane>
@@ -312,8 +312,8 @@ function getList() {
 /** 查询部门下拉树结构 */
 function getDeptTree() {
   deptTreeSelect().then(response => {
-    deptOptions.value = response.data
-    enabledDeptOptions.value = filterDisabledDept(JSON.parse(JSON.stringify(response.data)))
+    deptOptions.value = response
+    enabledDeptOptions.value = filterDisabledDept(JSON.parse(JSON.stringify(response)))
   })
 }
 

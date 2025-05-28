@@ -23,7 +23,9 @@ class DetailResponse(Response):
 
     def __init__(self, data=None, msg='success', status=None, template_name=None, headers=None, exception=False,
                  content_type=None,):
-        std_data = {}
+        std_data = {
+            "msg": msg
+        }
         
         if data:
             std_data['data'] = data

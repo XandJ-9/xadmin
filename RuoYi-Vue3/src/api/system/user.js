@@ -4,7 +4,7 @@ import { parseStrEmpty } from "@/utils/ruoyi";
 // 查询用户列表
 export function listUser(query) {
   return request({
-    url: '/system/users/',
+    url: '/system/users',
     method: 'get',
     params: query
   })
@@ -21,7 +21,7 @@ export function getUser(userId) {
 // 新增用户
 export function addUser(data) {
   return request({
-    url: '/system/users/',
+    url: '/system/users',
     method: 'post',
     data: data
   })
@@ -30,7 +30,7 @@ export function addUser(data) {
 // 修改用户
 export function updateUser(data) {
   return request({
-    url: '/system/users/',
+    url: '/system/users',
     method: 'put',
     data: data
   })
@@ -39,7 +39,7 @@ export function updateUser(data) {
 // 删除用户
 export function delUser(userId) {
   return request({
-    url: `/system/users/${userId}/`,
+    url: '/system/users/'+userId,
     method: 'delete'
   })
 }
