@@ -63,14 +63,14 @@ Authorization: Bearer {{token}}
 
 ###
 # 更新用户
-PUT {{host}}/api/system/users/2 HTTP/1.1
+PUT {{host}}/api/system/users/42 HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
   "username": "newusesrname",
   "password": "newpasssword",
-  "dept_id": 103
+  "dept_id": 104
 }
 
 ###
@@ -81,7 +81,7 @@ Authorization: Bearer {{token}}
 
 ###
 # 搜索用户
-GET {{host}}/api/system/users?pageNum=1&pageSize=10&dept=104 HTTP/1.1
+GET {{host}}/api/system/users?pageNum=1&pageSize=10&deptId=103 HTTP/1.1
 Authorization: Bearer {{token}}
 
 ###

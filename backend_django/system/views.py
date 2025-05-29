@@ -70,13 +70,18 @@ class RoleViewSet(CustomModelViewSet):
 class UserViewSet(CustomModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    filter_fields = ['status','username','dept']
+    filter_fields = ['status','username']
+    filter_backends = [SearchFilterBackend]
 
-    # def filter_queryset(self, queryset):
-    #     for field in self.filter_fields:
-    #         filter_kwargs = {field+'__icontains': self.request.query_params.get(field, '')}
-    #         queryset = queryset.filter(**filter_kwargs)
-    #     return queryset
+    def filter_queryset(self, queryset):
+        '''
+        外键搜索单独处理
+        '''
+        dept_id = self.request.query_params.get('deptId', None)
+        queryset = self.queryset.filter(dept_id=dept_id) if dept_id else self.get_queryset()
+        return super().filter_queryset(queryset)
+
+
     
     def get_permissions(self):
         if self.action in ['login', 'register', 'captchaImage']:
