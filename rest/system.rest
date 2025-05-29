@@ -24,6 +24,23 @@ GET {{host}}/api/system/dept HTTP/1.1
 Authorization: Bearer {{token}}
 
 ###
+# 添加部门
+POST {{host}}/api/system/dept HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+      "ancestors": "0",
+      "dept_name": "新链科技",
+      "order_num": 0,
+      "leader": "新链",
+      "phone": "15888888888",
+      "email": "xl@qq.com",
+      "status": "0",
+      "del_flag": "0"
+}
+
+###
 # 用户请求
 GET {{host}}/api/system/users HTTP/1.1
 Authorization: Bearer {{token}}
@@ -40,7 +57,7 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "username": "xxx12sss1ssodq",
+  "username": "afaad",
   "password": "12345cxx6"
 }
 
@@ -51,20 +68,20 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "username": "newusername",
-  "password": "newpassword",
+  "username": "newusesrname",
+  "password": "newpasssword",
   "dept_id": 103
 }
 
 ###
 # 删除用户
-DELETE {{host}}/api/system/users/4 HTTP/1.1
+DELETE {{host}}/api/system/users/36 HTTP/1.1
 Authorization: Bearer {{token}}
 
 
 ###
 # 搜索用户
-GET {{host}}/api/system/users?pageNum=3&pageSize=10&dept=104 HTTP/1.1
+GET {{host}}/api/system/users?pageNum=1&pageSize=10&dept=104 HTTP/1.1
 Authorization: Bearer {{token}}
 
 ###

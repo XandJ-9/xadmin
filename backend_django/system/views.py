@@ -67,7 +67,7 @@ class RoleViewSet(CustomModelViewSet):
         
         return Response({'menu_ids': menu_ids}, status=status.HTTP_200_OK)
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(CustomModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     filter_fields = ['status','username','dept']
@@ -91,8 +91,9 @@ class UserViewSet(viewsets.ModelViewSet):
         """
         user = self.request.user
         dept_id = self.request.data.get('dept_id',user.dept.id)
-        serializer.save(dept_id=dept_id)
-
+        # serializer.save(dept_id=dept_id)
+        serializer.validated_data['dept_id'] = dept_id
+        super().perform_create(serializer)
         
 
     @action(detail=False, methods=['get'])

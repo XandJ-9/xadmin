@@ -5,6 +5,14 @@ from django.utils import timezone
 
 
 class BaseModel(models.Model):
+    creator = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='%(class)s_creator', null=True, blank=True, verbose_name='创建者')
+    updator = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='%(class)s_updator', null=True, blank=True, verbose_name='更新者')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
+    del_flag = models.CharField(max_length=1, default='0', choices=[('0', '存在'), ('1', '删除')], verbose_name='删除标志')
+
 
     """所有模型的基类，用于设置统一的表前缀"""
     class Meta:
@@ -39,7 +47,7 @@ class Role(BaseModel):
     ]
     DEL_FLAG_CHOICES = [
         ('0', '存在'),
-        ('2', '删除'),
+        ('1', '删除'),
     ]
     
     role_name = models.CharField(max_length=30, verbose_name='角色名称')
@@ -49,9 +57,6 @@ class Role(BaseModel):
     menu_check_strictly = models.BooleanField(default=True, verbose_name='菜单树选择项是否关联显示')
     dept_check_strictly = models.BooleanField(default=True, verbose_name='部门树选择项是否关联显示')
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, verbose_name='角色状态')
-    del_flag = models.CharField(max_length=1, default='0', choices=DEL_FLAG_CHOICES, verbose_name='删除标志')
-    created_at = models.DateTimeField(default=timezone.now, verbose_name='创建时间')
-    updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
     remark = models.CharField(max_length=500, null=True, blank=True, verbose_name='备注')
 
     class Meta:
@@ -65,7 +70,7 @@ class Role(BaseModel):
 class Dept(BaseModel):
     DEPT_CHOICES = [
         ('1', '正常'),
-        ('2', '停用'),
+        ('0', '停用'),
     ]
 
     parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='children', null=True, blank=True, verbose_name='父部门')
@@ -76,9 +81,6 @@ class Dept(BaseModel):
     phone = models.CharField(max_length=11, blank=True, null=True, verbose_name='联系电话')
     email = models.EmailField(max_length=50, blank=True, null=True, verbose_name='邮箱')
     status = models.CharField(max_length=1, default='0', choices=DEPT_CHOICES, verbose_name='部门状态')
-    del_flag = models.CharField(max_length=1, default='0', verbose_name='删除标志')
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
-    updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
     remark = models.CharField(max_length=500, null=True, blank=True, verbose_name='备注')
     class Meta:
         verbose_name = '部门'
@@ -115,8 +117,6 @@ class User(AbstractUser, BaseModel):
     del_flag = models.CharField(max_length=1, default='0', choices=DEL_FLAG_CHOICES, verbose_name='删除标志')
     login_ip = models.CharField(max_length=128, blank=True, default='', verbose_name='最后登录IP')
     login_date = models.DateTimeField(null=True, blank=True, verbose_name='最后登录时间')
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
-    updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
     remark = models.CharField(max_length=500, null=True, blank=True, verbose_name='备注')
     
     # 移除默认的groups和user_permissions字段
@@ -186,10 +186,6 @@ class Menu(BaseModel):
     status = models.CharField(max_length=1, default='0', choices=STATUS_CHOICES, verbose_name='菜单状态')
     perms = models.CharField(max_length=100, null=True, blank=True, verbose_name='权限标识')
     icon = models.CharField(max_length=100, default='#', verbose_name='菜单图标')
-    created_at = models.DateTimeField(default=timezone.now, verbose_name='创建时间')
-    updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
-    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='menu_creator', verbose_name='创建者', null=True)
-    updator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='menu_updator', verbose_name='更新者', null=True)
     remark = models.CharField(max_length=500, default='', verbose_name='备注')
 
     class Meta:
@@ -210,10 +206,6 @@ class RoleMenu(BaseModel):
     """角色菜单关联模型"""
     role = models.ForeignKey(Role, on_delete=models.CASCADE, related_name='role_menus', verbose_name='角色')
     menu = models.ForeignKey(Menu, on_delete=models.CASCADE, related_name='role_menus', verbose_name='菜单')
-    created_at = models.DateTimeField(default=timezone.now, verbose_name='创建时间')
-    updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
-    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_role_menus', verbose_name='创建者')
-    updator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='updated_role_menus', verbose_name='更新者')
     class Meta:
         verbose_name = '角色菜单关联'
         verbose_name_plural = verbose_name
@@ -232,10 +224,6 @@ class SystemConfig(BaseModel):
     config_key = models.CharField(max_length=100, default='', verbose_name='参数键名')
     config_value = models.CharField(max_length=500, default='', verbose_name='参数键值')
     config_type = models.CharField(max_length=1, default='N', choices=CONFIG_TYPE_CHOICES, verbose_name='系统内置')
-    created_at = models.DateTimeField(default=timezone.now, verbose_name='创建时间')
-    updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
-    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_configs', verbose_name='创建者', null=True)
-    updator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='updated_configs', verbose_name='更新者', null=True)
     remark = models.CharField(max_length=500, null=True, blank=True, verbose_name='备注')
 
     class Meta:
@@ -257,10 +245,6 @@ class SystemDictType(BaseModel):
     dict_name = models.CharField(max_length=100, default='', verbose_name='字典名称')
     dict_type = models.CharField(max_length=100, default='', verbose_name='字典类型', unique=True)
     status = models.CharField(max_length=1, default='0', choices=STATUS_CHOICES, verbose_name='状态')
-    created_at = models.DateTimeField(default=timezone.now, verbose_name='创建时间')
-    updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
-    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_dicts', verbose_name='创建者', null=True)
-    updator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='updated_dicts', verbose_name='更新者', null=True)
     remark = models.CharField(max_length=500, null=True, blank=True, verbose_name='备注')
 
     class Meta:
@@ -290,10 +274,6 @@ class SystemDictData(BaseModel):
     list_class = models.CharField(max_length=100, null=True, blank=True, verbose_name='表格回显样式')
     is_default = models.CharField(max_length=1, default='N', choices=IS_DEFAULT_CHOICES, verbose_name='是否默认')
     status = models.CharField(max_length=1, default='0', choices=STATUS_CHOICES, verbose_name='状态')
-    created_at = models.DateTimeField(default=timezone.now, verbose_name='创建时间')
-    updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
-    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_dict_datas', verbose_name='创建者', null=True)
-    updator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='updated_dict_datas', verbose_name='更新者', null=True)
     remark = models.CharField(max_length=500, null=True, blank=True, verbose_name='备注')
 
     class Meta:
@@ -306,9 +286,5 @@ class SystemDictData(BaseModel):
 
 class BizBaseModel(BaseModel):
     """业务公共字段模型"""
-    created_at = models.DateTimeField(default=timezone.now, verbose_name='创建时间')
-    updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
-    creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='%(class)s_creator', verbose_name='创建者', blank=True, null=True)
-    updator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='%(class)s_updator', verbose_name='更新者', blank=True, null=True)
     class Meta:
         abstract = True

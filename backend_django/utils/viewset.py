@@ -54,13 +54,16 @@ class CustomModelViewSet(ModelViewSet):
     #         kwargs['updator'] = self.request.user
     #     return serializer_class(*args, **kwargs)
 
+    def perform_create(self, serializer):
+        # return super().perform_create(serializer)
+        if self.request.user and self.request.user.is_authenticated:
+            serializer.validated_data['creator'] = self.request.user
+        super().perform_create(serializer)
+
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        if request.user:
-            serializer.validated_data['creator'] = request.user
-            serializer.validated_data['updator'] = request.user
         self.perform_create(serializer)
         return DetailResponse(data=serializer.data, msg="新增成功")
 
@@ -91,6 +94,11 @@ class CustomModelViewSet(ModelViewSet):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return DetailResponse(data=serializer.data, msg="获取成功")
+
+    def perform_update(self, serializer):
+        if self.request.user and self.request.user.is_authenticated:
+            serializer.validated_data['updator'] = self.request.user
+        super().perform_update(serializer)
 
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
