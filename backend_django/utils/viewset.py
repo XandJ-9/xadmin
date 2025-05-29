@@ -1,4 +1,5 @@
 from django.core.paginator import Paginator
+from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny
@@ -116,8 +117,25 @@ class CustomModelViewSet(ModelViewSet):
         return DetailResponse(data=serializer.data, msg="更新成功")
 
     def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.delete()
+        """
+        自定义修改，支持多条删除
+        """
+        lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
+        filter_kwargs = {self.lookup_field: self.kwargs[lookup_url_kwarg]}
+        if isinstance(filter_kwargs[self.lookup_field], str):
+            filter_kwargs[self.lookup_field] = filter_kwargs[self.lookup_field].split(',')
+            queryset = self.filter_queryset(self.get_queryset().filter(**{self.lookup_field + '__in': filter_kwargs[self.lookup_field]}))
+        else:
+            queryset = self.filter_queryset(self.get_queryset().filter(**filter_kwargs))
+        if not queryset:
+            return ErrorResponse(msg="删除失败，数据不存在", status=status.HTTP_404_NOT_FOUND)
+        # 遍历queryset删除
+        for instance in queryset:
+            self.check_object_permissions(request, instance)
+            instance.delete()
+        # 如果是单个对象
+        # instance = self.get_object()
+        # instance.delete()
         return DetailResponse(data=[], msg="删除成功")
     
 

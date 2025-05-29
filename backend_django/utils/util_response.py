@@ -42,7 +42,6 @@ class ErrorResponse(Response):
                  exception=False, content_type=None):
         std_data = {
             "code": code,
-            "data": data,
             "msg": msg
         }
         super().__init__(std_data, status, template_name, headers, exception, content_type)

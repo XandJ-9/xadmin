@@ -57,7 +57,7 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "username": "afaad",
+  "username": "afaadz",
   "password": "12345cxx6"
 }
 
@@ -75,7 +75,7 @@ Authorization: Bearer {{token}}
 
 ###
 # 删除用户
-DELETE {{host}}/api/system/users/36 HTTP/1.1
+DELETE {{host}}/api/system/users/41 HTTP/1.1
 Authorization: Bearer {{token}}
 
 
