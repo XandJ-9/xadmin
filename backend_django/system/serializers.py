@@ -42,9 +42,12 @@ class UserSerializer(serializers.ModelSerializer):
         # fields = '__all__'
         read_only_fields = ['id', 'create_time']
 
-    # def create(self, validated_data):
-    #     validated_data['dept'] = Dept.objects.get(id=validated_data.pop('dept_id', None))
-    #     return super().create(validated_data)
+    def create(self, validated_data):
+        password = validated_data.pop('password', None)
+        instance = super().create(validated_data)
+        instance.set_password(password)  # Set the password using set_password method
+        instance.save()
+        return instance
 
     def update(self, instance, validated_data):
         if 'password' in validated_data:

@@ -5,7 +5,11 @@ class SearchFilterBackend(BaseFilterBackend):
 
     def get_search_fields(self, view, request):
         return getattr(view, 'filter_fields', None)
+    
     def filter_queryset(self, request, queryset, view):
+        """
+        todo: 注意区分普通字段和外键字段的过滤方式
+        """
         filter_fields = [field.name for field in queryset.model._meta.fields] if self.get_search_fields(view, request) == '__all__' else self.get_search_fields(view, request)
         for field in filter_fields:
             filter_kwargs = {field+'__icontains': request.query_params.get(field, '')}

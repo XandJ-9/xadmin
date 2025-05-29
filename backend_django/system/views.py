@@ -67,16 +67,16 @@ class RoleViewSet(CustomModelViewSet):
         
         return Response({'menu_ids': menu_ids}, status=status.HTTP_200_OK)
 
-class UserViewSet(CustomModelViewSet):
+class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    filter_fields = ['status','username']
+    filter_fields = ['status','username','dept']
 
-    def filter_queryset(self, queryset):
-        for field in self.filter_fields:
-            filter_kwargs = {field+'__icontains': self.request.query_params.get(field, '')}
-            queryset = queryset.filter(**filter_kwargs)
-        return queryset
+    # def filter_queryset(self, queryset):
+    #     for field in self.filter_fields:
+    #         filter_kwargs = {field+'__icontains': self.request.query_params.get(field, '')}
+    #         queryset = queryset.filter(**filter_kwargs)
+    #     return queryset
     
     def get_permissions(self):
         if self.action in ['login', 'register', 'captchaImage']:
@@ -92,6 +92,8 @@ class UserViewSet(CustomModelViewSet):
         user = self.request.user
         dept_id = self.request.data.get('dept_id',user.dept.id)
         serializer.save(dept_id=dept_id)
+
+        
 
     @action(detail=False, methods=['get'])
     def captchaImage(self, request):
