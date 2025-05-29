@@ -40,21 +40,32 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "username": "xxxx",
-  "password": "12345c6"
+  "username": "xxx12sss1ssodq",
+  "password": "12345cxx6"
 }
 
 ###
 # 更新用户
-PUT {{host}}/api/system/users/3 HTTP/1.1
+PUT {{host}}/api/system/users/2 HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "username": "testusexr",
+  "username": "newusername",
   "password": "newpassword",
   "dept_id": 103
 }
+
+###
+# 删除用户
+DELETE {{host}}/api/system/users/4 HTTP/1.1
+Authorization: Bearer {{token}}
+
+
+###
+# 搜索用户
+GET {{host}}/api/system/users?pageNum=3&pageSize=10&dept=104 HTTP/1.1
+Authorization: Bearer {{token}}
 
 ###
 # 用户菜单列表

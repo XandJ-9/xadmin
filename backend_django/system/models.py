@@ -87,6 +87,10 @@ class Dept(BaseModel):
 
 class User(AbstractUser, BaseModel):
     """自定义用户模型"""
+    USER_STATUS_CHOICES = [
+        ('0', '停用'),
+        ('1', '正常'),
+    ]
     USER_TYPE_CHOICES = [
         ('00', '系统用户'),
     ]
@@ -107,8 +111,7 @@ class User(AbstractUser, BaseModel):
     phonenumber = models.CharField(max_length=11, blank=True, default='', verbose_name='手机号码')
     sex = models.CharField(max_length=1, default='0', choices=SEX_CHOICES, verbose_name='用户性别')
     avatar = models.CharField(max_length=200, blank=True, null=True, verbose_name='头像')
-    # is_active = models.BooleanField(default=True, verbose_name='是否激活')
-    status = models.BooleanField(default=True, verbose_name='是否启用')
+    status = models.CharField(max_length=1, default='1', choices=USER_STATUS_CHOICES, verbose_name='是否启用')
     del_flag = models.CharField(max_length=1, default='0', choices=DEL_FLAG_CHOICES, verbose_name='删除标志')
     login_ip = models.CharField(max_length=128, blank=True, default='', verbose_name='最后登录IP')
     login_date = models.DateTimeField(null=True, blank=True, verbose_name='最后登录时间')

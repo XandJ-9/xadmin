@@ -51,7 +51,7 @@ export function resetUserPwd(userId, password) {
     password
   }
   return request({
-    url: '/system/user/resetPwd',
+    url: '/system/users/resetPwd',
     method: 'put',
     data: data
   })
@@ -64,7 +64,7 @@ export function changeUserStatus(userId, status) {
     status
   }
   return request({
-    url: '/system/user/changeStatus',
+    url: '/system/users/changeStatus',
     method: 'put',
     data: data
   })
