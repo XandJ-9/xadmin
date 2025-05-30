@@ -176,8 +176,7 @@ const { queryParams, form, rules } = toRefs(data)
 function getList() {
   loading.value = true
   listDept(queryParams.value).then(response => {
-    deptList.value = proxy.handleTree(response, "id")
-    console.log('deptList', deptList.value)
+    deptList.value = proxy.handleTree(response.data, "id")
     loading.value = false
   })
 }

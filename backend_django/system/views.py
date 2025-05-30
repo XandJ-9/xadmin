@@ -5,6 +5,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from django.utils.crypto import get_random_string
+from django.db.models import Q
 from PIL import Image, ImageDraw, ImageFont
 from .models import Dept,User, Role, Menu, SystemConfig, Captcha, UserRole, SystemDictType,SystemDictData
 from. serializers import *
@@ -78,8 +79,23 @@ class UserViewSet(CustomModelViewSet):
         外键搜索单独处理
         '''
         dept_id = self.request.query_params.get('deptId', None)
-        queryset = self.queryset.filter(dept_id=dept_id) if dept_id else self.get_queryset()
+        if dept_id:
+            # 部门存在，查找子级部门
+            try:
+                dept = Dept.objects.get(id=dept_id)
+                # 如果部门存在，获取该部门及其子部门
+                ancestors=','.join([dept.ancestors,str(dept.id)])
+                dept_ids = Dept.objects.filter(Q(ancestors=ancestors) 
+                                               | Q(id = dept_id)
+                                               ).values_list('id', flat=True)
+                queryset = queryset.filter(dept_id__in=dept_ids)
+            except Dept.DoesNotExist:
+                # 如果部门不存在，返回空查询集
+                logger.warning(f"Dept with id {dept_id} does not exist.")
+
         return super().filter_queryset(queryset)
+
+    
 
 
     
