@@ -87,6 +87,17 @@ class Dept(BaseModel):
         verbose_name_plural = verbose_name
         db_table = 'sys_dept'
 
+class Post(BaseModel):
+    POST_STATUS_CHOICES = [
+        ('0', '正常'),
+        ('1', '停用'),
+    ]
+    post_code = models.CharField(max_length=64, verbose_name='岗位编码')
+    post_name = models.CharField(max_length=50, verbose_name='岗位名称')
+    post_sort = models.IntegerField(verbose_name='显示顺序')
+    status = models.CharField(max_length=1, default='0', choices=POST_STATUS_CHOICES, verbose_name='状态')
+    remark = models.CharField(max_length=500, null=True, blank=True, verbose_name='备注')
+
 class User(AbstractUser, BaseModel):
     """自定义用户模型"""
     USER_STATUS_CHOICES = [

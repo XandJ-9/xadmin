@@ -107,12 +107,12 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="用户昵称" prop="nickName">
-              <el-input v-model="form.nickName" placeholder="请输入用户昵称" maxlength="30" />
+              <el-input v-model="form.username" placeholder="请输入用户昵称" maxlength="30" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="归属部门" prop="deptId">
-              <el-tree-select v-model="form.deptId" :data="enabledDeptOptions" :props="{ value: 'id', label: 'label', children: 'children' }" value-key="id" placeholder="请选择归属部门" check-strictly />
+              <el-tree-select v-model="form.deptId" :data="enabledDeptOptions" :props="{ value: 'id', label: 'dept_name', children: 'children' }" value-key="id" placeholder="请选择归属部门" check-strictly />
             </el-form-item>
           </el-col>
         </el-row>
@@ -317,6 +317,13 @@ function getDeptTree() {
   })
 }
 
+/** 查询岗位列表 */
+function getPostTree() {
+  listPost().then(response => {
+  postOptions.value = response.data
+  })
+}
+
 /** 过滤禁用的部门 */
 function filterDisabledDept(deptList) {
   return deptList.filter(dept => {
@@ -487,13 +494,13 @@ function cancel() {
 /** 新增按钮操作 */
 function handleAdd() {
   reset()
-  getUser().then(response => {
-    postOptions.value = response.posts
-    roleOptions.value = response.roles
+  // getUser().then(response => {
+    // postOptions.value = response.posts
+    // roleOptions.value = response.roles
     open.value = true
     title.value = "添加用户"
     form.value.password = initPassword.value
-  })
+  // })
 }
 
 /** 修改按钮操作 */
