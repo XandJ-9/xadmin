@@ -91,6 +91,11 @@ Authorization: Bearer {{token}}
 
 
 ###
+# 菜单列表
+GET {{host}}/api/system/menus HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
 # 用户角色列表
 GET {{host}}/api/system/roles HTTP/1.1
 Authorization: Bearer {{token}}
