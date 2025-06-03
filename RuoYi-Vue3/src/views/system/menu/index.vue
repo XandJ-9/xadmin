@@ -69,7 +69,7 @@
                <dict-tag :options="sys_normal_disable" :value="scope.row.status" />
             </template>
          </el-table-column>
-         <el-table-column label="创建时间" align="center" width="160" prop="createTime">
+         <el-table-column label="创建时间" align="center" width="160" prop="create_time">
             <template #default="scope">
                <span>{{ parseTime(scope.row.create_time) }}</span>
             </template>

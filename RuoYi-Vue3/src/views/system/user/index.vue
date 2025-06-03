@@ -6,7 +6,7 @@
         <pane size="16">
           <el-col>
             <div class="head-container">
-              <el-input v-model="deptName" placeholder="请输入部门名称" clearable prefix-icon="Search" style="margin-bottom: 20px" />
+              <el-input v-model="dept_name" placeholder="请输入部门名称" clearable prefix-icon="Search" style="margin-bottom: 20px" />
             </div>
             <div class="head-container">
               <el-tree :data="deptOptions" :props="{ label: 'dept_name', children: 'children' }" :expand-on-click-node="false" :filter-node-method="filterNode" ref="deptTreeRef" node-key="id" highlight-current default-expand-all @node-click="handleNodeClick" />
@@ -61,7 +61,7 @@
               <el-table-column label="用户编号" align="center" key="userId" prop="id" v-if="columns[0].visible" />
               <el-table-column label="用户名称" align="center" key="userName" prop="username" v-if="columns[1].visible" :show-overflow-tooltip="true" />
               <el-table-column label="用户昵称" align="center" key="nickName" prop="nickname" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-              <el-table-column label="部门" align="center" key="deptName" prop="dept.dept_name" v-if="columns[3].visible" :show-overflow-tooltip="true" />
+              <el-table-column label="部门" align="center" key="dept_name" prop="dept.dept_name" v-if="columns[3].visible" :show-overflow-tooltip="true" />
               <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />
               <el-table-column label="状态" align="center" key="status" v-if="columns[5].visible">
                 <template #default="scope">
@@ -235,7 +235,7 @@ const multiple = ref(true)
 const total = ref(0)
 const title = ref("")
 const dateRange = ref([])
-const deptName = ref("")
+const dept_name = ref("")
 const deptOptions = ref(undefined)
 const enabledDeptOptions = ref(undefined)
 const initPassword = ref(undefined)
@@ -291,11 +291,12 @@ const { queryParams, form, rules } = toRefs(data)
 /** 通过条件过滤节点  */
 const filterNode = (value, data) => {
   if (!value) return true
+  console.log(data, value)
   return data.label.indexOf(value) !== -1
 }
 
 /** 根据名称筛选部门树 */
-watch(deptName, val => {
+watch(dept_name, val => {
   proxy.$refs["deptTreeRef"].filter(val)
 })
 
@@ -506,7 +507,7 @@ function handleAdd() {
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset()
-  const userId = row.userId || ids.value
+  const userId = row.id || ids.value
   getUser(userId).then(response => {
     form.value = response.data
     postOptions.value = response.posts
