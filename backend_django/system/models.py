@@ -17,7 +17,6 @@ class BaseModel(models.Model):
     """所有模型的基类，用于设置统一的表前缀"""
     class Meta:
         abstract = True
-        db_table = settings.DATABASE_TABLE_PREFIX
 
 
 class Captcha(models.Model):
@@ -207,11 +206,14 @@ class Menu(BaseModel):
 
     def __str__(self):
         return self.menu_name
-    
-# class UserMenu(BaseModel):
-#     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_menus', verbose_name='用户')
-#     menu = models.ForeignKey(Menu, on_delete=models.CASCADE, related_name='user_menus', verbose_name='菜单')
 
+class UserPost(BaseModel):
+    """用户岗位关联模型"""
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_posts', verbose_name='用户')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='user_posts', verbose_name='岗位')
+    class Meta:
+        verbose_name = '用户岗位关联'
+        db_table = 'sys_user_post'
 
 class RoleMenu(BaseModel):
     """角色菜单关联模型"""

@@ -71,7 +71,7 @@ class RoleViewSet(CustomModelViewSet):
 class UserViewSet(CustomModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    filter_fields = ['status','username']
+    filter_fields = ['status','username','phonenumber']
     filter_backends = [SearchFilterBackend]
 
     def filter_queryset(self, queryset):
@@ -95,10 +95,6 @@ class UserViewSet(CustomModelViewSet):
 
         return super().filter_queryset(queryset)
 
-    
-
-
-    
     def get_permissions(self):
         if self.action in ['login', 'register', 'captchaImage']:
             return [AllowAny()]

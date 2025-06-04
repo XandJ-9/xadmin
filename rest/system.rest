@@ -20,6 +20,11 @@ Content-Type: application/json
 @token = {{login.response.body.token}}
 
 ###
+# getInfo
+GET {{host}}/api/getInfo HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
 GET {{host}}/api/system/dept HTTP/1.1
 Authorization: Bearer {{token}}
 
@@ -75,7 +80,7 @@ Authorization: Bearer {{token}}
 
 ###
 # 删除用户
-DELETE {{host}}/api/system/users/41 HTTP/1.1
+DELETE {{host}}/api/system/users/43 HTTP/1.1
 Authorization: Bearer {{token}}
 
 

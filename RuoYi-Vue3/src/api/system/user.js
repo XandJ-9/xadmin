@@ -30,7 +30,7 @@ export function addUser(data) {
 // 修改用户
 export function updateUser(data) {
   return request({
-    url: '/system/users',
+    url: '/system/users/'+data.user_id,
     method: 'put',
     data: data
   })
