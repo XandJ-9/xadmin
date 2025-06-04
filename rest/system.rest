@@ -86,13 +86,18 @@ Authorization: Bearer {{token}}
 
 ###
 # 用户菜单列表
-GET {{host}}/api/system/menus/user_menus HTTP/1.1
+GET {{host}}/api/system/menu/user_menu HTTP/1.1
 Authorization: Bearer {{token}}
 
 
 ###
 # 菜单列表
-GET {{host}}/api/system/menus HTTP/1.1
+GET {{host}}/api/system/menu?status=0 HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+# 
+GET {{host}}/api/system/menu/all HTTP/1.1
 Authorization: Bearer {{token}}
 
 ###
@@ -110,8 +115,21 @@ Authorization: Bearer {{token}}
 GET {{host}}/api/system/dict/type HTTP/1.1
 Authorization: Bearer {{token}}
 
+
+###
+GET {{host}}/api/system/dict/data HTTP/1.1
+Authorization: Bearer {{token}}
+
 ###
 GET {{host}}/api/system/dict/data/type/sys_normal_disable HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+GET {{host}}/api/system/dict/type/optionselect HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+GET {{host}}/api/system/dict/data?pageNum=1&pageSize=10&dict_type=sys_user_sex HTTP/1.1
 Authorization: Bearer {{token}}
 
 
