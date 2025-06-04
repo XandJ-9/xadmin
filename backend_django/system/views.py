@@ -453,7 +453,9 @@ class SystemDictTypeViewSet(CustomModelViewSet):
         serializer = self.get_serializer(self.get_queryset(), many=True)
         return Response(serializer.data)
 
-
+    @action(detail=False, methods=['delete'])
+    def refreshCache(self, request):
+        return Response({"message":"refresh"})
 
 class SystemDictDataViewSet(CustomModelViewSet):
     queryset = SystemDictData.objects.all()

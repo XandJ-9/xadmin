@@ -89,12 +89,14 @@
       <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange">
          <el-table-column type="selection" width="55" align="center" />
          <el-table-column label="字典编码" align="center" prop="id" />
+         <!--
          <el-table-column label="字典标签" align="center" prop="dictLabel">
             <template #default="scope">
-               <span v-if="(scope.row.listClass == '' || scope.row.listClass == 'default') && (scope.row.cssClass == '' || scope.row.cssClass == null)">{{ scope.row.dictLabel }}</span>
-               <el-tag v-else :type="scope.row.listClass == 'primary' ? '' : scope.row.listClass" :class="scope.row.cssClass">{{ scope.row.dictLabel }}</el-tag>
+               <span v-if="(scope.row.list_class == '' || scope.row.list_class == 'default') && (scope.row.css_class == '' || scope.row.css_class == null)">{{ scope.row.dictLabel }}</span>
+               <el-tag v-else :type="scope.row.list_class == 'primary' ? '' : scope.row.list_class" :class="scope.row.css_class">{{ scope.row.dictLabel }}</el-tag>
             </template>
          </el-table-column>
+        -->
          <el-table-column label="字典键值" align="center" prop="dict_value" />
          <el-table-column label="字典排序" align="center" prop="dict_sort" />
          <el-table-column label="状态" align="center" prop="status">
