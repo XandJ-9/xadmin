@@ -44,7 +44,7 @@
                @click="toggleExpandAll"
             >展开/折叠</el-button>
          </el-col>
-         <right-toolbar v-model:showSearch="showSearch" @queryTable="getList"></right-toolbar>
+         <right-toolbar v-model="showSearch" @queryTable="getList"></right-toolbar>
       </el-row>
 
       <el-table
@@ -441,8 +441,8 @@ function submitForm() {
 
 /** 删除按钮操作 */
 function handleDelete(row) {
-  proxy.$modal.confirm('是否确认删除名称为"' + row.menuName + '"的数据项?').then(function() {
-    return delMenu(row.menuId)
+  proxy.$modal.confirm('是否确认删除名称为"' + row.menu_name + '"的数据项?').then(function() {
+    return delMenu(row.id)
   }).then(() => {
     getList()
     proxy.$modal.msgSuccess("删除成功")

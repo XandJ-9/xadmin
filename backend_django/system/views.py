@@ -303,6 +303,9 @@ class MenuViewSet(CustomModelViewSet):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
     # permission_classes = [IsAdminUser]
+    filter_fields=['status','menu_name']
+    filter_backends = [SearchFilterBackend]
+
 
     def get_permissions(self):
         '''
@@ -316,17 +319,23 @@ class MenuViewSet(CustomModelViewSet):
                 roles = Role.objects.filter(id__in=self.request.user.user_roles.values_list('role_id', flat=True))
                 return [HasRolePermission(allowed_roles = [role.role_key for role in roles])]
         return [IsAdminUser()]
-    
 
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user, updator=self.request.user)
 
-    @action(detail=False, methods=['get'])
-    def all(self, request):
-        # 获取所有菜单
-        queryset = Menu.objects.all().order_by('order_num')
-        serializer = self.get_serializer(queryset, many=True)
-        return Response(serializer.data)
+    # @action(detail=False, methods=['get'])
+    # def all(self, request):
+    #     # 获取所有菜单
+    #     queryset = Menu.objects.all().order_by('order_num')
+    #     serializer = self.get_serializer(queryset, many=True)
+    #     return Response(serializer.data)
+
+    def list(self, request, *args, **kwargs):
+        # return super().list(request, *args, **kwargs)
+        queryset = self.filter_queryset(self.get_queryset())
+        serizlizer = self.get_serializer(queryset, many = True)
+        return Response(serizlizer.data)
+
 
     @action(detail=False, methods=['get'])
     def user_menus(self, request):
@@ -436,10 +445,23 @@ class SystemConfigViewSet(CustomModelViewSet):
 class SystemDictTypeViewSet(CustomModelViewSet):
     queryset = SystemDictType.objects.all()
     serializer_class = SystemDictTypeSerializer
+    filter_fields = ['status', 'dict_name','dict_type']
+    filter_backends = [SearchFilterBackend]
+
+    @action(detail=False, methods=['get'], url_path='optionselect')
+    def optionselect(self, request):
+        serializer = self.get_serializer(self.get_queryset(), many=True)
+        return Response(serializer.data)
+
+    @action(detail=False, methods=['delete'])
+    def refreshCache(self, request):
+        return Response({"message":"refresh"})
 
 class SystemDictDataViewSet(CustomModelViewSet):
     queryset = SystemDictData.objects.all()
     serializer_class = SystemDictDataSerializer
+    filter_fields = ['dict_type']
+    filter_backends = [SearchFilterBackend]
 
     @action(detail=False, methods=['get'])
     def get_data_by_type(self, request,dict_type=None):

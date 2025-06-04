@@ -1,13 +1,13 @@
 <template>
    <div class="app-container">
       <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch">
-         <el-form-item label="字典名称" prop="dictType">
-            <el-select v-model="queryParams.dictType" style="width: 200px">
+         <el-form-item label="字典名称" prop="dict_type">
+            <el-select v-model="queryParams.dict_type" style="width: 200px">
                <el-option
                   v-for="item in typeOptions"
-                  :key="item.dictId"
-                  :label="item.dictName"
-                  :value="item.dictType"
+                  :key="item.id"
+                  :label="item.dict_name"
+                  :value="item.dict_type"
                />
             </el-select>
          </el-form-item>
@@ -88,24 +88,26 @@
 
       <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange">
          <el-table-column type="selection" width="55" align="center" />
-         <el-table-column label="字典编码" align="center" prop="dictCode" />
+         <el-table-column label="字典编码" align="center" prop="id" />
+         <!--
          <el-table-column label="字典标签" align="center" prop="dictLabel">
             <template #default="scope">
-               <span v-if="(scope.row.listClass == '' || scope.row.listClass == 'default') && (scope.row.cssClass == '' || scope.row.cssClass == null)">{{ scope.row.dictLabel }}</span>
-               <el-tag v-else :type="scope.row.listClass == 'primary' ? '' : scope.row.listClass" :class="scope.row.cssClass">{{ scope.row.dictLabel }}</el-tag>
+               <span v-if="(scope.row.list_class == '' || scope.row.list_class == 'default') && (scope.row.css_class == '' || scope.row.css_class == null)">{{ scope.row.dictLabel }}</span>
+               <el-tag v-else :type="scope.row.list_class == 'primary' ? '' : scope.row.list_class" :class="scope.row.css_class">{{ scope.row.dictLabel }}</el-tag>
             </template>
          </el-table-column>
-         <el-table-column label="字典键值" align="center" prop="dictValue" />
-         <el-table-column label="字典排序" align="center" prop="dictSort" />
+        -->
+         <el-table-column label="字典键值" align="center" prop="dict_value" />
+         <el-table-column label="字典排序" align="center" prop="dict_sort" />
          <el-table-column label="状态" align="center" prop="status">
             <template #default="scope">
                <dict-tag :options="sys_normal_disable" :value="scope.row.status" />
             </template>
          </el-table-column>
          <el-table-column label="备注" align="center" prop="remark" :show-overflow-tooltip="true" />
-         <el-table-column label="创建时间" align="center" prop="createTime" width="180">
+         <el-table-column label="创建时间" align="center" prop="create_time" width="180">
             <template #default="scope">
-               <span>{{ parseTime(scope.row.createTime) }}</span>
+               <span>{{ parseTime(scope.row.create_time) }}</span>
             </template>
          </el-table-column>
          <el-table-column label="操作" align="center" width="160" class-name="small-padding fixed-width">
@@ -128,22 +130,22 @@
       <el-dialog :title="title" v-model="open" width="500px" append-to-body>
          <el-form ref="dataRef" :model="form" :rules="rules" label-width="80px">
             <el-form-item label="字典类型">
-               <el-input v-model="form.dictType" :disabled="true" />
+               <el-input v-model="form.dict_type" :disabled="true" />
             </el-form-item>
             <el-form-item label="数据标签" prop="dictLabel">
                <el-input v-model="form.dictLabel" placeholder="请输入数据标签" />
             </el-form-item>
             <el-form-item label="数据键值" prop="dictValue">
-               <el-input v-model="form.dictValue" placeholder="请输入数据键值" />
+               <el-input v-model="form.dict_value" placeholder="请输入数据键值" />
             </el-form-item>
             <el-form-item label="样式属性" prop="cssClass">
-               <el-input v-model="form.cssClass" placeholder="请输入样式属性" />
+               <el-input v-model="form.css_class" placeholder="请输入样式属性" />
             </el-form-item>
             <el-form-item label="显示排序" prop="dictSort">
-               <el-input-number v-model="form.dictSort" controls-position="right" :min="0" />
+               <el-input-number v-model="form.dict_sort" controls-position="right" :min="0" />
             </el-form-item>
             <el-form-item label="回显样式" prop="listClass">
-               <el-select v-model="form.listClass">
+               <el-select v-model="form.list_class">
                   <el-option
                      v-for="item in listClassOptions"
                      :key="item.value"
@@ -210,7 +212,7 @@ const data = reactive({
   queryParams: {
     pageNum: 1,
     pageSize: 10,
-    dictType: undefined,
+    dict_type: undefined,
     dictLabel: undefined,
     status: undefined
   },
@@ -235,7 +237,7 @@ function getTypes(dictId) {
 /** 查询字典类型列表 */
 function getTypeList() {
   getDictOptionselect().then(response => {
-    typeOptions.value = response.data
+    typeOptions.value = response
   })
 }
 
@@ -243,7 +245,7 @@ function getTypeList() {
 function getList() {
   loading.value = true
   listData(queryParams.value).then(response => {
-    dataList.value = response.rows
+    dataList.value = response.data
     total.value = response.total
     loading.value = false
   })
