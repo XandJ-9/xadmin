@@ -97,6 +97,11 @@ class Post(BaseModel):
     status = models.CharField(max_length=1, default='0', choices=POST_STATUS_CHOICES, verbose_name='状态')
     remark = models.CharField(max_length=500, null=True, blank=True, verbose_name='备注')
 
+    class Meta:
+        verbose_name = '岗位'
+        verbose_name_plural = verbose_name
+        db_table = 'sys_post'
+
 class User(AbstractUser, BaseModel):
     """自定义用户模型"""
     USER_STATUS_CHOICES = [
