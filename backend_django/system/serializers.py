@@ -57,14 +57,14 @@ class DeptSerializer(BizModelSerializer):
         read_only_fields = ['id', 'create_time']
 
 class UserSerializer(BizModelSerializer):
-    dept_id = serializers.IntegerField(write_only=True, required=False)
+    user_id = serializers.IntegerField(source="id",read_only=True,required=False)
+    dept_id = serializers.IntegerField(source="dept.id",read_only=True,required=False)
     password = serializers.CharField(write_only=True, required=False)
-    create_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True, source='created_at')
     dept = DeptSerializer(read_only=True)
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'password', 'dept', 'create_time','avatar','status','dept_id']
+        fields = ['user_id', 'username','nickname', 'sex','password', 'dept', 'create_time','avatar','status','phonenumber','dept_id']
         # fields = '__all__'
         read_only_fields = ['id', 'create_time']
 

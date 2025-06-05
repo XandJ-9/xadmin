@@ -47,9 +47,9 @@ const useUserStore = defineStore(
             } else {
               this.roles = ['ROLE_DEFAULT']
             }
-            this.id = user.userId
-            this.name = user.userName
-            this.nickName = user.nickName
+            this.id = user.user_id
+            this.name = user.username
+            this.nickname = user.nickname
             this.avatar = avatar
             resolve(res)
           }).catch(error => {
@@ -67,6 +67,7 @@ const useUserStore = defineStore(
             removeToken()
             resolve()
           }).catch(error => {
+            removeToken()
             reject(error)
           })
         })

@@ -42,6 +42,9 @@ class Command(BaseCommand):
         # 初始化部门数据
         self._init_dept(force)
 
+        # 初始化岗位
+        self._init_posts(force)
+        
         # 初始化字典表
         self._init_dict_type(force)
         self._init_dict_data(force)
@@ -50,14 +53,6 @@ class Command(BaseCommand):
         # 初始化字典类型
         self._init_dict_type(force)
         self._init_dict_data(force)
-        # 初始化角色关联菜单
-        # self._init_role_menu(force)
-
-        # # 初始化角色部门关系
-        # self._init_role_dept(force)
-
-        # # 初始化示例数据源
-        # self._init_sample_datasource(force)
 
         self.stdout.write(self.style.SUCCESS('系统数据初始化完成！'))
     
@@ -83,6 +78,22 @@ class Command(BaseCommand):
             return timezone.now()
         return value
 
+    def _init_posts(self, force):
+        self.stdout.write('初始化岗位数据...')
+        post_data = self._load_json_data('sys_post.json')
+        for post_item in post_data['sys_post']:
+            post_id = post_item.pop('post_id')
+            post, created = Post.objects.update_or_create(
+                id=post_id,
+                defaults=post_item
+            )
+            if created:
+                self.stdout.write(self.style.SUCCESS(f'创建岗位: {post.post_name}'))
+            elif force:
+                Post.objects.filter(id=post_id).update(**post_item)
+                self.stdout.write(self.style.WARNING(f'更新岗位: {post.post_name}'))
+            else:
+                self.stdout.write(f'岗位已存在: {post.post_name}')
     def _init_dict_data(self, force):
         """初始化字典表"""
         self.stdout.write('初始化字典数据表')

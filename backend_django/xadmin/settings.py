@@ -113,9 +113,6 @@ DATABASES = {
 # 数据库路由设置
 # DATABASE_ROUTERS = ['xadmin.db_router.XAdminDBRouter']
 
-# 数据库表前缀
-DATABASE_TABLE_PREFIX = 'xa'
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.0/ref/settings/#auth-password-validators
