@@ -327,7 +327,6 @@ function getList() {
   listMenu(queryParams.value).then(response => {
     menuList.value = proxy.handleTree(response, "id","parent")
     loading.value = false
-    console.log(menuList.value)
   })
 }
 
