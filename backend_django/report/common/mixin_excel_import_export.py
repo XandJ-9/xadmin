@@ -1,9 +1,8 @@
 from rest_framework.decorators import action
-from django.http.response import HttpResponseNotFound, HttpResponse,HttpResponseServerError
-from urllib.parse import quote
+from django.http.response import HttpResponseNotFound,HttpResponseServerError
 from django.conf import settings
 
-from utils.util_response import DetailResponse
+from utils.util_response import DetailResponse, ExcelResponse
 from ..models import *
 from .operation_excel import generate_interface_workbook, handle_import_interface, handle_import_tableinfo
 from hashlib import md5
@@ -12,14 +11,7 @@ import os,logging
 
 logger = logging.getLogger('django')
 
-class ExcelResponse(HttpResponse):
-    def __init__(self, *args, **kwargs):
-        filename = kwargs.pop('filename', 'export.xlsx')
-        super().__init__(*args, **kwargs)
-        self.headers['Content-Type'] = 'application/msexcel'
-        self.headers['content-disposition'] =  f'attachment;filename={quote(str(f"{filename}"))}'
-        # # cross-origin跨域请求需要设置Access-Control-Expose-Headers响应信息
-        self.headers['Access-Control-Expose-Headers'] = 'Content-Disposition'
+
 
 class ExcelImportExportMixin:
 
