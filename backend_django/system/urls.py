@@ -4,8 +4,8 @@ from .views import *
 
 router = DefaultRouter(trailing_slash=False)
 router.register('dept', DeptViewSet)
-router.register('users', UserViewSet)
-router.register('roles', RoleViewSet)
+router.register('user', UserViewSet)
+router.register('role', RoleViewSet)
 router.register('menu', MenuViewSet)
 router.register('configs', SystemConfigViewSet)
 router.register('dict/type', SystemDictTypeViewSet, basename='system-dict-type')

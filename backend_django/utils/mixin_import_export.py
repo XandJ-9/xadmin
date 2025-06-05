@@ -1,7 +1,8 @@
 from rest_framework.decorators import action
+from .util_response import ExcelResponse, ErrorResponse, DetailResponse
+from openpyxl import Workbook
 
-
-class Mixin_Export():
+class ExcelImportExportMixin():
   '''
   导出数据
   '''
@@ -14,6 +15,10 @@ class Mixin_Export():
     try:
       queryset = self.filter_queryset(self.get_queryset())
       serializer = self.get_serializer(queryset, many=True)
-      return SuccessResponse(data=serializer.data)
+      wb = Workbook()
+      st = wb.sheetnames[0]
+      resp = ExcelResponse()
+      wb.save(resp)
+      return resp
     except Exception as e:
       return ErrorResponse(msg=str(e))

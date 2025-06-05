@@ -5,12 +5,13 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny
 from system.permissions import IsOwnerOrAdmin,IsAdminUser, HasRolePermission
 from .util_response import SuccessResponse, ErrorResponse, DetailResponse
+from .mixin_import_export import ExcelImportExportMixin
 import logging
 
 logger = logging.getLogger('django')
 
 
-class CustomModelViewSet(ModelViewSet):
+class CustomModelViewSet(ExcelImportExportMixin,ModelViewSet):
     values_queryset = None
     ordering_fields = '__all__'
     create_serializer_class = None
