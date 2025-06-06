@@ -168,7 +168,6 @@ class ImportSerializerMixin:
         ws1 = wb.create_sheet("data", 1)
         ws1.sheet_state = "hidden"
         ws = wb.active
-        import_field_dict = {}
         header_data = ["序号","更新主键(勿改)"]
         hidden_header = ["#","id"]
         #----设置选项----
@@ -228,7 +227,7 @@ class ImportSerializerMixin:
                     result_column_width = self.get_string_len(val)
                     if h_index != 0 and result_column_width > df_len_max[h_index]:
                         df_len_max[h_index] = result_column_width
-            ws.append([index+1,*results_list])
+            ws.append([str(index+1),*results_list])
             column += 1
         # 　更新列宽
         for index, width in enumerate(df_len_max):

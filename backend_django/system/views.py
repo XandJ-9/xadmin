@@ -81,6 +81,7 @@ class UserViewSet(CustomModelViewSet):
         "username": "用户名称",
         "email": "用户邮箱",
         "phonenumber": "手机号码",
+        "create_time":  "创建时间",
         "sex": {
             "title": "用户性别",
             "choices": {
