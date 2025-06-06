@@ -21,5 +21,3 @@ urlpatterns = [
     path('getRouters', MenuViewSet.as_view({'get': 'getRouters',})),
     path('system/dict/data/type/<str:dict_type>', SystemDictDataViewSet.as_view({'get': 'get_data_by_type',}))
 ]
-
-print("system urls: ")

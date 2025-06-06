@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
-from urllib.parse import quote
-from django.http import HttpResponse
-from rest_framework.response import Response
+from __future__ import absolute_import, unicode_literals
 
+from rest_framework.response import Response
 
 class SuccessResponse(Response):
     def __init__(self, data=None, msg='success', status=None, template_name=None, headers=None, exception=False,
@@ -39,19 +38,10 @@ class ErrorResponse(Response):
     (1)默认错误码返回400, 也可以指定其他返回码:ErrorResponse(code=xxx)
     """
 
-    def __init__(self, data=None, msg='error', code=400, status=None, template_name=None, headers=None,
+    def __init__(self, data=None, msg='error', code=None, status=None, template_name=None, headers=None,
                  exception=False, content_type=None):
         std_data = {
-            "code": code,
             "msg": msg
         }
         super().__init__(std_data, status, template_name, headers, exception, content_type)
 
-class ExcelResponse(HttpResponse):
-    def __init__(self, *args, **kwargs):
-        filename = kwargs.pop('filename', 'export.xlsx')
-        super().__init__(*args, **kwargs)
-        self.headers['Content-Type'] = 'application/msexcel'
-        self.headers['content-disposition'] =  f'attachment;filename={quote(str(f"{filename}"))}'
-        # # cross-origin跨域请求需要设置Access-Control-Expose-Headers响应信息
-        self.headers['Access-Control-Expose-Headers'] = 'Content-Disposition'

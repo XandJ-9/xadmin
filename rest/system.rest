@@ -47,17 +47,17 @@ Authorization: Bearer {{token}}
 
 ###
 # 用户请求
-GET {{host}}/api/system/users HTTP/1.1
+GET {{host}}/api/system/user HTTP/1.1
 Authorization: Bearer {{token}}
 
 ###
 # 用户详情
-GET {{host}}/api/system/users/1 HTTP/1.1
+GET {{host}}/api/system/user/1 HTTP/1.1
 Authorization: Bearer {{token}}
 
 ###
 # 添加用户
-POST {{host}}/api/system/users HTTP/1.1
+POST {{host}}/api/system/user HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -68,7 +68,7 @@ Authorization: Bearer {{token}}
 
 ###
 # 更新用户
-PUT {{host}}/api/system/users/42 HTTP/1.1
+PUT {{host}}/api/system/user/42 HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
@@ -80,13 +80,23 @@ Authorization: Bearer {{token}}
 
 ###
 # 删除用户
-DELETE {{host}}/api/system/users/43 HTTP/1.1
+DELETE {{host}}/api/system/user/43 HTTP/1.1
 Authorization: Bearer {{token}}
 
 
 ###
 # 搜索用户
-GET {{host}}/api/system/users?pageNum=1&pageSize=10&deptId=10 HTTP/1.1
+GET {{host}}/api/system/user?pageNum=1&pageSize=10&deptId=10 HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+# 导出用户数据
+POST {{host}}/api/system/user/export HTTP/1.1
+Authorization: Bearer {{token}}
+
+### 
+# 导出模板
+POST {{host}}/api/system/user/importTemplate HTTP/1.1
 Authorization: Bearer {{token}}
 
 ###
@@ -142,5 +152,5 @@ GET {{host}}/api/system/dict/data?pageNum=1&pageSize=10&dict_type=sys_user_sex H
 Authorization: Bearer {{token}}
 
 ###
-GET {{host}}/api/system/users/deptTree HTTP/1.1
+GET {{host}}/api/system/user/deptTree HTTP/1.1
 Authorization: Bearer {{token}}

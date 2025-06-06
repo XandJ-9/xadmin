@@ -8,7 +8,7 @@ from django.utils.crypto import get_random_string
 from django.db.models import Q
 from PIL import Image, ImageDraw, ImageFont
 from .models import Dept,User, Role, Menu, SystemConfig, Captcha, UserRole, SystemDictType,SystemDictData
-from. serializers import *
+from.serializers import *
 from .permissions import IsAdminUser, IsOwnerOrAdmin,HasRolePermission
 from .authentication import get_user_from_token,get_token_from_request
 
@@ -73,6 +73,29 @@ class UserViewSet(CustomModelViewSet):
     serializer_class = UserSerializer
     filter_fields = ['status','username','phonenumber']
     filter_backends = [SearchFilterBackend]
+    export_field_label = {'username':'姓名','nickname':'昵称','phonenumber':'手机号码','dept_name':'部门名称'}
+    export_serializer_class = UserExportSerializer
+    import_serializer_class = UserImportSerializer
+    import_field_dict = {
+        "nickname": "昵称",
+        "username": "用户名称",
+        "email": "用户邮箱",
+        "phonenumber": "手机号码",
+        "sex": {
+            "title": "用户性别",
+            "choices": {
+                "data": {"未知": 2, "男": 1, "女": 0},
+            }
+        },
+        "is_active": {
+            "title": "帐号状态",
+            "choices": {
+                "data": {"启用": True, "禁用": False},
+            }
+        },
+        "dept": {"title": "部门", "choices": {"queryset": Dept.objects.filter(status=True), "values_name": "dept_name"}},
+        "role": {"title": "角色", "choices": {"queryset": Role.objects.filter(status=True), "values_name": "role_name"}},
+    }
 
     def filter_queryset(self, queryset):
         '''
@@ -111,7 +134,6 @@ class UserViewSet(CustomModelViewSet):
         # serializer.save(dept_id=dept_id)
         serializer.validated_data['dept_id'] = dept_id
         super().perform_create(serializer)
-        
 
     @action(detail=False, methods=['get'])
     def captchaImage(self, request):

@@ -1,5 +1,6 @@
-from rest_framework.utils.serializer_helpers import BindingDict
+from rest_framework.request import Request
 from rest_framework import serializers
+from rest_framework.fields import empty
 from .models import User,Role,Menu, SystemConfig, Dept, SystemDictType,SystemDictData
 from utils.serializer import set_choice_field_internal_value, set_choice_field_representation
 
@@ -27,7 +28,9 @@ class BizModelSerializer(serializers.ModelSerializer):
     updator_username = serializers.CharField(source='updator.username', read_only=True)
     update_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True, source='updated_at')
     
-
+    def __init__(self, instance=None, data=empty, request=None, **kwargs):
+            super().__init__(instance, data, **kwargs)
+            self.request: Request = request or self.context.get("request", None)
 
 class SystemDictTypeSerializer(BizModelSerializer):
     create_time = serializers.DateTimeField(source='created_at',format='%Y-%m-%d %H:%M:%S', read_only=True)
@@ -56,6 +59,17 @@ class DeptSerializer(BizModelSerializer):
         fields = "__all__"
         read_only_fields = ['id', 'create_time']
 
+
+class UserExportSerializer(BizModelSerializer):
+    dept_name = serializers.CharField(source="dept.name", read_only=True)
+    class Meta:
+        model = User 
+        fields = ['username','nickname','phonenumber','email','sex','status','dept_name','create_time']
+class UserImportSerializer(BizModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id','username','nickname','phonenumber','email','sex','status','dept_id','create_time']
+        
 class UserSerializer(BizModelSerializer):
     user_id = serializers.IntegerField(source="id",read_only=True,required=False)
     dept_id = serializers.IntegerField(source="dept.id",read_only=True,required=False)
