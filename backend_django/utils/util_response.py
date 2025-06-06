@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import absolute_import, unicode_literals
 
+from urllib.parse import quote
+from django.http import HttpResponse
 from rest_framework.response import Response
 
 class SuccessResponse(Response):
@@ -45,3 +47,14 @@ class ErrorResponse(Response):
         }
         super().__init__(std_data, status, template_name, headers, exception, content_type)
 
+<<<<<<< HEAD
+=======
+class ExcelResponse(HttpResponse):
+    def __init__(self, *args, **kwargs):
+        filename = kwargs.pop('filename', 'export.xlsx')
+        super().__init__(*args, **kwargs)
+        self.headers['Content-Type'] = 'application/msexcel'
+        self.headers['content-disposition'] =  f'attachment;filename={quote(str(f"{filename}"))}'
+        # # cross-origin跨域请求需要设置Access-Control-Expose-Headers响应信息
+        self.headers['Access-Control-Expose-Headers'] = 'Content-Disposition'
+>>>>>>> 00428591ab5b1a8bd2060fa6ca606ce24f4363ba
