@@ -206,10 +206,10 @@ class ImportSerializerMixin:
         for index, validation_data in enumerate(validation_data_dict.values()):
             for inx, ele in enumerate(validation_data):
                 ws1[f"{get_column_letter(index + 1)}{inx + 2}"] = ele
-        #--------
+        # --------
         df_len_max = [self.get_string_len(ele) for ele in header_data]
-        row = get_column_letter(len(hidden_header) + 1)
-        column = 1
+        column = get_column_letter(len(hidden_header))
+        row = 1
         ws.append(header_data)
         #  写入已经存在的数据
         for index, results in enumerate(data):
@@ -228,11 +228,11 @@ class ImportSerializerMixin:
                     if h_index != 0 and result_column_width > df_len_max[h_index]:
                         df_len_max[h_index] = result_column_width
             ws.append([str(index+1),*results_list])
-            column += 1
+            row += 1
         # 　更新列宽
         for index, width in enumerate(df_len_max):
             ws.column_dimensions[get_column_letter(index + 1)].width = width
-        tab = Table(displayName="Table", ref=f"A1:{row}{column}")  # 名称管理器
+        tab = Table(displayName="Table", ref=f"A1:{column}{row}")  # 名称管理器
         style = TableStyleInfo(
             name="TableStyleLight11",
             showFirstColumn=True,

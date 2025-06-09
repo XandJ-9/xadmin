@@ -6,6 +6,9 @@ from utils.serializer import set_choice_field_internal_value, set_choice_field_r
 
 
 class MixinSerializer():
+    '''
+     将choice字段的value值转换成对应的label值
+    '''
     def to_internal_value(self, data):
         ## 这里有一点迷惑，为什么在这里可以获取到self.fields中的key值，
         ## 在set_choice_field_internal_value方法中却不能这样遍历 self.fields的值到field_name
@@ -65,7 +68,7 @@ class UserExportSerializer(BizModelSerializer):
     class Meta:
         model = User 
         fields = ['username','nickname','phonenumber','email','sex','status','dept_name','create_time']
-class UserImportSerializer(BizModelSerializer):
+class UserImportSerializer(MixinSerializer,BizModelSerializer):
     class Meta:
         model = User
         fields = ['id','username','nickname','phonenumber','email','sex','status','dept_id','create_time']
