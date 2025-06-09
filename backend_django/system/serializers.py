@@ -2,27 +2,8 @@ from rest_framework.request import Request
 from rest_framework import serializers
 from rest_framework.fields import empty
 from .models import User,Role,Menu, SystemConfig, Dept, SystemDictType,SystemDictData
-from utils.serializer import set_choice_field_internal_value, set_choice_field_representation
+from utils.serializer import ChoiceFieldSerializerMixin, CamelFieldSerializerMixin
 
-
-class MixinSerializer():
-    '''
-     将choice字段的value值转换成对应的label值
-    '''
-    def to_internal_value(self, data):
-        ## 这里有一点迷惑，为什么在这里可以获取到self.fields中的key值，
-        ## 在set_choice_field_internal_value方法中却不能这样遍历 self.fields的值到field_name
-        for field_name in self.fields:
-            if field_name not in data.keys():
-                continue
-            set_choice_field_internal_value(self.fields, field_name, data)
-        return super().to_internal_value(data)
-
-    def to_representation(self, instance):
-        for field_name in self.fields:
-            set_choice_field_representation(self.fields,field_name,instance)
-        return super().to_representation(instance)
-    
 
 class BizModelSerializer(serializers.ModelSerializer):
     """adding creator and updator fields to serializers."""
@@ -55,26 +36,28 @@ class RoleSerializer(BizModelSerializer):
         fields = ['roleId', 'roleKey','roleName', 'create_time','status']
         read_only_fields = ['id', 'create_time']
 
-class DeptSerializer(BizModelSerializer):
-    create_time = serializers.DateTimeField(source="created_at",format='%Y-%m-%d %H:%M:%S', read_only=True)
-
+class DeptSerializer(CamelFieldSerializerMixin,BizModelSerializer):
+    deptId = serializers.IntegerField(source='id', read_only=True)
+    deptName = serializers.CharField(source='dept_name',read_only=True)
+    orderNum = serializers.IntegerField(source='order_num',read_only=True)
     class Meta:
         model = Dept
-        fields = "__all__"
-        read_only_fields = ['id', 'create_time']
-
-
+        # fields = '__all__'
+        fields = ['id','deptId', 'deptName', 'orderNum', 'status','parent']
+        read_only_fields = ['id', 'create_time','update_time','creator','updator']
+    
 class UserExportSerializer(BizModelSerializer):
     dept_name = serializers.CharField(source="dept.dept_name", read_only=True)
     class Meta:
         model = User 
         fields = ['username','nickname','phonenumber','email','sex','status','dept_name','create_time']
-class UserImportSerializer(MixinSerializer,BizModelSerializer):
+
+class UserImportSerializer(ChoiceFieldSerializerMixin,BizModelSerializer):
     dept_name = serializers.CharField(source="dept.dept_name", read_only=True)
     class Meta:
         model = User
         fields = ['id','username','nickname','phonenumber','email','sex','status','dept_name','create_time']
-        
+
 class UserSerializer(BizModelSerializer):
     user_id = serializers.IntegerField(source="id",read_only=True,required=False)
     dept_id = serializers.IntegerField(source="dept.id",read_only=True,required=False)
@@ -115,7 +98,6 @@ class MenuSerializer(BizModelSerializer):
         fields = "__all__"
         # exclude = ['creator','updator','created_at', 'updated_at']
         read_only_fields = ['id', 'created_at', 'updated_at']
-    
 
 class SystemConfigSerializer(BizModelSerializer):
     creator_info = UserSerializer(source='creator', read_only=True)

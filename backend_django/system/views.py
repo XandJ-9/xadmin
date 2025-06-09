@@ -8,7 +8,7 @@ from django.utils.crypto import get_random_string
 from django.db.models import Q
 from PIL import Image, ImageDraw, ImageFont
 from .models import Dept,User, Role, Menu, SystemConfig, Captcha, UserRole, SystemDictType,SystemDictData
-from.serializers import *
+from .serializers import *
 from .permissions import IsAdminUser, IsOwnerOrAdmin,HasRolePermission
 from .authentication import get_user_from_token,get_token_from_request
 
@@ -18,7 +18,7 @@ import logging, uuid
 
 logger = logging.getLogger('django')
 
-class StatusMixin:
+class SystemViewMixin:
 
     @action(detail=False, methods=['put'])
     def changeStatus(self, request, pk=None):
@@ -36,8 +36,13 @@ class DeptViewSet(CustomModelViewSet):
     queryset = Dept.objects.all()
     serializer_class = DeptSerializer
     # permission_classes = [IsAdminUser]
+    def list(self, request, *args, **kwargs):
+      # return super().list(request, *args, **kwargs)
+      queryset = self.filter_queryset(self.get_queryset())
+      serizlizer = self.get_serializer(queryset, many = True)
+      return Response(serizlizer.data)
 
-class RoleViewSet(StatusMixin,CustomModelViewSet):
+class RoleViewSet(SystemViewMixin,CustomModelViewSet):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
     # permission_classes = [IsAdminUser]
@@ -82,7 +87,7 @@ class RoleViewSet(StatusMixin,CustomModelViewSet):
         
         return Response({'menu_ids': menu_ids}, status=status.HTTP_200_OK)
 
-class UserViewSet(StatusMixin,CustomModelViewSet):
+class UserViewSet(SystemViewMixin,CustomModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     filter_fields = ['status','username','phonenumber']
@@ -320,7 +325,6 @@ class UserViewSet(StatusMixin,CustomModelViewSet):
         
         dept_tree = build_tree(serializer.data)
         return Response(dept_tree, status=status.HTTP_200_OK)
-
 
 class MenuViewSet(CustomModelViewSet):
     queryset = Menu.objects.all()

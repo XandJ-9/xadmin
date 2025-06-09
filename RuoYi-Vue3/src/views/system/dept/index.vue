@@ -55,8 +55,8 @@
          :default-expand-all="isExpandAll"
          :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
       >
-         <el-table-column prop="dept_name" label="部门名称" width="260"></el-table-column>
-         <el-table-column prop="order_num" label="排序" width="200"></el-table-column>
+         <el-table-column prop="deptName" label="部门名称" width="260"></el-table-column>
+         <el-table-column prop="orderNum" label="排序" width="200"></el-table-column>
          <el-table-column prop="status" label="状态" width="100">
             <template #default="scope">
                <dict-tag :options="sys_normal_disable" :value="scope.row.status" />
@@ -176,7 +176,7 @@ const { queryParams, form, rules } = toRefs(data)
 function getList() {
   loading.value = true
   listDept(queryParams.value).then(response => {
-    deptList.value = proxy.handleTree(response.data, "id")
+    deptList.value = proxy.handleTree(response, "deptId", "parent")
     loading.value = false
   })
 }
@@ -217,7 +217,7 @@ function resetQuery() {
 function handleAdd(row) {
   reset()
   listDept().then(response => {
-    deptOptions.value = proxy.handleTree(response.data, "deptId")
+    deptOptions.value = proxy.handleTree(response, "deptId", "parent")
   })
   if (row != undefined) {
     form.value.parentId = row.deptId
