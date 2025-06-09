@@ -47,11 +47,12 @@ class SystemDictDataSerializer(BizModelSerializer):
         fields = "__all__"
 
 class RoleSerializer(BizModelSerializer):
-    create_time = serializers.DateTimeField(source='created_at',format='%Y-%m-%d %H:%M:%S', read_only=True)
-
+    roleId = serializers.IntegerField(source='id', read_only=True) 
+    roleKey = serializers.CharField(source='role_key', read_only=True)
+    roleName =  serializers.CharField(source='role_name', read_only=True)
     class Meta:
         model = Role
-        fields = ['id', 'role_name','role_key', 'create_time']
+        fields = ['roleId', 'roleKey','roleName', 'create_time','status']
         read_only_fields = ['id', 'create_time']
 
 class DeptSerializer(BizModelSerializer):

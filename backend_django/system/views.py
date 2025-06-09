@@ -18,12 +18,26 @@ import logging, uuid
 
 logger = logging.getLogger('django')
 
+class StatusMixin:
+
+    @action(detail=False, methods=['put'])
+    def changeStatus(self, request, pk=None):
+        model = self.queryset.model
+        pk = request.data.get(f'{model.__name__.lower()}Id')
+        # 使用queryset.update方法无法使的时间字段自动更新
+        # model.objects.filter(id=pk).update(status=request.data.get('status'))
+        # 使用model.save方法可以使时间字段自动更新
+        obj = model.objects.get(id=pk)
+        obj.status = request.data.get('status')
+        obj.save()
+        return Response({'status': 'success'}, status=status.HTTP_200_OK)
+
 class DeptViewSet(CustomModelViewSet):
     queryset = Dept.objects.all()
     serializer_class = DeptSerializer
     # permission_classes = [IsAdminUser]
 
-class RoleViewSet(CustomModelViewSet):
+class RoleViewSet(StatusMixin,CustomModelViewSet):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
     # permission_classes = [IsAdminUser]
@@ -68,7 +82,7 @@ class RoleViewSet(CustomModelViewSet):
         
         return Response({'menu_ids': menu_ids}, status=status.HTTP_200_OK)
 
-class UserViewSet(CustomModelViewSet):
+class UserViewSet(StatusMixin,CustomModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     filter_fields = ['status','username','phonenumber']
@@ -307,17 +321,6 @@ class UserViewSet(CustomModelViewSet):
         dept_tree = build_tree(serializer.data)
         return Response(dept_tree, status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=['put'], url_path='changeStatus')
-    def changeStatus(self, request):
-        """
-        修改用户状态
-        """
-        user_id = self.request.data.get('userId')
-        user_status = self.request.data.get('status')
-        user = User.objects.get(id=user_id)
-        user.status = user_status
-        user.save()
-        return Response({'message': '修改成功'}, status=status.HTTP_200_OK)
 
 class MenuViewSet(CustomModelViewSet):
     queryset = Menu.objects.all()
