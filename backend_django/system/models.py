@@ -68,8 +68,8 @@ class Role(BaseModel):
 
 class Dept(BaseModel):
     DEPT_CHOICES = [
-        ('1', '正常'),
-        ('0', '停用'),
+        ('0', '正常'),
+        ('1', '停用'),
     ]
 
     parent = models.ForeignKey('self', on_delete=models.CASCADE, related_name='children', null=True, blank=True, verbose_name='父部门')
@@ -105,8 +105,8 @@ class Post(BaseModel):
 class User(AbstractUser, BaseModel):
     """自定义用户模型"""
     USER_STATUS_CHOICES = [
-        ('0', '停用'),
-        ('1', '正常'),
+        ('0', '正常'),
+        ('1', '停用'),
     ]
     USER_TYPE_CHOICES = [
         ('00', '系统用户'),

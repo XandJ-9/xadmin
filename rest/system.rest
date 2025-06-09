@@ -68,14 +68,14 @@ Authorization: Bearer {{token}}
 
 ###
 # 更新用户
-PUT {{host}}/api/system/user/42 HTTP/1.1
+PUT {{host}}/api/system/user/45 HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "username": "newusesrname",
-  "password": "newpasssword",
-  "dept_id": 104
+  "username": "afaadz",
+  "password": "newpassggsword",
+  "dept_id": 103
 }
 
 ###
@@ -154,3 +154,21 @@ Authorization: Bearer {{token}}
 ###
 GET {{host}}/api/system/user/deptTree HTTP/1.1
 Authorization: Bearer {{token}}
+
+
+
+### 
+# 获取角色
+GET {{host}}/api/system/role HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+# 修改角色状态
+PUT {{host}}/api/system/role/changeStatus HTTP/1.1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "roleId": 2,
+    "status": "0"
+}

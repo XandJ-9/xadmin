@@ -6,6 +6,9 @@ from utils.serializer import set_choice_field_internal_value, set_choice_field_r
 
 
 class MixinSerializer():
+    '''
+     将choice字段的value值转换成对应的label值
+    '''
     def to_internal_value(self, data):
         ## 这里有一点迷惑，为什么在这里可以获取到self.fields中的key值，
         ## 在set_choice_field_internal_value方法中却不能这样遍历 self.fields的值到field_name
@@ -44,11 +47,12 @@ class SystemDictDataSerializer(BizModelSerializer):
         fields = "__all__"
 
 class RoleSerializer(BizModelSerializer):
-    create_time = serializers.DateTimeField(source='created_at',format='%Y-%m-%d %H:%M:%S', read_only=True)
-
+    roleId = serializers.IntegerField(source='id', read_only=True) 
+    roleKey = serializers.CharField(source='role_key', read_only=True)
+    roleName =  serializers.CharField(source='role_name', read_only=True)
     class Meta:
         model = Role
-        fields = ['id', 'role_name','role_key', 'create_time']
+        fields = ['roleId', 'roleKey','roleName', 'create_time','status']
         read_only_fields = ['id', 'create_time']
 
 class DeptSerializer(BizModelSerializer):
@@ -61,14 +65,15 @@ class DeptSerializer(BizModelSerializer):
 
 
 class UserExportSerializer(BizModelSerializer):
-    dept_name = serializers.CharField(source="dept.name", read_only=True)
+    dept_name = serializers.CharField(source="dept.dept_name", read_only=True)
     class Meta:
         model = User 
         fields = ['username','nickname','phonenumber','email','sex','status','dept_name','create_time']
-class UserImportSerializer(BizModelSerializer):
+class UserImportSerializer(MixinSerializer,BizModelSerializer):
+    dept_name = serializers.CharField(source="dept.dept_name", read_only=True)
     class Meta:
         model = User
-        fields = ['id','username','nickname','phonenumber','email','sex','status','dept_id','create_time']
+        fields = ['id','username','nickname','phonenumber','email','sex','status','dept_name','create_time']
         
 class UserSerializer(BizModelSerializer):
     user_id = serializers.IntegerField(source="id",read_only=True,required=False)

@@ -3,7 +3,7 @@ from django.http.response import HttpResponseNotFound,HttpResponseServerError
 from django.conf import settings
 
 from utils.excel_response import ExcelResponse
-from utils.util_response import DetailResponse, ExcelResponse
+from utils.util_response import DetailResponse
 from ..models import *
 from .operation_excel import generate_interface_workbook, handle_import_interface, handle_import_tableinfo
 from hashlib import md5
