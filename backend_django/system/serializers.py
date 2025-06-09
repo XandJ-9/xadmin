@@ -64,14 +64,15 @@ class DeptSerializer(BizModelSerializer):
 
 
 class UserExportSerializer(BizModelSerializer):
-    dept_name = serializers.CharField(source="dept.name", read_only=True)
+    dept_name = serializers.CharField(source="dept.dept_name", read_only=True)
     class Meta:
         model = User 
         fields = ['username','nickname','phonenumber','email','sex','status','dept_name','create_time']
 class UserImportSerializer(MixinSerializer,BizModelSerializer):
+    dept_name = serializers.CharField(source="dept.dept_name", read_only=True)
     class Meta:
         model = User
-        fields = ['id','username','nickname','phonenumber','email','sex','status','dept_id','create_time']
+        fields = ['id','username','nickname','phonenumber','email','sex','status','dept_name','create_time']
         
 class UserSerializer(BizModelSerializer):
     user_id = serializers.IntegerField(source="id",read_only=True,required=False)

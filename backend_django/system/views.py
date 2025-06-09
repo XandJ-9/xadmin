@@ -85,7 +85,8 @@ class UserViewSet(CustomModelViewSet):
         "sex": {
             "title": "用户性别",
             "choices": {
-                "data": {"未知": 2, "男": 1, "女": 0},
+                # "data": {"未知": 2, "男": 1, "女": 0},
+                "queryset": SystemDictData.objects.filter(dict_type='sys_user_sex'),
             }
         },
         "is_active": {
@@ -94,8 +95,8 @@ class UserViewSet(CustomModelViewSet):
                 "data": {"启用": True, "禁用": False},
             }
         },
-        "dept": {"title": "部门", "choices": {"queryset": Dept.objects.filter(status=True), "values_name": "dept_name"}},
-        "role": {"title": "角色", "choices": {"queryset": Role.objects.filter(status=True), "values_name": "role_name"}},
+        "dept_name": {"title": "部门", "choices": {"queryset": Dept.objects.filter(status='1'), "values_name": "dept_name"}},
+        "role": {"title": "角色", "choices": {"queryset": Role.objects.filter(status='1'), "values_name": "role_name"}},
     }
 
     def filter_queryset(self, queryset):
