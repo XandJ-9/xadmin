@@ -90,6 +90,8 @@ class UserSerializer(BizModelSerializer):
 class MenuSerializer(BizModelSerializer):
     menuId = serializers.IntegerField(source='id', read_only=True)
     menuName = serializers.CharField(source='menu_name', read_only=True)
+    menuType = serializers.CharField(source='menu_type', read_only=True)
+    orderNum = serializers.IntegerField(source='order_num', read_only=True)
     parentId  = serializers.IntegerField(source='parent.id', read_only=True)
     
     class Meta:
