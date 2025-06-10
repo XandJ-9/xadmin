@@ -335,7 +335,7 @@ function getTreeselect() {
   menuOptions.value = []
   listMenu().then(response => {
     const menu = { id: 0, menu_name: "主类目", children: [] }
-    menu.children = proxy.handleTree(response.data, "id")
+    menu.children = proxy.handleTree(response, "id")
     menuOptions.value.push(menu)
   })
 }

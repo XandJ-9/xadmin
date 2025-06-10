@@ -130,6 +130,24 @@ GET {{host}}/api/system/menu/all HTTP/1.1
 Authorization: Bearer {{token}}
 
 ###
+# 添加菜单
+POST  {{host}}/api/system/menu HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "menuName": "报表",
+  "icon": "chart",
+  "menuType": "M",
+  "orderNum": 1,
+  "isFrame": "1",
+  "isCache": "0",
+  "visible": "0",
+  "status": "0",
+  "path": "/report"
+}
+
+###
 # 用户角色列表
 GET {{host}}/api/system/roles HTTP/1.1
 Authorization: Bearer {{token}}

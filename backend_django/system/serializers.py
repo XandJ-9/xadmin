@@ -5,7 +5,7 @@ from .models import User,Role,Menu, SystemConfig, Dept, SystemDictType,SystemDic
 from utils.serializer import ChoiceFieldSerializerMixin, CamelFieldSerializerMixin
 
 
-class BizModelSerializer(serializers.ModelSerializer):
+class BizModelSerializer(CamelFieldSerializerMixin,serializers.ModelSerializer):
     """adding creator and updator fields to serializers."""
     creator_username = serializers.CharField(source='creator.username', read_only=True)
     create_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True, source='created_at')
@@ -27,7 +27,7 @@ class SystemDictDataSerializer(BizModelSerializer):
         model = SystemDictData
         fields = "__all__"
 
-class RoleSerializer(CamelFieldSerializerMixin,BizModelSerializer):
+class RoleSerializer(BizModelSerializer):
     roleId = serializers.IntegerField(source='id', read_only=True) 
     roleKey = serializers.CharField(source='role_key', read_only=True)
     roleName =  serializers.CharField(source='role_name', read_only=True)
@@ -36,7 +36,7 @@ class RoleSerializer(CamelFieldSerializerMixin,BizModelSerializer):
         fields = ['roleId', 'roleKey','roleName', 'create_time','status']
         read_only_fields = ['id', 'create_time']
 
-class DeptSerializer(CamelFieldSerializerMixin,BizModelSerializer):
+class DeptSerializer(BizModelSerializer):
     deptId = serializers.IntegerField(source='id', read_only=True)
     deptName = serializers.CharField(source='dept_name',read_only=True)
     orderNum = serializers.IntegerField(source='order_num',read_only=True)
@@ -88,10 +88,9 @@ class UserSerializer(BizModelSerializer):
         return super().update(instance, validated_data)
 
 class MenuSerializer(BizModelSerializer):
-    # creator_info = UserSerializer(source='creator', read_only=True)
-    # parent_name = serializers.CharField(source='parent.name', read_only=True)
-    # created_at = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
-    # updated_at = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
+    menuId = serializers.IntegerField(source='id', read_only=True)
+    menuName = serializers.CharField(source='menu_name', read_only=True)
+    parentId  = serializers.IntegerField(source='parent.id', read_only=True)
     
     class Meta:
         model = Menu
