@@ -1,3 +1,4 @@
+import copy, re
 from rest_framework import serializers
 from rest_framework.utils.serializer_helpers import BindingDict
 
@@ -42,13 +43,25 @@ class CamelFieldSerializerMixin:
     '''
     将驼峰风格的字段值对应到下划线字段上
     '''
+
+
+    def _convert_to_camel_field_name(self,match_field):
+        if match_field.start() == 0:
+            return match_field.string[match_field.start():match_field.end()]
+        return match_field.group(1).upper()
     def to_internal_value(self, data):
-        for field in self._writable_fields:
-            if field.source.find('_') > 0 and field.source.find('_') < len(field.source) - 1:
+        '''
+        将驼峰风格的字段值对应到下划线风格的字段上
+        只有显示定义的序列化字段才转换
+        '''
+        declared_fields = copy.deepcopy(self._declared_fields)
+        for field_name in declared_fields:
+            field = declared_fields[field_name]
+            camel_field_name = re.sub(r'_([a-z])', self._convert_to_camel_field_name ,field.source)
+            if camel_field_name in data.keys():
                 # 将字段中下划线和其后面首字母转为大写
-                camel_field_name = field.source.replace('_', '').replace(field.source[field.source.find('_') + 1],
-field.source[field.source.find('_') + 1].upper())
-            self.set_value(data, field.source_attrs, data.get(camel_field_name, None))
-            data.pop(camel_field_name, None)
+                # 定位下划线及其后第一个字符
+                # camel_field_name = field.source.replace('_', '').replace(field.source[field.source.find('_') + 1],field.source[field.source.find('_') + 1].upper())
+                data[field.source] = data.pop(camel_field_name)
         return super().to_internal_value(data)
             

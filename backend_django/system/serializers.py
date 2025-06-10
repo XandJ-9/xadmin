@@ -42,8 +42,8 @@ class DeptSerializer(CamelFieldSerializerMixin,BizModelSerializer):
     orderNum = serializers.IntegerField(source='order_num',read_only=True)
     class Meta:
         model = Dept
-        # fields = '__all__'
-        fields = ['id','deptId', 'deptName', 'orderNum', 'status','parent']
+        fields = '__all__'
+        # fields = ['id','deptId', 'deptName', 'orderNum', 'status','parent']
         read_only_fields = ['id', 'create_time','update_time','creator','updator']
     
 class UserExportSerializer(BizModelSerializer):
