@@ -40,6 +40,7 @@ class DeptSerializer(BizModelSerializer):
     deptId = serializers.IntegerField(source='id', read_only=True)
     deptName = serializers.CharField(source='dept_name',read_only=True)
     orderNum = serializers.IntegerField(source='order_num',read_only=True)
+    parentId = serializers.IntegerField(source='parent.id', read_only=True)
     class Meta:
         model = Dept
         fields = '__all__'

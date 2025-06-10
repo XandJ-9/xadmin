@@ -52,8 +52,8 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "parentId": 110,
-  "deptName": "研发部门",
+  "parent": 101,
+  "deptName": "研发部门ss",
   "orderNum": 0,
   "leader": "admin",
   "status": "0"
