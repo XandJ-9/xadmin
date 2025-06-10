@@ -27,7 +27,7 @@ class SystemDictDataSerializer(BizModelSerializer):
         model = SystemDictData
         fields = "__all__"
 
-class RoleSerializer(BizModelSerializer):
+class RoleSerializer(CamelFieldSerializerMixin,BizModelSerializer):
     roleId = serializers.IntegerField(source='id', read_only=True) 
     roleKey = serializers.CharField(source='role_key', read_only=True)
     roleName =  serializers.CharField(source='role_name', read_only=True)
