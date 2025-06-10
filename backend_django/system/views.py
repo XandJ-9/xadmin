@@ -92,7 +92,7 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
     serializer_class = UserSerializer
     filter_fields = ['status','username','phonenumber']
     filter_backends = [SearchFilterBackend]
-    export_field_label = {'username':'姓名','nickname':'昵称','phonenumber':'手机号码','dept_name':'部门名称'}
+    export_field_label = {'username':'姓名','nickname':'昵称','phonenumber':'手机号码','deptName':'部门名称'}
     export_serializer_class = UserExportSerializer
     import_serializer_class = UserImportSerializer
     import_field_dict = {

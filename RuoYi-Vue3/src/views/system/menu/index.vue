@@ -421,6 +421,9 @@ async function handleUpdate(row) {
 function submitForm() {
   proxy.$refs["menuRef"].validate(valid => {
     if (valid) {
+      if  (form.value.menuType == "M") {
+        form.value.component = 'Layout'
+      }
       if (form.value.menuId != undefined) {
         updateMenu(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功")
