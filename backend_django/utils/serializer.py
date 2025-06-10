@@ -1,6 +1,8 @@
 import copy, re
 from rest_framework import serializers
 from rest_framework.utils.serializer_helpers import BindingDict
+from rest_framework.fields import SkipField
+from rest_framework.relations import PKOnlyObject  # NOQA # isort:skip
 
 
 def set_choice_field_internal_value(fields:BindingDict, field_name:str, data: dict):
@@ -54,14 +56,41 @@ class CamelFieldSerializerMixin:
         将驼峰风格的字段值对应到下划线风格的字段上
         只有显示定义的序列化字段才转换
         '''
-        declared_fields = copy.deepcopy(self._declared_fields)
-        for field_name in declared_fields:
-            field = declared_fields[field_name]
+        # declared_fields = copy.deepcopy(self._declared_fields)
+        for field in self._writable_fields:
+            # field = declared_fields[field_name]
+            # if field.source is None:
+            #     continue
             camel_field_name = re.sub(r'_([a-z])', self._convert_to_camel_field_name ,field.source)
-            if camel_field_name in data.keys():
-                # 将字段中下划线和其后面首字母转为大写
-                # 定位下划线及其后第一个字符
-                # camel_field_name = field.source.replace('_', '').replace(field.source[field.source.find('_') + 1],field.source[field.source.find('_') + 1].upper())
-                data[field.source] = data.pop(camel_field_name)
+            if camel_field_name not in data.keys():
+                continue
+            data[field.source] = data.pop(camel_field_name)
         return super().to_internal_value(data)
             
+    def to_representation(self, instance):
+        '''
+        将下划线风格字段转换成驼峰风格字段
+        '''
+        ret = {}
+        fields = self._readable_fields
+
+        for field in fields:
+            try:
+                attribute = field.get_attribute(instance)
+            except SkipField:
+                continue
+
+            # We skip `to_representation` for `None` values so that fields do
+            # not have to explicitly deal with that case.
+            #
+            # For related fields with `use_pk_only_optimization` we need to
+            # resolve the pk value.
+            check_for_none = attribute.pk if isinstance(attribute, PKOnlyObject) else attribute
+            if check_for_none is None:
+                ret[field.field_name] = None
+            else:
+                # 转换驼峰字段
+                camel_field_name = re.sub(r'_([a-z])', self._convert_to_camel_field_name ,field.field_name)
+                ret[camel_field_name] = field.to_representation(attribute)
+
+        return ret

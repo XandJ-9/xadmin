@@ -144,40 +144,31 @@ Authorization: Bearer {{token}}
 
 ### 
 # 更新菜单
-PUT {{host}}/api/system/menu/1063 HTTP/1.1
+PUT {{host}}/api/system/menu/1066 HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "id": 1063,
-  "creator_username": "admin",
-  "create_time": "2025-06-10 17:22:17",
-  "updator_username": "admin",
-  "update_time": "2025-06-10 17:22:17",
-  "menuId": 1063,
-  "menuName": "报表",
-  "menuType": "M",
-  "orderNum": 0,
-  "created_at": "2025-06-10T17:22:17.671265+08:00",
-  "updated_at": "2025-06-10T17:22:17.671265+08:00",
-  "del_flag": "0",
-  "menu_name": "报表",
-  "order_num": 0,
+  "id": 1066,
+  "creatorUsername": "admin",
+  "createTime": "2025-06-10 23:52:48",
+  "updatorUsername": "admin",
+  "updateTime": "2025-06-10 23:52:48",
+  "menuId": 1066,
+  "delFlag": "0",
+  "menuName": "报表管理",
+  "orderNum": 4,
   "path": "/report",
   "redirect": null,
   "component": null,
   "query": null,
-  "route_name": "",
-  "is_frame": 1,
-  "is_cache": 0,
-  "menu_type": "M",
+  "isFrame": 1,
+  "isCache": 0,
+  "menuType": "M",
   "visible": "0",
   "status": "0",
   "perms": null,
   "icon": "chart",
-  "remark": "",
-  "creator": 1,
-  "updator": 1,
   "parent": null
 }
 

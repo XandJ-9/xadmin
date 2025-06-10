@@ -6,10 +6,10 @@
         <pane size="16">
           <el-col>
             <div class="head-container">
-              <el-input v-model="dept_name" placeholder="请输入部门名称" clearable prefix-icon="Search" style="margin-bottom: 20px" />
+              <el-input v-model="deptName" placeholder="请输入部门名称" clearable prefix-icon="Search" style="margin-bottom: 20px" />
             </div>
             <div class="head-container">
-              <el-tree :data="deptOptions" :props="{ label: 'dept_name', children: 'children' }" :expand-on-click-node="false" :filter-node-method="filterNode" ref="deptTreeRef" node-key="id" highlight-current default-expand-all @node-click="handleNodeClick" />
+              <el-tree :data="deptOptions" :props="{ label: 'deptName', children: 'children' }" :expand-on-click-node="false" :filter-node-method="filterNode" ref="deptTreeRef" node-key="id" highlight-current default-expand-all @node-click="handleNodeClick" />
             </div>
           </el-col>
         </pane>
@@ -58,7 +58,7 @@
 
             <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
               <el-table-column type="selection" width="50" align="center" />
-              <el-table-column label="用户编号" align="center" key="userId" prop="user_id" v-if="columns[0].visible" />
+              <el-table-column label="用户编号" align="center" key="userId" prop="userId" v-if="columns[0].visible" />
               <el-table-column label="用户名称" align="center" key="userName" prop="username" v-if="columns[1].visible" :show-overflow-tooltip="true" />
               <el-table-column label="用户性别" align="center" key="sex" prop="sex" v-if="columns[2].visible"> 
                 <template #default="scope">
@@ -70,7 +70,7 @@
                 </template>
               </el-table-column>
               <el-table-column label="用户昵称" align="center" key="nickName" prop="nickname" v-if="columns[2].visible" :show-overflow-tooltip="true" />
-              <el-table-column label="部门" align="center" key="dept_name" prop="dept.dept_name" v-if="columns[3].visible" :show-overflow-tooltip="true" />
+              <el-table-column label="部门" align="center" key="deptName" prop="dept.deptName" v-if="columns[3].visible" :show-overflow-tooltip="true" />
               <el-table-column label="手机号码" align="center" key="phonenumber" prop="phonenumber" v-if="columns[4].visible" width="120" />
               <el-table-column label="状态" align="center" key="status" v-if="columns[5].visible">
                 <template #default="scope">
@@ -84,7 +84,7 @@
               </el-table-column>
               <el-table-column label="创建时间" align="center" prop="createTime" v-if="columns[6].visible" width="160">
                 <template #default="scope">
-                  <span>{{ parseTime(scope.row.create_time) }}</span>
+                  <span>{{ parseTime(scope.row.createTime) }}</span>
                 </template>
               </el-table-column>
               <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
@@ -121,7 +121,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="归属部门" prop="deptId">
-              <el-tree-select v-model="form.dept_id" :data="enabledDeptOptions" :props="{ value: 'id', label: 'dept_name', children: 'children' }" value-key="id" placeholder="请选择归属部门" check-strictly />
+              <el-tree-select v-model="form.dept_id" :data="enabledDeptOptions" :props="{ value: 'id', label: 'deptName', children: 'children' }" value-key="id" placeholder="请选择归属部门" check-strictly />
             </el-form-item>
           </el-col>
         </el-row>
@@ -139,12 +139,12 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item v-if="form.user_id == undefined" label="用户名称" prop="userName">
+            <el-form-item v-if="form.userId == undefined" label="用户名称" prop="username">
               <el-input v-model="form.username" placeholder="请输入用户名称" maxlength="30" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item v-if="form.user_id == undefined" label="用户密码" prop="password">
+            <el-form-item v-if="form.userId == undefined" label="用户密码" prop="password">
               <el-input v-model="form.password" placeholder="请输入用户密码" type="password" maxlength="20" show-password />
             </el-form-item>
           </el-col>
@@ -244,7 +244,7 @@ const multiple = ref(true)
 const total = ref(0)
 const title = ref("")
 const dateRange = ref([])
-const dept_name = ref("")
+const deptName = ref("")
 const deptOptions = ref(undefined)
 const enabledDeptOptions = ref(undefined)
 const initPassword = ref(undefined)
@@ -300,11 +300,11 @@ const { queryParams, form, rules } = toRefs(data)
 /** 通过条件过滤节点  */
 const filterNode = (value, data) => {
   if (!value) return true
-  return data.dept_name.indexOf(value) !== -1
+  return data.deptName.indexOf(value) !== -1
 }
 
 /** 根据名称筛选部门树 */
-watch(dept_name, val => {
+watch(deptName, val => {
   proxy.$refs["deptTreeRef"].filter(val)
 })
 
@@ -369,7 +369,7 @@ function resetQuery() {
 
 /** 删除按钮操作 */
 function handleDelete(row) {
-  const userIds = row.user_id || ids.value
+  const userIds = row.userId || ids.value
   proxy.$modal.confirm('是否确认删除用户编号为"' + userIds + '"的数据项？').then(function () {
     return delUser(userIds)
   }).then(() => {
@@ -389,7 +389,7 @@ function handleExport() {
 function handleStatusChange(row) {
   let text = row.status === "0" ? "启用" : "停用"
   proxy.$modal.confirm('确认要"' + text + '""' + row.username + '"用户吗?').then(function () {
-    return changeUserStatus(row.user_id, row.status)
+    return changeUserStatus(row.userId, row.status)
   }).then(() => {
     proxy.$modal.msgSuccess(text + "成功")
   }).catch(function () {
@@ -419,7 +419,7 @@ function handleAuthRole(row) {
 
 /** 重置密码按钮操作 */
 function handleResetPwd(row) {
-  proxy.$prompt('请输入"' + row.userName + '"的新密码', "提示", {
+  proxy.$prompt('请输入"' + row.username + '"的新密码', "提示", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     closeOnClickModal: false,
@@ -515,7 +515,7 @@ function handleAdd() {
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset()
-  const userId = row.user_id || ids.value
+  const userId = row.userId || ids.value
   getUser(userId).then(response => {
     form.value = response.data
     postOptions.value = response.posts
@@ -532,7 +532,7 @@ function handleUpdate(row) {
 function submitForm() {
   proxy.$refs["userRef"].validate(valid => {
     if (valid) {
-      if (form.value.user_id != undefined) {
+      if (form.value.userId != undefined) {
         updateUser(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功")
           open.value = false

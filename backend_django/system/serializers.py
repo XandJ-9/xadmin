@@ -59,15 +59,15 @@ class UserImportSerializer(ChoiceFieldSerializerMixin,BizModelSerializer):
         fields = ['id','username','nickname','phonenumber','email','sex','status','dept_name','create_time']
 
 class UserSerializer(BizModelSerializer):
-    user_id = serializers.IntegerField(source="id",read_only=True,required=False)
-    dept_id = serializers.IntegerField(source="dept.id",read_only=True,required=False)
+    userId = serializers.IntegerField(source="id",read_only=True,required=False)
+    deptId = serializers.IntegerField(source="dept.id",read_only=True,required=False)
     password = serializers.CharField(write_only=True, required=False)
     dept = DeptSerializer(read_only=True)
 
     class Meta:
         model = User
-        fields = ['user_id', 'username','nickname', 'sex','password', 'dept', 'create_time','avatar','status','phonenumber','dept_id']
-        # fields = '__all__'
+        # fields = ['user_id', 'username','nickname', 'sex','password', 'dept', 'create_time','avatar','status','phonenumber','dept_id']
+        fields = '__all__'
         read_only_fields = ['id', 'create_time']
 
     def create(self, validated_data):
@@ -89,15 +89,12 @@ class UserSerializer(BizModelSerializer):
 
 class MenuSerializer(BizModelSerializer):
     menuId = serializers.IntegerField(source='id', read_only=True)
-    menuName = serializers.CharField(source='menu_name', read_only=True)
-    menuType = serializers.CharField(source='menu_type', read_only=True)
-    orderNum = serializers.IntegerField(source='order_num', read_only=True)
     parentId  = serializers.IntegerField(source='parent.id', read_only=True)
     
     class Meta:
         model = Menu
-        fields = "__all__"
-        # exclude = ['creator','updator','created_at', 'updated_at']
+        # fields = "__all__"
+        exclude = ['creator','updator','created_at', 'updated_at','remark','route_name']
         read_only_fields = ['id', 'created_at', 'updated_at']
 
 class SystemConfigSerializer(BizModelSerializer):
