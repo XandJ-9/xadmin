@@ -1,9 +1,10 @@
 from rest_framework.request import Request
 from rest_framework import serializers
 from rest_framework.fields import empty
+from rest_framework.utils import model_meta
 from .models import User,Role,Menu, SystemConfig, Dept, SystemDictType,SystemDictData
 from utils.serializer import ChoiceFieldSerializerMixin, CamelFieldSerializerMixin
-
+import copy
 
 class BizModelSerializer(CamelFieldSerializerMixin,serializers.ModelSerializer):
     """adding creator and updator fields to serializers."""
@@ -15,6 +16,21 @@ class BizModelSerializer(CamelFieldSerializerMixin,serializers.ModelSerializer):
     def __init__(self, instance=None, data=empty, request=None, **kwargs):
             super().__init__(instance, data, **kwargs)
             self.request: Request = request or self.context.get("request", None)
+
+    def to_internal_value(self, data):
+        # 再通过遍历 declared_fields字段赋值关联字段
+        model = getattr(self.Meta, 'model')
+        model_field_info = model_meta.get_field_info(model)
+        declared_fields = copy.deepcopy(self._declared_fields)
+        # print(f'declared_fields: {declared_fields}')
+        for field_name, field in declared_fields.items():
+            if not field.source in model_field_info.relations:  # 判断是否为关联字段
+                continue
+            relation_info = model_field_info.relations[field.source]
+            # print(f'{field_name}  =>  {field}  => {relation_info}')
+        # 向data中添加关联字段的值
+
+        return super().to_internal_value(data)
 
 class SystemDictTypeSerializer(BizModelSerializer):
     create_time = serializers.DateTimeField(source='created_at',format='%Y-%m-%d %H:%M:%S', read_only=True)
@@ -90,12 +106,12 @@ class UserSerializer(BizModelSerializer):
 
 class MenuSerializer(BizModelSerializer):
     menuId = serializers.IntegerField(source='id', read_only=True)
-    parentId  = serializers.IntegerField(source='parent.id', read_only=True)
+    parentId  = serializers.IntegerField(source='parent.id', read_only=True)  # 想办法通过传递parentId的值来修改模型字段parent的值，对应模型中parent_id
     
     class Meta:
         model = Menu
         # fields = "__all__"
-        exclude = ['creator','updator','created_at', 'updated_at','remark','route_name']
+        exclude = ['creator','updator','created_at', 'updated_at']
         read_only_fields = ['id', 'created_at', 'updated_at']
 
 class SystemConfigSerializer(BizModelSerializer):

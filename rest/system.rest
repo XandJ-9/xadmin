@@ -153,30 +153,32 @@ PUT {{host}}/api/system/menu/1067 HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
-{
-  "id": 1067,
-  "creatorUsername": "admin",
-  "createTime": "2025-06-11 02:49:34",
-  "updatorUsername": "admin",
-  "updateTime": "2025-06-11 02:59:54",
-  "menuId": 1067,
-  "delFlag": "0",
-  "menuName": "报表列表",
-  "orderNum": 1,
-  "path": "reportinfo/reportmanage",
-  "redirect": null,
-  "component": "Ruodataassert/reportinfo/ReportManage",
-  "query": null,
-  "isFrame": 1,
-  "isCache": 0,
-  "menuType": "C",
-  "visible": "0",
-  "status": "0",
-  "perms": null,
-  "icon": "list",
-  "parent": null,
-  "parent": 1066
-}
+ {
+    "id": 1067,
+    "creatorUsername": "admin",
+    "createTime": "2025-06-11 02:49:34",
+    "updatorUsername": "admin",
+    "updateTime": "2025-06-11 15:13:26",
+    "menuId": 1067,
+    "parentId": 1066,
+    "delFlag": "0",
+    "menuName": "报表列表",
+    "orderNum": 1,
+    "path": "reportinfo/reportmanage",
+    "redirect": null,
+    "component": "dataassert/reportinfo/ReportManage",
+    "query": null,
+    "isFrame": 1,
+    "isCache": 0,
+    "menuType": "C",
+    "visible": "0",
+    "status": "0",
+    "perms": null,
+    "icon": "list",
+    "parent": 1066,
+    "remark": "",
+    "routeName":""
+  }
 
 ###
 # 用户角色列表

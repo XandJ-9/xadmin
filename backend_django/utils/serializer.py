@@ -1,4 +1,4 @@
-import copy, re
+import re
 from rest_framework import serializers
 from rest_framework.utils.serializer_helpers import BindingDict
 from rest_framework.fields import SkipField
@@ -56,15 +56,14 @@ class CamelFieldSerializerMixin:
         将驼峰风格的字段值对应到下划线风格的字段上
         只有显示定义的序列化字段才转换
         '''
-        # declared_fields = copy.deepcopy(self._declared_fields)
+        # self._writable_fields字段对应模型字段
+        # self._declared_fields字段对应显示序列化类中定义的字段
         for field in self._writable_fields:
-            # field = declared_fields[field_name]
-            # if field.source is None:
-            #     continue
             camel_field_name = re.sub(r'_([a-z])', self._convert_to_camel_field_name ,field.source)
             if camel_field_name not in data.keys():
                 continue
             data[field.source] = data.pop(camel_field_name)
+
         return super().to_internal_value(data)
             
     def to_representation(self, instance):

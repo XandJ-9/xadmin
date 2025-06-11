@@ -193,7 +193,7 @@ class Menu(BaseModel):
     redirect = models.CharField(max_length=200, null=True, blank=True, verbose_name='重定向地址')
     component = models.CharField(max_length=255, null=True, blank=True, verbose_name='组件路径')
     query = models.CharField(max_length=255, null=True, blank=True, verbose_name='路由参数')
-    route_name = models.CharField(max_length=50, default='', verbose_name='路由名称')
+    route_name = models.CharField(max_length=50, default='', blank=True,verbose_name='路由名称')
     is_frame = models.IntegerField(default=1, choices=IS_FRAME_CHOICES, verbose_name='是否为外链')
     is_cache = models.IntegerField(default=0, choices=IS_CACHE_CHOICES, verbose_name='是否缓存')
     menu_type = models.CharField(max_length=1, default='', choices=MENU_TYPE_CHOICES, verbose_name='菜单类型')
@@ -201,7 +201,7 @@ class Menu(BaseModel):
     status = models.CharField(max_length=1, default='0', choices=STATUS_CHOICES, verbose_name='菜单状态')
     perms = models.CharField(max_length=100, null=True, blank=True, verbose_name='权限标识')
     icon = models.CharField(max_length=100, default='#', verbose_name='菜单图标')
-    remark = models.CharField(max_length=500, default='', verbose_name='备注')
+    remark = models.CharField(max_length=500, default='',blank=True, verbose_name='备注')
 
     class Meta:
         verbose_name = '菜单'
