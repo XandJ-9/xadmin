@@ -41,6 +41,21 @@ class DeptViewSet(CustomModelViewSet):
       queryset = self.filter_queryset(self.get_queryset())
       serizlizer = self.get_serializer(queryset, many = True)
       return Response(serizlizer.data)
+    
+    @action(detail=False, methods=['get'])
+    def exclude(self, request, dept_id):
+        # queryset = self.queryset.exclude(id=dept_id)
+        # 排除 id为dept_id的部门以及其子部门
+        excluded_dept_ids = [dept_id]
+        def get_children(dept_id):
+            children = Dept.objects.filter(parent_id=dept_id)
+            for child in children:
+                excluded_dept_ids.append(child.id)
+                get_children(child.id)
+        get_children(dept_id)
+        queryset = Dept.objects.exclude(id__in=excluded_dept_ids)
+        serizlizer = self.get_serializer(queryset, many = True)
+        return Response(serizlizer.data, status=status.HTTP_200_OK)
 
 class RoleViewSet(SystemViewMixin,CustomModelViewSet):
     queryset = Role.objects.all()

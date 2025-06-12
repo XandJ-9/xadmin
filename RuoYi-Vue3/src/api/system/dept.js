@@ -12,7 +12,7 @@ export function listDept(query) {
 // 查询部门列表（排除节点）
 export function listDeptExcludeChild(deptId) {
   return request({
-    url: '/system/dept/list/exclude/' + deptId,
+    url: '/system/dept/exclude/' + deptId,
     method: 'get'
   })
 }

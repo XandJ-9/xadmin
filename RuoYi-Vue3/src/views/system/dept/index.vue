@@ -239,7 +239,7 @@ function toggleExpandAll() {
 function handleUpdate(row) {
   reset()
   listDeptExcludeChild(row.deptId).then(response => {
-    deptOptions.value = proxy.handleTree(response.data, "deptId")
+    deptOptions.value = proxy.handleTree(response, "deptId")
   })
   getDept(row.deptId).then(response => {
     form.value = response.data
