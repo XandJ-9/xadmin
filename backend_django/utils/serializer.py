@@ -1,4 +1,6 @@
 import re
+import copy
+from rest_framework.utils import model_meta
 from rest_framework import serializers
 from rest_framework.utils.serializer_helpers import BindingDict
 from rest_framework.fields import SkipField
@@ -46,7 +48,6 @@ class CamelFieldSerializerMixin:
     将驼峰风格的字段值对应到下划线字段上
     '''
 
-
     def _convert_to_camel_field_name(self,match_field):
         if match_field.start() == 0:
             return match_field.string[match_field.start():match_field.end()]
@@ -93,3 +94,37 @@ class CamelFieldSerializerMixin:
                 ret[camel_field_name] = field.to_representation(attribute)
 
         return ret
+    
+class UpdateSourceFieldSerializerMixin:
+    '''
+    将自定义字段的值赋值给源字段
+    例如定义字段如下：
+
+    parentId  = serializers.IntegerField(source='parent.id')
+
+    将传入数据中的parentId值赋值给parent字段
+
+    如果不想这样，可以在定义时添加参数read_only=True
+
+    parentId  = serializers.IntegerField(source='parent.id')
+    '''
+    def to_internal_value(self, data):
+        # 再通过遍历 declared_fields字段赋值关联字段
+        model = getattr(self.Meta, 'model')
+        # model_field_info = model_meta.get_field_info(model)
+        declared_fields = copy.deepcopy(self._declared_fields)
+
+        for field_name, field in declared_fields.items():
+            if field.source == '*':
+                source_attrs = []
+            else:
+                source_attrs = field.source.split('.')
+
+            if field.read_only:  # 跳过只读字段
+                continue
+            if len(source_attrs) > 0:
+                # 向data中添加关联字段的值
+                # print(f'update {field_name}:({source_attrs[0]}) =  {data.get(field_name,None)}')
+                data.update({source_attrs[0]: data.get(field_name,None)})
+
+        return super().to_internal_value(data)
