@@ -1,0 +1,19 @@
+@host = http://localhost:8000
+
+###
+# @name login
+POST {{host}}/api/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "123456",
+  "code":"A3BS",
+  "uuid":"1f3df7a4-9b7e-4816-8c76-8ac41205d88f"
+}
+
+
+###
+# 获取列表
+GET {{host}}/api/report/reports/ HTTP/1.1
+Authorization: Bearer {{login.response.body.token}}

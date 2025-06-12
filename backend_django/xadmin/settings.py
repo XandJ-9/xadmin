@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
+    # 'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
@@ -91,30 +91,27 @@ WSGI_APPLICATION = 'xadmin.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': env('DB_NAME'),
-        'USER': env('DB_USER'),
-        'PASSWORD': env('DB_PASSWORD'),
-        'HOST': env('DB_HOST'),
-        'PORT': env('DB_PORT'),
-        'OPTIONS': {
-            'options': '-c search_path=public'
-        }
-    }
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.postgresql',
+    #     'NAME': env('DB_NAME'),
+    #     'USER': env('DB_USER'),
+    #     'PASSWORD': env('DB_PASSWORD'),
+    #     'HOST': env('DB_HOST'),
+    #     'PORT': env('DB_PORT'),
+    #     'OPTIONS': {
+    #         'options': '-c search_path=public'
+    #     }
+    # }
 
     # 使用sqlite数据库
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
-    # }
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
 # 数据库路由设置
 # DATABASE_ROUTERS = ['xadmin.db_router.XAdminDBRouter']
-
-# 数据库表前缀
-DATABASE_TABLE_PREFIX = 'xa'
 
 
 # Password validation
@@ -147,6 +144,8 @@ USE_I18N = True
 
 USE_TZ = True
 
+# get请求有效，post请求无效
+APPEND_SLASH = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
@@ -168,6 +167,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    
     # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     #  'PAGE_SIZE': 100
     # 'DEFAULT_PERMISSION_CLASSES': (

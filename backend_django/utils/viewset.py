@@ -1,23 +1,24 @@
 from django.core.paginator import Paginator
+from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny
 from system.permissions import IsOwnerOrAdmin,IsAdminUser, HasRolePermission
 from .util_response import SuccessResponse, ErrorResponse, DetailResponse
+from .import_export_mixin import ExportSerializerMixin, ImportSerializerMixin
 import logging
 
 logger = logging.getLogger('django')
 
 
-class CustomModelViewSet(ModelViewSet):
+class CustomModelViewSet(ExportSerializerMixin, ImportSerializerMixin,ModelViewSet):
     values_queryset = None
     ordering_fields = '__all__'
     create_serializer_class = None
     update_serializer_class = None
     filter_fields = '__all__'
     search_fields = ()
-    import_field_dict = {}
-    export_field_label = {}
+
     # pagination_class = CustomPagination
 
     def get_permissions(self):
@@ -53,13 +54,16 @@ class CustomModelViewSet(ModelViewSet):
     #         kwargs['updator'] = self.request.user
     #     return serializer_class(*args, **kwargs)
 
+    def perform_create(self, serializer):
+        # return super().perform_create(serializer)
+        if self.request.user and self.request.user.is_authenticated:
+            serializer.validated_data['creator'] = self.request.user
+        super().perform_create(serializer)
+
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        if request.user:
-            serializer.validated_data['creator'] = request.user
-            serializer.validated_data['updator'] = request.user
         self.perform_create(serializer)
         return DetailResponse(data=serializer.data, msg="新增成功")
 
@@ -72,8 +76,8 @@ class CustomModelViewSet(ModelViewSet):
         if noPage == '1':
             return DetailResponse(data=ser.data, msg="获取数据")
         else:
-            page_no = request.query_params.get('page', 1)
-            page_size = request.query_params.get('page_size',10)
+            page_no = request.query_params.get('pageNum', 1)
+            page_size = request.query_params.get('pageSize',10)
             p = Paginator(ser.data, page_size)
             page_obj = p.get_page(page_no)
             page_data = page_obj.object_list
@@ -91,6 +95,11 @@ class CustomModelViewSet(ModelViewSet):
         serializer = self.get_serializer(instance)
         return DetailResponse(data=serializer.data, msg="获取成功")
 
+    def perform_update(self, serializer):
+        if self.request.user and self.request.user.is_authenticated:
+            serializer.validated_data['updator'] = self.request.user
+        super().perform_update(serializer)
+
     def update(self, request, *args, **kwargs):
         partial = kwargs.pop('partial', False)
         instance = self.get_object()
@@ -107,8 +116,25 @@ class CustomModelViewSet(ModelViewSet):
         return DetailResponse(data=serializer.data, msg="更新成功")
 
     def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.delete()
+        """
+        自定义修改，支持多条删除
+        """
+        lookup_url_kwarg = self.lookup_url_kwarg or self.lookup_field
+        filter_kwargs = {self.lookup_field: self.kwargs[lookup_url_kwarg]}
+        if isinstance(filter_kwargs[self.lookup_field], str):
+            filter_kwargs[self.lookup_field] = filter_kwargs[self.lookup_field].split(',')
+            queryset = self.filter_queryset(self.get_queryset().filter(**{self.lookup_field + '__in': filter_kwargs[self.lookup_field]}))
+        else:
+            queryset = self.filter_queryset(self.get_queryset().filter(**filter_kwargs))
+        if not queryset:
+            return ErrorResponse(msg="删除失败，数据不存在", status=status.HTTP_404_NOT_FOUND)
+        # 遍历queryset删除
+        for instance in queryset:
+            self.check_object_permissions(request, instance)
+            instance.delete()
+        # 如果是单个对象
+        # instance = self.get_object()
+        # instance.delete()
         return DetailResponse(data=[], msg="删除成功")
     
 

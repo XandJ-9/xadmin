@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from system.serializers import BizModelSerializer
 from .models import PlatformInfo, ModuleInfo, ReportInfo, InterfaceInfo, InterfaceField, InterfaceQueryLog
-
+from utils.serializer import ChoiceFieldSerializerMixin
 
 class PlatformInfoSerializer(BizModelSerializer):
     class Meta:
@@ -26,7 +26,7 @@ class ReportInfoSerializer(BizModelSerializer):
         fields = '__all__'
         read_only_fields = ['id', 'creator', 'create_datetime', 'update_datetime']
 
-class InterfaceInfoSerializer(BizModelSerializer):
+class InterfaceInfoSerializer(ChoiceFieldSerializerMixin,BizModelSerializer):
     report_info = ReportInfoSerializer(source='report',read_only=True)
     class Meta:
         model = InterfaceInfo
@@ -35,7 +35,7 @@ class InterfaceInfoSerializer(BizModelSerializer):
 
 
     
-class InterfaceFieldSerializer(BizModelSerializer):
+class InterfaceFieldSerializer(ChoiceFieldSerializerMixin,BizModelSerializer):
     class Meta:
         model = InterfaceField
         fields = '__all__'

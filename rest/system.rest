@@ -1,0 +1,239 @@
+@host = http://localhost:8000
+
+# @name getCaptcha
+GET {{host}}/api/captchaImage HTTP/1.1
+
+###
+# @name login
+POST {{host}}/api/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "123456",
+  "code":"A3BS",
+  "uuid":"1f3df7a4-9b7e-4816-8c76-8ac41205d88f"
+}
+
+###
+
+@token = {{login.response.body.token}}
+
+###
+# getInfo
+GET {{host}}/api/getInfo HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+GET {{host}}/api/system/dept HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+# 添加部门
+POST {{host}}/api/system/dept HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+      "ancestors": "0",
+      "dept_name": "新链科技",
+      "order_num": 0,
+      "leader": "新链",
+      "phone": "15888888888",
+      "email": "xl@qq.com",
+      "status": "0",
+      "del_flag": "0"
+}
+
+###
+# 添加部门
+POST {{host}}/api/system/dept HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "parent": 101,
+  "deptName": "研发部门ss",
+  "orderNum": 0,
+  "leader": "admin",
+  "status": "0"
+}
+
+###
+# 用户请求
+GET {{host}}/api/system/user HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+# 用户详情
+GET {{host}}/api/system/user/1 HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+# 添加用户
+POST {{host}}/api/system/user HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "username": "afaadz",
+  "password": "12345cxx6"
+}
+
+###
+# 更新用户
+PUT {{host}}/api/system/user/45 HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "username": "afaadz",
+  "password": "newpassggsword",
+  "dept_id": 103
+}
+
+###
+# 删除用户
+DELETE {{host}}/api/system/user/43 HTTP/1.1
+Authorization: Bearer {{token}}
+
+
+###
+# 搜索用户
+GET {{host}}/api/system/user?pageNum=1&pageSize=10&deptId=10 HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+# 导出用户数据
+POST {{host}}/api/system/user/export HTTP/1.1
+Authorization: Bearer {{token}}
+
+### 
+# 导出模板
+POST {{host}}/api/system/user/importTemplate HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+# 用户菜单列表
+GET {{host}}/api/system/menu/user_menu HTTP/1.1
+Authorization: Bearer {{token}}
+
+
+###
+# 菜单列表
+GET {{host}}/api/system/menu?status=0 HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+# 获取菜单
+GET {{host}}/api/system/menu/1067 HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+# 添加菜单
+POST  {{host}}/api/system/menu HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+  "menuName": "报表",
+  "icon": "chart",
+  "menuType": "M",
+  "orderNum": 1,
+  "isFrame": "1",
+  "isCache": "0",
+  "visible": "0",
+  "status": "0",
+  "path": "/report"
+}
+
+### 
+# 更新菜单
+PUT {{host}}/api/system/menu/1067 HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+ {
+    "id": 1067,
+    "creatorUsername": "admin",
+    "createTime": "2025-06-11 02:49:34",
+    "updatorUsername": "admin",
+    "updateTime": "2025-06-11 15:13:26",
+    "menuId": 1067,
+    "parentId": 103,
+    "delFlag": "0",
+    "menuName": "报表列表",
+    "orderNum": 1,
+    "path": "reportinfo/reportmanage",
+    "redirect": null,
+    "component": "dataassert/reportinfo/ReportManage",
+    "query": null,
+    "isFrame": 1,
+    "isCache": 0,
+    "menuType": "C",
+    "visible": "0",
+    "status": "0",
+    "perms": null,
+    "icon": "list",
+    "parent": 1066,
+    "remark": "",
+    "routeName":""
+  }
+
+###
+# 用户角色列表
+GET {{host}}/api/system/roles HTTP/1.1
+Authorization: Bearer {{token}}
+
+
+###
+GET {{host}}/api/getRouters HTTP/1.1
+Authorization: Bearer {{token}}
+
+
+###
+GET {{host}}/api/system/dict/type HTTP/1.1
+Authorization: Bearer {{token}}
+
+
+###
+GET {{host}}/api/system/dict/data HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+GET {{host}}/api/system/dict/data/type/sys_normal_disable HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+GET {{host}}/api/system/dict/type/optionselect HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+DELETE {{host}}/api/system/dict/type/refreshCache HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+GET {{host}}/api/system/dict/data?pageNum=1&pageSize=10&dict_type=sys_user_sex HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+GET {{host}}/api/system/user/deptTree HTTP/1.1
+Authorization: Bearer {{token}}
+
+
+
+### 
+# 获取角色
+GET {{host}}/api/system/role HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+# 修改角色状态
+PUT {{host}}/api/system/role/changeStatus HTTP/1.1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "roleId": 2,
+    "status": "0"
+}
