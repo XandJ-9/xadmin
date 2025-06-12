@@ -160,7 +160,7 @@ Authorization: Bearer {{token}}
     "updatorUsername": "admin",
     "updateTime": "2025-06-11 15:13:26",
     "menuId": 1067,
-    "parentId": 102,
+    "parentId": 103,
     "delFlag": "0",
     "menuName": "报表列表",
     "orderNum": 1,

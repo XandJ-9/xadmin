@@ -89,13 +89,13 @@ class UserSerializer(BizModelSerializer):
 
 class MenuSerializer(UpdateSourceFieldSerializerMixin,BizModelSerializer):
     menuId = serializers.IntegerField(source='id', read_only=True)
-    parentId  = serializers.IntegerField(source='parent.id')  # 想办法通过传递parentId的值来修改模型字段parent的值，对应模型中parent_id
+    parentId  = serializers.IntegerField(source='parent.id')
     
     class Meta:
         model = Menu
-        # fields = "__all__"
-        exclude = ['creator','updator','created_at', 'updated_at']
-        read_only_fields = ['id', 'created_at', 'updated_at']
+        fields = "__all__"
+        # exclude = ['creator','updator','created_at', 'updated_at']
+        read_only_fields = ['id']
 
 class SystemConfigSerializer(BizModelSerializer):
     creator_info = UserSerializer(source='creator', read_only=True)

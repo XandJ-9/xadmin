@@ -75,10 +75,20 @@ class CamelFieldSerializerMixin:
         fields = self._readable_fields
 
         for field in fields:
+
             try:
                 attribute = field.get_attribute(instance)
             except SkipField:
                 continue
+            except AttributeError as exc:
+                # 'read_only', 'write_only',
+                # 'required', 'default', 'initial', 'source',
+                # 'label', 'help_text', 'style',
+                # 'error_messages', 'validators', 'allow_null', 'allow_blank',
+                # 'choices'
+                # print(f'attribute error: {field.field_name} => {field} => instance is {instance}')
+                msg = '`{field_name}` was declared without a `default` or `allow_null=True` or `required=False` argument.'.format(field_name=field.field_name)
+                raise type(exc)(msg)
 
             # We skip `to_representation` for `None` values so that fields do
             # not have to explicitly deal with that case.
