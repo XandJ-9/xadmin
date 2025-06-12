@@ -1,6 +1,6 @@
 <template>
-  <div class="interface-manage">
-    <div v-if="route.path === '/reportinfo/interface'">
+  <div class="app-container">
+    <!-- <div v-if="route.path === '/reportinfo/interface'"> -->
       <!-- 搜索区域 -->
     <div class="search-area">
         <el-form :inline="true" :model="searchForm" class="demo-form-inline">
@@ -239,7 +239,7 @@
         </template>
       </el-dialog>
       
-    </div>
+    <!-- </div> -->
       <!-- 接口字段编辑窗口 -->
     <div class="field-editor-view">
         <router-view />
@@ -259,7 +259,7 @@ import { ref, onMounted, reactive, inject } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRoute, useRouter } from 'vue-router'
 import request from '@/utils/request'
-import Pagination from '@/components/Pagination.vue'
+import Pagination from '@/components/Pagination'
 // import InterfaceFields from './InterfaceFields.vue'
 const router = useRouter()
 const route = useRoute()
@@ -289,7 +289,7 @@ const datasourceOptions = ref([])
 // 获取支持的数据库类型
 const getDatasourceList = async () => {
   try {
-    const response = await request.get('/api/datasources/types/')
+    const response = await request.get('/datasources/types/')
     datasourceOptions.value = response.data
   } catch (error) {
     console.error('获取数据库类型列表失败：', error)
@@ -299,8 +299,8 @@ const getDatasourceList = async () => {
 // 获取平台列表
 const getPlatformList = async () => {
   try {
-    const response = await request.get('/api/report/platforms/list_all/')
-    platformOptions.value = response.data.data
+    const response = await request.get('/report/platforms/list_all/')
+    platformOptions.value = response.data
   } catch (error) {
     console.error('获取平台列表失败：', error)
   }
@@ -309,8 +309,8 @@ const getPlatformList = async () => {
 // 获取模块列表
 const getModuleList = async (platformId) => {
   try {
-    const response = await request.get(`/api/report/modules/?platform_id=${platformId}&noPage=1`)
-    moduleOptions.value = response.data.data
+    const response = await request.get(`/report/modules/?platform_id=${platformId}&noPage=1`)
+    moduleOptions.value = response.data
   } catch (error) {
     console.error('获取模块列表失败：', error)
   }
@@ -319,8 +319,8 @@ const getModuleList = async (platformId) => {
 // 获取报表列表
 const getReportList = async (moduleId) => {
   try {
-    const response = await request.get(`/api/report/reports/?noPage=1`)
-      reportOptions.value = response.data.data
+    const response = await request.get(`/report/reports/?noPage=1`)
+      reportOptions.value = response.data
   } catch (error) {
     console.error('获取报表列表失败：', error)
   }
@@ -338,9 +338,9 @@ const getInterfaceList = async () => {
       report_id: searchForm.reportId,
       interface_code: searchForm.interfaceCode
     }
-    const response = await request.get('/api/report/interfaces/', { params })
-    tableData.value = response.data.data.data
-    total.value = response.data.data.total
+    const response = await request.get('/report/interfaces/', { params })
+    tableData.value = response.data
+    total.value = response.total
   } catch (error) {
     console.error('获取接口列表失败：', error)
     ElMessage.error('获取接口列表失败')
@@ -483,10 +483,10 @@ const handleSubmit = async () => {
   await formRef.value.validate(async (valid) => {
     if (valid) {
         if (dialogType.value === 'add') {
-          await request.post('/api/report/interfaces/', formData)
+          await request.post('/report/interfaces/', formData)
           ElMessage.success('添加成功')
         } else {
-          await request.put(`/api/report/interfaces/${formData.id}/`, formData)
+          await request.put(`/report/interfaces/${formData.id}/`, formData)
           ElMessage.success('更新成功')
         }
         dialogVisible.value = false
@@ -507,7 +507,7 @@ const handleDelete = async (row) => {
     }
   )
     .then(async () => {
-        await request.delete(`/api/report/interfaces/${row.id}/`)
+        await request.delete(`/report/interfaces/${row.id}/`)
         ElMessage.success('删除成功')
         getInterfaceList()
     })
@@ -517,9 +517,9 @@ const handleDelete = async (row) => {
 const handleFields = async (row) => {
     router.push({ path: '/reportinfo/interface/fields', query: { interface_id: row.id } })
     // fieldEditorVisible.value = true
-    //   router.push(`/api/report/interface-fields/${row.id}`)
+    //   router.push(`/report/interface-fields/${row.id}`)
     // tableRef.value.toggleRowExpansion(row, true)
-    // const response = await request.get(`/api/report/interface-fields/?noPage=1&interface=${row.id}`)
+    // const response = await request.get(`/report/interface-fields/?noPage=1&interface=${row.id}`)
     
 }
 
@@ -527,16 +527,16 @@ const download = inject('download')
 
 // 导出接口到excel
 const handleExport = (row) => {
-    // request.post(`/api/report/interfaces/exportInterfaceinfo/`,{interface_id: row.id}).then((response) => {})
-    download(`/api/report/export/Interfaceinfo/`, 'POST', {interface_id: row.id}, '接口信息.xlsx')
+    // request.post(`/report/interfaces/exportInterfaceinfo/`,{interface_id: row.id}).then((response) => {})
+    download(`/report/export/Interfaceinfo/`, 'POST', {interface_id: row.id}, '接口信息.xlsx')
 }
 
 const uploadRef = ref(null)
 const importVisible = ref(false)
-const importExcelUrl = ref('/api/report/interfaces/importInterfaceinfo/')
+const importExcelUrl = ref('/report/interfaces/importInterfaceinfo/')
 
 const handleImport = () => {
-    importExcelUrl.value = '/api/report/import/Interfaceinfo/'
+    importExcelUrl.value = '/report/import/Interfaceinfo/'
     importVisible.value = true
 }
 

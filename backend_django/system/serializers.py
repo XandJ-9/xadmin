@@ -4,7 +4,7 @@ from rest_framework.fields import empty
 from .models import User,Role,Menu, SystemConfig, Dept, SystemDictType,SystemDictData
 from utils.serializer import ChoiceFieldSerializerMixin, CamelFieldSerializerMixin,UpdateSourceFieldSerializerMixin
 
-class BizModelSerializer(CamelFieldSerializerMixin,serializers.ModelSerializer):
+class BizModelSerializer(serializers.ModelSerializer):
     """adding creator and updator fields to serializers."""
     creator_username = serializers.CharField(source='creator.username', read_only=True)
     create_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True, source='created_at')
@@ -35,7 +35,7 @@ class RoleSerializer(BizModelSerializer):
         fields = ['roleId', 'roleKey','roleName', 'create_time','status']
         read_only_fields = ['id', 'create_time']
 
-class DeptSerializer(BizModelSerializer):
+class DeptSerializer(CamelFieldSerializerMixin,BizModelSerializer):
     deptId = serializers.IntegerField(source='id', read_only=True)
     deptName = serializers.CharField(source='dept_name',read_only=True)
     orderNum = serializers.IntegerField(source='order_num',read_only=True)
@@ -46,7 +46,7 @@ class DeptSerializer(BizModelSerializer):
         # fields = ['id','deptId', 'deptName', 'orderNum', 'status','parent']
         read_only_fields = ['id', 'create_time','update_time','creator','updator']
     
-class UserExportSerializer(BizModelSerializer):
+class UserExportSerializer(CamelFieldSerializerMixin,BizModelSerializer):
     dept_name = serializers.CharField(source="dept.dept_name", read_only=True)
     class Meta:
         model = User 
@@ -58,7 +58,7 @@ class UserImportSerializer(ChoiceFieldSerializerMixin,BizModelSerializer):
         model = User
         fields = ['id','username','nickname','phonenumber','email','sex','status','dept_name','create_time']
 
-class UserSerializer(BizModelSerializer):
+class UserSerializer(CamelFieldSerializerMixin,BizModelSerializer):
     userId = serializers.IntegerField(source="id",read_only=True,required=False)
     deptId = serializers.IntegerField(source="dept.id",read_only=True,required=False)
     password = serializers.CharField(write_only=True, required=False)
@@ -87,7 +87,7 @@ class UserSerializer(BizModelSerializer):
 
         return super().update(instance, validated_data)
 
-class MenuSerializer(UpdateSourceFieldSerializerMixin,BizModelSerializer):
+class MenuSerializer(UpdateSourceFieldSerializerMixin,CamelFieldSerializerMixin,BizModelSerializer):
     menuId = serializers.IntegerField(source='id', read_only=True)
     parentId  = serializers.IntegerField(source='parent.id', required=False)
     

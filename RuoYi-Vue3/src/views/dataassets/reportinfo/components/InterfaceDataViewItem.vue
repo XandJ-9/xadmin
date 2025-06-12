@@ -79,7 +79,7 @@ import { ref, reactive, onMounted } from 'vue'
 import request from '@/utils/request'
 // import { XLSX } from 'xlsx'
 import { parseTime } from '@/utils/index'
-import Pagination from '@/components/Pagination.vue'
+import Pagination from '@/components/Pagination'
 
 const props = defineProps({
     interface_id: { type: Number, default: 0 },

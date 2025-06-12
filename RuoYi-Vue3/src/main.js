@@ -1,4 +1,4 @@
-import { createApp } from 'vue'
+import { createApp, provide } from 'vue'
 
 import Cookies from 'js-cookie'
 
@@ -54,6 +54,8 @@ app.config.globalProperties.handleTree = handleTree
 app.config.globalProperties.addDateRange = addDateRange
 app.config.globalProperties.selectDictLabel = selectDictLabel
 app.config.globalProperties.selectDictLabels = selectDictLabels
+
+app.provide('download', download)
 
 // 全局组件挂载
 app.component('DictTag', DictTag)

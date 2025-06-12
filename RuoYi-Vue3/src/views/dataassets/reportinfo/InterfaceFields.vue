@@ -134,7 +134,7 @@ export default {
 import { ref, onMounted, reactive } from 'vue'
 import { useRoute , useRouter} from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import Pagination from '@/components/Pagination.vue'
+import Pagination from '@/components/Pagination'
 import request from '@/utils/request'
 
 const router = useRouter()
