@@ -89,7 +89,7 @@ class UserSerializer(BizModelSerializer):
 
 class MenuSerializer(UpdateSourceFieldSerializerMixin,BizModelSerializer):
     menuId = serializers.IntegerField(source='id', read_only=True)
-    parentId  = serializers.IntegerField(source='parent.id')
+    parentId  = serializers.IntegerField(source='parent.id', required=False)
     
     class Meta:
         model = Menu
