@@ -198,6 +198,9 @@ import { ref, onMounted, reactive, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
 import Pagination from '@/components/Pagination'
+import { getPlatformList, createPlatform, updatePlatform, deletePlatform,
+         getModuleList, getModulesByPlatform, createModule, updateModule, deleteModule,
+         getReportList, createReport, updateReport, deleteReport } from '@/api/dataassets/reportinfo'
 
 const reportList = ref([])
 const dialogVisible = ref(false)
@@ -273,7 +276,7 @@ const fetchReportList = async () => {
       module_id: searchForm.moduleId,
       name: searchForm.reportName
     }
-    const response = await request.get('/report/reports/', { params })
+    const response = await getReportList(params)
     reportList.value = response.data.data
     total.value = response.data.total
   } catch (error) {
@@ -285,7 +288,7 @@ const fetchReportList = async () => {
 // 获取平台列表
 const fetchPlatformOptions = async () => {
   try {
-    const response = await request.get('/report/platforms/list_all/')
+    const response = await getPlatformList({ list_all: true })
     platformOptions.value = response.data
   } catch (error) {
     console.error('获取平台列表失败：', error)
@@ -296,7 +299,7 @@ const fetchPlatformOptions = async () => {
 // 获取模块列表
 const fetchModuleOptions = async () => {
   try {
-    const response = await request.get('/report/modules/list_all/')
+    const response = await getModuleList({ list_all: true })
     moduleOptions.value = response.data
   } catch (error) {
     console.error('获取模块列表失败：', error)
@@ -312,8 +315,7 @@ const fetchModuleOptionsByPlatform = async () => {
   }
   
   try {
-    const params = { platform_id: searchForm.platformId }
-    const response = await request.get('/report/modules/list_all/', { params })
+    const response = await getModulesByPlatform(searchForm.platformId)
     moduleOptions.value = response.data
   } catch (error) {
     console.error('获取模块列表失败：', error)
@@ -425,7 +427,7 @@ const handleDelete = (row) => {
   })
     .then(async () => {
       try {
-        await request.delete(`/report/reports/${row.id}/`)
+        await deleteReport(row.id)
         ElMessage.success('删除成功')
         fetchReportList()
       } catch (error) {
@@ -448,7 +450,7 @@ const handleSubmit = async () => {
             desc: form.value.desc,
             module: form.value.module
           }
-          await request.put(`/report/reports/${currentId.value}/`, reportData)
+          await updateReport(currentId.value, reportData)
           ElMessage.success('更新成功')
           dialogVisible.value = false
           fetchReportList()
@@ -462,7 +464,7 @@ const handleSubmit = async () => {
             desc: form.value.desc,
             module: form.value.module
           }
-          await request.post('/report/reports/', reportData)
+          await createReport(reportData)
           ElMessage.success('创建成功')
           dialogVisible.value = false
           fetchReportList()
@@ -481,7 +483,7 @@ const handleSubmit = async () => {
             status: form.value.newModuleStatus,
             platform: form.value.platform
           }
-          const moduleResponse = await request.post('/report/modules/', moduleData)
+          const moduleResponse = await createModule(moduleData)
           moduleId = moduleResponse.data.id
         } 
         // 创建新平台和新模块
@@ -492,7 +494,7 @@ const handleSubmit = async () => {
             description: form.value.newPlatformDesc,
             status: form.value.newPlatformStatus
           }
-          const platformResponse = await request.post('/report/platforms/', platformData)
+          const platformResponse = await createPlatform(platformData)
           const platformId = platformResponse.data.id
           
           // 创建新模块
@@ -502,7 +504,7 @@ const handleSubmit = async () => {
             status: form.value.newModuleStatus,
             platform: platformId
           }
-          const moduleResponse = await request.post('/report/modules/', moduleData)
+          const moduleResponse = await createModule(moduleData)
           moduleId = moduleResponse.data.id
         }
         
@@ -512,7 +514,7 @@ const handleSubmit = async () => {
           desc: form.value.desc,
           module: moduleId
         }
-        await request.post('/report/reports/', reportData)
+        await createReport(reportData)
         
         ElMessage.success('创建成功')
         dialogVisible.value = false

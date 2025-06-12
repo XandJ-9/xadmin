@@ -15,18 +15,21 @@ class BizModelSerializer(serializers.ModelSerializer):
             super().__init__(instance, data, **kwargs)
             self.request: Request = request or self.context.get("request", None)
 
-class SystemDictTypeSerializer(BizModelSerializer):
+class SystemBaseSerializer(CamelFieldSerializerMixin,BizModelSerializer):
+    pass
+
+class SystemDictTypeSerializer(SystemBaseSerializer):
     create_time = serializers.DateTimeField(source='created_at',format='%Y-%m-%d %H:%M:%S', read_only=True)
     class Meta:
         model = SystemDictType
         fields = "__all__"
 
-class SystemDictDataSerializer(BizModelSerializer):
+class SystemDictDataSerializer(SystemBaseSerializer):
     class Meta:
         model = SystemDictData
         fields = "__all__"
 
-class RoleSerializer(BizModelSerializer):
+class RoleSerializer(SystemBaseSerializer):
     roleId = serializers.IntegerField(source='id', read_only=True) 
     roleKey = serializers.CharField(source='role_key', read_only=True)
     roleName =  serializers.CharField(source='role_name', read_only=True)
@@ -35,7 +38,7 @@ class RoleSerializer(BizModelSerializer):
         fields = ['roleId', 'roleKey','roleName', 'create_time','status']
         read_only_fields = ['id', 'create_time']
 
-class DeptSerializer(CamelFieldSerializerMixin,BizModelSerializer):
+class DeptSerializer(SystemBaseSerializer):
     deptId = serializers.IntegerField(source='id', read_only=True)
     deptName = serializers.CharField(source='dept_name',read_only=True)
     orderNum = serializers.IntegerField(source='order_num',read_only=True)
@@ -46,19 +49,19 @@ class DeptSerializer(CamelFieldSerializerMixin,BizModelSerializer):
         # fields = ['id','deptId', 'deptName', 'orderNum', 'status','parent']
         read_only_fields = ['id', 'create_time','update_time','creator','updator']
     
-class UserExportSerializer(CamelFieldSerializerMixin,BizModelSerializer):
+class UserExportSerializer(SystemBaseSerializer):
     dept_name = serializers.CharField(source="dept.dept_name", read_only=True)
     class Meta:
         model = User 
         fields = ['username','nickname','phonenumber','email','sex','status','dept_name','create_time']
 
-class UserImportSerializer(ChoiceFieldSerializerMixin,BizModelSerializer):
+class UserImportSerializer(ChoiceFieldSerializerMixin,SystemBaseSerializer):
     dept_name = serializers.CharField(source="dept.dept_name", read_only=True)
     class Meta:
         model = User
         fields = ['id','username','nickname','phonenumber','email','sex','status','dept_name','create_time']
 
-class UserSerializer(CamelFieldSerializerMixin,BizModelSerializer):
+class UserSerializer(SystemBaseSerializer):
     userId = serializers.IntegerField(source="id",read_only=True,required=False)
     deptId = serializers.IntegerField(source="dept.id",read_only=True,required=False)
     password = serializers.CharField(write_only=True, required=False)
@@ -87,7 +90,7 @@ class UserSerializer(CamelFieldSerializerMixin,BizModelSerializer):
 
         return super().update(instance, validated_data)
 
-class MenuSerializer(UpdateSourceFieldSerializerMixin,CamelFieldSerializerMixin,BizModelSerializer):
+class MenuSerializer(UpdateSourceFieldSerializerMixin,SystemBaseSerializer):
     menuId = serializers.IntegerField(source='id', read_only=True)
     parentId  = serializers.IntegerField(source='parent.id', required=False)
     
@@ -97,7 +100,7 @@ class MenuSerializer(UpdateSourceFieldSerializerMixin,CamelFieldSerializerMixin,
         # exclude = ['creator','updator','created_at', 'updated_at']
         read_only_fields = ['id']
 
-class SystemConfigSerializer(BizModelSerializer):
+class SystemConfigSerializer(SystemBaseSerializer):
     creator_info = UserSerializer(source='creator', read_only=True)
     
     class Meta:
