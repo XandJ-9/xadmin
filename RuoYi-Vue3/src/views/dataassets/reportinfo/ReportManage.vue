@@ -197,7 +197,7 @@ export default {
 import { ref, onMounted, reactive, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import request from '@/utils/request'
-import Pagination from '@/components/Pagination.vue'
+import Pagination from '@/components/Pagination'
 
 const reportList = ref([])
 const dialogVisible = ref(false)
