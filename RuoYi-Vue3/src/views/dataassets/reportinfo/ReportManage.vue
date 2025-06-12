@@ -273,9 +273,9 @@ const fetchReportList = async () => {
       module_id: searchForm.moduleId,
       name: searchForm.reportName
     }
-    const response = await request.get('/api/report/reports/', { params })
-    reportList.value = response.data.data.data
-    total.value = response.data.data.total
+    const response = await request.get('/report/reports/', { params })
+    reportList.value = response.data.data
+    total.value = response.data.total
   } catch (error) {
     console.error('获取报表列表失败：', error)
     ElMessage.error('获取报表列表失败')
@@ -285,8 +285,8 @@ const fetchReportList = async () => {
 // 获取平台列表
 const fetchPlatformOptions = async () => {
   try {
-    const response = await request.get('/api/report/platforms/list_all/')
-    platformOptions.value = response.data.data
+    const response = await request.get('/report/platforms/list_all/')
+    platformOptions.value = response.data
   } catch (error) {
     console.error('获取平台列表失败：', error)
     ElMessage.error('获取平台列表失败')
@@ -296,8 +296,8 @@ const fetchPlatformOptions = async () => {
 // 获取模块列表
 const fetchModuleOptions = async () => {
   try {
-    const response = await request.get('/api/report/modules/list_all/')
-    moduleOptions.value = response.data.data
+    const response = await request.get('/report/modules/list_all/')
+    moduleOptions.value = response.data
   } catch (error) {
     console.error('获取模块列表失败：', error)
     ElMessage.error('获取模块列表失败')
@@ -313,8 +313,8 @@ const fetchModuleOptionsByPlatform = async () => {
   
   try {
     const params = { platform_id: searchForm.platformId }
-    const response = await request.get('/api/report/modules/list_all/', { params })
-    moduleOptions.value = response.data.data
+    const response = await request.get('/report/modules/list_all/', { params })
+    moduleOptions.value = response.data
   } catch (error) {
     console.error('获取模块列表失败：', error)
     ElMessage.error('获取模块列表失败')
@@ -425,7 +425,7 @@ const handleDelete = (row) => {
   })
     .then(async () => {
       try {
-        await request.delete(`/api/report/reports/${row.id}/`)
+        await request.delete(`/report/reports/${row.id}/`)
         ElMessage.success('删除成功')
         fetchReportList()
       } catch (error) {
@@ -448,7 +448,7 @@ const handleSubmit = async () => {
             desc: form.value.desc,
             module: form.value.module
           }
-          await request.put(`/api/report/reports/${currentId.value}/`, reportData)
+          await request.put(`/report/reports/${currentId.value}/`, reportData)
           ElMessage.success('更新成功')
           dialogVisible.value = false
           fetchReportList()
@@ -462,7 +462,7 @@ const handleSubmit = async () => {
             desc: form.value.desc,
             module: form.value.module
           }
-          await request.post('/api/report/reports/', reportData)
+          await request.post('/report/reports/', reportData)
           ElMessage.success('创建成功')
           dialogVisible.value = false
           fetchReportList()
@@ -481,8 +481,8 @@ const handleSubmit = async () => {
             status: form.value.newModuleStatus,
             platform: form.value.platform
           }
-          const moduleResponse = await request.post('/api/report/modules/', moduleData)
-          moduleId = moduleResponse.data.data.id
+          const moduleResponse = await request.post('/report/modules/', moduleData)
+          moduleId = moduleResponse.data.id
         } 
         // 创建新平台和新模块
         else {
@@ -492,8 +492,8 @@ const handleSubmit = async () => {
             description: form.value.newPlatformDesc,
             status: form.value.newPlatformStatus
           }
-          const platformResponse = await request.post('/api/report/platforms/', platformData)
-          const platformId = platformResponse.data.data.id
+          const platformResponse = await request.post('/report/platforms/', platformData)
+          const platformId = platformResponse.data.id
           
           // 创建新模块
           const moduleData = {
@@ -502,8 +502,8 @@ const handleSubmit = async () => {
             status: form.value.newModuleStatus,
             platform: platformId
           }
-          const moduleResponse = await request.post('/api/report/modules/', moduleData)
-          moduleId = moduleResponse.data.data.id
+          const moduleResponse = await request.post('/report/modules/', moduleData)
+          moduleId = moduleResponse.data.id
         }
         
         // 创建新报表
@@ -512,7 +512,7 @@ const handleSubmit = async () => {
           desc: form.value.desc,
           module: moduleId
         }
-        await request.post('/api/report/reports/', reportData)
+        await request.post('/report/reports/', reportData)
         
         ElMessage.success('创建成功')
         dialogVisible.value = false
