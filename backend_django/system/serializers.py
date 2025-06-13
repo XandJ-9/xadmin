@@ -19,7 +19,7 @@ class SystemBaseSerializer(CamelFieldSerializerMixin,BizModelSerializer):
     pass
 
 class SystemDictTypeSerializer(SystemBaseSerializer):
-    create_time = serializers.DateTimeField(source='created_at',format='%Y-%m-%d %H:%M:%S', read_only=True)
+    dictId = serializers.IntegerField(source='id', read_only=True)
     class Meta:
         model = SystemDictType
         fields = "__all__"

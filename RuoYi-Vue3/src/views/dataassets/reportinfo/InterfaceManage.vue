@@ -206,27 +206,26 @@
           </el-form-item>
           <el-form-item label="是否合计" prop="is_total">
             <el-radio-group v-model="formData.is_total">
-              <el-radio label="1">是</el-radio>
-              <el-radio label="0">否</el-radio>
+              <el-radio value="1">是</el-radio>
+              <el-radio value="0">否</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="是否分页" prop="is_paging">
             <el-radio-group v-model="formData.is_paging">
-              <el-radio label="1">是</el-radio>
-              <el-radio label="0">否</el-radio>
+              <el-radio value="1">是</el-radio>
+              <el-radio value="0">否</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="是否日期查询" prop="is_date_option">
             <el-radio-group v-model="formData.is_date_option">
-              <el-radio label="1">是</el-radio>
-              <el-radio label="0">否</el-radio>
+              <el-radio value="1">是</el-radio>
+              <el-radio value="0">否</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="接口sql" prop="interface_sql">
             <el-input
               v-model="formData.interface_sql"
               type="textarea"
-              :rows="3"
               placeholder="请输入接口sql"
             />
           </el-form-item>

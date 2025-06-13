@@ -4,7 +4,7 @@ import request from '@/utils/request'
 // 获取平台列表
 export function getPlatformList(params) {
   return request({
-    url: '/api/report/platforms/',
+    url: '/report/platforms/',
     method: 'get',
     params
   })
@@ -13,7 +13,7 @@ export function getPlatformList(params) {
 // 创建平台
 export function createPlatform(data) {
   return request({
-    url: '/api/report/platforms/',
+    url: '/report/platforms/',
     method: 'post',
     data
   })
@@ -22,7 +22,7 @@ export function createPlatform(data) {
 // 更新平台
 export function updatePlatform(id, data) {
   return request({
-    url: `/api/report/platforms/${id}/`,
+    url: `/report/platforms/${id}/`,
     method: 'put',
     data
   })
@@ -31,7 +31,7 @@ export function updatePlatform(id, data) {
 // 删除平台
 export function deletePlatform(id) {
   return request({
-    url: `/api/report/platforms/${id}/`,
+    url: `/report/platforms/${id}/`,
     method: 'delete'
   })
 }
@@ -40,7 +40,7 @@ export function deletePlatform(id) {
 // 获取模块列表
 export function getModuleList(params) {
   return request({
-    url: '/api/report/modules/',
+    url: '/report/modules/',
     method: 'get',
     params
   })
@@ -49,7 +49,7 @@ export function getModuleList(params) {
 // 根据平台ID获取模块列表
 export function getModulesByPlatform(platformId) {
   return request({
-    url: '/api/report/modules/',
+    url: '/report/modules/',
     method: 'get',
     params: { platform: platformId }
   })
@@ -58,7 +58,7 @@ export function getModulesByPlatform(platformId) {
 // 创建模块
 export function createModule(data) {
   return request({
-    url: '/api/report/modules/',
+    url: '/report/modules/',
     method: 'post',
     data
   })
@@ -67,7 +67,7 @@ export function createModule(data) {
 // 更新模块
 export function updateModule(id, data) {
   return request({
-    url: `/api/report/modules/${id}/`,
+    url: `/report/modules/${id}/`,
     method: 'put',
     data
   })
@@ -76,7 +76,7 @@ export function updateModule(id, data) {
 // 删除模块
 export function deleteModule(id) {
   return request({
-    url: `/api/report/modules/${id}/`,
+    url: `/report/modules/${id}/`,
     method: 'delete'
   })
 }
@@ -85,7 +85,7 @@ export function deleteModule(id) {
 // 获取报表列表
 export function getReportList(params) {
   return request({
-    url: '/api/report/reports/',
+    url: '/report/reports/',
     method: 'get',
     params
   })
@@ -94,7 +94,7 @@ export function getReportList(params) {
 // 创建报表
 export function createReport(data) {
   return request({
-    url: '/api/report/reports/',
+    url: '/report/reports/',
     method: 'post',
     data
   })
@@ -103,7 +103,7 @@ export function createReport(data) {
 // 更新报表
 export function updateReport(id, data) {
   return request({
-    url: `/api/report/reports/${id}/`,
+    url: `/report/reports/${id}/`,
     method: 'put',
     data
   })
@@ -112,7 +112,7 @@ export function updateReport(id, data) {
 // 删除报表
 export function deleteReport(id) {
   return request({
-    url: `/api/report/reports/${id}/`,
+    url: `/report/reports/${id}/`,
     method: 'delete'
   })
 }
@@ -121,7 +121,7 @@ export function deleteReport(id) {
 // 获取接口列表
 export function getInterfaceList(params) {
   return request({
-    url: '/api/report/interfaces/',
+    url: '/report/interfaces/',
     method: 'get',
     params
   })
@@ -130,7 +130,7 @@ export function getInterfaceList(params) {
 // 获取接口详情
 export function getInterfaceDetail(id) {
   return request({
-    url: `/api/report/interfaces/${id}/`,
+    url: `/report/interfaces/${id}/`,
     method: 'get'
   })
 }
@@ -138,7 +138,7 @@ export function getInterfaceDetail(id) {
 // 创建接口
 export function createInterface(data) {
   return request({
-    url: '/api/report/interfaces/',
+    url: '/report/interfaces/',
     method: 'post',
     data
   })
@@ -147,7 +147,7 @@ export function createInterface(data) {
 // 更新接口
 export function updateInterface(id, data) {
   return request({
-    url: `/api/report/interfaces/${id}/`,
+    url: `/report/interfaces/${id}/`,
     method: 'put',
     data
   })
@@ -156,7 +156,7 @@ export function updateInterface(id, data) {
 // 删除接口
 export function deleteInterface(id) {
   return request({
-    url: `/api/report/interfaces/${id}/`,
+    url: `/report/interfaces/${id}/`,
     method: 'delete'
   })
 }
@@ -164,7 +164,7 @@ export function deleteInterface(id) {
 // 导出接口
 export function exportInterface(id) {
   return request({
-    url: `/api/report/interfaces/${id}/export/`,
+    url: `/report/interfaces/${id}/export/`,
     method: 'get',
     responseType: 'blob'
   })
@@ -176,7 +176,7 @@ export function importInterface(file) {
   formData.append('file', file)
   
   return request({
-    url: '/api/report/import-interface/',
+    url: '/report/import-interface/',
     method: 'post',
     data: formData,
     headers: {
@@ -189,7 +189,7 @@ export function importInterface(file) {
 // 获取接口字段列表
 export function getInterfaceFields(params) {
   return request({
-    url: '/api/report/interface-fields/',
+    url: '/report/interface-fields/',
     method: 'get',
     params
   })
@@ -198,7 +198,7 @@ export function getInterfaceFields(params) {
 // 创建接口字段
 export function createInterfaceField(data) {
   return request({
-    url: '/api/report/interface-fields/',
+    url: '/report/interface-fields/',
     method: 'post',
     data
   })
@@ -207,7 +207,7 @@ export function createInterfaceField(data) {
 // 更新接口字段
 export function updateInterfaceField(id, data) {
   return request({
-    url: `/api/report/interface-fields/${id}/`,
+    url: `/report/interface-fields/${id}/`,
     method: 'put',
     data
   })
@@ -216,7 +216,7 @@ export function updateInterfaceField(id, data) {
 // 删除接口字段
 export function deleteInterfaceField(id) {
   return request({
-    url: `/api/report/interface-fields/${id}/`,
+    url: `/report/interface-fields/${id}/`,
     method: 'delete'
   })
 }
@@ -225,7 +225,7 @@ export function deleteInterfaceField(id) {
 // 执行接口查询
 export function executeInterfaceQuery(interfaceCode, data) {
   return request({
-    url: `/api/report/execute-query/?interface_code=${interfaceCode}`,
+    url: `/report/execute-query/?interface_code=${interfaceCode}`,
     method: 'post',
     data
   })
@@ -234,7 +234,7 @@ export function executeInterfaceQuery(interfaceCode, data) {
 // 获取接口查询日志
 export function getInterfaceQueryLogs(params) {
   return request({
-    url: '/api/report/interface-logs/',
+    url: '/report/interface-logs/',
     method: 'get',
     params
   })
@@ -243,7 +243,7 @@ export function getInterfaceQueryLogs(params) {
 // 获取接口查询日志详情
 export function getInterfaceQueryLogDetail(id) {
   return request({
-    url: `/api/report/interface-logs/${id}/`,
+    url: `/report/interface-logs/${id}/`,
     method: 'get'
   })
 }

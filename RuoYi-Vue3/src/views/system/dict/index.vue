@@ -103,12 +103,12 @@
 
       <el-table v-loading="loading" :data="typeList" @selection-change="handleSelectionChange">
          <el-table-column type="selection" width="55" align="center" />
-         <el-table-column label="字典编号" align="center" prop="id" />
-         <el-table-column label="字典名称" align="center" prop="dict_name" :show-overflow-tooltip="true"/>
+         <el-table-column label="字典编号" align="center" prop="dictId" />
+         <el-table-column label="字典名称" align="center" prop="dictName" :show-overflow-tooltip="true"/>
          <el-table-column label="字典类型" align="center" :show-overflow-tooltip="true">
             <template #default="scope">
                <router-link :to="'/system/dict-data/index/' + scope.row.id" class="link-type">
-                  <span>{{ scope.row.dict_type }}</span>
+                  <span>{{ scope.row.dictType }}</span>
                </router-link>
             </template>
          </el-table-column>
@@ -118,9 +118,9 @@
             </template>
          </el-table-column>
          <el-table-column label="备注" align="center" prop="remark" :show-overflow-tooltip="true" />
-         <el-table-column label="创建时间" align="center" prop="create_time" width="180">
+         <el-table-column label="创建时间" align="center" prop="createTime" width="180">
             <template #default="scope">
-               <span>{{ parseTime(scope.row.create_time) }}</span>
+               <span>{{ parseTime(scope.row.createTime) }}</span>
             </template>
          </el-table-column>
          <el-table-column label="操作" align="center" width="160" class-name="small-padding fixed-width">

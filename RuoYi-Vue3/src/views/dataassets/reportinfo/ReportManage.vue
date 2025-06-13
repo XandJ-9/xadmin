@@ -93,8 +93,8 @@
         <el-divider content-position="left">所属模块</el-divider>
         <el-form-item label="选择方式" prop="moduleSelectType">
           <el-radio-group v-model="form.moduleSelectType" @change="handleModuleSelectTypeChange">
-            <el-radio label="existing">选择已有模块</el-radio>
-            <el-radio label="new">创建新模块</el-radio>
+            <el-radio value="existing">选择已有模块</el-radio>
+            <el-radio value="new">创建新模块</el-radio>
           </el-radio-group>
         </el-form-item>
         
@@ -118,8 +118,8 @@
           <!-- 平台选择/创建 -->
           <el-form-item label="选择方式" prop="platformSelectType">
             <el-radio-group v-model="form.platformSelectType" @change="handlePlatformSelectTypeChange">
-              <el-radio label="existing">选择已有平台</el-radio>
-              <el-radio label="new">创建新平台</el-radio>
+              <el-radio value="existing">选择已有平台</el-radio>
+              <el-radio value="new">创建新平台</el-radio>
             </el-radio-group>
           </el-form-item>
           
@@ -152,8 +152,8 @@
             </el-form-item>
             <el-form-item label="平台状态" prop="newPlatformStatus">
               <el-radio-group v-model="form.newPlatformStatus">
-                <el-radio label="1">启用</el-radio>
-                <el-radio label="0">禁用</el-radio>
+                <el-radio value="1">启用</el-radio>
+                <el-radio value="0">禁用</el-radio>
               </el-radio-group>
             </el-form-item>
           </template>
@@ -171,8 +171,8 @@
           </el-form-item>
           <el-form-item label="模块状态" prop="newModuleStatus">
             <el-radio-group v-model="form.newModuleStatus">
-              <el-radio label="1">启用</el-radio>
-              <el-radio label="0">禁用</el-radio>
+              <el-radio value="1">启用</el-radio>
+              <el-radio value="0">禁用</el-radio>
             </el-radio-group>
           </el-form-item>
         </template>
@@ -277,8 +277,8 @@ const fetchReportList = async () => {
       name: searchForm.reportName
     }
     const response = await getReportList(params)
-    reportList.value = response.data.data
-    total.value = response.data.total
+    reportList.value = response.data
+    total.value = response.total
   } catch (error) {
     console.error('获取报表列表失败：', error)
     ElMessage.error('获取报表列表失败')
