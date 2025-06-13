@@ -106,7 +106,10 @@ const queryProperties = ref([
     { label: '数据源类型', type: 'select', prop: 'type' , options: [
         {id:1, label: 'MySQL', value: 'mysql' },
         {id:2, label: 'PostgreSql', value: 'PostgreSql' },
-    ]}
+    ]
+    },
+    { label: '创建时间', type: 'date', prop: 'create_time' },
+    { label: '时间范围', type: 'dateRange', prop: 'dateRange' }
 ])
 
 const form = ref({
