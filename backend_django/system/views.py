@@ -502,7 +502,7 @@ class SystemDictTypeViewSet(CustomModelViewSet):
 class SystemDictDataViewSet(CustomModelViewSet):
     queryset = SystemDictData.objects.all()
     serializer_class = SystemDictDataSerializer
-    filter_fields = ['dict_type']
+    # filter_fields = ['dictType']  # filter_fields默认值为‘__all__’
     filter_backends = [SearchFilterBackend]
 
     @action(detail=False, methods=['get'])

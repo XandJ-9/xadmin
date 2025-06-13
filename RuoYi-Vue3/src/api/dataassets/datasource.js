@@ -3,7 +3,7 @@ import request from '@/utils/request'
 // 获取数据源列表
 export function getDataSourceList() {
   return request({
-    url: '/api/datasources/',
+    url: '/datasources/',
     method: 'get'
   })
 }
@@ -11,7 +11,7 @@ export function getDataSourceList() {
 // 创建数据源
 export function createDataSource(data) {
   return request({
-    url: '/api/datasources/',
+    url: '/datasources/',
     method: 'post',
     data
   })
@@ -20,7 +20,7 @@ export function createDataSource(data) {
 // 更新数据源
 export function updateDataSource(id, data) {
   return request({
-    url: `/api/datasources/${id}/`,
+    url: `/datasources/${id}/`,
     method: 'put',
     data
   })
@@ -29,7 +29,7 @@ export function updateDataSource(id, data) {
 // 删除数据源
 export function deleteDataSource(id) {
   return request({
-    url: `/api/datasources/${id}/`,
+    url: `/datasources/${id}/`,
     method: 'delete'
   })
 }
@@ -37,7 +37,7 @@ export function deleteDataSource(id) {
 // 测试数据源连接
 export function testDataSourceConnection(id) {
   return request({
-    url: `/api/datasources/${id}/test/`,
+    url: `/datasources/${id}/test/`,
     method: 'post'
   })
 }
@@ -48,7 +48,7 @@ export function executeQuery(dataSourceId, data) {
   formData.append('sql', data)
   
   return request({
-    url: `/api/datasources/${dataSourceId}/query/`,
+    url: `/datasources/${dataSourceId}/query/`,
     method: 'post',
     data: formData
   })
@@ -57,7 +57,7 @@ export function executeQuery(dataSourceId, data) {
 // 获取查询日志列表
 export function getQueryLogs(params) {
   return request({
-    url: '/api/querylogs/',
+    url: '/querylogs/',
     method: 'get',
     params
   })
@@ -66,7 +66,7 @@ export function getQueryLogs(params) {
 // 获取查询日志详情
 export function getQueryLogDetail(id) {
   return request({
-    url: `/api/querylogs/${id}/`,
+    url: `/querylogs/${id}/`,
     method: 'get'
   })
 }

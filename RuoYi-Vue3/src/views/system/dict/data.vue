@@ -1,13 +1,13 @@
 <template>
    <div class="app-container">
       <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch">
-         <el-form-item label="字典名称" prop="dict_type">
-            <el-select v-model="queryParams.dict_type" style="width: 200px">
+         <el-form-item label="字典名称" prop="dictType">
+            <el-select v-model="queryParams.dictType" style="width: 200px">
                <el-option
                   v-for="item in typeOptions"
                   :key="item.id"
-                  :label="item.dict_name"
-                  :value="item.dict_type"
+                  :label="item.dictName"
+                  :value="item.dictType"
                />
             </el-select>
          </el-form-item>
@@ -97,17 +97,17 @@
             </template>
          </el-table-column>
         -->
-         <el-table-column label="字典键值" align="center" prop="dict_value" />
-         <el-table-column label="字典排序" align="center" prop="dict_sort" />
+         <el-table-column label="字典键值" align="center" prop="dictValue" />
+         <el-table-column label="字典排序" align="center" prop="dictSort" />
          <el-table-column label="状态" align="center" prop="status">
             <template #default="scope">
                <dict-tag :options="sys_normal_disable" :value="scope.row.status" />
             </template>
          </el-table-column>
          <el-table-column label="备注" align="center" prop="remark" :show-overflow-tooltip="true" />
-         <el-table-column label="创建时间" align="center" prop="create_time" width="180">
+         <el-table-column label="创建时间" align="center" prop="createTime" width="180">
             <template #default="scope">
-               <span>{{ parseTime(scope.row.create_time) }}</span>
+               <span>{{ parseTime(scope.row.createTime) }}</span>
             </template>
          </el-table-column>
          <el-table-column label="操作" align="center" width="160" class-name="small-padding fixed-width">

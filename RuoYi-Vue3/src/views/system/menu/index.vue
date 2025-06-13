@@ -350,7 +350,7 @@ function cancel() {
 function reset() {
   form.value = {
     menuId: undefined,
-    parentId: 0,
+    parentId: undefined,
     menuName: undefined,
     icon: undefined,
     menuType: "M",

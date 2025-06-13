@@ -1,8 +1,7 @@
 <template>
-  <div class="datasource-container">
-    <div class="header">
-      <el-button type="primary" @click="handleAdd">新增数据源</el-button>
-    </div>
+  <div class="app-container">
+    <query-params-form :properties="queryProperties" @query="handleQuery"/>
+    <crud-bar />
 
     <el-table :data="dataSources" style="width: 100%" v-loading="loading">
       <el-table-column prop="id" label="ID" width="80" />
@@ -91,7 +90,9 @@ export default {
 <script setup>
 import { ref, onMounted, reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import request from '@/utils/request'
+import QueryParamsForm from '@/components/QueryParamsForm'
+import CrudBar from '@/components/CrudBar'
+import { getDataSourceList } from '@/api/dataassets/datasource'
 
 const loading = ref(false)
 const btnLoading = ref(false)
@@ -99,6 +100,14 @@ const dataSources = ref([])
 const dialogVisible = ref(false)
 const dialogTitle = ref('')
 const formRef = ref(null)
+
+const queryProperties = ref([
+    { label: '数据源名称', type: 'input', prop: 'name' },
+    { label: '数据源类型', type: 'select', prop: 'type' , options: [
+        {id:1, label: 'MySQL', value: 'mysql' },
+        {id:2, label: 'PostgreSql', value: 'PostgreSql' },
+    ]}
+])
 
 const form = ref({
   name: '',
@@ -124,8 +133,8 @@ const rules = {
 const fetchDataSources = async () => {
   try {
     loading.value = true
-    const response = await request.get('/api/datasources/')
-    dataSources.value = response.data
+    const response = await getDataSourceList()
+    dataSources.value = response
   } catch (error) {
     // ElMessage.error('获取数据源列表失败')
     console.error(error)
@@ -133,6 +142,12 @@ const fetchDataSources = async () => {
     loading.value = false
   }
 }
+
+const handleQuery = (queryParams) => {
+    // fetchDataSources()
+    console.log("handleQuery", queryParams)
+}
+
 
 const handleAdd = () => {
   dialogTitle.value = '新增数据源'
@@ -213,9 +228,7 @@ const resetForm = () => {
   }
 }
 
-onMounted(() => {
-  fetchDataSources()
-})
+
 </script>
 
 <style scoped>

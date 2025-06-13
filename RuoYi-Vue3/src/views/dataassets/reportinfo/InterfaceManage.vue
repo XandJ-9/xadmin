@@ -247,21 +247,14 @@
   </div>
 </template>
 
-<script>
-export default {
-    name: 'InterfaceManage'
-}
-</script>
-
-<script setup>
+<script setup name="InterfaceManage">
 import { ref, onMounted, reactive, inject } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import { useRoute, useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import request from '@/utils/request'
 import Pagination from '@/components/Pagination'
 // import InterfaceFields from './InterfaceFields.vue'
 const router = useRouter()
-const route = useRoute()
 
 // 搜索表单数据
 const searchForm = reactive({

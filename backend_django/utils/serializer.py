@@ -1,4 +1,3 @@
-import re
 import copy
 from rest_framework.utils import model_meta
 from rest_framework import serializers
@@ -6,6 +5,7 @@ from rest_framework.utils.serializer_helpers import BindingDict
 from rest_framework.fields import SkipField
 from rest_framework.relations import PKOnlyObject  # NOQA # isort:skip
 
+from utils.util_str import underline_to_camel_string
 
 def set_choice_field_internal_value(fields:BindingDict, field_name:str, data: dict):
     # for field_name in fields:  这种方式无法获取到field_name
@@ -47,11 +47,6 @@ class CamelFieldSerializerMixin:
     '''
     将驼峰风格的字段值对应到下划线字段上
     '''
-
-    def _convert_to_camel_field_name(self,match_field):
-        if match_field.start() == 0:
-            return match_field.string[match_field.start():match_field.end()]
-        return match_field.group(1).upper()
     def to_internal_value(self, data):
         '''
         将驼峰风格的字段值对应到下划线风格的字段上
@@ -60,7 +55,7 @@ class CamelFieldSerializerMixin:
         # self._writable_fields字段对应模型字段
         # self._declared_fields字段对应显示序列化类中定义的字段
         for field in self._writable_fields:
-            camel_field_name = re.sub(r'_([a-z])', self._convert_to_camel_field_name ,field.source)
+            camel_field_name = underline_to_camel_string(field.source)
             if camel_field_name not in data.keys():
                 continue
             data[field.source] = data.pop(camel_field_name)
@@ -100,7 +95,7 @@ class CamelFieldSerializerMixin:
                 ret[field.field_name] = None
             else:
                 # 转换驼峰字段
-                camel_field_name = re.sub(r'_([a-z])', self._convert_to_camel_field_name ,field.field_name)
+                camel_field_name = underline_to_camel_string(field.field_name)
                 ret[camel_field_name] = field.to_representation(attribute)
 
         return ret

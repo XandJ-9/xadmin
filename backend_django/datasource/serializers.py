@@ -3,7 +3,7 @@ from system.serializers import BizModelSerializer
 from .models import DataSource, QueryLog
 
 class DataSourceSerializer(BizModelSerializer):
-    # password = serializers.CharField(write_only=True)
+    datasource_name = serializers.CharField(source='name', read_only=True)
 
     class Meta:
         model = DataSource

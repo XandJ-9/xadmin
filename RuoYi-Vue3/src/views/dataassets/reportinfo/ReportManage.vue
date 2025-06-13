@@ -194,12 +194,11 @@ export default {
 </script>
 
 <script setup>
-import { ref, onMounted, reactive, watch } from 'vue'
+import { ref, onMounted, reactive, watch, inject } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import request from '@/utils/request'
 import Pagination from '@/components/Pagination'
-import { getPlatformList, createPlatform, updatePlatform, deletePlatform,
-         getModuleList, getModulesByPlatform, createModule, updateModule, deleteModule,
+import { getPlatformList, createPlatform,
+         getModuleList, getModulesByPlatform, createModule,
          getReportList, createReport, updateReport, deleteReport } from '@/api/dataassets/reportinfo'
 
 const reportList = ref([])

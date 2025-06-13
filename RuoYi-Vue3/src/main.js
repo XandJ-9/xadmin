@@ -56,6 +56,7 @@ app.config.globalProperties.selectDictLabel = selectDictLabel
 app.config.globalProperties.selectDictLabels = selectDictLabels
 
 app.provide('download', download)
+app.provide('useDict', useDict)
 
 // 全局组件挂载
 app.component('DictTag', DictTag)

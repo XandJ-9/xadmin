@@ -213,7 +213,7 @@ DELETE {{host}}/api/system/dict/type/refreshCache HTTP/1.1
 Authorization: Bearer {{token}}
 
 ###
-GET {{host}}/api/system/dict/data?pageNum=1&pageSize=10&dict_type=sys_user_sex HTTP/1.1
+GET {{host}}/api/system/dict/data?pageNum=1&pageSize=10&dictType=sys_user_sex HTTP/1.1
 Authorization: Bearer {{token}}
 
 ###

@@ -13,9 +13,8 @@ Content-Type: application/json
 }
 
 
+
 ###
-# 获取列表
-GET {{host}}/api/report/reports/ HTTP/1.1
-Authorization: Bearer {{login.response.body.token}}
-
-
+# 获取数据源
+GET {{host}}/api/datasources/ HTTP/1.1
+Authorization: Bearer {{login.response.body.$.token}}
