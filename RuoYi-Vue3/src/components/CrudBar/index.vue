@@ -83,12 +83,22 @@ const props = defineProps({
 
 const emit = defineEmits([])
 
-const handleAdd = () => { }
 
-const handleUpdate = () => { }
 
-const handleDelete = () => { }
+const handleAdd = () => {
+    emit("add")
+ }
 
-const handleExport = () => { }
+const handleUpdate = () => { 
+    emit('update')
+}
+
+const handleDelete = () => {
+    emit('delete')
+ }
+
+const handleExport = () => { 
+    emit('export')
+}
 
 </script>

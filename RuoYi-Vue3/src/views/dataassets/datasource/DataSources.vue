@@ -1,7 +1,12 @@
 <template>
   <div class="app-container">
     <query-params-form :properties="queryProperties" @query="handleQuery"/>
-    <crud-bar />
+    <crud-bar 
+     @add="handleAdd"
+     @delete="handleDelete"
+     @update="handleUpdate"
+     @export="handleExport"
+    />
 
     <el-table :data="dataSources" style="width: 100%" v-loading="loading">
       <el-table-column prop="id" label="ID" width="80" />
@@ -17,7 +22,7 @@
       <el-table-column fixed="right" label="操作" width="250">
         <template #default="scope">
           <div class="operation-buttons">
-            <el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>
+            <el-button size="small" @click="handleUpdate(scope.row)">编辑</el-button>
             <el-button size="small" type="success" :loading="btnTestList.includes(scope.row)" @click="handleTest(scope.row)">测试连接</el-button>
             <el-button size="small" type="danger" @click="handleDelete(scope.row)">删除</el-button>
           </div>
@@ -157,25 +162,12 @@ const handleAdd = () => {
   dialogVisible.value = true
 }
 
-const handleEdit = (row) => {
+const handleUpdate = (row) => {
   dialogTitle.value = '编辑数据源'
   form.value = { ...row }
   dialogVisible.value = true
 }
 
-const btnTestList = ref([])
-
-const handleTest = async (row) => {
-    btnTestList.value.push(row)
-    const response = await request.post(`/api/datasources/${row.id}/test/`)
-    if (response.data.status === 'success') {
-      ElMessage.success(`${row.name}连接测试成功`)
-    } else {
-      ElMessage.error(`${row.name}连接测试失败: ${response.data.msg}`)
-    }
-      // row.loading = false
-    btnTestList.value = btnTestList.value.filter(item => item.id !== row.id)
-}
 
 const handleDelete = (row) => {
   ElMessageBox.confirm('确认删除该数据源吗？', '提示', {
@@ -191,6 +183,10 @@ const handleDelete = (row) => {
       ElMessage.error('删除失败')
     }
   })
+}
+
+const handleExport = () => { 
+    ElMessage.success('导出成功')
 }
 
 const handleSubmit = async () => {
@@ -229,6 +225,21 @@ const resetForm = () => {
     password: '',
     description: ''
   }
+}
+
+
+const btnTestList = ref([])
+
+const handleTest = async (row) => {
+    btnTestList.value.push(row)
+    const response = await request.post(`/api/datasources/${row.id}/test/`)
+    if (response.data.status === 'success') {
+      ElMessage.success(`${row.name}连接测试成功`)
+    } else {
+      ElMessage.error(`${row.name}连接测试失败: ${response.data.msg}`)
+    }
+      // row.loading = false
+    btnTestList.value = btnTestList.value.filter(item => item.id !== row.id)
 }
 
 

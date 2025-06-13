@@ -52,7 +52,6 @@
 
 <script setup>
 
-import { resetForm } from '../../utils/ruoyi'
 
 const emit = defineEmits()
 // 传参样例
