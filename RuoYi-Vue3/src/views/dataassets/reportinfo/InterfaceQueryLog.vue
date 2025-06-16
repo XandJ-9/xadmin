@@ -146,7 +146,7 @@ import hljs from 'highlight.js/lib/core'
 import sql from 'highlight.js/lib/languages/sql'
 import 'highlight.js/styles/atom-one-dark.css'
 import { Document } from '@element-plus/icons-vue'
-import Pagination from '@/components/Pagination.vue'
+import Pagination from '@/components/Pagination'
 
 // 注册SQL语言高亮
 hljs.registerLanguage('sql', sql)
@@ -251,7 +251,7 @@ const searchLogs = () => {
 
 // 重置过滤器
 const resetFilter = () => {
-  filterForm = {
+  filterForm.valie ={
     interface_code: '',
     dateRange: []
   }

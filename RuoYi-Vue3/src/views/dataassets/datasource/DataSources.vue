@@ -93,11 +93,11 @@ export default {
 </script>
 
 <script setup>
-import { ref, onMounted, reactive } from 'vue'
+import { ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import QueryParamsForm from '@/components/QueryParamsForm'
 import CrudBar from '@/components/CrudBar'
-import { getDataSourceList } from '@/api/dataassets/datasource'
+import { getDataSourceList, deleteDataSource, updateDataSource, createDataSource, testDataSourceConnection } from '@/api/dataassets/datasource'
 
 const loading = ref(false)
 const btnLoading = ref(false)
@@ -152,8 +152,7 @@ const fetchDataSources = async () => {
 }
 
 const handleQuery = (queryParams) => {
-    // fetchDataSources()
-    console.log("handleQuery", queryParams)
+    fetchDataSources()
 }
 
 
@@ -176,7 +175,8 @@ const handleDelete = (row) => {
     type: 'warning'
   }).then(async () => {
     try {
-      await request.delete(`/api/datasources/${row.id}/`)
+        // await request.delete(`/api/datasources/${row.id}/`)
+      await deleteDataSource(row.id)
       ElMessage.success('删除成功')
       fetchDataSources()
     } catch (error) {
@@ -196,15 +196,16 @@ const handleSubmit = async () => {
     if (valid) {
       try {
         if (form.value.id) {
-          await request.put(`/api/datasources/${form.value.id}/`, form.value)
+          await updateDataSource(form.value.id, form.value)
           ElMessage.success('更新成功')
         } else {
-          await request.post('/api/datasources/', form.value)
+          await createDataSource(form.value)
           ElMessage.success('创建成功')
         }
         dialogVisible.value = false
         fetchDataSources()
       } catch (error) {
+        console.error(error)
         ElMessage.error(error.response?.data?.message || '操作失败')
       }
     }
@@ -227,21 +228,21 @@ const resetForm = () => {
   }
 }
 
-
+// 批量测试列表
 const btnTestList = ref([])
 
 const handleTest = async (row) => {
     btnTestList.value.push(row)
-    const response = await request.post(`/api/datasources/${row.id}/test/`)
-    if (response.data.status === 'success') {
+    const response = await testDataSourceConnection(row.id)
+    if (response.status === 'success') {
       ElMessage.success(`${row.name}连接测试成功`)
     } else {
-      ElMessage.error(`${row.name}连接测试失败: ${response.data.msg}`)
+      ElMessage.error(`${row.name}连接测试失败: ${response.msg}`)
     }
-      // row.loading = false
     btnTestList.value = btnTestList.value.filter(item => item.id !== row.id)
 }
 
+fetchDataSources()
 
 </script>
 

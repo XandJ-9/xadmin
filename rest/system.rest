@@ -237,3 +237,30 @@ Content-Type: application/json
     "roleId": 2,
     "status": "0"
 }
+
+
+###
+# 添加菜单
+POST  {{host}}/api/system/menu HTTP/1.1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{   
+    "menu_name" : "查询日志",
+    "order_num" : 1,
+    "path" : "datasource\/querylogs",
+    "component" : "dataassets\/datasource\/QueryLog",
+    "query" : null,
+    "route_name" : "QueryLog",
+    "is_frame" : 1,
+    "is_cache" : 1,
+    "menu_type" : "C",
+    "visible" : "0",
+    "status" : "0",
+    "perms" : null,
+    "icon" : "example",
+    "remark" : "",
+    "redirect" : null,
+    "del_flag" : "0",
+    "parentId" : 1072
+}

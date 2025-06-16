@@ -18,3 +18,35 @@ Content-Type: application/json
 # 获取数据源
 GET {{host}}/api/datasources/ HTTP/1.1
 Authorization: Bearer {{login.response.body.$.token}}
+
+
+###
+# 添加数据源
+POST {{host}}/api/datasources/ HTTP/1.1
+Authorization: Bearer {{login.response.body.$.token}}
+Content-Type: application/json
+
+{
+    "name": "租户库",
+    "type": "mysql",
+    "url": "jdbc:mysql://localhost:3306/test?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&allowMultiQueries=true",
+    "username": "root",
+    "password": "123456",
+    "host":  "localhost",
+    "port":  "3306",
+    "database":  "test"
+}
+
+###
+#
+POST {{host}}/api/datasources/1/query/ HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+Authorization: Bearer {{login.response.body.$.token}}
+
+sql=select%201
+
+
+###
+# 获取查询日志
+GET {{host}}/api/querylogs/ HTTP/1.1
+Authorization: Bearer {{login.response.body.$.token}}

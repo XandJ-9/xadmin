@@ -49,6 +49,9 @@ export function executeQuery(dataSourceId, data) {
   
   return request({
     url: `/datasources/${dataSourceId}/query/`,
+    headers: {
+        'Content-Type': 'multipart/form-data'
+    },
     method: 'post',
     data: formData
   })

@@ -14,7 +14,7 @@
             <el-select v-model="filterForm.dataSourceId" placeholder="请选择数据源" style="width: 200px">
               <el-option label="全部" value=""></el-option>
               <el-option 
-                v-for="source in dataSources" 
+                v-for="source in dataSourcesOptions" 
                 :key="source.id" 
                 :label="source.name" 
                 :value="source.id"
@@ -176,13 +176,7 @@
   </div>
 </template>
 
-<script>
-export default {
-    name: 'DataQueryLog',
-}
-</script>
-
-<script setup>
+<script setup name="DataQueryLog">
 import { ref, onMounted, nextTick, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
@@ -191,7 +185,11 @@ import hljs from 'highlight.js/lib/core'
 import sql from 'highlight.js/lib/languages/sql'
 import 'highlight.js/styles/atom-one-dark.css'
 import { Document } from '@element-plus/icons-vue'
-import Pagination from '@/components/Pagination.vue'
+import Pagination from '@/components/Pagination'
+
+import { getQueryLogs, getQueryLogDetail } from '@/api/dataassets/datasource'
+import { getDataSourceList } from '../../../api/dataassets/datasource'
+import { get } from '@vueuse/core'
 
 // 注册SQL语言高亮
 hljs.registerLanguage('sql', sql)
@@ -213,7 +211,7 @@ const pagination = ref({
 })
 
 // 数据源列表
-const dataSources = ref([])
+const dataSourcesOptions = ref([])
 
 // 日志数据
 const logData = ref([])
@@ -253,7 +251,8 @@ const copySql = () => {
 
 // 监听对话框显示状态，当对话框显示时应用代码高亮
 watch(dialogVisible, (newVal) => {
-  if (newVal && sqlCodeBlock.value) {
+    if (newVal && sqlCodeBlock.value) {
+    sqlCodeBlock.value.dataset.highlighted = "no"
     nextTick(() => {
       hljs.highlightElement(sqlCodeBlock.value)
     })
@@ -262,12 +261,15 @@ watch(dialogVisible, (newVal) => {
 
 // 获取数据源列表
 const fetchDataSources = async () => {
-  try {
-    const response = await request.get('/api/datasources/')
-    dataSources.value = response.data
-  } catch (error) {
-    // ElMessage.error('获取数据源列表失败')
-  }
+//   try {
+//     const response = await request.get('/api/datasources/')
+//     dataSourcesOptions.value = response.data
+//   } catch (error) {
+//     // ElMessage.error('获取数据源列表失败')
+    //   }
+    getDataSourceList().then((response) => { 
+    dataSourcesOptions.value = response
+    })
 }
 
 // 查询日志
@@ -288,9 +290,10 @@ const searchLogs = async () => {
       params.end_date = filterForm.value.dateRange[1].toISOString().split('T')[0]
     }
     
-    const response = await request.get('/api/querylogs/', { params })
-    logData.value = response.data.data.data
-    pagination.value.total = response.data.data.total
+      getQueryLogs(params).then(res => {
+          logData.value = res.data
+          pagination.value.total = res.total
+    })
   } catch (error) {
     // ElMessage.error('获取查询日志失败')
   } finally {
@@ -324,8 +327,8 @@ const handleCurrentChange = (page) => {
 // 查看查询详情
 const viewQueryDetail = async (row) => {
   try {
-    const response = await request.get(`/api/querylogs/${row.id}/`)
-    const result = response.data.data
+    const response = await getQueryLogDetail(row.id)
+    const result = response.data
     currentQuery.value = {
       id: result.id,
       dataSourceName: result.datasource_name,
@@ -343,7 +346,7 @@ const viewQueryDetail = async (row) => {
     
     // 在对话框显示后应用代码高亮
     nextTick(() => {
-      if (sqlCodeBlock.value) {
+        if (sqlCodeBlock.value) {
         hljs.highlightElement(sqlCodeBlock.value)
       }
     })

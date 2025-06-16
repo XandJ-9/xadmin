@@ -96,5 +96,6 @@ class QueryLogMiddleware(MiddlewareMixin):
             
         except Exception as e:
             logger.error(f'记录查询日志失败: {str(e)}')
+            raise e
             
         return response

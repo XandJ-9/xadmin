@@ -14,7 +14,7 @@
           :value="source.id"
         />
       </el-select>
-      <el-button type="primary" @click="executeQuery" :loading="loading">执行查询</el-button>
+      <el-button type="primary" @click="handleQuery" :loading="loading">执行查询</el-button>
     </div>
 
     <div class="query-content">
@@ -66,9 +66,9 @@ export default {
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { ElMessage } from 'element-plus'
-import request from '@/utils/request'
-import MonacoEditor from '@/components/MonacoEditor.vue'
-import QueryResult from '@/components/QueryResult.vue'
+import MonacoEditor from '@/components/MonacoEditor'
+import QueryResult from './QueryResult'
+import {  getDataSourceList, executeQuery } from '@/api/dataassets/datasource'
 
 // 数据查询相关数据
 const dataSources = ref([])
@@ -115,12 +115,9 @@ onUnmounted(() => {
 })
 
 const fetchDataSources = async () => {
-  try {
-    const response = await request.get('/api/datasources/')
-    dataSources.value = response.data
-  } catch (error) {
-    // ElMessage.error('获取数据源列表失败')
-  }
+    getDataSourceList().then(res => {
+        dataSources.value = res
+     })
 }
 
 const handleDataSourceChange = () => {
@@ -157,7 +154,7 @@ const getCurrentSql = () => {
   return lastStatement ? lastStatement.trim() : ''
 }
 
-const executeQuery = async () => {
+const handleQuery = async () => {
   if (!selectedDataSource.value) {
     ElMessage.warning('请选择数据源')
     return
@@ -179,10 +176,10 @@ const executeQuery = async () => {
   const newTabId = `tab-${tabIndex.value++}`
   
   try {
-    const formData = new FormData()
-    formData.append('sql', sql)
+    // const formData = new FormData()
+    // formData.append('sql', sql)
     
-    const response = await request.post(`/api/datasources/${selectedDataSource.value}/query/`, formData)
+    const response = await executeQuery(selectedDataSource.value, sql)
     
     // 创建新标签
     const newTab = {
@@ -194,9 +191,9 @@ const executeQuery = async () => {
       error: ''
     }
 
-    if (response.data.total > 0) {
-      newTab.tableColumns = Object.keys(response.data.data[0])
-      newTab.queryResult = response.data.data
+    if (response.total > 0) {
+      newTab.tableColumns = Object.keys(response.data[0])
+      newTab.queryResult = response.data
     }
 
     queryTabs.value.push(newTab)
@@ -322,7 +319,7 @@ const handleCursorChange = (position) => {
 }
 
 .query-editor {
-  border: 1px solid #dcdfe6;
+  /* border: 1px solid #dcdfe6; */
   border-radius: 4px;
   overflow: hidden;
   position: relative;
