@@ -34,6 +34,13 @@ export function deleteDataSource(id) {
   })
 }
 
+export function getDataSourceTypeList() {
+    return request({
+        url: '/datasources/types/',
+        method: 'get'
+    })
+}
+
 // 测试数据源连接
 export function testDataSourceConnection(id) {
   return request({

@@ -34,8 +34,9 @@ class DataSourceViewSet(viewsets.ModelViewSet):
         """
         获取所有数据源的简单信息
         """
-        type_set = DataSource.objects.distinct('type')
-        return Response(type_set.values('type'))
+        type_list = DataSource.objects.values_list('type')
+        type_set = set(type_list)
+        return Response(type_set)
 
     @action(detail=True, methods=['post'], url_path='test')
     def test_connection(self, request, pk=None):

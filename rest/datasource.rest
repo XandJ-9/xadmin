@@ -19,6 +19,10 @@ Content-Type: application/json
 GET {{host}}/api/datasources/ HTTP/1.1
 Authorization: Bearer {{login.response.body.$.token}}
 
+###
+#
+GET {{host}}/api/datasources/types/ HTTP/1.1
+Authorization: Bearer {{login.response.body.$.token}}
 
 ###
 # 添加数据源

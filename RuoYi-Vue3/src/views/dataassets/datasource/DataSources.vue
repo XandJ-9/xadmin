@@ -93,7 +93,7 @@ export default {
 </script>
 
 <script setup>
-import { ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import QueryParamsForm from '@/components/QueryParamsForm'
 import CrudBar from '@/components/CrudBar'
@@ -106,7 +106,7 @@ const dialogVisible = ref(false)
 const dialogTitle = ref('')
 const formRef = ref(null)
 
-const queryProperties = ref([
+const queryProperties = reactive([
     { label: '数据源名称', type: 'input', prop: 'name' },
     { label: '数据源类型', type: 'select', prop: 'type' , options: [
         {id:1, label: 'MySQL', value: 'mysql' },

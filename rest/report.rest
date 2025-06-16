@@ -19,3 +19,12 @@ GET {{host}}/api/report/reports/ HTTP/1.1
 Authorization: Bearer {{login.response.body.token}}
 
 
+###
+# 获取平台信息
+GET {{host}}/api/report/platforms/?noPage=1&moduleId=1 HTTP/1.1
+Authorization: Bearer {{login.response.body.token}}
+
+###
+# 获取接口信息
+GET {{host}}/api/report/interfaces/?noPage=1&platform_id=1 HTTP/1.1
+Authorization: Bearer {{login.response.body.token}}

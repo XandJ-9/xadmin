@@ -15,7 +15,10 @@
              v-model="queryParams[item.prop]" 
              :placeholder="`请选择` + item.label" 
              clearable 
-             style="width: 200px">
+             style="width: 200px"
+             @change="handleSelectChange"
+             @click="handleSelectClick"
+             >
                 <el-option
                 v-for="dict in item.options"
                 :key="dict.id"
@@ -52,7 +55,6 @@
 
 <script setup>
 
-
 const emit = defineEmits()
 // 传参样例
 // const queryProperties = ref([
@@ -78,12 +80,18 @@ const handleQuery = () => {
     emit("query", queryParams)
 }
 
-const { proxy } = getCurrentInstance()
+const handleSelectChange = (value) => { 
+    // console.log('handleSelectChange', e)
+    emit("select-change", queryParams)
+}
+
+const handleSelectClick = (e) => { 
+    // console.log('handleSelectClick', value)
+    emit("select-click", e)
+}
 
 const resetQuery = () => { 
-    // emit("reset")
-    proxy.resetForm("queryRef")
-    handleQuery()
+    emit("reset")
 }
 
 </script>
