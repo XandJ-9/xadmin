@@ -237,7 +237,7 @@ LOGGING = {
             'propagate': True,
         },
         'user_operation': {
-            'handlers': ['console'],
+            'handlers': ['console','user_operation_file'],
             'level': 'INFO',
             'propagate': True,
         },

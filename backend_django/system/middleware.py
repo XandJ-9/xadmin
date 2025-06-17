@@ -14,11 +14,14 @@ class UserOperationMiddleware(MiddlewareMixin):
           if request.resolver_match.url_name == 'user-login':
               token = response.data.get('token')
               if token:
-                  logger.info(f'用户登录成功，用户名：{request.POST.get("username")}')
-          if request.resolver_match.url_name == 'user-register':
+                  username = response.data.get('user').get('username')
+                  logger.info(f'用户登录成功，用户名：{username}')
+          elif request.resolver_match.url_name == 'user-register':
               if response.status_code == status.HTTP_201_CREATED:
                   logger.info(f'新用户注册成功，用户名：{request.POST.get("username")}')
               else:
                   logger.info(f'新用户注册失败，用户名：{request.POST.get("username")}')
+          else:
+              logger.info(f'用户操作，用户名：{request.user.username}，请求路径：{request.path}，请求方法：{request.method}, 请求视图名称：{request.resolver_match.url_name}')
 
         return response

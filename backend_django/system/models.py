@@ -302,7 +302,3 @@ class SystemDictData(BaseModel):
     def __str__(self):
         return self.dict_label
 
-class BizBaseModel(BaseModel):
-    """业务公共字段模型"""
-    class Meta:
-        abstract = True

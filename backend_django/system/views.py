@@ -10,7 +10,7 @@ from PIL import Image, ImageDraw, ImageFont
 from .models import Dept,User, Role, Menu, SystemConfig, Captcha, UserRole, SystemDictType,SystemDictData
 from .serializers import *
 from .permissions import IsAdminUser, IsOwnerOrAdmin,HasRolePermission
-from .authentication import get_user_from_token,get_token_from_request
+from .authentication import get_token_from_request
 
 from utils.viewset import CustomModelViewSet
 from utils.filters import SearchFilterBackend
@@ -266,7 +266,7 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
 
     @action(detail=False, methods=['get'])
     def getInfo(self, request):
-        user = get_user_from_token(request)
+        user = request.user
         if user.is_authenticated:
             # 获取用户角色
             user_roles = user.user_roles.all()

@@ -19,7 +19,7 @@ def get_token_from_request(request):
     except (InvalidToken, TokenError) as e:
         return None
 
-def get_user_from_token(request):
+def get_user_from_request(request):
     auth_header = request.headers.get('Authorization')
     if not auth_header or not auth_header.startswith('Bearer '):
         return AnonymousUser()
@@ -38,7 +38,7 @@ class JWTAuthenticationMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        request.user = SimpleLazyObject(lambda: get_user_from_token(request))
+        request.user = SimpleLazyObject(lambda: get_user_from_request(request))
         if request.user.is_authenticated:
             logger.info(f'User {request.user.username} (role: {request.user.role}) accessed {request.path} with method {request.method}')
         return self.get_response(request)

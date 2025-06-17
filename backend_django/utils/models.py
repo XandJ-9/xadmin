@@ -1,6 +1,6 @@
 from django.db import models
+from django.conf import settings
 
-table_prefix = "report_"
 
 class CoreModel(models.Model):
     """
@@ -18,3 +18,17 @@ class CoreModel(models.Model):
         abstract = True
         verbose_name = '核心模型'
         verbose_name_plural = verbose_name
+
+class BizBaseModel(models.Model):
+    """业务公共字段模型"""
+    creator = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='%(class)s_creator', null=True, blank=True, verbose_name='创建者')
+    updator = models.ForeignKey(
+        settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='%(class)s_updator', null=True, blank=True, verbose_name='更新者')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='创建时间')
+    updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
+    del_flag = models.CharField(max_length=1, default='0', choices=[('0', '存在'), ('1', '删除')], verbose_name='删除标志')
+
+
+    class Meta:
+        abstract = True
