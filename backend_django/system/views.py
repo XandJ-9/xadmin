@@ -143,14 +143,14 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
             try:
                 dept = Dept.objects.get(id=dept_id)
                 # 如果部门存在，获取该部门及其子部门
-                ancestors=','.join([dept.ancestors,str(dept.id)])
+                ancestors=','.join([dept.ancestors,str(dept.id)])+','
                 dept_ids = Dept.objects.filter(Q(ancestors__startswith=ancestors) 
                                                | Q(id = dept_id)
                                                ).values_list('id', flat=True)
                 queryset = queryset.filter(dept_id__in=dept_ids)
             except Dept.DoesNotExist:
                 # 如果部门不存在，返回空查询集
-                logger.warning(f"Dept with id {dept_id} does not exist.")
+                queryset = queryset.none()
 
         return super().filter_queryset(queryset)
 

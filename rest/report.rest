@@ -24,7 +24,18 @@ Authorization: Bearer {{login.response.body.token}}
 GET {{host}}/api/report/platforms/?noPage=1&moduleId=1 HTTP/1.1
 Authorization: Bearer {{login.response.body.token}}
 
+### 
+# 获取模块信息
+GET {{host}}/api/report/modules/?noPage=1&platformId=1 HTTP/1.1
+Authorization: Bearer {{login.response.body.token}}
+
+###
+# 获取report
+GET {{host}}/api/report/reports/1/ HTTP/1.1
+Authorization: Bearer {{login.response.body.token}}
+
 ###
 # 获取接口信息
-GET {{host}}/api/report/interfaces/?noPage=1&platform_id=1 HTTP/1.1
+GET {{host}}/api/report/interfaces/?noPage=1&report_id=2 HTTP/1.1
 Authorization: Bearer {{login.response.body.token}}
+

@@ -100,7 +100,7 @@ Authorization: Bearer {{token}}
 
 ###
 # 搜索用户
-GET {{host}}/api/system/user?pageNum=1&pageSize=10&deptId=10 HTTP/1.1
+GET {{host}}/api/system/user?pageNum=1&pageSize=10&deptId=103 HTTP/1.1
 Authorization: Bearer {{token}}
 
 ###
