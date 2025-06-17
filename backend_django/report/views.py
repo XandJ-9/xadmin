@@ -41,7 +41,7 @@ class InterfaceInfoViewSet(CustomModelViewSet):
     queryset = InterfaceInfo.objects.all()
     serializer_class = InterfaceInfoSerializer
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
-    filterset_fields = ['report', 'interface_db_type', 'is_total', 'is_paging', 'is_date_option', 'is_second_table', 'is_login_visit', 'alarm_type']
+    filterset_fields = ['report_id', 'interface_code', 'interface_name']
     search_fields = ['interface_name', 'interface_code', 'interface_desc']
     ordering_fields = ['id', 'create_datetime', 'update_datetime']
 

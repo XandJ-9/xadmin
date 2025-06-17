@@ -74,14 +74,14 @@ class CustomModelViewSet(ExportSerializerMixin, ImportSerializerMixin,ModelViewS
         noPage = request.query_params.get('noPage', "0")
         
         if noPage == '1':
-            return DetailResponse(data=ser.data, msg="获取数据")
+            return DetailResponse(data=ser.data)
         else:
             page_no = request.query_params.get('pageNum', 1)
             page_size = request.query_params.get('pageSize',10)
             p = Paginator(ser.data, page_size)
             page_obj = p.get_page(page_no)
             page_data = page_obj.object_list
-            return SuccessResponse(data=page_data, total=p.count,page=page_obj.number,limit=p.per_page, msg="获取成功")
+            return SuccessResponse(data=page_data, total=p.count,page=page_obj.number,limit=p.per_page)
         # page = self.paginate_queryset(queryset)
         # p = Paginator(serializer_data, page_size)
         # if p is not None:
@@ -93,7 +93,7 @@ class CustomModelViewSet(ExportSerializerMixin, ImportSerializerMixin,ModelViewS
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
-        return DetailResponse(data=serializer.data, msg="获取成功")
+        return DetailResponse(data=serializer.data)
 
     def perform_update(self, serializer):
         if self.request.user and self.request.user.is_authenticated:
@@ -113,7 +113,7 @@ class CustomModelViewSet(ExportSerializerMixin, ImportSerializerMixin,ModelViewS
             # If 'prefetch_related' has been applied to a queryset, we need to
             # forcibly invalidate the prefetch cache on the instance.
             # instance._prefetched_objects_cache = {}
-        return DetailResponse(data=serializer.data, msg="更新成功")
+        return DetailResponse(data=serializer.data)
 
     def destroy(self, request, *args, **kwargs):
         """
@@ -127,7 +127,7 @@ class CustomModelViewSet(ExportSerializerMixin, ImportSerializerMixin,ModelViewS
         else:
             queryset = self.filter_queryset(self.get_queryset().filter(**filter_kwargs))
         if not queryset:
-            return ErrorResponse(msg="删除失败，数据不存在", status=status.HTTP_404_NOT_FOUND)
+            return ErrorResponse(msg="Not Found", status=status.HTTP_404_NOT_FOUND)
         # 遍历queryset删除
         for instance in queryset:
             self.check_object_permissions(request, instance)
@@ -135,11 +135,11 @@ class CustomModelViewSet(ExportSerializerMixin, ImportSerializerMixin,ModelViewS
         # 如果是单个对象
         # instance = self.get_object()
         # instance.delete()
-        return DetailResponse(data=[], msg="删除成功")
+        return DetailResponse(data=[])
     
 
     @action(methods=['get'], detail=False)
     def list_all(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         serializer = self.get_serializer(queryset, many=True)
-        return DetailResponse(data=serializer.data, msg="获取成功")
+        return DetailResponse(data=serializer.data)

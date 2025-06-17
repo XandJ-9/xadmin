@@ -26,11 +26,10 @@ class DetailResponse(Response):
     def __init__(self, data=None, msg='success', status=None, template_name=None, headers=None, exception=False,
                  content_type=None,):
         std_data = {
-            "msg": msg
+            "msg": msg,
+            "data": data
         }
         
-        if data:
-            std_data['data'] = data
         super().__init__(std_data, status, template_name, headers, exception, content_type)
 
 

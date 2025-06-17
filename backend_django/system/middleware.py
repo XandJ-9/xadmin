@@ -22,6 +22,6 @@ class UserOperationMiddleware(MiddlewareMixin):
               else:
                   logger.info(f'新用户注册失败，用户名：{request.POST.get("username")}')
           else:
-              logger.info(f'用户操作，用户名：{request.user.username}，请求路径：{request.path}，请求方法：{request.method}, 请求视图名称：{request.resolver_match.url_name}')
+              logger.info(f'用户操作记录，用户名：{request.user.username}，请求路径：{request.path}，请求方法：{request.method}, 请求视图名称：{request.resolver_match.url_name}')
 
         return response
