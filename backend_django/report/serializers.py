@@ -1,7 +1,6 @@
 from rest_framework import serializers
-from system.serializers import BizModelSerializer
 from .models import PlatformInfo, ModuleInfo, ReportInfo, InterfaceInfo, InterfaceField, InterfaceQueryLog
-from utils.serializer import ChoiceFieldSerializerMixin
+from utils.serializer import ChoiceFieldSerializerMixin,BizModelSerializer
 
 class PlatformInfoSerializer(BizModelSerializer):
     class Meta:

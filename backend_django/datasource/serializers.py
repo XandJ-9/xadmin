@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from system.serializers import BizModelSerializer
+from utils.serializer import BizModelSerializer
 from .models import DataSource, QueryLog
 
 class DataSourceSerializer(BizModelSerializer):

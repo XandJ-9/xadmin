@@ -1,9 +1,10 @@
 import copy
-from rest_framework.utils import model_meta
+from rest_framework.request import Request
 from rest_framework import serializers
 from rest_framework.utils.serializer_helpers import BindingDict
-from rest_framework.fields import SkipField
+from rest_framework.fields import SkipField,empty
 from rest_framework.relations import PKOnlyObject  # NOQA # isort:skip
+
 
 from utils.util_str import underline_to_camel_string
 
@@ -133,3 +134,15 @@ class UpdateSourceFieldSerializerMixin:
                 data.update({source_attrs[0]: data.get(field_name,None)})
 
         return super().to_internal_value(data)
+    
+
+class BizModelSerializer(serializers.ModelSerializer):
+    """adding creator and updator fields to serializers."""
+    creator_username = serializers.CharField(source='creator.username', read_only=True)
+    create_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True, source='created_at')
+    updator_username = serializers.CharField(source='updator.username', read_only=True)
+    update_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True, source='updated_at')
+    
+    def __init__(self, instance=None, data=empty, request=None, **kwargs):
+            super().__init__(instance, data, **kwargs)
+            self.request: Request = request or self.context.get("request", None)

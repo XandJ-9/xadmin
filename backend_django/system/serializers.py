@@ -1,19 +1,8 @@
-from rest_framework.request import Request
 from rest_framework import serializers
-from rest_framework.fields import empty
 from .models import User,Role,Menu, SystemConfig, Dept, SystemDictType,SystemDictData
-from utils.serializer import ChoiceFieldSerializerMixin, CamelFieldSerializerMixin,UpdateSourceFieldSerializerMixin
+from utils.serializer import ChoiceFieldSerializerMixin, CamelFieldSerializerMixin,UpdateSourceFieldSerializerMixin,BizModelSerializer
 
-class BizModelSerializer(serializers.ModelSerializer):
-    """adding creator and updator fields to serializers."""
-    creator_username = serializers.CharField(source='creator.username', read_only=True)
-    create_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True, source='created_at')
-    updator_username = serializers.CharField(source='updator.username', read_only=True)
-    update_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True, source='updated_at')
-    
-    def __init__(self, instance=None, data=empty, request=None, **kwargs):
-            super().__init__(instance, data, **kwargs)
-            self.request: Request = request or self.context.get("request", None)
+
 
 class SystemBaseSerializer(CamelFieldSerializerMixin,BizModelSerializer):
     pass
