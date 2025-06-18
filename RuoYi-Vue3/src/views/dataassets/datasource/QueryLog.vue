@@ -189,7 +189,6 @@ import Pagination from '@/components/Pagination'
 
 import { getQueryLogs, getQueryLogDetail } from '@/api/dataassets/datasource'
 import { getDataSourceList } from '../../../api/dataassets/datasource'
-import { get } from '@vueuse/core'
 
 // 注册SQL语言高亮
 hljs.registerLanguage('sql', sql)
