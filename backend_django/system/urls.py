@@ -3,6 +3,7 @@ from rest_framework.routers import DefaultRouter
 from .views import *
 
 router = DefaultRouter(trailing_slash=False)
+router.register('post',PostViewSet)
 router.register('dept', DeptViewSet)
 router.register('user', UserViewSet)
 router.register('role', RoleViewSet)

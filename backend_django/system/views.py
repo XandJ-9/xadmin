@@ -7,7 +7,7 @@ from django.contrib.auth import authenticate
 from django.utils.crypto import get_random_string
 from django.db.models import Q
 from PIL import Image, ImageDraw, ImageFont
-from .models import Dept,User, Role, Menu, SystemConfig, Captcha, UserRole, SystemDictType,SystemDictData
+from .models import Post,Dept,User, Role, Menu, SystemConfig, Captcha, UserRole, SystemDictType,SystemDictData
 from .serializers import *
 from .permissions import IsAdminUser, IsOwnerOrAdmin,HasRolePermission
 from .authentication import get_token_from_request
@@ -32,16 +32,24 @@ class SystemViewMixin:
         obj.save()
         return Response({'status': 'success'}, status=status.HTTP_200_OK)
 
+class PostViewSet(CustomModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
 class DeptViewSet(CustomModelViewSet):
     queryset = Dept.objects.all()
     serializer_class = DeptSerializer
     # permission_classes = [IsAdminUser]
-    def list(self, request, *args, **kwargs):
-      # return super().list(request, *args, **kwargs)
-      queryset = self.filter_queryset(self.get_queryset())
-      serizlizer = self.get_serializer(queryset, many = True)
-      return Response(serizlizer.data)
     
+    def perform_create(self, serializer):
+        # 拼接ancestors字段的值 
+        parent = serializer.validated_data.get('parent',None)
+        if parent:
+            ancestors = ','.join([parent.ancestors, str(parent.id)])
+        else:
+            ancestors = '0'
+        serializer.validated_data.update({'ancestors': ancestors})
+        return super().perform_create(serializer)
     @action(detail=False, methods=['get'])
     def exclude(self, request, dept_id):
         # queryset = self.queryset.exclude(id=dept_id)

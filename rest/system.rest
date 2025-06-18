@@ -24,40 +24,77 @@ Content-Type: application/json
 GET {{host}}/api/getInfo HTTP/1.1
 Authorization: Bearer {{token}}
 
+
 ###
+#  获取岗位信息
+GET {{host}}/api/system/post HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+# 创建
+POST {{host}}/api/system/post HTTP/1.1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "postName": "测试岗位",
+    "postCode": "test",
+    "status": "0",
+    "postSort": 1
+}
+
+###
+# 更新
+PUT {{host}}/api/system/post/1 HTTP/1.1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "postCode": "ceo",
+    "postName": "董事长",
+    "postSort": 1,
+    "status": "1",
+    "remark": ""
+}
+
+###
+#  获取部门列表
 GET {{host}}/api/system/dept HTTP/1.1
 Authorization: Bearer {{token}}
 
 ###
-# 添加部门
+#  添加部门
 POST {{host}}/api/system/dept HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-      "ancestors": "0",
-      "dept_name": "新链科技",
-      "order_num": 0,
-      "leader": "新链",
-      "phone": "15888888888",
-      "email": "xl@qq.com",
-      "status": "0",
-      "del_flag": "0"
+    "deptName": "新链研发s部",
+    "orderNum": 0,
+    "status": "1",
+    "parentId": 109
 }
 
 ###
-# 添加部门
-POST {{host}}/api/system/dept HTTP/1.1
+# 更新部门
+PUT {{host}}/api/system/dept/130 HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "parent": 101,
-  "deptName": "研发部门ss",
-  "orderNum": 0,
-  "leader": "admin",
-  "status": "0"
+    "deptName": "新链科技",
+    "orderNum": 0,
+    "status": "1",
+    "ancestors": "0",
+    "parentId": 147
 }
+
+###
+# 查询详细
+GET {{host}}/api/system/dept/101 HTTP/1.1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
 
 ###
 # 用户请求

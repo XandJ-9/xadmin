@@ -56,13 +56,26 @@ class CamelFieldSerializerMixin:
         # self._writable_fields字段对应模型字段
         # self._declared_fields字段对应显示序列化类中定义的字段
         for field in self._writable_fields:
-            camel_field_name = underline_to_camel_string(field.source)
+            # print(f'{field.field_name}  {field.__class__}')
+            source_attrs = field.source.split('.')
+            camel_field_name = underline_to_camel_string(field.field_name)
             if camel_field_name not in data.keys():
                 continue
-            data[field.source] = data.pop(camel_field_name)
-
-        return super().to_internal_value(data)
             
+            source_field_name = source_attrs[0]
+            if len(source_attrs) > 1 :
+                # 如果对应的字段是外键字段，则获取对应的对象信息
+                related_field_atrr = source_attrs[1]
+                model = getattr(self.Meta, 'model')
+                related_field = model._meta.get_field(source_field_name)
+                filter_kwargs = {related_field_atrr: data.pop(camel_field_name)}
+                qs = related_field.related_model._default_manager.filter(**filter_kwargs)
+                if qs.exists():
+                    data[source_field_name] = qs.first()
+            else:
+                data[source_field_name] = data.pop(camel_field_name)
+        # return super().to_internal_value(data)
+        return data
     def to_representation(self, instance):
         '''
         将下划线风格字段转换成驼峰风格字段
@@ -101,6 +114,7 @@ class CamelFieldSerializerMixin:
 
         return ret
     
+
 class UpdateSourceFieldSerializerMixin:
     '''
     将自定义字段的值赋值给源字段

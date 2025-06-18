@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User,Role,Menu, SystemConfig, Dept, SystemDictType,SystemDictData
+from .models import User,Role,Menu, SystemConfig, Dept, SystemDictType,SystemDictData,Post
 from utils.serializer import ChoiceFieldSerializerMixin, CamelFieldSerializerMixin,UpdateSourceFieldSerializerMixin,BizModelSerializer
 
 
@@ -29,14 +29,11 @@ class RoleSerializer(SystemBaseSerializer):
 
 class DeptSerializer(SystemBaseSerializer):
     deptId = serializers.IntegerField(source='id', read_only=True)
-    deptName = serializers.CharField(source='dept_name',read_only=True)
-    orderNum = serializers.IntegerField(source='order_num',read_only=True)
-    parentId = serializers.IntegerField(source='parent.id', read_only=True)
+    parentId = serializers.IntegerField(source='parent.id', required=False)
     class Meta:
         model = Dept
-        fields = '__all__'
-        # fields = ['id','deptId', 'deptName', 'orderNum', 'status','parent']
-        read_only_fields = ['id', 'create_time','update_time','creator','updator']
+        fields = ['deptId', 'dept_name', 'order_num', 'status','parentId',"ancestors","creator_username"]
+        # read_only_fields = ['id', 'create_time','update_time','creator','updator']
     
 class UserExportSerializer(SystemBaseSerializer):
     dept_name = serializers.CharField(source="dept.dept_name", read_only=True)
@@ -98,5 +95,8 @@ class SystemConfigSerializer(SystemBaseSerializer):
         read_only_fields = ['id', 'created_at', 'updated_at']
 
 
-
+class PostSerializer(SystemBaseSerializer):
+    class Meta:
+        model = Post
+        fields = ['id', 'post_code', 'post_name', 'post_sort', 'status', 'remark', 'create_time', 'update_time','creator_username']
 
