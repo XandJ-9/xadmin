@@ -225,8 +225,8 @@
 <script setup name="User">
 import { getToken } from "@/utils/auth"
 import useAppStore from '@/store/modules/app'
-import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, deptTreeSelect } from "@/api/system/user"
-import { Splitpanes, Pane } from "splitpanes"
+import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser } from "@/api/system/user"
+import { deptTreeSelect } from "@/api/system/dept"
 import "splitpanes/dist/splitpanes.css"
 
 const router = useRouter()

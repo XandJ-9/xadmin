@@ -32,8 +32,8 @@ class DeptSerializer(SystemBaseSerializer):
     parentId = serializers.IntegerField(source='parent.id', required=False)
     class Meta:
         model = Dept
-        fields = ['deptId', 'dept_name', 'order_num', 'status','parentId',"ancestors","creator_username"]
-        # read_only_fields = ['id', 'create_time','update_time','creator','updator']
+        fields = ['id','deptId', 'dept_name', 'order_num', 'status','parentId',"ancestors","creator_username", "parent"]
+        read_only_fields = ['id','parent']
     
 class UserExportSerializer(SystemBaseSerializer):
     dept_name = serializers.CharField(source="dept.dept_name", read_only=True)
@@ -49,22 +49,21 @@ class UserImportSerializer(ChoiceFieldSerializerMixin,SystemBaseSerializer):
 
 class UserSerializer(SystemBaseSerializer):
     userId = serializers.IntegerField(source="id",read_only=True,required=False)
-    deptId = serializers.IntegerField(source="dept.id",read_only=True,required=False)
+    deptId = serializers.IntegerField(source="dept.id",required=False)
     password = serializers.CharField(write_only=True, required=False)
     dept = DeptSerializer(read_only=True)
 
     class Meta:
         model = User
-        # fields = ['user_id', 'username','nickname', 'sex','password', 'dept', 'create_time','avatar','status','phonenumber','dept_id']
-        fields = '__all__'
-        read_only_fields = ['id', 'create_time']
+        fields = ['userId', 'username','nickname', 'sex','password', 'dept', 'create_time','avatar','status','phonenumber','deptId']
+        # read_only_fields = ['id', 'create_time']
 
-    def create(self, validated_data):
-        password = validated_data.pop('password', None)
-        instance = super().create(validated_data)
-        instance.set_password(password)  # Set the password using set_password method
-        instance.save()
-        return instance
+    # def create(self, validated_data):
+    #     password = validated_data.pop('password', None)
+    #     instance = super().create(validated_data)
+    #     instance.set_password(password)  # Set the password using set_password method
+    #     instance.save()
+    #     return instance
 
     def update(self, instance, validated_data):
         if 'password' in validated_data:

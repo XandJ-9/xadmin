@@ -30,7 +30,8 @@ class SystemViewMixin:
         obj = model.objects.get(id=pk)
         obj.status = request.data.get('status')
         obj.save()
-        return Response({'status': 'success'}, status=status.HTTP_200_OK)
+        ser = self.get_serializer(obj)
+        return Response(ser.data, status=status.HTTP_200_OK)
 
 class PostViewSet(CustomModelViewSet):
     queryset = Post.objects.all()
@@ -64,6 +65,31 @@ class DeptViewSet(CustomModelViewSet):
         queryset = Dept.objects.exclude(id__in=excluded_dept_ids)
         serizlizer = self.get_serializer(queryset, many = True)
         return Response(serizlizer.data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['get'])
+    def tree(self, request):
+        """
+        获取部门树形结构
+        :param request:
+        :return:
+        """
+        depts = Dept.objects.all()
+        serializer = DeptSerializer(depts, many=True)
+        
+        def build_tree(dept_list, parent_id=None):
+            tree = []
+            for dept in dept_list:
+                if dept['parent'] == parent_id:
+                    children = build_tree(dept_list, dept['id'])
+                    if children:
+                        dept['children'] = children
+                    else:
+                        dept['children'] = []
+                    tree.append(dept)
+            return tree
+        
+        dept_tree = build_tree(serializer.data)
+        return Response(dept_tree, status=status.HTTP_200_OK)
 
 class RoleViewSet(SystemViewMixin,CustomModelViewSet):
     queryset = Role.objects.all()
@@ -169,15 +195,15 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
             return [IsAdminUser()]
         return [IsOwnerOrAdmin()]
 
-    def perform_create(self, serializer):
-        """
-        在创建用户之前，添加部门
-        """
-        user = self.request.user
-        dept_id = self.request.data.get('dept_id',user.dept.id)
-        # serializer.save(dept_id=dept_id)
-        serializer.validated_data['dept_id'] = dept_id
-        super().perform_create(serializer)
+    # def perform_create(self, serializer):
+    #     """
+    #     在创建用户之前，添加部门
+    #     """
+    #     user = self.request.user
+    #     dept_id = self.request.data.get('dept_id',user.dept.id)
+    #     # serializer.save(dept_id=dept_id)
+    #     serializer.validated_data['dept_id'] = dept_id
+    #     super().perform_create(serializer)
 
     @action(detail=False, methods=['get'])
     def captchaImage(self, request):
@@ -284,15 +310,27 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
         else:
             return Response({'error': '用户未登录'}, status=status.HTTP_401_UNAUTHORIZED)
 
-    @action(detail=True, methods=['post'])
-    def reset_pwd(self, request, pk=None):
+    @action(detail=True, methods=['put'])
+    def resetPwd(self, request, pk=None):
+        password = request.data.get("password")
         user = self.get_object()
-        user.set_password("123456")
+        user.check_password(password)
+        user.set_password(password)
         user.save()
         return Response({'message': '密码重置成功'}, status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=['post'], url_path='authRole')
+    @action(detail=True, methods=['get'], url_path='authRole')
     def authRole(self, request, pk=None):
+        user = self.get_object()
+        roles = Role.objects.all()
+        ret = {
+            'user': UserSerializer(user).data,
+            'roles': RoleSerializer(roles, many=True).data
+        }
+        return Response(ret)
+
+    @action(detail=True, methods=['post'], url_path='authRole')
+    def updateAuthRole(self, request, pk=None):
         """
         授权用户角色
         :param request:
@@ -323,31 +361,6 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
             # 关联用户和角色
              UserRole.objects.create(user=user, role_id=roleId)
         return Response({'message': '授权成功'}, status=status.HTTP_200_OK)
-
-    @action(detail=False, methods=['get'])
-    def deptTree(self, request):
-        """
-        获取部门树形结构
-        :param request:
-        :return:
-        """
-        depts = Dept.objects.all()
-        serializer = DeptSerializer(depts, many=True)
-        
-        def build_tree(dept_list, parent_id=None):
-            tree = []
-            for dept in dept_list:
-                if dept['parent'] == parent_id:
-                    children = build_tree(dept_list, dept['id'])
-                    if children:
-                        dept['children'] = children
-                    else:
-                        dept['children'] = []
-                    tree.append(dept)
-            return tree
-        
-        dept_tree = build_tree(serializer.data)
-        return Response(dept_tree, status=status.HTTP_200_OK)
 
 class MenuViewSet(CustomModelViewSet):
     queryset = Menu.objects.all()

@@ -64,7 +64,10 @@ class CustomModelViewSet(ExportSerializerMixin, ImportSerializerMixin,ModelViewS
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
+        try:
+            self.perform_create(serializer)
+        except Exception as e:
+            return ErrorResponse(msg=str(e))
         return DetailResponse(data=serializer.data, msg="新增成功")
 
     def list(self, request, *args, **kwargs):
