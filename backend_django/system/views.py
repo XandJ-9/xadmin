@@ -314,10 +314,13 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
     def resetPwd(self, request, pk=None):
         password = request.data.get("password")
         user = self.get_object()
-        user.check_password(password)
-        user.set_password(password)
-        user.save()
-        return Response({'message': '密码重置成功'}, status=status.HTTP_200_OK)
+        # user.check_password(password)
+        # user.set_password(password)
+        # user.save()
+        ser = UserSerializer(instance=user, data={'password': password}, request=request)
+        if ser.is_valid():
+            ser.save()
+        return Response({'message': '密码重置成功','data': ser.data}, status=status.HTTP_200_OK)
     @action(detail=True, methods=['get'], url_path='authRole')
     def authRole(self, request, pk=None):
         user = self.get_object()
@@ -343,14 +346,15 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
         if not user:
             return Response({'error': '用户不存在'}, status=status.HTTP_400_BAD_REQUEST)
         
-        roleId_str = request.data.get('roleIds')
+        roleId_str = request.data.get('roleIds','')
         try:
             roleIds = [int(rid) for rid in roleId_str.split(",")]
             # # 验证用户ID是否有效
             # if not all(isinstance(rid, int) for rid in rIds):
             #     return Response({'error': f'角色ID必须为整数 {roleIds}'}, status=status.HTTP_400_BAD_REQUEST)
         except ValueError:
-            return Response({'error': f'角色ID必须为整数 {roleId_str}'}, status=status.HTTP_400_BAD_REQUEST)
+            logger.error(f'角色ID为空或不是整数 {roleId_str}')
+            return Response({'message': f'角色ID必须为整数 {roleId_str}'}, status=status.HTTP_400_BAD_REQUEST)
 
         # 判断角色id是否都存在
         all_role_ids = set(Role.objects.filter(id__in=roleIds).values_list('id', flat=True))

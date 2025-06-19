@@ -440,7 +440,7 @@ function handleResetPwd(row) {
 
 /** 选择条数  */
 function handleSelectionChange(selection) {
-  ids.value = selection.map(item => item.id)
+  ids.value = selection.map(item => item.userId)
   single.value = selection.length != 1
   multiple.value = !selection.length
 }

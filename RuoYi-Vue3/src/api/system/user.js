@@ -51,7 +51,7 @@ export function resetUserPwd(userId, password) {
     password
   }
   return request({
-    url: '/system/user/resetPwd',
+    url: `/system/user/${userId}/resetPwd`,
     method: 'put',
     data: data
   })
@@ -121,9 +121,9 @@ export function getAuthRole(userId) {
 // 保存授权角色
 export function updateAuthRole(userId,data) {
   return request({
-    url: '/system/user'+ userId +'/authRole',
+    url: '/system/user/'+ userId +'/updateAuthRole',
     method: 'put',
-    params: data
+    data: data
   })
 }
 

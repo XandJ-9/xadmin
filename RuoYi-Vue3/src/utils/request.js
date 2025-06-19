@@ -117,8 +117,9 @@ service.interceptors.response.use(res => {
     } else if (message.includes("timeout")) {
       message = "系统接口请求超时"
     } else if (message.includes("Request failed with status code")) {
-        message = "系统接口" + message + "异常"
-        }
+        // message = "系统接口" + message + "异常"
+        message = response.data || "系统接口" + message + "异常"
+    }
     if (response.status === 401) {
         if (!isRelogin.show) {
             isRelogin.show = true
