@@ -1,7 +1,7 @@
 <template>
    <el-form ref="userRef" :model="form" :rules="rules" label-width="80px">
-      <el-form-item label="用户昵称" prop="nickName">
-         <el-input v-model="form.nickName" maxlength="30" />
+      <el-form-item label="用户昵称" prop="nickname">
+         <el-input v-model="form.nickname" maxlength="30" />
       </el-form-item>
       <el-form-item label="手机号码" prop="phonenumber">
          <el-input v-model="form.phonenumber" maxlength="11" />
@@ -61,7 +61,7 @@ function close() {
 // 回显当前登录用户信息
 watch(() => props.user, user => {
   if (user) {
-    form.value = { nickName: user.nickName, phonenumber: user.phonenumber, email: user.email, sex: user.sex }
+    form.value = { nickname: user.nickname, phonenumber: user.phonenumber, email: user.email, sex: user.sex }
   }
 },{ immediate: true })
 </script>

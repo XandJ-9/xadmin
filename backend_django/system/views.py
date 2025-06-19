@@ -381,6 +381,21 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
         role_ids = user.user_roles.all().values_list('role_id', flat=True)
         return Response({'message': '授权成功','role_ids':role_ids}, status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=['get'])
+    def profile(self, request):
+        user = request.user
+        return Response({"user":UserSerializer(user).data,
+                         "roleGroup":[user_role.role.role_name for user_role in user.user_roles.all()],
+                         "postGroup":[user_post.post.post_name for user_post in user.user_posts.all()]
+                         })
+    @action(detail=False, methods=['put'])
+    def updateProfile(self, request):
+        user = request.user
+        ser = UserSerializer(instance=user, data=request.data, request=request)
+        if ser.is_valid():
+            ser.save()
+        return Response({'message': '更新成功', "data":ser.data})
+    
 class MenuViewSet(CustomModelViewSet):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer

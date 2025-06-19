@@ -227,6 +227,8 @@ import { getToken } from "@/utils/auth"
 import useAppStore from '@/store/modules/app'
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser } from "@/api/system/user"
 import { deptTreeSelect } from "@/api/system/dept"
+import { listPost } from "@/api/system/post"
+import { listRole } from "@/api/system/role"
 import { Splitpanes, Pane } from "splitpanes"
 import "splitpanes/dist/splitpanes.css"
 
@@ -319,18 +321,23 @@ function getList() {
   })
 }
 
+function getPostlist() {
+    listPost({noPage:1}).then(res => {
+        postOptions.value = res.data
+    })
+}
+
+function getRolelist() {
+    listRole({noPage:1}).then(res => {
+        roleOptions.value = res.data
+    })
+}
+
 /** 查询部门下拉树结构 */
 function getDeptTree() {
   deptTreeSelect().then(response => {
     deptOptions.value = response
     enabledDeptOptions.value = filterDisabledDept(JSON.parse(JSON.stringify(response)))
-  })
-}
-
-/** 查询岗位列表 */
-function getPostTree() {
-  listPost().then(response => {
-  postOptions.value = response.data
   })
 }
 
@@ -492,7 +499,7 @@ function reset() {
     postIds: [],
     roleIds: []
   }
-  proxy.resetForm("userRef")
+    proxy.resetForm("userRef")
 }
 
 /** 取消按钮 */
@@ -504,13 +511,11 @@ function cancel() {
 /** 新增按钮操作 */
 function handleAdd() {
   reset()
-  // getUser().then(response => {
-    // postOptions.value = response.posts
-    // roleOptions.value = response.roles
+  getUser().then(response => {
     open.value = true
     title.value = "添加用户"
     form.value.password = initPassword.value
-  // })
+  })
 }
 
 /** 修改按钮操作 */
@@ -519,8 +524,6 @@ function handleUpdate(row) {
   const userId = row.userId || ids.value
   getUser(userId).then(response => {
     form.value = response.data
-    postOptions.value = response.posts
-    roleOptions.value = response.roles
     form.value.postIds = response.postIds
     form.value.roleIds = response.roleIds
     open.value = true
@@ -550,6 +553,8 @@ function submitForm() {
   })
 }
 
+getPostlist()
+getRolelist()
 getDeptTree()
 getList()
 </script>

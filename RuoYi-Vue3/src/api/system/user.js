@@ -12,8 +12,9 @@ export function listUser(query) {
 
 // 查询用户详细
 export function getUser(userId) {
+  const suffix = parseStrEmpty(userId) ? `/${userId}` : '';
   return request({
-    url: '/system/user/' + parseStrEmpty(userId),
+    url: '/system/user' + suffix,
     method: 'get'
   })
 }
@@ -81,7 +82,7 @@ export function getUserProfile() {
 // 修改用户个人信息
 export function updateUserProfile(data) {
   return request({
-    url: '/system/user/profile',
+    url: '/system/user/updateProfile',
     method: 'put',
     data: data
   })

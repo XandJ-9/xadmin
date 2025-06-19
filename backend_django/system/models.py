@@ -158,7 +158,7 @@ class UserRole(BaseModel):
         db_table = 'sys_user_role'
 
     def __str__(self):
-        return f"{self.user.username} - {self.role.name}"
+        return f"{self.user.username} - {self.role.role_name}"
         
 class Menu(BaseModel):
     """系统菜单模型"""

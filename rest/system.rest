@@ -37,7 +37,7 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "postName": "测试岗位",
+    "postName": "测试岗位no",
     "postCode": "test",
     "status": "0",
     "postSort": 1
@@ -104,7 +104,7 @@ Authorization: Bearer {{token}}
 
 ###
 # 用户请求
-GET {{host}}/api/system/user HTTP/1.1
+GET {{host}}/api/system/user?noPage=1 HTTP/1.1
 Authorization: Bearer {{token}}
 
 ###
@@ -161,6 +161,24 @@ Authorization: Bearer {{token}}
 GET {{host}}/api/system/user/getInfo HTTP/1.1
 Authorization: Bearer {{token}}
 
+
+###
+# /system/user/profile
+GET {{host}}/api/system/user/profile HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+# 
+PUT {{host}}/api/system/user/updateProfile HTTP/1.1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "nickname": "haha",
+  "phonenumber": "15888888888",
+  "email": "hagha@123.com",
+  "sex": "1"
+}
 
 ###
 # 重置用户密码

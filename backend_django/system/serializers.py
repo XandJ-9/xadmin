@@ -58,7 +58,7 @@ class UserSerializer(SystemBaseSerializer):
 
     class Meta:
         model = User
-        fields = ['userId', 'username','nickname', 'sex','password', 'dept', 'create_time','avatar','status','phonenumber','deptId','creator_username','updator_username']
+        fields = ['userId', 'username','nickname', 'sex','password', 'dept', 'create_time','avatar','status','phonenumber','email','deptId','creator_username','updator_username']
         # read_only_fields = ['id', 'create_time']
 
     def create(self, validated_data):
@@ -99,7 +99,8 @@ class SystemConfigSerializer(SystemBaseSerializer):
         read_only_fields = ['id', 'created_at', 'updated_at']
 
 class PostSerializer(SystemBaseSerializer):
+    postId = serializers.IntegerField(source='id', read_only=True)
     class Meta:
         model = Post
-        fields = ['id', 'post_code', 'post_name', 'post_sort', 'status', 'remark', 'create_time', 'update_time','creator_username']
+        fields = ['postId', 'post_code', 'post_name', 'post_sort', 'status', 'remark', 'create_time', 'update_time','creator_username']
 
