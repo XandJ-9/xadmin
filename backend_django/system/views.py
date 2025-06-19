@@ -318,18 +318,19 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
         user.set_password(password)
         user.save()
         return Response({'message': '密码重置成功'}, status=status.HTTP_200_OK)
-
     @action(detail=True, methods=['get'], url_path='authRole')
     def authRole(self, request, pk=None):
         user = self.get_object()
+        user_roles = user.user_roles.all().values_list('role_id', flat=True)
         roles = Role.objects.all()
         ret = {
             'user': UserSerializer(user).data,
+            'userRoles':user_roles,
             'roles': RoleSerializer(roles, many=True).data
         }
         return Response(ret)
 
-    @action(detail=True, methods=['post'], url_path='authRole')
+    @action(detail=True, methods=['put'])
     def updateAuthRole(self, request, pk=None):
         """
         授权用户角色
@@ -342,25 +343,39 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
         if not user:
             return Response({'error': '用户不存在'}, status=status.HTTP_400_BAD_REQUEST)
         
-        roleIds = request.data.get('roleIds')
-        # rIds = roleIds.split(",")
-        # 验证用户ID是否有效
-        if not all(isinstance(rid, int) for rid in roleIds):
-            return Response({'error': f'角色ID必须为整数 {roleIds}'}, status=status.HTTP_400_BAD_REQUEST)
+        roleId_str = request.data.get('roleIds')
+        try:
+            roleIds = [int(rid) for rid in roleId_str.split(",")]
+            # # 验证用户ID是否有效
+            # if not all(isinstance(rid, int) for rid in rIds):
+            #     return Response({'error': f'角色ID必须为整数 {roleIds}'}, status=status.HTTP_400_BAD_REQUEST)
+        except ValueError:
+            return Response({'error': f'角色ID必须为整数 {roleId_str}'}, status=status.HTTP_400_BAD_REQUEST)
 
         # 判断角色id是否都存在
-        existed_role_ids= set(Role.objects.filter(id__in=roleIds).values_list('id', flat=True))
-        invalid_ids = set(roleIds) - existed_role_ids
+        all_role_ids = set(Role.objects.filter(id__in=roleIds).values_list('id', flat=True))
+        invalid_ids = set(roleIds) - all_role_ids
         if invalid_ids:
             return Response({'error': f'角色ID不存在: {list(invalid_ids)}'}, status=status.HTTP_400_BAD_REQUEST)
 
+        existed_role_ids = UserRole.objects.filter(user_id=user.id).values_list('role_id', flat=True)
+        
         # 删除原有的用户角色关联
-        user.user_roles.all().delete()
+        delete_role_ids = set(existed_role_ids) - set(roleIds)
+        for roleId in delete_role_ids:
+            UserRole.objects.filter(user_id=user.id, role_id=roleId).delete()
 
-        for roleId in roleIds:
+        # 添加新的用户角色关联
+        new_role_ids = set(roleIds) - set(existed_role_ids)
+        for roleId in new_role_ids:
             # 关联用户和角色
-             UserRole.objects.create(user=user, role_id=roleId)
-        return Response({'message': '授权成功'}, status=status.HTTP_200_OK)
+            # 使用序列化get_serializer方法可以自定义添加一些数据到模型
+            # ser = self.get_serializer(data={'user': user, 'role_id': roleId})
+            ser = UserRoleSerializer(data={'user': user, 'role_id': roleId}, request=request)
+            if ser.is_valid():
+                ser.save()
+        role_ids = user.user_roles.all().values_list('role_id', flat=True)
+        return Response({'message': '授权成功','role_ids':role_ids}, status=status.HTTP_200_OK)
 
 class MenuViewSet(CustomModelViewSet):
     queryset = Menu.objects.all()

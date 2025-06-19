@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from utils.serializer import BizModelSerializer
+from utils.serializer import BaseModelSerializer
 from .models import DataSource, QueryLog
 
-class DataSourceSerializer(BizModelSerializer):
+class DataSourceSerializer(BaseModelSerializer):
     datasource_name = serializers.CharField(source='name', read_only=True)
 
     class Meta:
@@ -19,7 +19,7 @@ class DataSourceSerializer(BizModelSerializer):
         return representation
 
 
-class QueryLogSerializer(BizModelSerializer):
+class QueryLogSerializer(BaseModelSerializer):
     datasource_name = serializers.CharField(source='datasource.name', read_only=True)
     username = serializers.CharField(source='creator.username', read_only=True)
     execution_time = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)

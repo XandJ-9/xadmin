@@ -119,9 +119,9 @@ export function getAuthRole(userId) {
 }
 
 // 保存授权角色
-export function updateAuthRole(data) {
+export function updateAuthRole(userId,data) {
   return request({
-    url: '/system/user/authRole',
+    url: '/system/user'+ userId +'/authRole',
     method: 'put',
     params: data
   })

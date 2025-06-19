@@ -151,8 +151,6 @@ class UserRole(BaseModel):
     """用户角色关联模型"""
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_roles', verbose_name='用户')
     role = models.ForeignKey(Role, on_delete=models.CASCADE, related_name='user_roles', verbose_name='角色')
-    created_at = models.DateTimeField(default=timezone.now, verbose_name='创建时间')
-    updated_at = models.DateTimeField(auto_now=True, verbose_name='更新时间')
 
     class Meta:
         verbose_name = '用户角色关联'

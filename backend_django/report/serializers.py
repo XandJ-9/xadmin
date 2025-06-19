@@ -1,14 +1,14 @@
 from rest_framework import serializers
 from .models import PlatformInfo, ModuleInfo, ReportInfo, InterfaceInfo, InterfaceField, InterfaceQueryLog
-from utils.serializer import ChoiceFieldSerializerMixin,BizModelSerializer
+from utils.serializer import ChoiceFieldSerializerMixin,BaseModelSerializer
 
-class PlatformInfoSerializer(BizModelSerializer):
+class PlatformInfoSerializer(BaseModelSerializer):
     class Meta:
         model = PlatformInfo
         fields = '__all__'
         read_only_fields = ['id', 'creator', 'create_datetime', 'update_datetime']
 
-class ModuleInfoSerializer(BizModelSerializer):
+class ModuleInfoSerializer(BaseModelSerializer):
     # platform_name = serializers.CharField(source='platform.name', read_only=True)
     platform_info = PlatformInfoSerializer(source='platform', read_only=True)
     class Meta:
@@ -16,7 +16,7 @@ class ModuleInfoSerializer(BizModelSerializer):
         fields = '__all__'
         read_only_fields = ['id', 'creator', 'create_at', 'update_at']
 
-class ReportInfoSerializer(BizModelSerializer):
+class ReportInfoSerializer(BaseModelSerializer):
     # module_name = serializers.CharField(source='module.name', read_only=True)
     # platform_name = serializers.CharField(source='module.platform.name', read_only=True)
     module_info = ModuleInfoSerializer(source='module',read_only=True)
@@ -25,7 +25,7 @@ class ReportInfoSerializer(BizModelSerializer):
         fields = '__all__'
         read_only_fields = ['id', 'creator', 'create_datetime', 'update_datetime']
 
-class InterfaceInfoSerializer(ChoiceFieldSerializerMixin,BizModelSerializer):
+class InterfaceInfoSerializer(ChoiceFieldSerializerMixin,BaseModelSerializer):
     report_info = ReportInfoSerializer(source='report',read_only=True)
     class Meta:
         model = InterfaceInfo
@@ -34,7 +34,7 @@ class InterfaceInfoSerializer(ChoiceFieldSerializerMixin,BizModelSerializer):
 
 
     
-class InterfaceFieldSerializer(ChoiceFieldSerializerMixin,BizModelSerializer):
+class InterfaceFieldSerializer(ChoiceFieldSerializerMixin,BaseModelSerializer):
     class Meta:
         model = InterfaceField
         fields = '__all__'
@@ -57,7 +57,7 @@ class InterfaceFieldSerializer(ChoiceFieldSerializerMixin,BizModelSerializer):
         return instance
 
 
-class InterfaceQueryLogSerializer(BizModelSerializer):
+class InterfaceQueryLogSerializer(BaseModelSerializer):
     execute_start_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
     execute_end_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)
     class Meta:

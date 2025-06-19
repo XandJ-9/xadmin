@@ -44,20 +44,14 @@ class CustomModelViewSet(ExportSerializerMixin, ImportSerializerMixin,ModelViewS
             return action_serializer_class
         return super().get_serializer_class()
 
-    # def get_serializer(self, *args, **kwargs):
-    #     serializer_class = self.get_serializer_class()
-    #     kwargs.setdefault('context', self.get_serializer_context())
-    #     if self.action == 'create':
-    #         kwargs['creator'] = self.request.user
-    #         kwargs['updator'] = self.request.user
-    #     else:
-    #         kwargs['updator'] = self.request.user
-    #     return serializer_class(*args, **kwargs)
+    def get_serializer(self, *args, **kwargs):
+        serializer_class = self.get_serializer_class()
+        kwargs.setdefault('context', self.get_serializer_context())
+        return serializer_class(*args, **kwargs)
 
     def perform_create(self, serializer):
-        # return super().perform_create(serializer)
-        if self.request.user and self.request.user.is_authenticated:
-            serializer.validated_data['creator'] = self.request.user
+        # 添加通用处理逻辑, 例如根据action的类型处理自定义不同处理逻辑
+        # self.action = 'create'
         super().perform_create(serializer)
 
 
@@ -99,8 +93,6 @@ class CustomModelViewSet(ExportSerializerMixin, ImportSerializerMixin,ModelViewS
         return DetailResponse(data=serializer.data)
 
     def perform_update(self, serializer):
-        if self.request.user and self.request.user.is_authenticated:
-            serializer.validated_data['updator'] = self.request.user
         super().perform_update(serializer)
 
     def update(self, request, *args, **kwargs):
@@ -108,8 +100,6 @@ class CustomModelViewSet(ExportSerializerMixin, ImportSerializerMixin,ModelViewS
         instance = self.get_object()
         serializer = self.get_serializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
-        if request.user:
-            serializer.validated_data['updator'] = request.user
         self.perform_update(serializer)
 
         # if getattr(instance, '_prefetched_objects_cache', None):

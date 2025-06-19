@@ -1,11 +1,14 @@
 from rest_framework import serializers
-from .models import User,Role,Menu, SystemConfig, Dept, SystemDictType,SystemDictData,Post
-from utils.serializer import ChoiceFieldSerializerMixin, CamelFieldSerializerMixin,UpdateSourceFieldSerializerMixin,BizModelSerializer
+from rest_framework.request import Request
+from rest_framework.fields import empty
+from .models import *
+from utils.serializer import ChoiceFieldSerializerMixin, CamelFieldSerializerMixin,UpdateSourceFieldSerializerMixin,BaseModelSerializer
 
 
 
-class SystemBaseSerializer(CamelFieldSerializerMixin,BizModelSerializer):
+class SystemBaseSerializer(CamelFieldSerializerMixin,BaseModelSerializer):
     pass
+
 
 class SystemDictTypeSerializer(SystemBaseSerializer):
     dictId = serializers.IntegerField(source='id', read_only=True)
@@ -58,22 +61,22 @@ class UserSerializer(SystemBaseSerializer):
         fields = ['userId', 'username','nickname', 'sex','password', 'dept', 'create_time','avatar','status','phonenumber','deptId']
         # read_only_fields = ['id', 'create_time']
 
-    # def create(self, validated_data):
-    #     password = validated_data.pop('password', None)
-    #     instance = super().create(validated_data)
-    #     instance.set_password(password)  # Set the password using set_password method
-    #     instance.save()
-    #     return instance
+    def create(self, validated_data):
+        password = validated_data.pop('password', None)
+        instance = super().create(validated_data)
+        instance.set_password(password)  # Set the password using set_password method
+        instance.save()
+        return instance
 
     def update(self, instance, validated_data):
         if 'password' in validated_data:
             instance.set_password(validated_data.pop('password'))
-        if 'role' in validated_data:
-            role_name = validated_data.get('role')
-            role_instance = Role.objects.get(name=role_name)
-            validated_data['role']=role_instance
-
         return super().update(instance, validated_data)
+
+class UserRoleSerializer(SystemBaseSerializer):
+    class Meta:
+        model = UserRole
+        fields = ['id', 'user', 'role','creator','updator']
 
 class MenuSerializer(UpdateSourceFieldSerializerMixin,SystemBaseSerializer):
     menuId = serializers.IntegerField(source='id', read_only=True)
@@ -92,7 +95,6 @@ class SystemConfigSerializer(SystemBaseSerializer):
         model = SystemConfig
         fields = ['id', 'key', 'value', 'description', 'creator', 'creator_info', 'created_at', 'updated_at']
         read_only_fields = ['id', 'created_at', 'updated_at']
-
 
 class PostSerializer(SystemBaseSerializer):
     class Meta:

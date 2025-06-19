@@ -150,13 +150,26 @@ class UpdateSourceFieldSerializerMixin:
         return super().to_internal_value(data)
     
 
-class BizModelSerializer(serializers.ModelSerializer):
+class BaseModelSerializer(serializers.ModelSerializer):
     """adding creator and updator fields to serializers."""
     creator_username = serializers.CharField(source='creator.username', read_only=True)
     create_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True, source='created_at')
     updator_username = serializers.CharField(source='updator.username', read_only=True)
     update_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True, source='updated_at')
     
+    class Meta:
+        abstract = True
+
     def __init__(self, instance=None, data=empty, request=None, **kwargs):
             super().__init__(instance, data, **kwargs)
             self.request: Request = request or self.context.get("request", None)
+    def create(self, validated_data):
+        if not validated_data.get('creator', None):
+            validated_data.setdefault('creator', self.request.user)
+            validated_data.setdefault('updator', self.request.user)
+        return super().create(validated_data)    
+    
+    def update(self, instance, validated_data):
+        if not validated_data.get('updator', None):
+            validated_data.setdefault('updator', self.request.user)
+        return super().update(instance, validated_data)
