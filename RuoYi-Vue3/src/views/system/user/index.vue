@@ -227,6 +227,7 @@ import { getToken } from "@/utils/auth"
 import useAppStore from '@/store/modules/app'
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser } from "@/api/system/user"
 import { deptTreeSelect } from "@/api/system/dept"
+import { Splitpanes, Pane } from "splitpanes"
 import "splitpanes/dist/splitpanes.css"
 
 const router = useRouter()
