@@ -53,7 +53,7 @@ class UserImportSerializer(ChoiceFieldSerializerMixin,SystemBaseSerializer):
 class UserSerializer(SystemBaseSerializer):
     userId = serializers.IntegerField(source="id",read_only=True,required=False)
     deptId = serializers.IntegerField(source="dept.id",required=False)
-    password = serializers.CharField(write_only=True, required=False)
+    password = serializers.CharField(write_only=True, allow_blank=False)
     dept = DeptSerializer(read_only=True)
 
     class Meta:

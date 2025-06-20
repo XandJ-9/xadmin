@@ -198,7 +198,7 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "password": "newpassggswo1rd"
+    "password": ""
 }
 
 ###

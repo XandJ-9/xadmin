@@ -312,14 +312,16 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
 
     @action(detail=True, methods=['put'])
     def resetPwd(self, request, pk=None):
-        password = request.data.get("password")
+        password = request.data.get("password", None)
+        if password is None or password.strip() == '':
+            return Response({'error': '密码不能为空'}, status=status.HTTP_400_BAD_REQUEST)
         user = self.get_object()
-        # user.check_password(password)
-        # user.set_password(password)
-        # user.save()
         ser = UserSerializer(instance=user, data={'password': password}, request=request)
         if ser.is_valid(raise_exception=True):
             ser.save()
+        
+        if user.email:
+            # 发送邮件通知用户密码已重置
             mail_msg = f'您的登录信息已被重置:用户名 {user.username} ,密码 {password}'
             user.email_user(subject='密码重置成功',
                         message= mail_msg)
