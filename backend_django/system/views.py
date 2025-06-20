@@ -359,7 +359,7 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
             #     return Response({'error': f'角色ID必须为整数 {roleIds}'}, status=status.HTTP_400_BAD_REQUEST)
         except ValueError:
             logger.error(f'角色ID为空或不是整数 {roleId_str}')
-            return Response({'message': f'角色ID必须为整数 {roleId_str}'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': f'角色ID不能为空 {roleId_str}'}, status=status.HTTP_400_BAD_REQUEST)
 
         # 判断角色id是否都存在
         all_role_ids = set(Role.objects.filter(id__in=roleIds).values_list('id', flat=True))
