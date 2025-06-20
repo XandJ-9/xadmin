@@ -510,12 +510,10 @@ function cancel() {
 
 /** 新增按钮操作 */
 function handleAdd() {
-  reset()
-  getUser().then(response => {
+    reset()
     open.value = true
     title.value = "添加用户"
     form.value.password = initPassword.value
-  })
 }
 
 /** 修改按钮操作 */
@@ -523,7 +521,7 @@ function handleUpdate(row) {
   reset()
   const userId = row.userId || ids.value
   getUser(userId).then(response => {
-    form.value = response.data
+    form.value = response.user
     form.value.postIds = response.postIds
     form.value.roleIds = response.roleIds
     open.value = true

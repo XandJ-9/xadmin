@@ -205,6 +205,20 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
     #     serializer.validated_data['dept_id'] = dept_id
     #     super().perform_create(serializer)
 
+    def retrieve(self, request, *args, **kwargs):
+        '''
+        自定义返回单个对象的数据格式
+        '''
+        instance = self.get_object()
+        user_data = self.get_serializer(instance)
+        role_ids = instance.user_roles.all().values_list('role_id', flat=True)
+        post_ids = instance.user_posts.all().values_list('post_id', flat=True)
+        return Response(data={
+            'user': user_data.data,
+            'roleIds': list(role_ids),
+            'postIds': list(post_ids)
+        })
+    
     @action(detail=False, methods=['get'])
     def captchaImage(self, request):
         """

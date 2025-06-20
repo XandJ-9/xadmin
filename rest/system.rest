@@ -114,7 +114,7 @@ Authorization: Bearer {{token}}
 
 ###
 # 用户详情
-GET {{host}}/api/system/user/1 HTTP/1.1
+GET {{host}}/api/system/user/49 HTTP/1.1
 Authorization: Bearer {{token}}
 
 ###
@@ -198,7 +198,7 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "password": ""
+    "password": "123456"
 }
 
 ###
