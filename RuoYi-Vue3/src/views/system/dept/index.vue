@@ -174,9 +174,9 @@ const { queryParams, form, rules } = toRefs(data)
 
 /** 查询部门列表 */
 function getList() {
-  loading.value = true
-  listDept(queryParams.value).then(response => {
-    deptList.value = proxy.handleTree(response, "deptId", "parent")
+    loading.value = true
+    listDept({ noPage: 1, ...queryParams.value }).then(response => {
+    deptList.value = proxy.handleTree(response.data, "deptId", "parent")
     loading.value = false
   })
 }
@@ -216,8 +216,8 @@ function resetQuery() {
 /** 新增按钮操作 */
 function handleAdd(row) {
   reset()
-  listDept().then(response => {
-    deptOptions.value = proxy.handleTree(response, "deptId", "parent")
+    listDept({noPage:1}).then(response => {
+    deptOptions.value = proxy.handleTree(response.data, "deptId", "parent")
   })
   if (row != undefined) {
     form.value.parentId = row.deptId
@@ -241,6 +241,9 @@ function handleUpdate(row) {
   listDeptExcludeChild(row.deptId).then(response => {
     deptOptions.value = proxy.handleTree(response, "deptId")
   })
+  if(row.parentId == undefined || row.parentId == null) {
+    form.value.parentId = 0
+  }
   getDept(row.deptId).then(response => {
     form.value = response.data
     open.value = true

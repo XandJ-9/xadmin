@@ -59,7 +59,7 @@ Content-Type: application/json
 
 ###
 #  获取部门列表
-GET {{host}}/api/system/dept HTTP/1.1
+GET {{host}}/api/system/dept?noPage=1 HTTP/1.1
 Authorization: Bearer {{token}}
 
 ###
@@ -101,6 +101,12 @@ Content-Type: application/json
 # 获取部门树结构
 GET {{host}}/api/system/dept/tree HTTP/1.1
 Authorization: Bearer {{token}}
+
+###
+# /api/system/dept/exclude/100
+GET {{host}}/api/system/dept/exclude/100 HTTP/1.1
+Authorization: Bearer {{token}}
+
 
 ###
 # 用户请求
