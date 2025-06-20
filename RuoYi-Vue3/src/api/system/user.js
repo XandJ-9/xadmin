@@ -82,7 +82,7 @@ export function getUserProfile() {
 // 修改用户个人信息
 export function updateUserProfile(data) {
   return request({
-    url: '/system/user/updateProfile',
+    url: '/system/user/profile/update',
     method: 'put',
     data: data
   })

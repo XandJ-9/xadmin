@@ -114,7 +114,7 @@ Authorization: Bearer {{token}}
 
 ###
 # 用户详情
-GET {{host}}/api/system/user/49 HTTP/1.1
+GET {{host}}/api/system/user/1 HTTP/1.1
 Authorization: Bearer {{token}}
 
 ###
@@ -169,20 +169,31 @@ Authorization: Bearer {{token}}
 
 ###
 # 
-PUT {{host}}/api/system/user/updateProfile HTTP/1.1
+PUT {{host}}/api/system/user/profile/update HTTP/1.1
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "nickname": "haha",
+  "nickname": "hahaa",
   "phonenumber": "15888888888",
-  "email": "hagha@123.com",
+  "email": "jia.xu@qiyucloud.com.cn",
   "sex": "1"
 }
 
 ###
+# 修改用户密码
+PUT {{host}}/api/system/user/profile/updatePwd HTTP/1.1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "oldPassword": "123456",
+    "newPassword": "newpassggsword"
+}
+
+###
 # 重置用户密码
-PUT {{host}}/api/system/user/53/resetPwd HTTP/1.1
+PUT {{host}}/api/system/user/1/resetPwd HTTP/1.1
 Authorization: Bearer {{token}}
 Content-Type: application/json
 

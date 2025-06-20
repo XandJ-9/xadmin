@@ -318,8 +318,11 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
         # user.set_password(password)
         # user.save()
         ser = UserSerializer(instance=user, data={'password': password}, request=request)
-        if ser.is_valid():
+        if ser.is_valid(raise_exception=True):
             ser.save()
+            mail_msg = f'您的登录信息已被重置:用户名 {user.username} ,密码 {password}'
+            user.email_user(subject='密码重置成功',
+                        message= mail_msg)
         return Response({'message': '密码重置成功','data': ser.data}, status=status.HTTP_200_OK)
     @action(detail=True, methods=['get'], url_path='authRole')
     def authRole(self, request, pk=None):
@@ -388,7 +391,7 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
                          "roleGroup":[user_role.role.role_name for user_role in user.user_roles.all()],
                          "postGroup":[user_post.post.post_name for user_post in user.user_posts.all()]
                          })
-    @action(detail=False, methods=['put'])
+    @action(detail=False, methods=['put'], url_path='profile/update')
     def updateProfile(self, request):
         user = request.user
         ser = UserSerializer(instance=user, data=request.data, request=request)
@@ -396,6 +399,25 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
             ser.save()
         return Response({'message': '更新成功', "data":ser.data})
     
+    @action(detail=False, methods=['put'], url_path='profile/updatePwd')
+    def updatePwd(self, request):
+        """
+        修改密码
+        :param request:
+        :return:
+        """
+        user = request.user
+        old_password = request.data.get('oldPassword')
+        new_password = request.data.get('newPassword')
+        
+        if not user.check_password(old_password):
+            return Response({'error': '旧密码错误'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        user.set_password(new_password)
+        user.save()
+        
+        return Response({'message': '密码修改成功'}, status=status.HTTP_200_OK)
+
 class MenuViewSet(CustomModelViewSet):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
