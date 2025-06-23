@@ -90,6 +90,12 @@ class MenuSerializer(UpdateSourceFieldSerializerMixin,SystemBaseSerializer):
         # exclude = ['creator','updator','created_at', 'updated_at']
         read_only_fields = ['id']
 
+class RoleMenuSerializer(SystemBaseSerializer):
+    class Meta:
+        model = RoleMenu
+        fields = ['id', 'role', 'menu', 'creator', 'updator']
+        read_only_fields = ['id']
+
 class SystemConfigSerializer(SystemBaseSerializer):
     creator_info = UserSerializer(source='creator', read_only=True)
     

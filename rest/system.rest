@@ -245,12 +245,31 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-    "roleIds":""
+    "roleIds":[1,2]
 }
 
 
 ###
-# 
+# 角色列表
+GET {{host}}/api/system/role?noPage=1 HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+# 获取指定角色的菜单
+GET {{host}}/api/system/role/2/menus HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+# 更新角色的菜单
+PUT {{host}}/api/system/role/2/updateRoleMenu HTTP/1.1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "menuIds": [
+        101,102
+    ]
+}
 
 ###
 # 用户菜单列表

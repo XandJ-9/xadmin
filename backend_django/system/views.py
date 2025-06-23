@@ -105,36 +105,37 @@ class RoleViewSet(SystemViewMixin,CustomModelViewSet):
         menu_ids = [rm.menu_id for rm in role_menus]
         return Response({'menu_ids': menu_ids}, status=status.HTTP_200_OK)
     
-    @action(detail=True, methods=['post'])
-    def set_menus(self, request, pk=None):
-        """设置角色的菜单权限"""
+    @action(detail=True, methods=['put'])
+    def updateRoleMenu(self, request, pk=None):
+        """
+        设置角色的菜单
+        """
         role = self.get_object()
-        menu_ids = request.data.get('menu_ids', [])
+        menu_ids = request.data.get('menuIds', [])
         
         # 验证菜单ID是否有效
         if not all(isinstance(mid, int) for mid in menu_ids):
             return Response({'error': '菜单ID必须为整数'}, status=status.HTTP_400_BAD_REQUEST)
         
         # 验证菜单是否存在
-        existing_menu_ids = set(Menu.objects.filter(id__in=menu_ids).values_list('id', flat=True))
-        invalid_ids = set(menu_ids) - existing_menu_ids
+        valid_menu_ids = set(Menu.objects.filter(id__in=menu_ids).values_list('id', flat=True))
+        invalid_ids = set(menu_ids) - valid_menu_ids
         if invalid_ids:
             return Response({'error': f'菜单ID不存在: {list(invalid_ids)}'}, status=status.HTTP_400_BAD_REQUEST)
         
-        # 清除原有的角色菜单关联
-        role.role_menus.all().delete()
+        # 筛选应该删除的菜单id,并删除之
+        existed_menu_ids = role.role_menus.all().values_list('menu_id', flat=True)
+        delete_menu_ids = set(existed_menu_ids) - set(menu_ids)
+        RoleMenu.objects.filter(role_id=role.id, menu_id__in=delete_menu_ids).delete()
+
         
         # 创建新的角色菜单关联
-        from .models import RoleMenu
-        for menu_id in menu_ids:
-            RoleMenu.objects.create(
-                role=role,
-                menu_id=menu_id,
-                creator=request.user,
-                updator=request.user
-            )
-        
-        return Response({'menu_ids': menu_ids}, status=status.HTTP_200_OK)
+        new_role_menu_ids = set(menu_ids) - set(existed_menu_ids)
+        ser = RoleMenuSerializer(data=[{'role': role, 'menu_id': menu_id} for menu_id in new_role_menu_ids], many=True, request=request)
+        if ser.is_valid(raise_exception=True):
+            ser.save()
+        new_role_menu_ids = role.role_menus.all().values_list('menu_id', flat=True)
+        return Response({'menu_ids': new_role_menu_ids}, status=status.HTTP_200_OK)
 
 class UserViewSet(SystemViewMixin,CustomModelViewSet):
     queryset = User.objects.all()
@@ -365,40 +366,33 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
         if not user:
             return Response({'error': '用户不存在'}, status=status.HTTP_400_BAD_REQUEST)
         
-        roleId_str = request.data.get('roleIds','')
-        try:
-            roleIds = [int(rid) for rid in roleId_str.split(",")]
-            # # 验证用户ID是否有效
-            # if not all(isinstance(rid, int) for rid in rIds):
-            #     return Response({'error': f'角色ID必须为整数 {roleIds}'}, status=status.HTTP_400_BAD_REQUEST)
-        except ValueError:
-            logger.error(f'角色ID为空或不是整数 {roleId_str}')
-            return Response({'message': f'角色ID不能为空 {roleId_str}'}, status=status.HTTP_400_BAD_REQUEST)
+        role_ids = request.data.get('roleIds',[])
+
+        # # 验证用户ID是否有效
+        if not all(isinstance(rid, int) for rid in role_ids):
+            return Response({'error': f'角色ID必须为整数 {role_ids}'}, status=status.HTTP_400_BAD_REQUEST)
 
         # 判断角色id是否都存在
-        all_role_ids = set(Role.objects.filter(id__in=roleIds).values_list('id', flat=True))
-        invalid_ids = set(roleIds) - all_role_ids
+        valid_role_ids = set(Role.objects.filter(id__in=role_ids).values_list('id', flat=True))
+        invalid_ids = set(role_ids) - valid_role_ids
         if invalid_ids:
             return Response({'error': f'角色ID不存在: {list(invalid_ids)}'}, status=status.HTTP_400_BAD_REQUEST)
 
         existed_role_ids = UserRole.objects.filter(user_id=user.id).values_list('role_id', flat=True)
         
         # 删除原有的用户角色关联
-        delete_role_ids = set(existed_role_ids) - set(roleIds)
-        for roleId in delete_role_ids:
-            UserRole.objects.filter(user_id=user.id, role_id=roleId).delete()
+        delete_role_ids = set(existed_role_ids) - set(role_ids)
+        # for roleId in delete_role_ids:
+            # UserRole.objects.filter(user_id=user.id, role_id=roleId).delete()
+        UserRole.objects.filter(user_id=user.id, role_id__in=delete_role_ids).delete()
 
         # 添加新的用户角色关联
-        new_role_ids = set(roleIds) - set(existed_role_ids)
-        for roleId in new_role_ids:
-            # 关联用户和角色
-            # 使用序列化get_serializer方法可以自定义添加一些数据到模型
-            # ser = self.get_serializer(data={'user': user, 'role_id': roleId})
-            ser = UserRoleSerializer(data={'user': user, 'role_id': roleId}, request=request)
-            if ser.is_valid():
-                ser.save()
-        role_ids = user.user_roles.all().values_list('role_id', flat=True)
-        return Response({'message': '授权成功','role_ids':role_ids}, status=status.HTTP_200_OK)
+        new_role_ids = set(role_ids) - set(existed_role_ids)
+        ser = UserRoleSerializer(data=[{'user': user, 'role_id': role_id} for role_id in new_role_ids], many=True, request=request)
+        if ser.is_valid(raise_exception=True):
+            ser.save()
+        new_role_ids = user.user_roles.all().values_list('role_id', flat=True)
+        return Response({'message': '授权成功','role_ids':new_role_ids}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['get'])
     def profile(self, request):
