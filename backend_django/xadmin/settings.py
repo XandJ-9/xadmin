@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework_swagger',
+    'rest_framework_simplejwt.token_blacklist',
     'corsheaders',  # 添加CORS应用
     'datasource.apps.DatasourceConfig',
     'report.apps.ReportConfig',
