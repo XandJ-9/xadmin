@@ -11,8 +11,8 @@ Content-Type: application/json
 {
   "username": "admin",
   "password": "123456",
-  "code":"A3BS",
-  "uuid":"1f3df7a4-9b7e-4816-8c76-8ac41205d88f"
+  "code":"8VC1",
+  "uuid":"f0c8fcab-4167-4145-919a-cab0cd70ecbc"
 }
 
 ###
@@ -24,6 +24,11 @@ Content-Type: application/json
 GET {{host}}/api/getInfo HTTP/1.1
 Authorization: Bearer {{token}}
 
+
+###
+# 退出登录
+POST {{host}}/api/logout HTTP/1.1
+Authorization: Bearer {{token}}
 
 ###
 #  获取岗位信息

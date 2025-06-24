@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from django.contrib.auth import authenticate
 from django.utils.crypto import get_random_string
 from django.db.models import Q
@@ -10,7 +10,6 @@ from PIL import Image, ImageDraw, ImageFont
 from .models import Post,Dept,User, Role, Menu, SystemConfig, Captcha, UserRole, SystemDictType,SystemDictData
 from .serializers import *
 from .permissions import IsAdminUser, IsOwnerOrAdmin,HasRolePermission
-from .authentication import get_token_from_request
 
 from utils.viewset import CustomModelViewSet
 from utils.filters import SearchFilterBackend
@@ -291,13 +290,13 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
     @action(detail=False, methods=['post'])
     def logout(self, request):
         """登出"""
-        token = get_token_from_request(request)
+        token = request.auth
         if token:
             uuid_str = token.get('uuid')
             # 删除验证码
             Captcha.objects.filter(uuid=uuid_str).delete()
             # 要想限制用户有效退出登录，将token加入黑名单
-            # token.blacklist()
+            # accessToken.blacklist()
 
         return Response({'message': '登出成功'}, status=status.HTTP_200_OK)
 
