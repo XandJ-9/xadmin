@@ -78,7 +78,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import request from '@/utils/request'
 import Pagination from '@/components/Pagination'
-import {getInterfaceDetail, getInterfaceFields} from '@/api/dataassets/reportinfo'
+import {getInterfaceDetail, getInterfaceFields, executeInterfaceQuery} from '@/api/dataassets/reportinfo'
 
 const props = defineProps({
     interface_id: { type: Number },
@@ -166,7 +166,9 @@ const queryData = (data) => {
     queryLoading.value = true
 
     //   getReportData({ interface_code, payload, env_type: data.env_type }).then(response => {
-    request.post(`/api/report/execute-query/?interface_code=${interface_code.value}`, payload).then(response => {
+  // request.post(`/report/execute-query/?interface_code=${interface_code.value}`, payload).
+  executeInterfaceQuery(interface_code.value, payload)
+    then(response => {
         const res = response.data
         try {
             if (res.code == '-1') {
