@@ -334,7 +334,7 @@ function getList() {
 function getTreeselect() {
   menuOptions.value = []
   listMenu().then(response => {
-    const menu = { id: 0, menu_name: "主类目", children: [] }
+    const menu = { menuId: null, menuName: "主类目", children: [] }
     menu.children = proxy.handleTree(response, "id")
     menuOptions.value.push(menu)
   })
@@ -391,7 +391,7 @@ function handleAdd(row) {
   if (row != null && row.menuId) {
     form.value.parentId = row.menuId
   } else {
-    form.value.parentId = 0
+    form.value.parentId = ''
   }
   open.value = true
   title.value = "添加菜单"
@@ -443,7 +443,7 @@ function submitForm() {
 
 /** 删除按钮操作 */
 function handleDelete(row) {
-  proxy.$modal.confirm('是否确认删除名称为"' + row.menu_name + '"的数据项?').then(function() {
+  proxy.$modal.confirm('是否确认删除名称为"' + row.menuName + '"的数据项?').then(function() {
     return delMenu(row.id)
   }).then(() => {
     getList()
