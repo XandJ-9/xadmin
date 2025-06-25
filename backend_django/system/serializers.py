@@ -17,9 +17,11 @@ class SystemDictTypeSerializer(SystemBaseSerializer):
         fields = "__all__"
 
 class SystemDictDataSerializer(SystemBaseSerializer):
+    dictId = serializers.IntegerField(source='id', read_only=True)
     class Meta:
         model = SystemDictData
         fields = "__all__"
+        
 
 class RoleSerializer(SystemBaseSerializer):
     roleId = serializers.IntegerField(source='id', read_only=True) 
@@ -80,14 +82,14 @@ class UserRoleSerializer(SystemBaseSerializer):
         model = UserRole
         fields = ['id', 'user', 'role','creator','updator']
 
-class MenuSerializer(UpdateSourceFieldSerializerMixin,SystemBaseSerializer):
+class MenuSerializer(SystemBaseSerializer):
     menuId = serializers.IntegerField(source='id', read_only=True)
     parentId  = serializers.IntegerField(source='parent.id', required=False)
     
     class Meta:
         model = Menu
-        fields = "__all__"
-        # exclude = ['creator','updator','created_at', 'updated_at']
+        # fields = "__all__"
+        exclude = ['creator','updator','created_at', 'updated_at']
         read_only_fields = ['id']
 
 class RoleMenuSerializer(SystemBaseSerializer):

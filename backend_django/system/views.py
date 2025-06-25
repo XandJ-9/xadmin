@@ -431,7 +431,7 @@ class MenuViewSet(CustomModelViewSet):
     queryset = Menu.objects.all()
     serializer_class = MenuSerializer
     # permission_classes = [IsAdminUser]
-    filter_fields=['status','menu_name']
+    filter_fields=['status','menu_name','menu_type','visible']
     filter_backends = [SearchFilterBackend]
 
 
@@ -447,23 +447,6 @@ class MenuViewSet(CustomModelViewSet):
                 roles = Role.objects.filter(id__in=self.request.user.user_roles.values_list('role_id', flat=True))
                 return [HasRolePermission(allowed_roles = [role.role_key for role in roles])]
         return [IsAdminUser()]
-
-    def perform_create(self, serializer):
-        serializer.save(creator=self.request.user, updator=self.request.user)
-
-    # @action(detail=False, methods=['get'])
-    # def all(self, request):
-    #     # 获取所有菜单
-    #     queryset = Menu.objects.all().order_by('order_num')
-    #     serializer = self.get_serializer(queryset, many=True)
-    #     return Response(serializer.data)
-
-    def list(self, request, *args, **kwargs):
-        # return super().list(request, *args, **kwargs)
-        queryset = self.filter_queryset(self.get_queryset())
-        serizlizer = self.get_serializer(queryset, many = True)
-        return Response(serizlizer.data)
-
 
     @action(detail=False, methods=['get'])
     def user_menus(self, request):
@@ -505,7 +488,7 @@ class MenuViewSet(CustomModelViewSet):
         for user_role in user_roles:
             # 如果是admin角色，则拥有所有菜单权限
             if user_role.role.role_key == 'admin':
-                menu_ids = [menu.id for menu in Menu.objects.filter(menu_type__in=['M', 'C'])]
+                menu_ids = [menu.id for menu in Menu.objects.filter(visible='0')]
             else:
                 role_menus = user_role.role.role_menus.all()
                 menu_ids.extend([rm.menu_id for rm in role_menus])
@@ -514,7 +497,7 @@ class MenuViewSet(CustomModelViewSet):
         menu_ids = list(set(menu_ids))
         
         # 获取所有菜单并按排序字段排序
-        all_menus = Menu.objects.filter(id__in=menu_ids, menu_type__in=['M','C']).order_by('order_num')
+        all_menus = Menu.objects.filter(id__in=menu_ids, visible='0').order_by('order_num')
         
         # 获取顶级菜单
         top_menus = [menu for menu in all_menus if menu.parent is None]

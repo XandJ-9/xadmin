@@ -56,6 +56,11 @@
          :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
       >
          <el-table-column prop="menuName" label="菜单名称" :show-overflow-tooltip="true" width="160"></el-table-column>
+         <el-table-column prop="menuType" label="菜单类型" width="80">
+            <template #default="scope">
+                <dict-tag :options="sys_menu_type" :value="scope.row.menuType" />
+            </template>
+         </el-table-column>
          <el-table-column prop="icon" label="图标" align="center" width="100">
             <template #default="scope">
                <svg-icon :icon-class="scope.row.icon" />
@@ -294,7 +299,7 @@ import SvgIcon from "@/components/SvgIcon"
 import IconSelect from "@/components/IconSelect"
 
 const { proxy } = getCurrentInstance()
-const { sys_show_hide, sys_normal_disable } = proxy.useDict("sys_show_hide", "sys_normal_disable")
+const { sys_show_hide, sys_normal_disable, sys_menu_type } = proxy.useDict("sys_show_hide", "sys_normal_disable","sys_menu_type")
 
 const menuList = ref([])
 const open = ref(false)
@@ -324,18 +329,18 @@ const { queryParams, form, rules } = toRefs(data)
 /** 查询菜单列表 */
 function getList() {
   loading.value = true
-  listMenu(queryParams.value).then(response => {
-    menuList.value = proxy.handleTree(response, "id","parent")
+    listMenu({ noPage: 1, ...queryParams.value }).then(response => {
+    menuList.value = proxy.handleTree(response.data, "id","parent")
     loading.value = false
   })
 }
 
 /** 查询菜单下拉树结构 */
 function getTreeselect() {
-  menuOptions.value = []
-  listMenu().then(response => {
+    menuOptions.value = []
+    listMenu({noPage:1,visible:'0'}).then(response => {
     const menu = { menuId: null, menuName: "主类目", children: [] }
-    menu.children = proxy.handleTree(response, "id")
+    menu.children = proxy.handleTree(response.data, "id")
     menuOptions.value.push(menu)
   })
 }
@@ -423,7 +428,8 @@ function submitForm() {
     if (valid) {
       if  (form.value.menuType == "M") {
         form.value.component = 'Layout'
-      }
+        }
+
       if (form.value.menuId != undefined) {
         updateMenu(form.value).then(response => {
           proxy.$modal.msgSuccess("修改成功")

@@ -89,14 +89,14 @@
       <el-table v-loading="loading" :data="dataList" @selection-change="handleSelectionChange">
          <el-table-column type="selection" width="55" align="center" />
          <el-table-column label="字典编码" align="center" prop="id" />
-         <!--
+    
          <el-table-column label="字典标签" align="center" prop="dictLabel">
             <template #default="scope">
                <span v-if="(scope.row.list_class == '' || scope.row.list_class == 'default') && (scope.row.css_class == '' || scope.row.css_class == null)">{{ scope.row.dictLabel }}</span>
                <el-tag v-else :type="scope.row.list_class == 'primary' ? '' : scope.row.list_class" :class="scope.row.css_class">{{ scope.row.dictLabel }}</el-tag>
             </template>
          </el-table-column>
-        -->
+    
          <el-table-column label="字典键值" align="center" prop="dictValue" />
          <el-table-column label="字典排序" align="center" prop="dictSort" />
          <el-table-column label="状态" align="center" prop="status">
@@ -130,22 +130,22 @@
       <el-dialog :title="title" v-model="open" width="500px" append-to-body>
          <el-form ref="dataRef" :model="form" :rules="rules" label-width="80px">
             <el-form-item label="字典类型">
-               <el-input v-model="form.dict_type" :disabled="true" />
+               <el-input v-model="form.dictType" :disabled="true" />
             </el-form-item>
             <el-form-item label="数据标签" prop="dictLabel">
                <el-input v-model="form.dictLabel" placeholder="请输入数据标签" />
             </el-form-item>
             <el-form-item label="数据键值" prop="dictValue">
-               <el-input v-model="form.dict_value" placeholder="请输入数据键值" />
+               <el-input v-model="form.dictValue" placeholder="请输入数据键值" />
             </el-form-item>
             <el-form-item label="样式属性" prop="cssClass">
-               <el-input v-model="form.css_class" placeholder="请输入样式属性" />
+               <el-input v-model="form.cssClass" placeholder="请输入样式属性" />
             </el-form-item>
             <el-form-item label="显示排序" prop="dictSort">
-               <el-input-number v-model="form.dict_sort" controls-position="right" :min="0" />
+               <el-input-number v-model="form.dictSort" controls-position="right" :min="0" />
             </el-form-item>
             <el-form-item label="回显样式" prop="listClass">
-               <el-select v-model="form.list_class">
+               <el-select v-model="form.listClass">
                   <el-option
                      v-for="item in listClassOptions"
                      :key="item.value"
@@ -260,7 +260,7 @@ function cancel() {
 /** 表单重置 */
 function reset() {
   form.value = {
-    dictCode: undefined,
+    dictId: undefined,
     dictLabel: undefined,
     dictValue: undefined,
     cssClass: undefined,
@@ -301,7 +301,7 @@ function handleAdd() {
 
 /** 多选框选中数据 */
 function handleSelectionChange(selection) {
-  ids.value = selection.map(item => item.dictCode)
+  ids.value = selection.map(item => item.dictId)
   single.value = selection.length != 1
   multiple.value = !selection.length
 }
@@ -309,8 +309,8 @@ function handleSelectionChange(selection) {
 /** 修改按钮操作 */
 function handleUpdate(row) {
   reset()
-  const dictCode = row.dictCode || ids.value
-  getData(dictCode).then(response => {
+  const dictId = row.dictId || ids.value
+  getData(dictId).then(response => {
     form.value = response.data
     open.value = true
     title.value = "修改字典数据"
@@ -321,7 +321,7 @@ function handleUpdate(row) {
 function submitForm() {
   proxy.$refs["dataRef"].validate(valid => {
     if (valid) {
-      if (form.value.dictCode != undefined) {
+      if (form.value.dictId != undefined) {
         updateData(form.value).then(response => {
           useDictStore().removeDict(queryParams.value.dictType)
           proxy.$modal.msgSuccess("修改成功")
@@ -342,9 +342,9 @@ function submitForm() {
 
 /** 删除按钮操作 */
 function handleDelete(row) {
-  const dictCodes = row.dictCode || ids.value
-  proxy.$modal.confirm('是否确认删除字典编码为"' + dictCodes + '"的数据项？').then(function() {
-    return delData(dictCodes)
+  const dictIds = row.dictId || ids.value
+  proxy.$modal.confirm('是否确认删除字典编码为"' + dictIds + '"的数据项？').then(function() {
+    return delData(dictIds)
   }).then(() => {
     getList()
     proxy.$modal.msgSuccess("删除成功")
