@@ -51,7 +51,7 @@
          v-if="refreshTable"
          v-loading="loading"
          :data="menuList"
-         row-key="id"
+         row-key="menuId"
          :default-expand-all="isExpandAll"
          :tree-props="{ children: 'children', hasChildren: 'hasChildren' }"
       >
@@ -330,7 +330,7 @@ const { queryParams, form, rules } = toRefs(data)
 function getList() {
   loading.value = true
     listMenu({ noPage: 1, ...queryParams.value }).then(response => {
-    menuList.value = proxy.handleTree(response.data, "id","parent")
+    menuList.value = proxy.handleTree(response.data, "menuId","parent")
     loading.value = false
   })
 }
@@ -340,7 +340,7 @@ function getTreeselect() {
     menuOptions.value = []
     listMenu({noPage:1,visible:'0'}).then(response => {
     const menu = { menuId: null, menuName: "主类目", children: [] }
-    menu.children = proxy.handleTree(response.data, "id")
+    menu.children = proxy.handleTree(response.data, "menuId")
     menuOptions.value.push(menu)
   })
 }
@@ -426,7 +426,7 @@ async function handleUpdate(row) {
 function submitForm() {
   proxy.$refs["menuRef"].validate(valid => {
     if (valid) {
-      if  (form.value.menuType == "M") {
+      if  (form.value.menuType == "M" && form.value.parentId == undefined) {
         form.value.component = 'Layout'
         }
 
@@ -450,7 +450,7 @@ function submitForm() {
 /** 删除按钮操作 */
 function handleDelete(row) {
   proxy.$modal.confirm('是否确认删除名称为"' + row.menuName + '"的数据项?').then(function() {
-    return delMenu(row.id)
+    return delMenu(row.menuId)
   }).then(() => {
     getList()
     proxy.$modal.msgSuccess("删除成功")

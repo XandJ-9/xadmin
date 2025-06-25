@@ -21,7 +21,7 @@ class SystemDictDataSerializer(SystemBaseSerializer):
     class Meta:
         model = SystemDictData
         fields = "__all__"
-        
+
 
 class RoleSerializer(SystemBaseSerializer):
     roleId = serializers.IntegerField(source='id', read_only=True) 
@@ -89,7 +89,7 @@ class MenuSerializer(SystemBaseSerializer):
     class Meta:
         model = Menu
         # fields = "__all__"
-        exclude = ['creator','updator','created_at', 'updated_at']
+        exclude = ['creator','updator','created_at', 'updated_at','id']
         read_only_fields = ['id']
 
 class RoleMenuSerializer(SystemBaseSerializer):

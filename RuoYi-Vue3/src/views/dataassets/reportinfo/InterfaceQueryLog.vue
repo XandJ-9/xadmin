@@ -147,7 +147,7 @@ import sql from 'highlight.js/lib/languages/sql'
 import 'highlight.js/styles/atom-one-dark.css'
 import { Document } from '@element-plus/icons-vue'
 import Pagination from '@/components/Pagination'
-
+import {getInterfaceQueryLogs} from '@/api/dataassets/reportinfo'
 // 注册SQL语言高亮
 hljs.registerLanguage('sql', sql)
 
@@ -197,12 +197,15 @@ const fetchLogs = async () => {
       }
     }
     
-    const response = await request.get('/api/report/interface-logs/', { params })
-      // logData.value = response.data.data
-      pageInfo.data = response.data.data.data
-      pageInfo.total = response.data.data.total
-      pageInfo.currentPage = response.data.data.page
-      pageInfo.pageSize = response.data.data.limit
+      // const response = await request.get('/api/report/interface-logs/', { params })
+      await getInterfaceQueryLogs(params).then(response => {
+        pageInfo.data = response.data.data
+        pageInfo.total = response.data.total
+        pageInfo.currentPage = response.data.page
+        pageInfo.pageSize = response.data.limit
+      }
+    )
+
   } catch (error) {
     console.error('获取接口查询日志失败:', error)
     ElMessage.error('获取接口查询日志失败')

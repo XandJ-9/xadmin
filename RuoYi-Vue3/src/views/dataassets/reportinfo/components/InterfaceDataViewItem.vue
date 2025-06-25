@@ -2,7 +2,7 @@
     <div id="interface-view-container">
         <el-form class="demo-form-inline" :model="queryForm" label-position="top">
             <el-form-item label="接口编码" style="font-weight: 15px;">
-                <el-input v-model="interface_code" placeholder="" :disabled="true"></el-input>
+                <el-input v-model="interface_code" placeholder="" :disabled="interface_id == undefined"></el-input>
             </el-form-item>
             <el-form-item label="接口参数" class="param-item">
                 <div class="param-header">
@@ -77,11 +77,11 @@
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
 import request from '@/utils/request'
-// import { XLSX } from 'xlsx'
 import Pagination from '@/components/Pagination'
+import {getInterfaceDetail, getInterfaceFields} from '@/api/dataassets/reportinfo'
 
 const props = defineProps({
-    interface_id: { type: Number, default: 0 },
+    interface_id: { type: Number },
     interface_name: { type: String, default: '' },
 })
 
@@ -106,10 +106,12 @@ onMounted(() => {
     getInterfaceInfo()
 })
 const getInterfaceInfo = async () => {
-    const res = await request.get(`/api/report/interfaces/${props.interface_id}/`)
-    interface_code.value = res.data.data.interface_code
-    const resp = await request.get(`/api/report/interface-fields/?interface=${props.interface_id}&noPage=1`)
-    const fields = resp.data.data
+    // const res = await request.get(`/api/report/interfaces/${props.interface_id}/`)
+    const res = await getInterfaceDetail(props.interface_id)
+    interface_code.value = res.data.interface_code
+    // const resp = await request.get(`/api/report/interface-fields/?interface=${props.interface_id}&noPage=1`)
+    const resp = await getInterfaceFields({ interface: props.interface_id, noPage: 1 })
+    const fields = resp.data
     if (!fields) {
         return
     }

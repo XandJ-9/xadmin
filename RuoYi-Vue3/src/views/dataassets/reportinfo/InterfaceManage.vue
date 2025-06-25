@@ -531,7 +531,8 @@ const handleDataview = (row) => {
     //     })
     // } else {
     // }
-    router.push({ path: `/reportinfo/view/${row.id}`, query: { interface_name: row.interface_name } })
+    // router.push({ path: `/reportinfo/view/${row.id}`, query: { interface_name: row.interface_name } })
+    router.push({ path: `/report/interface/interfaceDataView/${row.id}`, query: { interface_name: row.interface_name } })
     .then(() => {
         console.log('跳转成功')
     })
