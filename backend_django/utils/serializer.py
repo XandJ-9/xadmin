@@ -61,21 +61,24 @@ class CamelFieldSerializerMixin:
             camel_field_name = underline_to_camel_string(field.field_name)
             if camel_field_name not in data.keys():
                 continue
-            
             source_field_name = source_attrs[0]
-            if len(source_attrs) > 1 :
-                # 如果对应的字段是外键字段，则获取对应的对象信息
-                related_field_atrr = source_attrs[1]
-                model = getattr(self.Meta, 'model')
-                related_field = model._meta.get_field(source_field_name)
-                filter_kwargs = {related_field_atrr: data.pop(camel_field_name)}
-                qs = related_field.related_model._default_manager.filter(**filter_kwargs)
-                if qs.exists():
-                    data[source_field_name] = qs.first()
-            else:
-                data[source_field_name] = data.pop(camel_field_name)
-        # return super().to_internal_value(data)
-        return data
+            # if len(source_attrs) > 1 :
+            #     # 如果对应的字段是外键字段，则获取对应的对象信息
+            #     related_field_atrr = source_attrs[1]
+            #     model = getattr(self.Meta, 'model')
+            #     related_field = model._meta.get_field(source_field_name)
+            #     filter_kwargs = {related_field_atrr: data.pop(camel_field_name)}
+            #     qs = related_field.related_model._default_manager.filter(**filter_kwargs)
+            #     if qs.exists():
+            #         data[source_field_name] = qs.first()
+            # else:
+            #     data[source_field_name] = data.pop(camel_field_name)
+            # 如果是外键字段，直接将值对应到字段上，外键字段对象的映射交给父类去对应
+            data[source_field_name] = data.pop(camel_field_name)
+        # 调用父类的to_internal_value方法进行验证
+        # 这里的data已经是下划线风格的字段了
+        validated_data = super().to_internal_value(data)
+        return validated_data
     def to_representation(self, instance):
         '''
         将下划线风格字段转换成驼峰风格字段

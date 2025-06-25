@@ -23,6 +23,6 @@ class UserOperationMiddleware(MiddlewareMixin):
                   logger.info(f'新用户注册失败，用户名：{request.POST.get("username")}')
           else:
               auth_token_info = request.auth.payload if hasattr(request, 'auth') and request.auth else None
-              logger.info(f'用户操作记录，用户名：{request.user.username}，请求路径：{request.path}，请求方法：{request.method}, 请求视图名称：{request.resolver_match.url_name}, token：{auth_token_info}')
+              logger.info(f'用户操作记录，用户名：{request.user.username}，请求路径：{request.path}，请求方法：{request.method}, 请求视图名称：{request.resolver_match.url_name}')
 
         return response
