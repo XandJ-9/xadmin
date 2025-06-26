@@ -205,7 +205,7 @@ import { useRouter } from 'vue-router'
 import QueryParamsForm from '@/components/QueryParamsForm'
 import Pagination from '@/components/Pagination'
 import { getDataSourceTypeList } from '@/api/dataassets/datasource'
-import { getPlatformList, getModuleList, getReportList, getInterfaceList, updateInterface, createInterface, deleteInterface} from '@/api/dataassets/reportinfo'
+import { getPlatformList, getModuleList, getReportList, getInterfaceList, updateInterface, createInterface, deleteInterface, importInterface} from '@/api/dataassets/reportinfo'
 
 const router = useRouter()
 
@@ -500,13 +500,9 @@ const handleSubmitImport = async () => {
 }
 
 const handleUpload = (options) => {
-  const formData = new FormData()
-  formData.append('file', options.file)
-  request.post('/report/interfaces/importInterfaceinfo/', formData, {
-    headers: {
-      'Content-Type': 'multipart/form-data'
-    }
-  }).then((response) => {
+
+    // request.post('/report/interfaces/importInterfaceinfo/', formData, { headers })
+    importInterface(options.file).then((response) => {
     ElMessage.success('导入成功')
     options.onSuccess = () => {
       console.log('上传成功')

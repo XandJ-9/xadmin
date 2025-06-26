@@ -170,8 +170,8 @@
                         </span>
                      </template>
                      <el-radio-group v-model="form.isFrame">
-                        <el-radio value="0">是</el-radio>
-                        <el-radio value="1">否</el-radio>
+                        <el-radio :value="0">是</el-radio>
+                        <el-radio :value="1">否</el-radio>
                      </el-radio-group>
                   </el-form-item>
                </el-col>
@@ -238,8 +238,8 @@
                         </span>
                      </template>
                      <el-radio-group v-model="form.isCache">
-                        <el-radio value="0">缓存</el-radio>
-                        <el-radio value="1">不缓存</el-radio>
+                        <el-radio :value="1">缓存</el-radio>
+                        <el-radio :value="0">不缓存</el-radio>
                      </el-radio-group>
                   </el-form-item>
                </el-col>
@@ -339,7 +339,7 @@ function getList() {
 function getTreeselect() {
     menuOptions.value = []
     listMenu({noPage:1,visible:'0'}).then(response => {
-    const menu = { menuId: null, menuName: "主类目", children: [] }
+    const menu = { menuId: 0, menuName: "主类目", children: [] }
     menu.children = proxy.handleTree(response.data, "menuId")
     menuOptions.value.push(menu)
   })
@@ -414,7 +414,7 @@ function toggleExpandAll() {
 /** 修改按钮操作 */
 async function handleUpdate(row) {
   reset()
-  await getTreeselect()
+  getTreeselect()
   getMenu(row.menuId).then(response => {
     form.value = response.data
     open.value = true

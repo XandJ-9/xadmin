@@ -41,7 +41,7 @@ class InterfaceInfo(BizBaseModel):
     IS_DATA_OPTION_CHOICE = (('1', '是'), ('0', '否'))
     IS_SECODN_TABLE_CHOICE = (('1', '是'), ('0', '否'))
     IS_LOGIN_VISIT_CHOICE = (('1', '是'), ('0', '否'))
-    ALARM_TYPE_CHOICES = (('0', '否'), ('1', '邮件'), ('2', '短信'), ('3', '钉钉'), ('4', '企业微信'), ('5', '电话'))
+    ALARM_TYPE_CHOICES = (('0', '否'), ('1', '邮件'), ('2', '短信'), ('3', '钉钉'), ('4', '企业微信'), ('5', '电话'), ('6','飞书'))
     report = models.ForeignKey(ReportInfo,verbose_name="报表", on_delete=models.CASCADE)
     interface_name= models.CharField(max_length=255, verbose_name='接口名称')
     interface_code= models.CharField(max_length=255, verbose_name='接口编码',unique=True)

@@ -52,7 +52,7 @@ class ExcelImportExportMixin:
             )
         except Exception as e:
             logger.error(e)
-            return HttpResponseServerError(content='导入文件解析失败，请检查是否格式正确')
+            return HttpResponseServerError(content=f'导入失败 {e}')
 
     @action(methods=['post'], detail=False, url_path='export/Interfaceinfo', url_name='export_interfaceinfo')
     def export_interfaceinfo(self, request, *args, **kwargs):

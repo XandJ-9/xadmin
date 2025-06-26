@@ -19,6 +19,12 @@ class QueryExecutor(ABC):
         """执行SQL查询"""
         pass
 
+    
+    @abstractmethod
+    def execute_query_page(self, sql: str, page_num: int, page_size: int) -> Dict[str, Any]:
+        """执行SQL查询并分页"""
+        pass
+    
     @abstractmethod
     def test_connection(self) -> bool:
         """测试数据库连接"""

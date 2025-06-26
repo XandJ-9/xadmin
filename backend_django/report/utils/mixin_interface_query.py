@@ -4,22 +4,17 @@ from django.template import Template, Context
 from rest_framework.decorators import action
 from ..models  import InterfaceInfo,InterfaceField,InterfaceQueryLog
 
-from .operation_interface_query import wrap_query_result
-from datasource.models import DataSource
-from datasource.executors.factory import QueryExecutorFactory
+from .operation_interface_query import InterfaceQueryResult
 from utils.util_datetime import getNowTimestamp
 import logging
 
 
 logger = logging.getLogger(__name__)
 
-class InterfaceQueryException(Exception):
-    pass
-
 class InterfaceQueryMixin:
 
     @action(detail=False, methods=['POST'], url_path='execute-query')
-    def query_interface(self, request, interface_code=None):
+    def query_interface(self, request):
         '''
         获取接口信息：
         1. 数据源
@@ -32,29 +27,24 @@ class InterfaceQueryMixin:
             return HttpResponseNotFound(content="接口不存在")
         interface_db_type = interface_info.interface_db_type
         interface_db_name = interface_info.interface_db_name
-        interface_fields = InterfaceField.objects.filter(interface=interface_info)
         # 解析查询sql，并执行查询
         interface_sql_template = Template(interface_info.interface_sql)
         interface_sql = interface_sql_template.render(Context(request.data))
+        if interface_info.is_total == "1":
+            total_sql_template = Template(interface_info.total_sql)
+            total_sql = total_sql_template.render(Context(request.data))
         # 获取数据源
         execute_start_time = getNowTimestamp()
-        execute_result = str()
+        execute_result = ''
         error_message = None
+        query_obj = InterfaceQueryResult(interface_info)  # 初始化查询结果对象
+
         try:
-            executor = self.get_executor(interface_db_type, interface_db_name)
-            query_result = executor.execute_query(interface_sql)
-            # 结果包装
-            data_result = wrap_query_result(query_result, interface_fields, interface_info)
-            data_result['code'] = "0"
-            data_result['message'] = "success"
+            query_obj.execute_query(interface_sql=interface_sql,total_sql=total_sql)
             execute_result = "success"
-        except InterfaceQueryException as e:
+        except Exception as e:
             logger.error(traceback.format_exc())
             error_message = str(e)
-            data_result = {
-                "code": "-1",
-                "message": error_message
-            }
             execute_result = "error"
         finally:
             execute_end_time = getNowTimestamp()
@@ -67,19 +57,9 @@ class InterfaceQueryMixin:
                                             execute_end_time=execute_end_time,
                                             execute_result=execute_result,
                                             error_message=error_message,
-                                            creator = request.user)
+                                            creator = request.user if request.user.is_authenticated else None)
             interface_query_log.save()
-        return JsonResponse(data_result)
+        return JsonResponse(query_obj.get_result())
     
-    def get_executor(self, interface_db_type, interface_db_name):
-        datasource = DataSource.objects.filter(type=interface_db_type,database=interface_db_name).first()
-        if datasource is None:
-            raise InterfaceQueryException("数据源类型%s或者数据库%s不存在"%(interface_db_type, interface_db_name))
-        executor =QueryExecutorFactory.get_executor(datasource_type=datasource.type,
-                                            host=datasource.host, 
-                                            port=datasource.port,
-                                            database= datasource.database, 
-                                            username =datasource.username, 
-                                            password=datasource.password)
-        return executor
+
 

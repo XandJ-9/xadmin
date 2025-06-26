@@ -177,7 +177,7 @@ export function importInterface(file) {
   formData.append('file', file)
   
   return request({
-    url: '/report/import-interface/',
+    url: '/report/import/Interfaceinfo/',
     method: 'post',
     data: formData,
     headers: {

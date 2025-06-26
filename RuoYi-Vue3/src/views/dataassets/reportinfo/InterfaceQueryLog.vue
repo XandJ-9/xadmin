@@ -141,13 +141,12 @@ export default {
 <script setup>
 import { reactive, ref, onMounted, nextTick } from 'vue'
 import { ElMessage } from 'element-plus'
-import request from '@/utils/request'
 import hljs from 'highlight.js/lib/core'
 import sql from 'highlight.js/lib/languages/sql'
 import 'highlight.js/styles/atom-one-dark.css'
 import { Document } from '@element-plus/icons-vue'
 import Pagination from '@/components/Pagination'
-import {getInterfaceQueryLogs} from '@/api/dataassets/reportinfo'
+import {getInterfaceQueryLogs, getInterfaceQueryLogDetail} from '@/api/dataassets/reportinfo'
 // 注册SQL语言高亮
 hljs.registerLanguage('sql', sql)
 
@@ -197,12 +196,11 @@ const fetchLogs = async () => {
       }
     }
     
-      // const response = await request.get('/api/report/interface-logs/', { params })
       await getInterfaceQueryLogs(params).then(response => {
-        pageInfo.data = response.data.data
-        pageInfo.total = response.data.total
-        pageInfo.currentPage = response.data.page
-        pageInfo.pageSize = response.data.limit
+        pageInfo.data = response.data
+        pageInfo.total = response.total
+        pageInfo.currentPage = response.page
+        pageInfo.pageSize = response.limit
       }
     )
 
@@ -217,8 +215,8 @@ const fetchLogs = async () => {
 // 查看详情
 const viewQueryDetail = async (row) => {
   try {
-    const response = await request.get(`/api/report/interface-logs/${row.id}/`)
-    currentQuery.value = response.data.data
+    const response = await getInterfaceQueryLogDetail(row.id)
+    currentQuery.value = response.data
     dialogVisible.value = true
     
     // 等待DOM更新后应用代码高亮

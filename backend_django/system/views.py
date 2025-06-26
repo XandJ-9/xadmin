@@ -488,7 +488,7 @@ class MenuViewSet(CustomModelViewSet):
         for user_role in user_roles:
             # 如果是admin角色，则拥有所有菜单权限
             if user_role.role.role_key == 'admin':
-                menu_ids = [menu.id for menu in Menu.objects.filter(visible='0')]
+                menu_ids = [menu.id for menu in Menu.objects.filter(status='0')]
             else:
                 role_menus = user_role.role.role_menus.all()
                 menu_ids.extend([rm.menu_id for rm in role_menus])
@@ -497,7 +497,7 @@ class MenuViewSet(CustomModelViewSet):
         menu_ids = list(set(menu_ids))
         
         # 获取所有菜单并按排序字段排序
-        all_menus = Menu.objects.filter(id__in=menu_ids, visible='0').order_by('order_num')
+        all_menus = Menu.objects.filter(id__in=menu_ids, status='0').order_by('order_num')
         
         # 获取顶级菜单
         top_menus = [menu for menu in all_menus if menu.parent is None]

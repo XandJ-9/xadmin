@@ -11,8 +11,8 @@ Content-Type: application/json
 {
   "username": "admin",
   "password": "123456",
-  "code":"6L44",
-  "uuid":"d1c1b8ac-e968-47dd-a5d2-f3810153b164"
+  "code":"N9RV",
+  "uuid":"c68521ff-4052-474e-8c1e-15940c46e6e9"
 }
 
 ###
@@ -289,7 +289,7 @@ Authorization: Bearer {{token}}
 
 ###
 # 获取菜单
-GET {{host}}/api/system/menu/1067 HTTP/1.1
+GET {{host}}/api/system/menu/1080 HTTP/1.1
 Authorization: Bearer {{token}}
 
 ###
