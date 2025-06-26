@@ -346,7 +346,7 @@ const resetQuery = () => {
 // 分页大小变更处理
 const handleSizeChange = (val) => {
   pageSize.value = val
-  getInterfaceList()
+  fetchInterfaceList()
 }
 
 // 当前页变更处理
@@ -485,7 +485,7 @@ const download = inject('download')
 
 // 导出接口到excel
 const handleExport = (row) => {
-    download(`/report/export/Interfaceinfo/`, {interface_id: row.id}, '接口信息.xlsx')
+    download(`/report/interface-export/`, {interface_id: row.id}, '接口信息.xlsx')
 }
 
 const uploadRef = ref(null)
@@ -496,7 +496,7 @@ const handleImport = () => {
 }
 
 const handleSubmitImport = async () => {
-  uploadRef.value.submit()
+    uploadRef.value.submit()
 }
 
 const handleUpload = (options) => {
@@ -509,7 +509,7 @@ const handleUpload = (options) => {
     }
     importVisible.value = false
     uploadRef.value.clearFiles()
-    getInterfaceList()
+    fetchInterfaceList()
   }).catch((error) => {
     console.error('导入失败：', error)
     ElMessage.error('导入失败')

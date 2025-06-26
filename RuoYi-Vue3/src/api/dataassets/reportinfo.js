@@ -162,14 +162,6 @@ export function deleteInterface(id) {
   })
 }
 
-// 导出接口
-export function exportInterface(id) {
-  return request({
-    url: `/report/interfaces/${id}/export/`,
-    method: 'get',
-    responseType: 'blob'
-  })
-}
 
 // 导入接口
 export function importInterface(file) {
@@ -177,7 +169,7 @@ export function importInterface(file) {
   formData.append('file', file)
   
   return request({
-    url: '/report/import/Interfaceinfo/',
+    url: '/report/interface-import/',
     method: 'post',
     data: formData,
     headers: {
@@ -226,7 +218,7 @@ export function deleteInterfaceField(id) {
 // 执行接口查询
 export function executeInterfaceQuery(interfaceCode, data) {
   return request({
-    url: `/report/execute-query/?interface_code=${interfaceCode}`,
+    url: `/report/interface-query/?interface_code=${interfaceCode}`,
     method: 'post',
     data
   })

@@ -53,11 +53,11 @@ class InterfaceFieldViewSet(CustomModelViewSet):
     search_fields = ['field_name', 'field_code', 'field_desc']
     ordering_fields = ['id', 'create_datetime', 'update_datetime', 'field_order']
 
-class ImportExportViewSet(ExcelImportExportMixin, ViewSet):
+class InterfaceImportExportViewSet(ExcelImportExportMixin, CustomModelViewSet):
     queryset = None
 
 
-class InterfaceQueryViewSet(InterfaceQueryMixin, ViewSet):
+class InterfaceQueryViewSet(InterfaceQueryMixin, CustomModelViewSet):
     '''
     接口查询视图
     '''

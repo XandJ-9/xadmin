@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 class InterfaceQueryMixin:
 
-    @action(detail=False, methods=['post'], url_path='execute-query')
+    @action(detail=False, methods=['post'])
     def query_interface(self, request):
         '''
         获取接口信息：

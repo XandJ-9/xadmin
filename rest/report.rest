@@ -58,7 +58,7 @@ Authorization: Bearer {{login.response.body.token}}
 
 ###
 # 查询接口
-POST {{host}}/api/report/execute-query/?interface_code=ads_xl_ai_account_exhibit_hall HTTP/1.1
+POST {{host}}/api/report/interface-query/?interface_code=ads_xl_ai_account_exhibit_hall HTTP/1.1
 Authorization:  Bearer {{login.response.body.token}}
 
 
@@ -79,5 +79,5 @@ Content-Type: application/json
 
 ###
 # 导出数据接口
-POST {{host}}/api/report/export/Interfaceinfo/?interface_id=3 HTTP/1.1
+POST {{host}}/api/report/interface-export/?interface_id=3 HTTP/1.1
 Authorization:  Bearer {{login.response.body.token}}

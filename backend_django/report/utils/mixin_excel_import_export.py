@@ -16,7 +16,7 @@ logger = logging.getLogger('django')
 
 class ExcelImportExportMixin:
 
-    @action(methods=['post'], detail=False, url_path='import/Interfaceinfo', url_name='import_interfaceinfo')
+    @action(methods=['post'], detail=False)
     def import_interfaceinfo(self, request, *args, **kwargs):
         """
         Import interface information from an Excel file.
@@ -54,7 +54,7 @@ class ExcelImportExportMixin:
             logger.error(e)
             return HttpResponseServerError(content=f'导入失败 {e}')
 
-    @action(methods=['post'], detail=False, url_path='export/Interfaceinfo', url_name='export_interfaceinfo')
+    @action(methods=['post'], detail=False)
     def export_interfaceinfo(self, request, *args, **kwargs):
         """
         Export interface information to an Excel file.
