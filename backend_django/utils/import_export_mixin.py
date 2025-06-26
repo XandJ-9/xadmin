@@ -15,7 +15,7 @@ from utils.import_export import import_to_data
 from utils.util_response import DetailResponse, SuccessResponse
 from utils.util_request import get_verbose_name
 
-class ImportSerializerMixin:
+class ModelImportSerializerMixin:
     """
     自定义导入模板、导入功能
     """
@@ -57,7 +57,7 @@ class ImportSerializerMixin:
             length += 2.1 if ord(char) > 256 else 1
         return round(length, 1) if length <= self.export_column_width else self.export_column_width
 
-    @action(methods=['get','post'],detail=False, url_path='import')
+    @action(methods=['get','post'],detail=False, url_path='import', url_name='model-import')
     @transaction.atomic  # Django 事务,防止出错
     def import_data(self, request: Request, *args, **kwargs):
         """
@@ -246,7 +246,7 @@ class ImportSerializerMixin:
         return response
 
 
-class ExportSerializerMixin:
+class ModelExportSerializerMixin:
     """
     自定义导出功能
     """
@@ -288,7 +288,7 @@ class ExportSerializerMixin:
             length += 2.1 if ord(char) > 256 else 1
         return round(length, 1) if length <= self.export_column_width else self.export_column_width
 
-    @action(methods=['post'],detail=False, url_path='export')
+    @action(methods=['post'],detail=False, url_path='export', url_name='model-export')
     def export_data(self, request: Request, *args, **kwargs):
         """
         导出功能

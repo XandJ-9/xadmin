@@ -11,8 +11,8 @@ from .serializers import (
     InterfaceFieldSerializer,
     InterfaceQueryLogSerializer
 )
-from .common.mixin_excel_import_export import ExcelImportExportMixin
-from .common.mixin_interface_query import InterfaceQueryMixin 
+from .utils.mixin_excel_import_export import ExcelImportExportMixin
+from .utils.mixin_interface_query import InterfaceQueryMixin 
 
 class PlatformInfoViewSet(CustomModelViewSet):
     queryset = PlatformInfo.objects.all()
@@ -56,11 +56,13 @@ class InterfaceFieldViewSet(CustomModelViewSet):
 class ImportExportViewSet(ExcelImportExportMixin, ViewSet):
     queryset = None
 
-class InterfaceQueryViewSet(InterfaceQueryMixin,ViewSet):
+
+class InterfaceQueryViewSet(InterfaceQueryMixin, ViewSet):
     '''
     接口查询视图
     '''
     queryset = None
+
 
 class InterfaceQueryLogViewSet(CustomModelViewSet):
     '''

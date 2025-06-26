@@ -48,6 +48,10 @@ class MySQLQueryExecutor(QueryExecutor):
             if 'connection' in locals():
                 connection.close()
 
+    def execute_query_page(self, sql: str, page_num: int, page_size: int) -> Dict[str, Any]:
+        offset = (page_num - 1) * page_size
+        paginated_sql = f"{sql} LIMIT {offset}, {page_size}"
+        return self.execute_query(paginated_sql)
     def close(self) -> None:
         # 由于每次查询都会创建新的连接，所以这里不需要实现
         pass

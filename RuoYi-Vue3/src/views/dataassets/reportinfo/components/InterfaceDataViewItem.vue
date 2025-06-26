@@ -78,7 +78,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import request from '@/utils/request'
 import Pagination from '@/components/Pagination'
-import {getInterfaceDetail, getInterfaceFields, executeInterfaceQuery} from '@/api/dataassets/reportinfo'
+import {getInterfaceDetail, getInterfaceFields,executeInterfaceQuery} from '@/api/dataassets/reportinfo'
 
 const props = defineProps({
     interface_id: { type: Number },
@@ -106,10 +106,8 @@ onMounted(() => {
     getInterfaceInfo()
 })
 const getInterfaceInfo = async () => {
-    // const res = await request.get(`/api/report/interfaces/${props.interface_id}/`)
     const res = await getInterfaceDetail(props.interface_id)
     interface_code.value = res.data.interface_code
-    // const resp = await request.get(`/api/report/interface-fields/?interface=${props.interface_id}&noPage=1`)
     const resp = await getInterfaceFields({ interface: props.interface_id, noPage: 1 })
     const fields = resp.data
     if (!fields) {
@@ -166,10 +164,9 @@ const queryData = (data) => {
     queryLoading.value = true
 
     //   getReportData({ interface_code, payload, env_type: data.env_type }).then(response => {
-  // request.post(`/report/execute-query/?interface_code=${interface_code.value}`, payload).
-  executeInterfaceQuery(interface_code.value, payload)
-    then(response => {
-        const res = response.data
+    executeInterfaceQuery(interface_code.value, payload)
+        .then(response => {
+        const res = response
         try {
             if (res.code == '-1') {
                 errorMsg.value.error = true

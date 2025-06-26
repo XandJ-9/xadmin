@@ -1,5 +1,5 @@
 <template>
-  <div class="interface-fields">
+  <div class="app-container">
     
       <span style="margin-bottom: 10px;">接口字段配置 - {{ interfaceInfo?.interface_name }}</span>
 

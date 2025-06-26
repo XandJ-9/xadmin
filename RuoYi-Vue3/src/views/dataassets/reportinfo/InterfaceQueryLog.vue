@@ -141,7 +141,6 @@ export default {
 <script setup>
 import { reactive, ref, onMounted, nextTick } from 'vue'
 import { ElMessage } from 'element-plus'
-import request from '@/utils/request'
 import hljs from 'highlight.js/lib/core'
 import sql from 'highlight.js/lib/languages/sql'
 import 'highlight.js/styles/atom-one-dark.css'
@@ -197,7 +196,6 @@ const fetchLogs = async () => {
       }
     }
     
-      // const response = await request.get('/api/report/interface-logs/', { params })
       await getInterfaceQueryLogs(params).then(response => {
         pageInfo.data = response.data
         pageInfo.total = response.total
@@ -217,7 +215,6 @@ const fetchLogs = async () => {
 // 查看详情
 const viewQueryDetail = async (row) => {
   try {
-    // const response = await request.get(`/api/report/interface-logs/${row.id}/`)
     const response = await getInterfaceQueryLogDetail(row.id)
     currentQuery.value = response.data
     dialogVisible.value = true

@@ -1,5 +1,5 @@
 <template>
-  <div class="report-info-container">
+  <div class="app-container">
       <!-- 搜索区域 -->
       <div class="search-area">
         <el-form :inline="true" :model="searchForm" class="demo-form-inline">

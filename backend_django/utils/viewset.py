@@ -5,13 +5,13 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny
 from system.permissions import IsOwnerOrAdmin,IsAdminUser, HasRolePermission
 from .util_response import SuccessResponse, ErrorResponse, DetailResponse
-from .import_export_mixin import ExportSerializerMixin, ImportSerializerMixin
+from .import_export_mixin import ModelExportSerializerMixin, ModelImportSerializerMixin
 import logging
 
 logger = logging.getLogger('django')
 
 
-class CustomModelViewSet(ExportSerializerMixin, ImportSerializerMixin,ModelViewSet):
+class CustomModelViewSet(ModelExportSerializerMixin, ModelImportSerializerMixin, ModelViewSet):
     values_queryset = None
     ordering_fields = '__all__'
     create_serializer_class = None
@@ -22,8 +22,8 @@ class CustomModelViewSet(ExportSerializerMixin, ImportSerializerMixin,ModelViewS
     # pagination_class = CustomPagination
 
     def get_permissions(self):
-        if self.action in ['list']:
-            return [AllowAny()]
+        # if self.action in ['list']:
+            # return [AllowAny()]
         return [IsOwnerOrAdmin()]
     
     def filter_queryset(self, queryset):
