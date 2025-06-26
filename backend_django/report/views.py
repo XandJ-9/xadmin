@@ -56,11 +56,13 @@ class InterfaceFieldViewSet(CustomModelViewSet):
 class ImportExportViewSet(ExcelImportExportMixin, ViewSet):
     queryset = None
 
-class InterfaceQueryViewSet(InterfaceQueryMixin,ViewSet):
+
+class InterfaceQueryViewSet(InterfaceQueryMixin, ViewSet):
     '''
     接口查询视图
     '''
     queryset = None
+
 
 class InterfaceQueryLogViewSet(CustomModelViewSet):
     '''

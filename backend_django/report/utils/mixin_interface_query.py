@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 class InterfaceQueryMixin:
 
-    @action(detail=False, methods=['POST'], url_path='execute-query')
+    @action(detail=False, methods=['post'], url_path='execute-query')
     def query_interface(self, request):
         '''
         获取接口信息：
@@ -25,8 +25,6 @@ class InterfaceQueryMixin:
         interface_info = InterfaceInfo.objects.filter(interface_code=interface_code).first()
         if not interface_info:
             return HttpResponseNotFound(content="接口不存在")
-        interface_db_type = interface_info.interface_db_type
-        interface_db_name = interface_info.interface_db_name
         # 解析查询sql，并执行查询
         interface_sql_template = Template(interface_info.interface_sql)
         interface_sql = interface_sql_template.render(Context(request.data))

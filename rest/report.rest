@@ -75,3 +75,9 @@ Content-Type: application/json
     "page_size": 10, 
     "operate_type": "1"
 }
+
+
+###
+# 导出数据接口
+POST {{host}}/api/report/export/Interfaceinfo/?interface_id=3 HTTP/1.1
+Authorization:  Bearer {{login.response.body.token}}
