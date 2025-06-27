@@ -60,15 +60,16 @@
       </el-table-column>
     </el-table>
     
-    <div class="card-footer">
+    <!-- <div class="card-footer">
       <Pagination
         :total="pageInfo.total"
-        :current-page="pageInfo.currentPage"
-        :page-size="pageInfo.pageSize"
+        v-model:current-page="pageInfo.currentPage"
+        v-model:page-size="pageInfo.pageSize"
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
       />
-    </div>
+    </div> -->
+    <pagination v-show="pageInfo.total > 0" :total="pageInfo.total" :page="pageInfo.currentPage" :limit="pageInfo.pageSize" @pagination="fetchData" />
 
     <!-- 查询详情对话框 -->
     <el-dialog
@@ -132,20 +133,14 @@
 </template>
 
 
-<script>
-export default {
-    name: 'InterfaceQueryLog',
-}
-</script>
-
-<script setup>
+<script setup name="InterfaceQueryLog">
 import { reactive, ref, onMounted, nextTick } from 'vue'
 import { ElMessage } from 'element-plus'
 import hljs from 'highlight.js/lib/core'
 import sql from 'highlight.js/lib/languages/sql'
 import 'highlight.js/styles/atom-one-dark.css'
 import { Document } from '@element-plus/icons-vue'
-import Pagination from '@/components/Pagination'
+// import Pagination from '@/components/Pagination'
 import {getInterfaceQueryLogs, getInterfaceQueryLogDetail} from '@/api/dataassets/reportinfo'
 // 注册SQL语言高亮
 hljs.registerLanguage('sql', sql)
@@ -175,7 +170,7 @@ const currentQuery = ref({})
 const sqlCodeBlock = ref(null)
 
 // 获取日志数据
-const fetchLogs = async () => {
+const fetchData = async () => {
   loading.value = true
   try {
     const params = {
@@ -205,7 +200,6 @@ const fetchLogs = async () => {
     )
 
   } catch (error) {
-    console.error('获取接口查询日志失败:', error)
     ElMessage.error('获取接口查询日志失败')
   } finally {
     loading.value = false
@@ -247,7 +241,7 @@ const copySql = () => {
 // 搜索日志
 const searchLogs = () => {
   pageInfo.currentPage = 1
-  fetchLogs()
+  fetchData()
 }
 
 // 重置过滤器
@@ -262,17 +256,17 @@ const resetFilter = () => {
 // 分页处理
 const handleSizeChange = (size) => {
   pageInfo.pageSize = size
-  fetchLogs()
+  fetchData()
 }
 
 const handleCurrentChange = (page) => {
   pageInfo.currentPage = page
-  fetchLogs()
+  fetchData()
 }
 
 // 组件挂载时获取数据
 onMounted(() => {
-  fetchLogs()
+  fetchData()
 })
 </script>
 
