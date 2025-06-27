@@ -5,6 +5,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny
 from system.permissions import IsOwnerOrAdmin,IsAdminUser, HasRolePermission
 from .util_response import SuccessResponse, ErrorResponse, DetailResponse
+from .filters import SearchFilterBackend
 from .import_export_mixin import ModelExportSerializerMixin, ModelImportSerializerMixin
 import logging
 
@@ -17,6 +18,7 @@ class CustomModelViewSet(ModelExportSerializerMixin, ModelImportSerializerMixin,
     create_serializer_class = None
     update_serializer_class = None
     filter_fields = '__all__'
+    filter_backends = [SearchFilterBackend]
     search_fields = ()
 
     # pagination_class = CustomPagination
@@ -120,7 +122,8 @@ class CustomModelViewSet(ModelExportSerializerMixin, ModelImportSerializerMixin,
         else:
             queryset = self.filter_queryset(self.get_queryset().filter(**filter_kwargs))
         if not queryset:
-            return ErrorResponse(msg="Not Found", status=status.HTTP_404_NOT_FOUND)
+            # return ErrorResponse(msg="Not Found", status=status.HTTP_404_NOT_FOUND)
+            return DetailResponse(msg="未找到要删除的数据")
         # 遍历queryset删除
         for instance in queryset:
             self.check_object_permissions(request, instance)
@@ -128,7 +131,7 @@ class CustomModelViewSet(ModelExportSerializerMixin, ModelImportSerializerMixin,
         # 如果是单个对象
         # instance = self.get_object()
         # instance.delete()
-        return DetailResponse(data=[])
+        return DetailResponse(msg=f'删除成功，共删除{len(queryset)}条数据')
     
 
     @action(methods=['get'], detail=False)

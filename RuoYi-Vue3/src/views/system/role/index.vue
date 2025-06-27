@@ -243,6 +243,7 @@
 
 <script setup name="Role">
 import { addRole, changeRoleStatus, dataScope, delRole, getRole, listRole, updateRole, deptTreeSelect } from "@/api/system/role"
+import {exportRole} from "@/api/export"
 import { roleMenuTreeselect, treeselect as menuTreeselect } from "@/api/system/menu"
 
 const router = useRouter()
@@ -332,9 +333,10 @@ function handleDelete(row) {
 
 /** 导出按钮操作 */
 function handleExport() {
-  proxy.download("system/role/export", {
-    ...queryParams.value,
-  }, `role_${new Date().getTime()}.xlsx`)
+//   proxy.download("system/role/export", {
+//     ...queryParams.value,
+//   }, `role_${new Date().getTime()}.xlsx`)
+    exportRole({...queryParams.value}, { roleIds: ids.value })
 }
 
 /** 多选框选中数据 */

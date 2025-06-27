@@ -114,13 +114,18 @@ Authorization: Bearer {{token}}
 
 
 ###
-# 用户请求
-GET {{host}}/api/system/user?noPage=1 HTTP/1.1
+# 用户列表
+GET {{host}}/api/system/user HTTP/1.1
 Authorization: Bearer {{token}}
+Content-Type:  application/json
+
+{
+    "userIds":[1]
+}
 
 ###
 # 搜索用户
-GET {{host}}/api/system/user?pageNum=1&pageSize=10&deptId=103 HTTP/1.1
+GET {{host}}/api/system/user?pageNum=1&pageSize=10&deptId=102 HTTP/1.1
 Authorization: Bearer {{token}}
 
 ###
@@ -135,7 +140,7 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-  "username": "tomcat6",
+  "username": "tomcadt6",
   "password": "12345cxx6"
 }
 
@@ -152,7 +157,7 @@ Authorization: Bearer {{token}}
 
 ###
 # 删除用户
-DELETE {{host}}/api/system/user/43 HTTP/1.1
+DELETE {{host}}/api/system/user/59,60 HTTP/1.1
 Authorization: Bearer {{token}}
 
 
@@ -160,6 +165,11 @@ Authorization: Bearer {{token}}
 # 导出用户数据
 POST {{host}}/api/system/user/export HTTP/1.1
 Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "userIds": [1,2,3]
+}
 
 ### 
 # 导出模板

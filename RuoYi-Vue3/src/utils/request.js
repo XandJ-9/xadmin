@@ -140,14 +140,22 @@ service.interceptors.response.use(res => {
 )
 
 // 通用下载方法
-export function download(url, params, filename, config) {
+export function download(url, filename, params = null, data = null) {
   downloadLoadingInstance = ElLoading.service({ text: "正在下载数据，请稍候", background: "rgba(0, 0, 0, 0.7)", })
-  return service.post(url, params, {
-    transformRequest: [(params) => { return tansParams(params) }],
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    responseType: 'blob',
-    ...config
-  }).then(async (data) => {
+//   return service.post(url, params, {
+    // transformRequest: [(params) => { return tansParams(params) }],
+    // headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    // responseType: 'blob',
+    // ...config
+//   })
+    return service({
+        url,
+        method: 'post',
+        params,
+        data,
+        responseType: 'blob'
+    })
+    .then(async (data) => {
     const isBlob = blobValidate(data)
     if (isBlob) {
       const blob = new Blob([data])

@@ -485,7 +485,7 @@ const download = inject('download')
 
 // 导出接口到excel
 const handleExport = (row) => {
-    download(`/report/interface-export/`, {interface_id: row.id}, '接口信息.xlsx')
+    download(`/report/interface-export/`, `${row.report_info.name}-${row.interface_name}.xlsx`, {interface_id: row.id})
 }
 
 const uploadRef = ref(null)

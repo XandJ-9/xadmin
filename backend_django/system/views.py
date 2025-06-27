@@ -12,7 +12,6 @@ from .serializers import *
 from .permissions import IsAdminUser, IsOwnerOrAdmin,HasRolePermission
 
 from utils.viewset import CustomModelViewSet
-from utils.filters import SearchFilterBackend
 import logging, uuid
 
 logger = logging.getLogger('django')
@@ -93,7 +92,8 @@ class DeptViewSet(CustomModelViewSet):
 class RoleViewSet(SystemViewMixin,CustomModelViewSet):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
-    # permission_classes = [IsAdminUser]
+    export_serializer_class = RoleSerializer
+    permission_classes = [IsOwnerOrAdmin]
     
     @action(detail=True, methods=['get'])
     def menus(self, request, pk=None):
@@ -140,7 +140,6 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     filter_fields = ['status','username','phonenumber']
-    filter_backends = [SearchFilterBackend]
     export_field_label = {'username':'姓名','nickname':'昵称','phonenumber':'手机号码','deptName':'部门名称'}
     export_serializer_class = UserExportSerializer
     import_serializer_class = UserImportSerializer
@@ -185,7 +184,10 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
             except Dept.DoesNotExist:
                 # 如果部门不存在，返回空查询集
                 queryset = queryset.none()
-
+        userIds = self.request.data.get('userIds', None)
+        if userIds:
+            # 如果userIds存在，过滤出指定的用户
+            queryset = queryset.filter(id__in=userIds)
         return super().filter_queryset(queryset)
 
     def get_permissions(self):
@@ -194,16 +196,6 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
         if self.action in ['retrieve', 'update', 'partial_update', 'destroy']:
             return [IsAdminUser()]
         return [IsOwnerOrAdmin()]
-
-    # def perform_create(self, serializer):
-    #     """
-    #     在创建用户之前，添加部门
-    #     """
-    #     user = self.request.user
-    #     dept_id = self.request.data.get('dept_id',user.dept.id)
-    #     # serializer.save(dept_id=dept_id)
-    #     serializer.validated_data['dept_id'] = dept_id
-    #     super().perform_create(serializer)
 
     def retrieve(self, request, *args, **kwargs):
         '''
@@ -432,7 +424,6 @@ class MenuViewSet(CustomModelViewSet):
     serializer_class = MenuSerializer
     # permission_classes = [IsAdminUser]
     filter_fields=['status','menu_name','menu_type','visible']
-    filter_backends = [SearchFilterBackend]
 
 
     def get_permissions(self):
@@ -488,7 +479,7 @@ class MenuViewSet(CustomModelViewSet):
         for user_role in user_roles:
             # 如果是admin角色，则拥有所有菜单权限
             if user_role.role.role_key == 'admin':
-                menu_ids = [menu.id for menu in Menu.objects.filter(status='0')]
+                menu_ids = [menu.id for menu in Menu.objects.filter(status='0').exclude(menu_type ='F').order_by('order_num')]
             else:
                 role_menus = user_role.role.role_menus.all()
                 menu_ids.extend([rm.menu_id for rm in role_menus])
@@ -497,7 +488,7 @@ class MenuViewSet(CustomModelViewSet):
         menu_ids = list(set(menu_ids))
         
         # 获取所有菜单并按排序字段排序
-        all_menus = Menu.objects.filter(id__in=menu_ids, status='0').order_by('order_num')
+        all_menus = Menu.objects.filter(id__in=menu_ids, status='0').exclude(menu_type='F').order_by('order_num')
         
         # 获取顶级菜单
         top_menus = [menu for menu in all_menus if menu.parent is None]
@@ -557,7 +548,6 @@ class SystemDictTypeViewSet(CustomModelViewSet):
     queryset = SystemDictType.objects.all()
     serializer_class = SystemDictTypeSerializer
     filter_fields = ['status', 'dict_name','dict_type']
-    filter_backends = [SearchFilterBackend]
 
     @action(detail=False, methods=['get'], url_path='optionselect')
     def optionselect(self, request):
@@ -571,8 +561,6 @@ class SystemDictTypeViewSet(CustomModelViewSet):
 class SystemDictDataViewSet(CustomModelViewSet):
     queryset = SystemDictData.objects.all()
     serializer_class = SystemDictDataSerializer
-    # filter_fields = ['dictType']  # filter_fields默认值为‘__all__’
-    filter_backends = [SearchFilterBackend]
 
     @action(detail=False, methods=['get'])
     def get_data_by_type(self, request,dict_type=None):

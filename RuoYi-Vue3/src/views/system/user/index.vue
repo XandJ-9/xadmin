@@ -53,7 +53,7 @@
               <el-col :span="1.5">
                 <el-button type="warning" plain icon="Download" @click="handleExport" v-hasPermi="['system:user:export']">导出</el-button>
               </el-col>
-              <right-toolbar v-model:showSearch="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
+              <right-toolbar :showSearch="showSearch" @queryTable="getList" :columns="columns"></right-toolbar>
             </el-row>
 
             <el-table v-loading="loading" :data="userList" @selection-change="handleSelectionChange">
@@ -104,7 +104,7 @@
                 </template>
               </el-table-column>
             </el-table>
-            <pagination v-show="total > 0" :total="total" v-model:page="queryParams.pageNum" v-model:limit="queryParams.pageSize" @pagination="getList" />
+            <pagination v-show="total > 0" :total="total" :page="queryParams.pageNum" :limit="queryParams.pageSize" @pagination="getList" />
           </el-col>
         </pane>
       </splitpanes>
@@ -226,6 +226,7 @@
 import { getToken } from "@/utils/auth"
 import useAppStore from '@/store/modules/app'
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser } from "@/api/system/user"
+import { exportUser } from "@/api/export"
 import { deptTreeSelect } from "@/api/system/dept"
 import { listPost } from "@/api/system/post"
 import { listRole } from "@/api/system/role"
@@ -388,9 +389,7 @@ function handleDelete(row) {
 
 /** 导出按钮操作 */
 function handleExport() {
-  proxy.download("system/user/export", {
-    ...queryParams.value,
-  },`user_${new Date().getTime()}.xlsx`)
+    exportUser({...queryParams.value}, { userIds: ids.value })
 }
 
 /** 用户状态修改  */
