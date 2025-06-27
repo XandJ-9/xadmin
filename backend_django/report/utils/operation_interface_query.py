@@ -3,8 +3,8 @@ from datasource.executors.factory import QueryExecutorFactory
 from ..models  import InterfaceInfo,InterfaceField
 
 
-class InterfaceQueryException(Exception):
-    pass
+# class InterfaceQueryException(Exception):
+#     pass
 
 
 PROPERTIES = {
@@ -52,11 +52,13 @@ class InterfaceQueryResult:
         self.page_size = page_size
         self.data_result = None
         self.property_result = None
+        self.query_success = False
+        self.query_error = None
 
     def get_executor(self, interface_db_type, interface_db_name):
         datasource = DataSource.objects.filter(type=interface_db_type,database=interface_db_name).first()
         if datasource is None:
-            raise InterfaceQueryException("数据源类型%s或者数据库%s不存在"%(interface_db_type, interface_db_name))
+            raise Exception("数据源类型%s或者数据库%s不存在"%(interface_db_type, interface_db_name))
         executor =QueryExecutorFactory.get_executor(datasource_type=datasource.type,
                                             host=datasource.host, 
                                             port=datasource.port,
@@ -70,6 +72,11 @@ class InterfaceQueryResult:
 
         :return: The data as a dictionary.
         """
+        if not self.query_success:
+            return {
+                "code": "-1",
+                "message": self.query_error if self.query_error else "Query failed"
+            }
         interface_fields = InterfaceField.objects.filter(interface=self.interface)
         self.property_result = {}
         for field in interface_fields:
@@ -116,5 +123,12 @@ class InterfaceQueryResult:
                 if self.interface.is_total == "1":
                     query_result = executor.execute_query_page(sql=total_sql, page_num=1, page_size=limit)
                     self.data_result["totaldata"] = query_result.get('data', [])
+            self.query_success = True
         except Exception as e:
+            self.query_success = False
+            self.query_error = str(e)
             raise e
+        
+        @property
+        def success(self):
+            return self.query_success

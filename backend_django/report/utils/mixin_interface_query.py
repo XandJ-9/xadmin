@@ -31,6 +31,8 @@ class InterfaceQueryMixin:
         if interface_info.is_total == "1":
             total_sql_template = Template(interface_info.total_sql)
             total_sql = total_sql_template.render(Context(request.data))
+        else:
+            total_sql = None
         # 获取数据源
         execute_start_time = getNowTimestamp()
         execute_result = ''
