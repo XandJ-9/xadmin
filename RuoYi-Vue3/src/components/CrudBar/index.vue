@@ -81,7 +81,7 @@ const props = defineProps({
     }
 })
 
-const emit = defineEmits([])
+const emit = defineEmits(["add", "update", "delete", "export"])
 
 
 

@@ -5,6 +5,14 @@
      @select-change="handleSelectChange" 
      @select-click="handleSelectClick" />
 
+     <!-- <el-row>
+      <el-button type="primary" @click="handleAdd">新增接口</el-button>
+      <el-button type="primary" @click="handleImport">模板导入</el-button>
+     </el-row> -->
+
+     <crud-bar
+     @add="handleAdd"
+     />
       <!-- 数据表格 -->
       <el-table ref="tableRef" :data="tableData" style="width: 100%" v-loading="loading" fit highlight-current-row>
         <el-table-column prop="interface_code" label="接口编码" show-overflow-tooltip />
@@ -72,8 +80,7 @@
 
       <div class="card-footer">
           <div class="add-btn">
-            <el-button type="primary" @click="handleAdd">新增接口</el-button>
-            <el-button type="primary" @click="handleImport">模板导入</el-button>
+
           </div>
             <!-- 分页 -->
             <Pagination
@@ -188,12 +195,6 @@
           </span>
         </template>
       </el-dialog>
-      
-    <!-- </div> -->
-      <!-- 接口字段编辑窗口 -->
-    <div class="field-editor-view">
-        <router-view />
-    </div>
   
   </div>
 </template>
@@ -203,7 +204,7 @@ import { ref, onMounted, reactive, inject } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
 import QueryParamsForm from '@/components/QueryParamsForm'
-import Pagination from '@/components/Pagination'
+import CrudBar from '@/components/CrudBar'
 import { getDataSourceTypeList } from '@/api/dataassets/datasource'
 import { getPlatformList, getModuleList, getReportList, getInterfaceList, updateInterface, createInterface, deleteInterface, importInterface} from '@/api/dataassets/reportinfo'
 
@@ -407,6 +408,7 @@ const resetForm = () => {
 
 // 新增接口
 const handleAdd = () => {
+  console.log("handleAdd")
   dialogType.value = 'add'
   resetForm()
   dialogVisible.value = true

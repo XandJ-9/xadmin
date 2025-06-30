@@ -1,7 +1,6 @@
 <template>
   <div class="app-container">
       <!-- 搜索区域 -->
-      <div class="search-area">
         <el-form :inline="true" :model="searchForm" class="demo-form-inline">
           <el-form-item label="平台名称">
             <el-select v-model="searchForm.platformId" placeholder="请选择平台" clearable 
@@ -33,14 +32,16 @@
             <el-input v-model="searchForm.reportName" placeholder="请输入报表名称" clearable />
           </el-form-item>
           <el-form-item>
-            <el-button type="primary" @click="handleSearch">查询</el-button>
+            <el-button type="primary" icon="Search" @click="handleSearch">查询</el-button>
             <el-button @click="resetSearch">重置</el-button>
           </el-form-item>
         </el-form>
-      </div>
-    
+        <el-row :gutter="10" class="mb8">
+          <el-button type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
+        </el-row>
+
     <!-- 数据列表 -->
-    <el-table :data="reportList" border style="width: 100%">
+    <el-table :data="dataList" border style="width: 100%">
       <el-table-column prop="id" label="ID" width="80" />
       <el-table-column prop="name" label="报表名称" />
       <el-table-column prop="desc" label="描述" />
@@ -56,20 +57,13 @@
       </el-table-column>
     </el-table>
 
-    <div class="card-footer">
-          <div class="add-btn">
-            <el-button type="primary" @click="handleAdd">新增报表</el-button>
-          </div>
+    <!-- 分页 -->
+    <pagination v-show="pageInfo.total > 0" 
+      :total="pageInfo.total" 
+      v-model:page="pageInfo.currentPage" 
+      v-model:limit="pageInfo.pageSize" 
+      @pagination="fetchReportList" />
 
-            <!-- 分页 -->
-            <Pagination
-                :total="total"
-                :current-page="currentPage"
-                :page-size="pageSize"
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-            />
-      </div>
     <el-dialog
       :title="dialogTitle"
       v-model="dialogVisible"
@@ -194,14 +188,13 @@ export default {
 </script>
 
 <script setup>
-import { ref, onMounted, reactive, watch, inject } from 'vue'
+import { ref, onMounted, reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import Pagination from '@/components/Pagination'
 import { getPlatformList, createPlatform,
          getModuleList, getModulesByPlatform, createModule,
          getReportList, createReport, updateReport, deleteReport } from '@/api/dataassets/reportinfo'
 
-const reportList = ref([])
+const dataList = ref([])
 const dialogVisible = ref(false)
 const dialogTitle = ref('')
 const moduleOptions = ref([])
@@ -213,9 +206,13 @@ const searchForm = reactive({
   moduleId: '',
   reportName: ''
 })
-const currentPage = ref(1)
-const pageSize = ref(10)
-const total = ref(0)
+
+const pageInfo = reactive({
+  data: [],
+  currentPage: 1,
+  pageSize: 10,
+  total: 0
+})
 
 // 表单数据
 const form = ref({
@@ -269,15 +266,15 @@ const currentId = ref(null)
 const fetchReportList = async () => {
   try {
     const params = {
-      page: currentPage.value,
-      page_size: pageSize.value,
+      pageNum: pageInfo.currentPage,
+      pageSize: pageInfo.pageSize,
       platform_id: searchForm.platformId,
       module_id: searchForm.moduleId,
       name: searchForm.reportName
     }
     const response = await getReportList(params)
-    reportList.value = response.data
-    total.value = response.total
+    dataList.value = response.data
+    pageInfo.total = response.total
   } catch (error) {
     console.error('获取报表列表失败：', error)
     ElMessage.error('获取报表列表失败')
