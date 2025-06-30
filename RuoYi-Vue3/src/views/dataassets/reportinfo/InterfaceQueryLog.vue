@@ -69,7 +69,11 @@
         @current-change="handleCurrentChange"
       />
     </div> -->
-    <pagination v-show="pageInfo.total > 0" :total="pageInfo.total" :page="pageInfo.currentPage" :limit="pageInfo.pageSize" @pagination="fetchData" />
+    <pagination v-show="pageInfo.total > 0" 
+      :total="pageInfo.total" 
+      v-model:page="pageInfo.currentPage" 
+      v-model:limit="pageInfo.pageSize" 
+      @pagination="fetchData" />
 
     <!-- 查询详情对话框 -->
     <el-dialog
@@ -174,9 +178,9 @@ const fetchData = async () => {
   loading.value = true
   try {
     const params = {
-      page: pageInfo.currentPage,
-      page_size: pageInfo.pageSize,
-      interface_code: filterForm.interface_code || undefined
+      pageNum: pageInfo.currentPage,
+      pageSize: pageInfo.pageSize,
+      interfaceCode: filterForm.interface_code || undefined
     }
     
     // 添加日期范围过滤
@@ -194,8 +198,6 @@ const fetchData = async () => {
       await getInterfaceQueryLogs(params).then(response => {
         pageInfo.data = response.data
         pageInfo.total = response.total
-        pageInfo.currentPage = response.page
-        pageInfo.pageSize = response.limit
       }
     )
 

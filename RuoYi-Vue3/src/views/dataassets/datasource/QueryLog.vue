@@ -92,17 +92,13 @@
           </template>
         </el-table-column>
       </el-table>
-      
-      <div class="card-footer">
-        <Pagination
-          :total="pagination.total"
-          :current-page="pagination.currentPage"
-          :page-size="pagination.pageSize"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-        />
-      </div>
 
+    <pagination v-show="pagination.total > 0" 
+      :total="pagination.total"
+      v-model:page="pagination.currentPage" 
+      v-model:limit="pagination.pageSize" 
+      @pagination="searchLogs"
+    />
     <!-- 查询详情对话框 -->
     <el-dialog
       v-model="dialogVisible"
@@ -176,8 +172,8 @@
   </div>
 </template>
 
-<script setup name="DataQueryLog">
-import { ref, onMounted, nextTick, watch } from 'vue'
+<script setup name="QueryLog">
+import { ref, onMounted, nextTick, watch, reactive } from 'vue'
 import { ElMessage } from 'element-plus'
 import request from '@/utils/request'
 import { useRouter } from 'vue-router'
@@ -185,10 +181,9 @@ import hljs from 'highlight.js/lib/core'
 import sql from 'highlight.js/lib/languages/sql'
 import 'highlight.js/styles/atom-one-dark.css'
 import { Document } from '@element-plus/icons-vue'
-import Pagination from '@/components/Pagination'
 
 import { getQueryLogs, getQueryLogDetail } from '@/api/dataassets/datasource'
-import { getDataSourceList } from '../../../api/dataassets/datasource'
+import { getDataSourceList } from '@/api/dataassets/datasource'
 
 // 注册SQL语言高亮
 hljs.registerLanguage('sql', sql)
@@ -203,7 +198,7 @@ const filterForm = ref({
 })
 
 // 分页信息
-const pagination = ref({
+const pagination = reactive({
   currentPage: 1,
   pageSize: 10,
   total: 0
@@ -277,8 +272,8 @@ const searchLogs = async () => {
   try {
     // 构建查询参数
     const params = {
-      page: pagination.value.currentPage,
-      page_size: pagination.value.pageSize,
+      pageNum: pagination.currentPage,
+      pageSize: pagination.pageSize,
       status: filterForm.value.status,
       datasource_id: filterForm.value.dataSourceId
     }
@@ -289,9 +284,9 @@ const searchLogs = async () => {
       params.end_date = filterForm.value.dateRange[1].toISOString().split('T')[0]
     }
     
-      getQueryLogs(params).then(res => {
+    await getQueryLogs(params).then(res => {
           logData.value = res.data
-          pagination.value.total = res.total
+          pagination.total = res.total
     })
   } catch (error) {
     // ElMessage.error('获取查询日志失败')
@@ -307,19 +302,19 @@ const resetFilter = () => {
     dataSourceId: '',
     dateRange: []
   }
-  pagination.value.currentPage = 1
+  pagination.currentPage = 1
   searchLogs()
 }
 
 // 处理每页显示数量变化
 const handleSizeChange = (size) => {
-  pagination.value.pageSize = size
+  pagination.pageSize = size
   searchLogs()
 }
 
 // 处理页码变化
 const handleCurrentChange = (page) => {
-  pagination.value.currentPage = page
+  pagination.currentPage = page
   searchLogs()
 }
 

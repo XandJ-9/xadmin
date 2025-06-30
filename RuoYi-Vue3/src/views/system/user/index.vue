@@ -104,7 +104,10 @@
                 </template>
               </el-table-column>
             </el-table>
-            <pagination v-show="total > 0" :total="total" :page="queryParams.pageNum" :limit="queryParams.pageSize" @pagination="getList" />
+            <pagination v-show="total > 0" :total="total" 
+              v-model:page="queryParams.pageNum" 
+              v-model:limit="queryParams.pageSize" 
+              @pagination="getList" />
           </el-col>
         </pane>
       </splitpanes>
@@ -314,6 +317,7 @@ watch(deptName, val => {
 
 /** 查询用户列表 */
 function getList() {
+  console.log("查询用户列表", queryParams)
   loading.value = true
   listUser(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
     loading.value = false
