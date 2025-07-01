@@ -229,7 +229,7 @@
 import { getToken } from "@/utils/auth"
 import useAppStore from '@/store/modules/app'
 import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser } from "@/api/system/user"
-import { exportUser } from "@/api/export"
+import { exportUser, userImportTemplate } from "@/api/export"
 import { deptTreeSelect } from "@/api/system/dept"
 import { listPost } from "@/api/system/post"
 import { listRole } from "@/api/system/role"
@@ -462,8 +462,9 @@ function handleImport() {
 
 /** 下载模板操作 */
 function importTemplate() {
-  proxy.download("system/user/importTemplate", {
-  }, `user_template_${new Date().getTime()}.xlsx`)
+  // proxy.download("system/user/importTemplate", {
+  // }, `user_template_${new Date().getTime()}.xlsx`)
+  userImportTemplate()
 }
 
 /**文件上传中处理 */

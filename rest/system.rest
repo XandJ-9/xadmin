@@ -460,6 +460,10 @@ Content-Type: application/json
 }
 
 
+###
+#
+GET {{host}}/api/system/menu/roleMenuTreeselect/2 HTTP/1.1
+Authorization: Bearer {{token}}
 
 ###
 # 获取角色菜单

@@ -8,6 +8,18 @@ from rest_framework.relations import PKOnlyObject  # NOQA # isort:skip
 
 from utils.util_str import underline_to_camel_string
 
+
+def build_tree(data_list, parent_id=None, parent_field_name='parent', pk_field_name='id'):
+    tree = []
+    for data in data_list:
+        if data.get(parent_field_name) == parent_id:
+            children = build_tree(data_list, data.get(pk_field_name), parent_field_name, pk_field_name)
+            if children:
+                data['children'] = children
+            else:
+                data['children'] = []
+            tree.append(data)
+    return tree
 def set_choice_field_internal_value(fields:BindingDict, field_name:str, data: dict):
     # for field_name in fields:  这种方式无法获取到field_name
         # print(f'{field_name}')
@@ -167,6 +179,7 @@ class BaseModelSerializer(serializers.ModelSerializer):
             super().__init__(instance, data, **kwargs)
             self.request: Request = request or self.context.get("request", None)
     def create(self, validated_data):
+        print(f'create: {validated_data}')
         if not validated_data.get('creator', None):
             validated_data.setdefault('creator', self.request.user)
             validated_data.setdefault('updator', self.request.user)

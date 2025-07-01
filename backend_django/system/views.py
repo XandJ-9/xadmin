@@ -12,6 +12,7 @@ from .serializers import *
 from .permissions import IsAdminUser, IsOwnerOrAdmin,HasRolePermission
 
 from utils.viewset import CustomModelViewSet
+from utils.serializer import build_tree
 import logging, uuid
 
 logger = logging.getLogger('django')
@@ -198,7 +199,7 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
             except Dept.DoesNotExist:
                 # 如果部门不存在，返回空查询集
                 queryset = queryset.none()
-        userIds = self.request.data.get('userIds', None)
+        userIds = self.request.data.get('userIds', None) if self.request.data else None
         if userIds:
             # 如果userIds存在，过滤出指定的用户
             queryset = queryset.filter(id__in=userIds)
@@ -393,7 +394,7 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
 
         # 添加新的用户角色关联
         new_role_ids = set(role_ids) - set(existed_role_ids)
-        ser = UserRoleSerializer(data=[{'user': user, 'role_id': role_id} for role_id in new_role_ids], many=True, request=request)
+        ser = UserRoleSerializer(data=[{'user': user.id, 'role': role_id} for role_id in new_role_ids], many=True, request=request)
         if ser.is_valid(raise_exception=True):
             ser.save()
         new_role_ids = user.user_roles.all().values_list('role_id', flat=True)
@@ -540,8 +541,11 @@ class MenuViewSet(CustomModelViewSet):
     @action(detail=False, methods=['get'])
     def roleMenuTreeselect(self, request, roleId):
         role = Role.objects.filter(id=roleId).first()
-        menu_ids = role.role_menus.all().values_list('id', flat=True)
-        return Response({'menus': menu_ids})
+        menu_ids = role.role_menus.all().values_list('menu_id', flat=True)
+        menus = Menu.objects.filter(id__in=menu_ids).order_by('order_num')
+        serializer = MenuSerializer(menus, many=True)
+        tree_data = build_tree(serializer.data, parent_id=None, parent_field_name='parentId', pk_field_name='menuId')
+        return Response(tree_data, status=status.HTTP_200_OK)
     
 class SystemConfigViewSet(CustomModelViewSet):
     queryset = SystemConfig.objects.all()

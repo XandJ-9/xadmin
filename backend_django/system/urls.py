@@ -22,6 +22,6 @@ urlpatterns = [
     path('getRouters', MenuViewSet.as_view({'get': 'getRouters',})),
     path('system/dict/data/type/<str:dict_type>', SystemDictDataViewSet.as_view({'get': 'get_data_by_type',})),
     path('system/dept/exclude/<int:dept_id>', DeptViewSet.as_view({'get': 'exclude',})),
-    path('system/menu/roleMenuTreeselect/<int:roleId>', MenuViewSet.as_view({'get': 'roleMenuTreeselect',})),
+    path('system/menu/roleMenuTreeselect/<int:roleId>', MenuViewSet.as_view({'get': 'roleMenuTreeselect',}), name='menu-role-treeselect'),
     path('system/role/deptTree/<int:roleId>', RoleViewSet.as_view({'get': 'deptTree',}))
 ]

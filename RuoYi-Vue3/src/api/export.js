@@ -1,5 +1,12 @@
 import { download } from '@/utils/request'
 
+export function userImportTemplate() {
+    download(
+        '/system/user/importTemplate',
+        `user_${new Date().getTime()}.xlsx`
+    )
+}
+
 // 导出文件
 export function exportUser(params, data) {
     download(
