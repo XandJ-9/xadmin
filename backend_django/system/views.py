@@ -288,7 +288,7 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
             # 删除验证码
             Captcha.objects.filter(uuid=uuid_str).delete()
             # 要想限制用户有效退出登录，将token加入黑名单
-            # accessToken.blacklist()
+            # token.blacklist()
 
         return Response({'message': '登出成功'}, status=status.HTTP_200_OK)
 

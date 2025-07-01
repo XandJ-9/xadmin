@@ -317,7 +317,6 @@ watch(deptName, val => {
 
 /** 查询用户列表 */
 function getList() {
-  console.log("查询用户列表", queryParams)
   loading.value = true
   listUser(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
     loading.value = false

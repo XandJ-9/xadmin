@@ -121,7 +121,8 @@ service.interceptors.response.use(res => {
         message = response.data || "系统接口" + message + "异常"
     }
         if (response.status === 401) {
-        console.log(response)
+            console.log(response)
+            console.log(`relogin: ${isRelogin.show}`)
         if (!isRelogin.show) {
             isRelogin.show = true
             ElMessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', { confirmButtonText: '重新登录', cancelButtonText: '取消', type: 'warning' }).then(() => {
