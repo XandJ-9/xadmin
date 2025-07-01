@@ -1,7 +1,7 @@
 <template>
     <div class="crud-bar">
         <el-row :gutter="10" class="mb8">
-         <el-col :span="1.5">
+         <el-col :span="1.5" v-if="addBtn">
             <el-button
                type="primary"
                plain
@@ -10,7 +10,7 @@
                v-hasPermi="addPermi"
             >新增</el-button>
          </el-col>
-         <el-col :span="1.5">
+         <el-col :span="1.5" v-if="editBtn">
             <el-button
                type="success"
                plain
@@ -20,7 +20,7 @@
                v-hasPermi="editPermi"
             >修改</el-button>
          </el-col>
-         <el-col :span="1.5">
+         <el-col :span="1.5" v-if="removeBtn">
             <el-button
                type="danger"
                plain
@@ -30,7 +30,7 @@
                v-hasPermi="removePermi"
             >删除</el-button>
          </el-col>
-         <el-col :span="1.5">
+         <el-col :span="1.5" v-if="exportBtn">
             <el-button
                type="warning"
                plain
@@ -78,27 +78,43 @@ const props = defineProps({
     exportPermi: {
         type: Array,
         default: ['undefined:undefined:undefined']
-    }
+  },
+  addBtn: {
+      type: Boolean,
+      default: undefined
+  },
+  editBtn: {
+      type: Boolean,
+      default: undefined
+  },
+  removeBtn: {
+      type: Boolean,
+      default: undefined
+  },
+  exportBtn: {
+      type: Boolean,
+      default: undefined
+  }
 })
 
-const emit = defineEmits(["add", "update", "delete", "export"])
+const emit = defineEmits(["addEvent", "updateEvent", "deleteEvent", "exportEvent"])
 
 
 
 const handleAdd = () => {
-    emit("add")
+    emit("addEvent")
  }
 
 const handleUpdate = () => { 
-    emit('update')
+    emit('updateEvent')
 }
 
 const handleDelete = () => {
-    emit('delete')
+    emit('deleteEvent')
  }
 
 const handleExport = () => { 
-    emit('export')
+    emit('exportEvent')
 }
 
 </script>

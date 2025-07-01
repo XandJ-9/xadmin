@@ -94,6 +94,13 @@ class RoleViewSet(SystemViewMixin,CustomModelViewSet):
     serializer_class = RoleSerializer
     export_serializer_class = RoleSerializer
     permission_classes = [IsOwnerOrAdmin]
+    export_field_label = {
+        'roleName': '角色名称',
+        'roleKey': '角色权限字符串',
+        'roleSort': '显示顺序',
+        'status': '角色状态',
+        'remark': '备注'
+    }
     
     @action(detail=True, methods=['get'])
     def menus(self, request, pk=None):
@@ -135,6 +142,13 @@ class RoleViewSet(SystemViewMixin,CustomModelViewSet):
             ser.save()
         new_role_menu_ids = role.role_menus.all().values_list('menu_id', flat=True)
         return Response({'menu_ids': new_role_menu_ids}, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['get'])
+    def deptTree(self, request, roleId = None):
+        if not roleId:
+            return Response({'message': '参数错误'},status=status.HTTP_400_BAD_REQUEST)
+        role = Role.objects.get(id=roleId)
+        return Response({'dept_tree': []}, status=status.HTTP_200_OK)
 
 class UserViewSet(SystemViewMixin,CustomModelViewSet):
     queryset = User.objects.all()
@@ -523,6 +537,12 @@ class MenuViewSet(CustomModelViewSet):
         
         return Response(router_data, status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=['get'])
+    def roleMenuTreeselect(self, request, roleId):
+        role = Role.objects.filter(id=roleId).first()
+        menu_ids = role.role_menus.all().values_list('id', flat=True)
+        return Response({'menus': menu_ids})
+    
 class SystemConfigViewSet(CustomModelViewSet):
     queryset = SystemConfig.objects.all()
     serializer_class = SystemConfigSerializer

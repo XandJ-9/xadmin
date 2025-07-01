@@ -2,10 +2,8 @@
   <div class="app-container">
     <query-params-form :properties="queryProperties" @query="handleQuery"/>
     <crud-bar 
-     @add="handleAdd"
-     @delete="handleDelete"
-     @update="handleUpdate"
-     @export="handleExport"
+     addBtn
+     @addEvent="handleAdd"
     />
 
     <el-table :data="dataSources" style="width: 100%" v-loading="loading">

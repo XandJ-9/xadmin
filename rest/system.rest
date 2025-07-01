@@ -11,8 +11,8 @@ Content-Type: application/json
 {
   "username": "admin",
   "password": "123456",
-  "code":"N9RV",
-  "uuid":"c68521ff-4052-474e-8c1e-15940c46e6e9"
+  "code":"F0EY",
+  "uuid":"a65f55bf-e7d2-4b60-b8ce-3d159992e381"
 }
 
 ###
@@ -458,3 +458,15 @@ Content-Type: application/json
     "del_flag" : "0",
     "parentId" : 1072
 }
+
+
+
+###
+# 获取角色菜单
+GET {{host}}/api/system/role/2/menus HTTP/1.1
+Authorization: Bearer {{token}}
+
+###
+# 获取角色的部门列表
+GET {{host}}/api/system/role/deptTree/2 HTTP/1.1
+Authorization: Bearer {{token}}

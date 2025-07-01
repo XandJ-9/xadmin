@@ -11,7 +11,8 @@
      </el-row> -->
 
      <crud-bar
-     @add="handleAdd"
+     addBtn
+     @addEvent="handleAdd"
      />
       <!-- 数据表格 -->
       <el-table ref="tableRef" :data="tableData" style="width: 100%" v-loading="loading" fit highlight-current-row>

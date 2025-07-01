@@ -112,16 +112,7 @@ service.interceptors.response.use(res => {
   },
     error => {
     let { message, response } = error
-    if (message == "Network Error") {
-      message = "后端接口连接异常"
-    } else if (message.includes("timeout")) {
-      message = "系统接口请求超时"
-    } else if (message.includes("Request failed with status code")) {
-        // message = "系统接口" + message + "异常"
-        message = response.data || "系统接口" + message + "异常"
-    }
-        if (response.status === 401) {
-            console.log(response)
+    if (response.status === 401) {
             console.log(`relogin: ${isRelogin.show}`)
         if (!isRelogin.show) {
             isRelogin.show = true
@@ -134,8 +125,16 @@ service.interceptors.response.use(res => {
                 isRelogin.show = false
             })
         }
+    } else {
+          if (message == "Network Error") {
+            message = "后端接口连接异常"
+          } else if (message.includes("timeout")) {
+            message = "系统接口请求超时"
+          } else if (message.includes("Request failed with status code")) {
+            message = "系统接口异常" + response.status
+          }
     }
-    ElMessage({ message: message, type: 'error', duration: 3 * 1000 })
+    ElMessage({ message: message, type: 'error', duration: 1 * 1000 })
     return Promise.reject(error)
   }
 )

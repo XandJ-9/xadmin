@@ -36,10 +36,10 @@
             <el-button @click="resetSearch">重置</el-button>
           </el-form-item>
         </el-form>
-        <el-row :gutter="10" class="mb8">
+        <!-- <el-row :gutter="10" class="mb8">
           <el-button type="primary" plain icon="Plus" @click="handleAdd">新增</el-button>
-        </el-row>
-
+        </el-row> -->
+        <crud-bar addBtn @addEvent="handleAdd" />
     <!-- 数据列表 -->
     <el-table :data="dataList" border style="width: 100%">
       <el-table-column prop="id" label="ID" width="80" />
@@ -190,6 +190,7 @@ export default {
 <script setup>
 import { ref, onMounted, reactive } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
+import CrudBar from '@/components/CrudBar'
 import { getPlatformList, createPlatform,
          getModuleList, getModulesByPlatform, createModule,
          getReportList, createReport, updateReport, deleteReport } from '@/api/dataassets/reportinfo'

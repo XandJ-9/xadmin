@@ -325,17 +325,16 @@ class ModelExportSerializerMixin:
         ws.append(header_data)
         for index, results in enumerate(data):
             results_list = []
-            for h_index, h_item in enumerate(hidden_header):
-                for key,val in results.items():
-                    if key == h_item:
-                        if val is None or val=="":
-                            results_list.append("")
-                        else:
-                            results_list.append(val)
-                        # 计算最大列宽度
-                        result_column_width = self.get_string_len(val)
-                        if h_index !=0 and result_column_width > df_len_max[h_index]:
-                            df_len_max[h_index] = result_column_width
+            for h_index, h_item in enumerate(hidden_header[1:]):
+                if h_item in results.keys():
+                    val = results.get(h_item, "")
+                    results_list.append(val)
+                    # 　计算最大列宽度
+                    result_column_width = self.get_string_len(val)
+                    if h_index != 0 and result_column_width > df_len_max[h_index]:
+                        df_len_max[h_index] = result_column_width
+                else:
+                    results_list.append("")
             ws.append([index + 1, *results_list])
             column += 1
         # 　更新列宽
