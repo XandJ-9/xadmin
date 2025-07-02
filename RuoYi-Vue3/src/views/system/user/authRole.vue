@@ -63,10 +63,12 @@ const form = ref({
   userId: undefined
 })
 
+const roleRef = ref(null)
 /** 单击选中行数据 */
 function clickRow(row) {
   if (checkSelectable(row)) {
-    proxy.$refs["roleRef"].toggleRowSelection(row)
+    // proxy.$refs["roleRef"].toggleRowSelection(row)
+    roleRef.value.toggleRowSelection(row)
   }
 }
 
@@ -106,14 +108,15 @@ function submitForm() {
   if (userId) {
     loading.value = true
     getAuthRole(userId).then(response => {
+      roleIds.value = response.userRoles
       form.value = response.user
       roles.value = response.roles
       total.value = roles.value.length
       nextTick(() => {
-        roles.value.forEach(row => {
-          if (row.flag) {
-            proxy.$refs["roleRef"].toggleRowSelection(row)
-          }
+        roles.value
+          .filter(row => roleIds.value.includes(row.roleId))
+          .forEach(row => {
+          roleRef.value.toggleRowSelection(row)
         })
       })
       loading.value = false

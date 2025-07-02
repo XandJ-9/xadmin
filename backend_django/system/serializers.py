@@ -38,8 +38,29 @@ class DeptSerializer(SystemBaseSerializer):
     class Meta:
         model = Dept
         fields = ['id','deptId', 'dept_name', 'order_num', 'status','parentId',"ancestors","creator_username", "parent"]
-        read_only_fields = ['id','parent']
+        read_only_fields = ['id']
     
+    def create(self, validated_data):
+        # 设置ancestors字段的值
+        parent = validated_data.get('parent', None)
+        if parent:
+            ancestors = ','.join([parent.ancestors, str(parent.id)])
+        else:
+            ancestors = '0'
+        validated_data['ancestors'] = ancestors
+        return super().create(validated_data)
+    
+    def update(self, instance, validated_data):
+        # 更新ancestors字段的值
+        parent = validated_data.get('parent', None)
+        if parent:
+            ancestors = ','.join([parent.ancestors, str(parent.id)])
+        else:
+            ancestors = '0'
+        validated_data['ancestors'] = ancestors
+        return super().update(instance, validated_data)
+    
+
 class UserExportSerializer(SystemBaseSerializer):
     dept_name = serializers.CharField(source="dept.dept_name", read_only=True)
     class Meta:
@@ -55,13 +76,13 @@ class UserImportSerializer(ChoiceFieldSerializerMixin,SystemBaseSerializer):
 class UserSerializer(SystemBaseSerializer):
     userId = serializers.IntegerField(source="id",read_only=True,required=False)
     deptId = serializers.IntegerField(source="dept.id",required=False)
-    password = serializers.CharField(write_only=True, allow_blank=False)
+    # password = serializers.CharField(write_only=True, allow_blank=False)
     dept = DeptSerializer(read_only=True)
 
     class Meta:
         model = User
-        fields = ['userId', 'username','nickname', 'sex','password', 'dept', 'create_time','avatar','status','phonenumber','email','deptId','creator_username','updator_username']
-        # read_only_fields = ['id', 'create_time']
+        fields = ['userId', 'username','nickname', 'sex', 'password','dept', 'create_time','avatar','status','phonenumber','email','deptId','creator_username','updator_username']
+        read_only_fields = ['id', 'password']
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)

@@ -86,6 +86,14 @@ class Dept(BaseModel):
         verbose_name_plural = verbose_name
         db_table = 'sys_dept'
 
+class RoleDept(BaseModel):
+    role = models.ForeignKey(Role, on_delete=models.CASCADE, related_name='role_depts',verbose_name='角色')
+    dept = models.ForeignKey(Dept, on_delete=models.CASCADE, related_name='role_depts',verbose_name='部门')
+    class Meta:
+        verbose_name = '角色部门'
+        verbose_name_plural = verbose_name
+        db_table = 'sys_role_dept'
+
 class Post(BaseModel):
     POST_STATUS_CHOICES = [
         ('0', '正常'),

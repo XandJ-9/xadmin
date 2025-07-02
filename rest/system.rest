@@ -74,24 +74,28 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-    "deptName": "新链研发s部",
+    "deptName": "新链研发ssss部",
     "orderNum": 0,
     "status": "1",
-    "parentId": 109
+    "parentId": 108
 }
 
 ###
 # 更新部门
-PUT {{host}}/api/system/dept/130 HTTP/1.1
+PUT {{host}}/api/system/dept/150 HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-    "deptName": "新链科技",
-    "orderNum": 0,
-    "status": "1",
-    "ancestors": "0",
-    "parentId": 147
+  "id": 150,
+  "deptId": 150,
+  "deptName": "dddx",
+  "orderNum": 0,
+  "status": "0",
+  "ancestors": "1",
+  "creatorUsername": "admin",
+  "parent": null,
+  "parentId": 109
 }
 
 ###
@@ -146,7 +150,7 @@ Authorization: Bearer {{token}}
 
 ###
 # 更新用户
-PUT {{host}}/api/system/user/51 HTTP/1.1
+PUT {{host}}/api/system/user/66 HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{token}}
 
