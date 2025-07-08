@@ -53,7 +53,7 @@ export const useUserStore = defineStore('user', {
     async login(loginData) {
         try {
             // 发送登录请求
-            const response = await request.post('/api/users/login/', loginData)
+            const response = await request.post('/api/login', loginData)
             const { token, user } = response.data
             
             // 保存用户数据

@@ -290,14 +290,14 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
     @action(detail=False, methods=['post'])
     def register(self, request):
         serializer = self.get_serializer(data=request.data)
-        if serializer.is_valid():
+        if serializer.is_valid(raise_exception=True):
             user = serializer.save()
             refresh = RefreshToken.for_user(user)
             return Response({
                 'token': str(refresh.access_token),
                 'user': serializer.data
             }, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False, methods=['get'])
     def getInfo(self, request):

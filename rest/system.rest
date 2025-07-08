@@ -1,5 +1,17 @@
 @host = http://localhost:8000
 
+###
+# 注册用户
+POST {{host}}/api/register HTTP/1.1
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "123456"
+}
+
+
+###
 # @name getCaptcha
 GET {{host}}/api/captchaImage HTTP/1.1
 
@@ -10,9 +22,7 @@ Content-Type: application/json
 
 {
   "username": "admin",
-  "password": "123456",
-  "code":"F0EY",
-  "uuid":"a65f55bf-e7d2-4b60-b8ce-3d159992e381"
+  "password": "123456"
 }
 
 ###
@@ -218,7 +228,7 @@ Content-Type: application/json
 
 ###
 # 重置用户密码
-PUT {{host}}/api/system/user/1/resetPwd HTTP/1.1
+PUT {{host}}/api/system/user/76/resetPwd HTTP/1.1
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -232,10 +242,10 @@ POST {{host}}/api/login HTTP/1.1
 Content-Type: application/json
 
 {
-    "username": "tomcat3",
+    "username": "Jack8",
     "password": "123456",
-    "code":"A3BS",
-    "uuid":"1f3df7a4-9b7e-4816-8c76-8ac41205d88f"
+    "code":"F0EY",
+    "uuid":"a65f55bf-e7d2-4b60-b8ce-3d159992e381"
 }
 
 

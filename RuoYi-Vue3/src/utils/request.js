@@ -1,5 +1,5 @@
 import axios from 'axios'
-import { ElNotification , ElMessageBox, ElMessage, ElLoading } from 'element-plus'
+import { ElMessageBox, ElMessage, ElLoading } from 'element-plus'
 import { getToken } from '@/utils/auth'
 import errorCode from '@/utils/errorCode'
 import { tansParams, blobValidate } from '@/utils/ruoyi'
@@ -110,7 +110,7 @@ service.interceptors.response.use(res => {
     // }
     return  Promise.resolve(res.data)
   },
-    error => {
+  error => {
     let { message, response } = error
     if (response.status === 401) {
             console.log(`relogin: ${isRelogin.show}`)
@@ -131,7 +131,7 @@ service.interceptors.response.use(res => {
           } else if (message.includes("timeout")) {
             message = "系统接口请求超时"
           } else if (message.includes("Request failed with status code")) {
-            message = "系统接口异常" + response.status
+            message = "系统接口异常: " + response.status
           }
     }
     ElMessage({ message: message, type: 'error', duration: 1 * 1000 })

@@ -3,6 +3,7 @@ from rest_framework.request import Request
 from rest_framework.fields import empty
 from .models import *
 from utils.serializer import ChoiceFieldSerializerMixin, CamelFieldSerializerMixin,UpdateSourceFieldSerializerMixin,BaseModelSerializer
+from django.contrib.auth.hashers import make_password
 
 
 
@@ -76,16 +77,17 @@ class UserImportSerializer(ChoiceFieldSerializerMixin,SystemBaseSerializer):
 class UserSerializer(SystemBaseSerializer):
     userId = serializers.IntegerField(source="id",read_only=True,required=False)
     deptId = serializers.IntegerField(source="dept.id",required=False)
-    # password = serializers.CharField(write_only=True, allow_blank=False)
+    password = serializers.CharField(write_only=True, allow_blank=False)
     dept = DeptSerializer(read_only=True)
 
     class Meta:
         model = User
-        fields = ['userId', 'username','nickname', 'sex', 'password','dept', 'create_time','avatar','status','phonenumber','email','deptId','creator_username','updator_username']
-        read_only_fields = ['id', 'password']
+        fields = ['userId', 'username','nickname', 'sex','dept', 'create_time','avatar','status','phonenumber','email','deptId','creator_username','updator_username','password']
+        read_only_fields = ['id']
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
+        print(f'{validated_data}, password: {password}')
         instance = super().create(validated_data)
         instance.set_password(password)  # Set the password using set_password method
         instance.save()
@@ -96,6 +98,7 @@ class UserSerializer(SystemBaseSerializer):
             password = validated_data.pop('password')
             instance.check_password(password)
             instance.set_password(password)
+
         return super().update(instance, validated_data)
 
 class UserRoleSerializer(SystemBaseSerializer):

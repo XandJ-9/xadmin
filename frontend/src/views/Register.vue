@@ -68,7 +68,7 @@ const handleRegister = () => {
       loading.value = true
       try {
         // 发送注册请求
-        const response = await request.post('/api/users/register/', registerForm)
+        const response = await request.post('/api/register', registerForm)
         const userData = response.data
         
         // 保存用户数据
