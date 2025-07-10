@@ -244,7 +244,7 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
         import base64
         base64_code = base64.encodebytes(buffer.getvalue()).decode('utf-8')
         # return JsonResponse({'code': status.HTTP_200_OK, 'img': base64_code,'uuid':uuid_str})
-        return Response({'img': base64_code,'uuid':uuid_str}, status=status.HTTP_200_OK)
+        return Response({'img': base64_code,'uuid':uuid_str, 'code':code}, status=status.HTTP_200_OK)
 
     @action(detail=False, methods=['post'])
     def login(self, request):
@@ -527,6 +527,13 @@ class MenuViewSet(CustomModelViewSet):
         tree_data = build_tree(serializer.data, parent_id=None, parent_field_name='parentId', pk_field_name='menuId')
         return Response(tree_data, status=status.HTTP_200_OK)
     
+    @action(methods=['get'], detail=False)
+    def treeselect(self, request):
+        ser = MenuSerializer(Menu.objects.all(), many=True)
+        tree_data = build_tree(ser.data, parent_id=None, parent_field_name='parentId', pk_field_name='menuId')
+        return Response(tree_data, status=status.HTTP_200_OK)
+    
+
 class SystemConfigViewSet(CustomModelViewSet):
     queryset = SystemConfig.objects.all()
     serializer_class = SystemConfigSerializer

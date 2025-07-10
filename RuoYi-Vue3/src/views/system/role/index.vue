@@ -177,10 +177,10 @@
                   :data="menuOptions"
                   show-checkbox
                   ref="menuRef"
-                  node-key="id"
+                  node-key="menuId"
                   :check-strictly="!form.menuCheckStrictly"
                   empty-text="加载中，请稍候"
-                  :props="{ label: 'label', children: 'children' }"
+                  :props="{ label: 'menuName', children: 'children' }"
                ></el-tree>
             </el-form-item>
             <el-form-item label="备注">
@@ -380,7 +380,7 @@ function handleAuthUser(row) {
 /** 查询菜单树结构 */
 function getMenuTreeselect() {
   menuTreeselect().then(response => {
-    menuOptions.value = response.data
+    menuOptions.value = response
   })
 }
 
@@ -429,6 +429,7 @@ function handleAdd() {
 /** 修改角色 */
 function handleUpdate(row) {
   reset()
+  getMenuTreeselect()
   const roleId = row.roleId || ids.value
   const roleMenu = getRoleMenuTreeselect(roleId)
   getRole(roleId).then(response => {
@@ -437,7 +438,7 @@ function handleUpdate(row) {
     open.value = true
     nextTick(() => {
       roleMenu.then((res) => {
-        let checkedKeys = res.checkedKeys
+        let checkedKeys = res
         checkedKeys.forEach((v) => {
           nextTick(() => {
             menuRef.value.setChecked(v, true, false)

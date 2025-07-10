@@ -29,7 +29,7 @@ export function addRole(data) {
 // 修改角色
 export function updateRole(data) {
   return request({
-    url: '/system/role',
+    url: '/system/role/' + data.roleId,
     method: 'put',
     data: data
   })

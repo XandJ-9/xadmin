@@ -24,14 +24,7 @@ class SystemDictDataSerializer(SystemBaseSerializer):
         fields = "__all__"
 
 
-class RoleSerializer(SystemBaseSerializer):
-    roleId = serializers.IntegerField(source='id', read_only=True) 
-    roleKey = serializers.CharField(source='role_key', read_only=True)
-    roleName =  serializers.CharField(source='role_name', read_only=True)
-    class Meta:
-        model = Role
-        fields = ['roleId', 'roleKey','roleName', 'create_time','status']
-        read_only_fields = ['id', 'create_time']
+
 
 class DeptSerializer(SystemBaseSerializer):
     deptId = serializers.IntegerField(source='id', read_only=True)
@@ -121,6 +114,34 @@ class RoleMenuSerializer(SystemBaseSerializer):
         model = RoleMenu
         fields = ['id', 'role', 'menu', 'creator', 'updator']
         read_only_fields = ['id']
+
+class RoleSerializer(SystemBaseSerializer):
+    roleId = serializers.IntegerField(source='id', read_only=True) 
+    # roleKey = serializers.CharField(source='role_key', read_only=True)
+    # roleName =  serializers.CharField(source='role_name', read_only=True)
+    menuIds = serializers.SerializerMethodField()
+
+    def get_menuIds(self, obj):
+        return obj.role_menus.all().values_list('menu_id', flat=True)
+
+    def create(self, validated_data):
+        menu_ids = validated_data.pop('menuIds', [])
+        role = Role.objects.create(**validated_data)
+        role.role_menus.set(menu_ids)
+        return role
+    def update(self, instance, validated_data):
+        # menu_ids = validated_data.pop('menuIds', [])
+        menu_ids = self.initial_data.pop('menuIds', [])
+        instance = super().update(instance, validated_data)
+        for menuId in menu_ids:
+            menu = Menu.objects.get(id=menuId)
+            RoleMenu.objects.get_or_create(role=instance, menu=menu)
+        return instance
+    
+    class Meta:
+        model = Role
+        fields = ['roleId', 'role_key','role_name', 'create_time','status','role_sort','menuIds']
+        read_only_fields = ['id', 'create_time']
 
 class SystemConfigSerializer(SystemBaseSerializer):
     creator_info = UserSerializer(source='creator', read_only=True)
