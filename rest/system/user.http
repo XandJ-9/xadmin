@@ -1,0 +1,19 @@
+@host = http://localhost:8000
+
+###
+# @name 获取验证码
+GET {{host}}/api/captchaImage
+Content-Type: application/json
+
+
+### 
+# @name login
+POST {{host}}/api/login
+Content-Type: application/json
+
+{
+    "username": "admin",
+    "password": "123456",
+    "code": "MT0Y",
+    "uuid": "4c281b65-045a-4cf1-b089-5b49891ae5f2"
+}
