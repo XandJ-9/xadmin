@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
-from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
+from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
 from django.utils.crypto import get_random_string
 from django.db.models import Q
@@ -280,10 +280,13 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
         token = request.auth
         if token:
             uuid_str = token.get('uuid')
-            # 删除验证码
-            Captcha.objects.filter(uuid=uuid_str).delete()
-            # 要想限制用户有效退出登录，将token加入黑名单
-            # token.blacklist()
+            if Captcha.objects.filter(uuid=uuid_str).exists():
+                # 删除验证码
+                Captcha.objects.filter(uuid=uuid_str).delete()
+                # 要想限制用户有效退出登录，将token加入黑名单
+                # token.blacklist()
+            else:
+                return Response({'message': '用户已退出'},status=status.HTTP_401_UNAUTHORIZED)
 
         return Response({'message': '登出成功'}, status=status.HTTP_200_OK)
 

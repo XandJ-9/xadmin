@@ -1,19 +1,35 @@
 @host = http://localhost:8000
 
 ###
-# @name 获取验证码
+# @name captcha
+# @description 获取验证码
 GET {{host}}/api/captchaImage
 Content-Type: application/json
 
 
 ### 
 # @name login
+# @description 登录
 POST {{host}}/api/login
 Content-Type: application/json
 
 {
     "username": "admin",
     "password": "123456",
-    "code": "MT0Y",
-    "uuid": "4c281b65-045a-4cf1-b089-5b49891ae5f2"
+    "code": "GL2F",
+    "uuid": "335d08a0-26ec-4648-83b0-77e3d482c3d2"
 }
+
+###
+# @name getUserInfo
+# @description 获取用户信息
+GET {{host}}/api/getInfo
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.token}}
+
+
+###
+# @name logout
+# @description 登出
+POST {{host}}/api/logout
+Authorization: Bearer {{login.response.body.token}}
