@@ -80,7 +80,6 @@ class UserSerializer(SystemBaseSerializer):
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
-        print(f'{validated_data}, password: {password}')
         instance = super().create(validated_data)
         instance.set_password(password)  # Set the password using set_password method
         instance.save()
