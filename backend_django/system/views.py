@@ -263,7 +263,8 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
         if user:
             refresh_token = RefreshToken.for_user(user)
             refresh_token['uuid'] = uuid
-            token = refresh_token.access_token
+            # token = refresh_token.access_token
+            token = refresh_token
             return Response({
                 'token': str(token),
                 'user': UserSerializer(user).data
@@ -282,9 +283,9 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
             uuid_str = token.get('uuid')
             if Captcha.objects.filter(uuid=uuid_str).exists():
                 # 删除验证码
-                Captcha.objects.filter(uuid=uuid_str).delete()
+                # Captcha.objects.filter(uuid=uuid_str).delete()
                 # 要想限制用户有效退出登录，将token加入黑名单
-                # token.blacklist()
+                token.blacklist()
             else:
                 return Response({'message': '用户已退出'},status=status.HTTP_401_UNAUTHORIZED)
 
