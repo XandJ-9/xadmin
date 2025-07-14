@@ -40,8 +40,47 @@ Content-Type: application/json
 Authorization: Bearer {{login.response.body.token}}
 
 
+
+
+
 ###
 # @name logout
 # @description 登出
 POST {{host}}/api/logout
+Authorization: Bearer {{login.response.body.token}}
+
+
+###
+# @name profile
+# @description 获取用户信息
+GET {{host}}/api/system/user/profile
+Authorization: Bearer {{login.response.body.token}}
+
+
+###
+# 修改用户信息
+PUT {{host}}/api/system/user/69
+Content-Type: application/json
+Authorization: Bearer {{login.response.body.token}}
+
+{
+  "userId": 69,
+  "username": "Jack",
+  "nickname": "Jack",
+  "sex": "0",
+  "deptId": 102,
+  "createTime": "2025-07-08 22:40:49",
+  "avatar": null,
+  "status": "1",
+  "phonenumber": "",
+  "email": "",
+  "postIds": [],
+  "roleIds": [
+    2
+  ]
+}
+
+
+###
+GET {{host}}/api/system/user/69
 Authorization: Bearer {{login.response.body.token}}

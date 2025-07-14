@@ -70,7 +70,7 @@ class UserImportSerializer(ChoiceFieldSerializerMixin,SystemBaseSerializer):
 class UserSerializer(SystemBaseSerializer):
     userId = serializers.IntegerField(source="id",read_only=True,required=False)
     deptId = serializers.IntegerField(source="dept.id",required=False)
-    password = serializers.CharField(write_only=True, allow_blank=False)
+    password = serializers.CharField(write_only=True, allow_blank=False, required=False)
     dept = DeptSerializer(read_only=True)
 
     class Meta:
@@ -111,7 +111,7 @@ class MenuSerializer(SystemBaseSerializer):
 class RoleMenuSerializer(SystemBaseSerializer):
     class Meta:
         model = RoleMenu
-        fields = ['id', 'role', 'menu', 'creator', 'updator']
+        fields = ['id', 'role', 'creator', 'updator','menu']
         read_only_fields = ['id']
 
 class RoleSerializer(SystemBaseSerializer):

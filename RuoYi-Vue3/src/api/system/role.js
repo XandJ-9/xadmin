@@ -117,3 +117,20 @@ export function deptTreeSelect(roleId) {
     method: 'get'
   })
 }
+
+// 根据角色id查询菜单
+export function roleMenu(roleId) {
+  return request({
+    url: `/system/role/${roleId}/menus`,
+    method: 'get'
+  })
+}
+
+export function updateRoleMenu(roleId, data) {
+  return request({
+    url: `/system/role/${roleId}/updateRoleMenu`,
+    method: 'put',
+    data
+  })
+  
+}

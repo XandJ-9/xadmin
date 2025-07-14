@@ -40,6 +40,9 @@ class JWTAuthenticationMiddleware(MiddlewareMixin):
     """
 
     def process_response(self, request, response):
+        if not hasattr(request, 'resolver_match') or not request.resolver_match:
+            return response
+        
         if request.resolver_match.url_name == 'user-logout':
             return response
         if request.user and request.user.is_authenticated:
@@ -47,5 +50,4 @@ class JWTAuthenticationMiddleware(MiddlewareMixin):
             if not Captcha.objects.filter(uuid=auth_token.get('uuid')).exists():
                 response.content = "登录信息已失效，请重新登录！"
                 response.status_code = status.HTTP_401_UNAUTHORIZED
-            logger.info(f'JWT认证结束：{response}')
         return response

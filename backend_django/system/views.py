@@ -116,7 +116,7 @@ class RoleViewSet(SystemViewMixin,CustomModelViewSet):
         
         # 创建新的角色菜单关联
         new_role_menu_ids = set(menu_ids) - set(existed_menu_ids)
-        ser = RoleMenuSerializer(data=[{'role': role, 'menu_id': menu_id} for menu_id in new_role_menu_ids], many=True, request=request)
+        ser = RoleMenuSerializer(data=[{'role': role.id, 'menu': menu_id} for menu_id in new_role_menu_ids], many=True, request=request)
         if ser.is_valid(raise_exception=True):
             ser.save()
         new_role_menu_ids = role.role_menus.all().values_list('menu_id', flat=True)

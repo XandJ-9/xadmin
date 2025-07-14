@@ -49,3 +49,14 @@ Authorization: Bearer {{login.response.body.token}}
   "status": "0",
   "menuIds": [1]
 }
+
+
+###
+PUT {{host}}/api/system/role/2/updateRoleMenu HTTP/1.1
+Authorization: Bearer {{login.response.body.token}}
+Content-Type: application/json
+
+{
+    "menuIds": [
+    ]
+}

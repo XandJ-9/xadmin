@@ -121,9 +121,12 @@
               <el-tooltip content="删除" placement="top" v-if="scope.row.roleId !== 1">
                 <el-button link type="primary" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['system:role:remove']"></el-button>
               </el-tooltip>
-              <el-tooltip content="数据权限" placement="top" v-if="scope.row.roleId !== 1">
-                <el-button link type="primary" icon="CircleCheck" @click="handleDataScope(scope.row)" v-hasPermi="['system:role:edit']"></el-button>
+              <el-tooltip content="分配权限" placement="top" v-if="scope.row.roleId !== 1">
+                <el-button link type="primary" icon="Edit" @click="handlePermission(scope.row)" v-hasPermi="['system:role:edit']"></el-button>
               </el-tooltip>
+              <!-- <el-tooltip content="数据权限" placement="top" v-if="scope.row.roleId !== 1">
+                <el-button link type="primary" icon="CircleCheck" @click="handleDataScope(scope.row)" v-hasPermi="['system:role:edit']"></el-button>
+              </el-tooltip> -->
               <el-tooltip content="分配用户" placement="top" v-if="scope.row.roleId !== 1">
                 <el-button link type="primary" icon="User" @click="handleAuthUser(scope.row)" v-hasPermi="['system:role:edit']"></el-button>
               </el-tooltip>
@@ -238,6 +241,9 @@
             </div>
          </template>
       </el-dialog>
+
+      <RolePermission ref="rolePermissionRef" />
+
    </div>
 </template>
 
@@ -245,6 +251,7 @@
 import { addRole, changeRoleStatus, dataScope, delRole, getRole, listRole, updateRole, deptTreeSelect } from "@/api/system/role"
 import {exportRole} from "@/api/export"
 import { roleMenuTreeselect, treeselect as menuTreeselect } from "@/api/system/menu"
+import RolePermission from "./RolePermission.vue"
 
 const router = useRouter()
 const { proxy } = getCurrentInstance()
@@ -269,6 +276,8 @@ const deptOptions = ref([])
 const openDataScope = ref(false)
 const menuRef = ref(null)
 const deptRef = ref(null)
+// 角色权限编辑相关
+const rolePermissionRef = ref(null)
 
 /** 数据范围选项*/
 const dataScopeOptions = ref([
@@ -530,6 +539,11 @@ function submitForm() {
       }
     }
   })
+}
+
+// 处理编辑权限
+const handlePermission = (row) => {
+  rolePermissionRef.value.open(row)
 }
 
 /** 取消按钮 */
