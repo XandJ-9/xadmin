@@ -68,7 +68,7 @@ Authorization: Bearer {{login.response.body.token}}
   "username": "Jack",
   "nickname": "Jack",
   "sex": "0",
-  "deptId": 102,
+  "dept": 104,
   "createTime": "2025-07-08 22:40:49",
   "avatar": null,
   "status": "1",

@@ -71,11 +71,11 @@ class UserSerializer(SystemBaseSerializer):
     userId = serializers.IntegerField(source="id",read_only=True,required=False)
     deptId = serializers.IntegerField(source="dept.id",required=False)
     password = serializers.CharField(write_only=True, allow_blank=False, required=False)
-    dept = DeptSerializer(read_only=True)
+    # dept = DeptSerializer(read_only=True)
 
     class Meta:
         model = User
-        fields = ['userId', 'username','nickname', 'sex','dept', 'create_time','avatar','status','phonenumber','email','deptId','creator_username','updator_username','password']
+        fields = ['userId', 'username','nickname', 'sex', 'create_time','avatar','status','phonenumber','email','deptId','creator_username','updator_username','password']
         read_only_fields = ['id']
 
     def create(self, validated_data):
