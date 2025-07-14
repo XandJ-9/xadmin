@@ -20,8 +20,8 @@ urlpatterns = [
     path('system/role/deptTree/<int:roleId>', RoleViewSet.as_view({'get': 'deptTree',})),
     path('captchaImage',UserViewSet.as_view({'get': 'captchaImage',})),
     path('login', UserViewSet.as_view({'post': 'login',}), name='user-login'),
-    path('getInfo', UserViewSet.as_view({'get': 'getInfo',})),
+    path('getInfo', UserViewSet.as_view({'get': 'getInfo',}), name='user-info'),
     path('register', UserViewSet.as_view({'post': 'register',}), name='user-register'),
-    path('logout', UserViewSet.as_view({'post': 'logout',})),
+    path('logout', UserViewSet.as_view({'post': 'logout',}), name='user-logout'),
     path('getRouters', MenuViewSet.as_view({'get': 'getRouters',}), name='menu-routers')
 ]
