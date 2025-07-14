@@ -75,8 +75,9 @@ class UserSerializer(SystemBaseSerializer):
 
     class Meta:
         model = User
-        fields = ['userId', 'username','nickname', 'sex', 'create_time','avatar','status','phonenumber','email','deptId','creator_username','updator_username','password']
+        fields = ['userId', 'username','nickname', 'sex', 'create_time','avatar','status','phonenumber','email','dept','deptId','creator_username','updator_username','password']
         read_only_fields = ['id']
+        write_only_fields = ['password','dept']
 
     def create(self, validated_data):
         password = validated_data.pop('password', None)
@@ -86,6 +87,7 @@ class UserSerializer(SystemBaseSerializer):
         return instance
 
     def update(self, instance, validated_data):
+        print(f'validated_data: {validated_data}')
         if validated_data.get('password', None):
             password = validated_data.pop('password')
             instance.check_password(password)
