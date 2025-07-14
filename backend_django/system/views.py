@@ -252,7 +252,6 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
         password = request.data.get('password')
         code = request.data.get('code')
         uuid = request.data.get('uuid')
-
         # 验证验证码
         if not code or not Captcha.objects.filter(uuid=uuid, code=code.upper()).exists():
             return Response({'error': '验证码错误'}, status=status.HTTP_400_BAD_REQUEST)
@@ -295,10 +294,8 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
     def register(self, request):
         serializer = self.get_serializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
-            user = serializer.save()
-            refresh = RefreshToken.for_user(user)
+            serializer.save()
             return Response({
-                'token': str(refresh.access_token),
                 'user': serializer.data
             }, status=status.HTTP_201_CREATED)
         return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
