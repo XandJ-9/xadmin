@@ -32,7 +32,7 @@ class SystemViewMixin:
         ser = self.get_serializer(obj)
         return Response(ser.data, status=status.HTTP_200_OK)
 
-class PostViewSet(CustomModelViewSet):
+class PostViewSet(SystemViewMixin,CustomModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
@@ -533,7 +533,6 @@ class MenuViewSet(CustomModelViewSet):
         ser = MenuSerializer(Menu.objects.all(), many=True)
         tree_data = build_tree(ser.data, parent_id=None, parent_field_name='parentId', pk_field_name='menuId')
         return Response(tree_data, status=status.HTTP_200_OK)
-    
 
 class SystemConfigViewSet(CustomModelViewSet):
     queryset = SystemConfig.objects.all()

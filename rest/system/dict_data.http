@@ -1,0 +1,74 @@
+@host = http://localhost:8000
+
+###
+# @name getCaptcha
+GET {{host}}/api/captchaImage HTTP/1.1
+
+###
+# @name login
+POST {{host}}/api/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "123456",
+  "code":"XXXX",
+  "uuid":"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+}
+
+
+###
+# @name getDictDataList
+# @description 获取字典数据列表
+GET {{host}}/api/system/dict/data?pageNum=1&pageSize=10&dictLabel=&dictType=&status= HTTP/1.1
+Authorization: Bearer {{accessToken}}
+
+###
+# @name getDictDataDetail
+# @description 获取字典数据详情
+GET {{host}}/api/system/dict/data/1 HTTP/1.1
+Authorization: Bearer {{accessToken}}
+
+###
+# @name createDictData
+# @description 创建字典数据
+POST {{host}}/api/system/dict/data HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "dictLabel": "测试标签",
+  "dictValue": "test_value",
+  "dictType": "test_dict",
+  "dictSort": 1,
+  "status": "0",
+  "remark": "测试字典数据"
+}
+
+###
+# @name updateDictData
+# @description 更新字典数据
+PUT {{host}}/api/system/dict/data/1 HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "dictLabel": "测试标签更新",
+  "dictValue": "test_value",
+  "dictType": "test_dict",
+  "dictSort": 1,
+  "status": "0",
+  "remark": "测试字典数据更新"
+}
+
+###
+# @name deleteDictData
+# @description 删除字典数据
+DELETE {{host}}/api/system/dict/data/1 HTTP/1.1
+Authorization: Bearer {{accessToken}}
+
+###
+# @name getDictDataByType
+# @description 根据字典类型获取字典数据
+GET {{host}}/api/system/dict/data/get_data_by_type/sys_user_sex HTTP/1.1
+Authorization: Bearer {{accessToken}}

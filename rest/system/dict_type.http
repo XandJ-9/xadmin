@@ -1,0 +1,76 @@
+@host = http://localhost:8000
+
+###
+# @name getCaptcha
+GET {{host}}/api/captchaImage HTTP/1.1
+
+###
+# @name login
+POST {{host}}/api/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "123456",
+  "code":"XXXX",
+  "uuid":"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+}
+
+
+###
+# @name getDictTypeList
+# @description 获取字典类型列表
+GET {{host}}/api/system/dict/type?pageNum=1&pageSize=10&dictName=&dictType=&status= HTTP/1.1
+Authorization: Bearer {{accessToken}}
+
+###
+# @name getDictTypeDetail
+# @description 获取字典类型详情
+GET {{host}}/api/system/dict/type/1 HTTP/1.1
+Authorization: Bearer {{accessToken}}
+
+###
+# @name createDictType
+# @description 创建字典类型
+POST {{host}}/api/system/dict/type HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "dictName": "测试字典",
+  "dictType": "test_dict",
+  "status": "0",
+  "remark": "测试字典类型"
+}
+
+###
+# @name updateDictType
+# @description 更新字典类型
+PUT {{host}}/api/system/dict/type/1 HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "dictName": "测试字典更新",
+  "dictType": "test_dict",
+  "status": "0",
+  "remark": "测试字典类型更新"
+}
+
+###
+# @name deleteDictType
+# @description 删除字典类型
+DELETE {{host}}/api/system/dict/type/1 HTTP/1.1
+Authorization: Bearer {{accessToken}}
+
+###
+# @name getDictTypeOptionSelect
+# @description 获取字典类型下拉选项
+GET {{host}}/api/system/dict/type/optionselect HTTP/1.1
+Authorization: Bearer {{accessToken}}
+
+###
+# @name refreshDictTypeCache
+# @description 刷新字典缓存
+DELETE {{host}}/api/system/dict/type/refreshCache HTTP/1.1
+Authorization: Bearer {{accessToken}}

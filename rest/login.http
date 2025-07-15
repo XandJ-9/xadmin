@@ -1,0 +1,23 @@
+@host = http://localhost:8000
+
+### 
+# @name login
+# @description 登录
+POST {{host}}/api/login
+Content-Type: application/json
+
+{
+    "username": "admin",
+    "password": "123456",
+    "code": "X888",
+    "uuid": "acf9c378-2f56-499b-9cb3-028451dfe842"
+}
+
+###
+# @accesToken = {{login.response.body.token}}
+
+###
+# @name getPostList
+# @description 获取岗位列表
+GET {{host}}/api/system/post?pageNum=1&pageSize=10&postName=&status= HTTP/1.1
+Authorization: Bearer {{$dotenv accessToken}}

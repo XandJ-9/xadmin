@@ -1,0 +1,82 @@
+@host = http://localhost:8000
+
+###
+# @name getCaptcha
+GET {{host}}/api/captchaImage HTTP/1.1
+
+###
+# @name login
+POST {{host}}/api/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "123456",
+  "code":"XXXX",
+  "uuid":"xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+}
+
+
+###
+# @name getDeptList
+# @description 获取部门列表
+GET {{host}}/api/system/dept?pageNum=1&pageSize=10&deptName=&status= HTTP/1.1
+Authorization: Bearer {{accessToken}}
+
+###
+# @name getDeptDetail
+# @description 获取部门详情
+GET {{host}}/api/system/dept/1 HTTP/1.1
+Authorization: Bearer {{accessToken}}
+
+###
+# @name createDept
+# @description 创建部门
+POST {{host}}/api/system/dept HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "deptName": "测试部门",
+  "orderNum": 1,
+  "leader": "测试负责人",
+  "phone": "13800138000",
+  "email": "test@example.com",
+  "status": "0",
+  "parentId": 0
+}
+
+###
+# @name updateDept
+# @description 更新部门
+PUT {{host}}/api/system/dept/1 HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "deptName": "测试部门更新",
+  "orderNum": 1,
+  "leader": "测试负责人",
+  "phone": "13800138000",
+  "email": "test@example.com",
+  "status": "0",
+  "parentId": 0
+}
+
+###
+# @name deleteDept
+# @description 删除部门
+DELETE {{host}}/api/system/dept/1 HTTP/1.1
+Authorization: Bearer {{accessToken}}
+
+###
+# @name getDeptTree
+# @description 获取部门树形结构
+GET {{host}}/api/system/dept/tree HTTP/1.1
+Authorization: Bearer {{accessToken}}
+
+###
+# @name excludeDept
+# @description 获取排除指定部门及其子部门的部门列表
+GET {{host}}/api/system/dept/exclude/1 HTTP/1.1
+Authorization: Bearer {{accessToken}}
