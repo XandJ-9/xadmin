@@ -12,3 +12,13 @@ Content-Type: application/json
     "code": "X888",
     "uuid": "acf9c378-2f56-499b-9cb3-028451dfe842"
 }
+
+
+
+###
+POST {{host}}/api/logout
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1Mjc3MDI4NywiaWF0IjoxNzUyNjgzODg3LCJqdGkiOiI5OGMwMjkyYTg4YjI0YTQ2YWI0NjA1M2YyYWI5ODUyMyIsInVzZXJfaWQiOjEsInV1aWQiOiJkOTI3NjkwOS1iZjYwLTQ4NDUtYjZiMC00ZTYwY2ZkZjRjMTUifQ.YemAnPAG8AzTZOuDh0heZ58UyLtlkyTR2qPU-6FQUv0
+
+
+
+

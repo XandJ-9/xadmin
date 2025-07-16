@@ -319,9 +319,9 @@ watch(deptName, val => {
 function getList() {
   loading.value = true
   listUser(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
-    loading.value = false
     userList.value = res.data
     total.value = res.total
+    loading.value = false
   })
 }
 
