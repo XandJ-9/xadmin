@@ -37,7 +37,7 @@ Content-Type: application/json
 # @description 获取用户信息
 GET {{host}}/api/getInfo
 Content-Type: application/json
-Authorization: Bearer {{$dotenv accesToken}}
+Authorization: Bearer {{$dotenv accessToken}}
 
 
 
@@ -47,21 +47,21 @@ Authorization: Bearer {{$dotenv accesToken}}
 # @name logout
 # @description 登出
 POST {{host}}/api/logout
-Authorization: Bearer {{$dotenv accesToken}}
+Authorization: Bearer {{$dotenv accessToken}}
 
 
 ###
 # @name profile
 # @description 获取用户信息
 GET {{host}}/api/system/user/profile
-Authorization: Bearer {{$dotenv accesToken}}
+Authorization: Bearer {{$dotenv accessToken}}
 
 
 ###
 # 修改用户信息
 PUT {{host}}/api/system/user/69
 Content-Type: application/json
-Authorization: Bearer {{$dotenv accesToken}}
+Authorization: Bearer {{$dotenv accessToken}}
 
 {
   "userId": 69,
@@ -83,4 +83,4 @@ Authorization: Bearer {{$dotenv accesToken}}
 
 ###
 GET {{host}}/api/system/user/69
-Authorization: Bearer {{$dotenv accesToken}}
+Authorization: Bearer {{$dotenv accessToken}}

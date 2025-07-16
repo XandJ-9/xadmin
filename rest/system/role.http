@@ -1,32 +1,15 @@
 @host = http://localhost:8000
 
 ###
-# @name getCaptcha
-GET {{host}}/api/captchaImage HTTP/1.1
-
-###
-# @name login
-POST {{host}}/api/login HTTP/1.1
-Content-Type: application/json
-
-{
-  "username": "admin",
-  "password": "123456",
-  "code":"8PVB",
-  "uuid":"48a31669-c282-41de-b73d-5c934f6136a5"
-}
-
-
-###
 # 获取角色
 GET {{host}}/api/system/role?pageNum=1&pageSize=10&roleName=&status=&deptId= HTTP/1.1
-Authorization: Bearer {{accessToken}}
+Authorization: Bearer {{$dotenv accessToken}}
 
 ###
 # 添加角色
 POST {{host}}/api/system/role HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer {{accessToken}}
+Authorization: Bearer {{$dotenv accessToken}}
 
 {
   "roleName": "测试角色",
@@ -40,7 +23,7 @@ Authorization: Bearer {{accessToken}}
 # 修改角色
 PUT {{host}}/api/system/role/4 HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer {{accessToken}}
+Authorization: Bearer {{$dotenv accessToken}}
 
 {
   "roleName": "测试角色",
@@ -52,11 +35,16 @@ Authorization: Bearer {{accessToken}}
 
 
 ###
-PUT {{host}}/api/system/role/2/updateRoleMenu HTTP/1.1
-Authorization: Bearer {{accessToken}}
+PUT {{host}}/api/system/role/4/updateRoleMenu HTTP/1.1
+Authorization: Bearer {{$dotenv accessToken}}
 Content-Type: application/json
 
 {
     "menuIds": [
+        100
     ]
 }
+
+###
+DELETE {{host}}/api/system/role/4 HTTP/1.1
+Authorization: Bearer {{$dotenv accessToken}}
