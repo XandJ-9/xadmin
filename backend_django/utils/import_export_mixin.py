@@ -12,7 +12,7 @@ from rest_framework.decorators import action
 from rest_framework.request import Request
 
 from utils.import_export import import_to_data
-from utils.util_response import DetailResponse, SuccessResponse
+from utils.util_response import DetailResponse, ExcelResponse
 from utils.util_request import get_verbose_name
 
 class ModelImportSerializerMixin:
@@ -308,8 +308,8 @@ class ModelExportSerializerMixin:
         """
         export_serializer_class = self.get_export_serializer_class()
         queryset = self.filter_queryset(self.get_queryset())
-        # assert self.export_field_label, "'%s' 请配置对应的导出模板字段。" % self.__class__.__name__
-        # assert self.export_serializer_class, "'%s' 请配置对应的导出序列化器。" % self.__class__.__name__
+        assert self.export_field_label, "'%s' 请配置对应的导出模板字段。" % self.__class__.__name__
+        assert export_serializer_class, "'%s' 请配置对应的导出序列化器。" % self.__class__.__name__
         data = export_serializer_class(queryset, many=True, request=request).data
         # 导出excel 表
         response = HttpResponse(content_type="application/msexcel")
@@ -352,3 +352,45 @@ class ModelExportSerializerMixin:
         ws.add_table(tab)
         wb.save(response)
         return response
+    
+
+class ExcelImportExportMixin:
+    export_serializer_class = None 
+    import_serializer_class = None
+
+    def get_export_serializer_class(self):
+        return self.export_serializer_class or self.serializer_class
+    
+    def get_export_serializer(self, *args, **kwargs):
+        return self.get_export_serializer_class(*args, **kwargs)
+    
+    @action(methods=['get'], detail=False, url_name='export_data', url_path='export')
+    def export_data(self, request, *args, **kwargs):
+        wb = self.generate_export_file(request, *args, **kwargs)
+        filename = self.rquest.query_params.get('file_name', 'export')
+        response = ExcelResponse(filename=filename, workbook = wb)
+        return response
+
+    def get_import_serializer_class(self):
+        return self.import_serializer_class or self.serializer_class
+    
+    def get_import_serializer(self, *args, **kwargs):
+        return self.get_import_serializer_class(*args, **kwargs)
+    
+    @action(methods ='get', detail=False, url_name='import_data', url_path='import')
+    def import_data(self, request, *args, **kwargs):
+        file_obj = request.FILES.get('file')
+        if not file_obj:
+            return DetailResponse(status=400, msg='请上传文件')
+        data = self.parse_import_file(file_obj)
+        serializer = self.get_import_serializer(data=data, many=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+        return DetailResponse(msg='导入成功')
+
+    def generate_export_file(self, request, *args, **kwargs):
+        raise NotImplementedError('子类必须实现generate_export_file方法')
+
+    def parse_import_file(self, request, *args, **kwargs):
+        raise NotImplementedError('子类必须实现parse_import_file方法')
+    
