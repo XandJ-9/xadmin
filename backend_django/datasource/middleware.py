@@ -3,6 +3,8 @@ import time
 from decimal import Decimal
 import logging
 from .models import QueryLog
+from rest_framework.settings import api_settings
+from rest_framework.request import Request
 
 logger = logging.getLogger('django')
 
@@ -55,9 +57,8 @@ class QueryLogMiddleware(MiddlewareMixin):
 
             # 解析请求数据 
             # 将httprequest转换为rest_framework.request.Request对象
-            from rest_framework.request import Request
-            from rest_framework.parsers import JSONParser, FormParser, MultiPartParser
-            new_request = Request(request, parsers=[JSONParser(), FormParser(), MultiPartParser()])
+            parser_classes = api_settings.DEFAULT_PARSER_CLASSES
+            new_request = Request(request, parsers=[parser() for parser in parser_classes])
             
 
             # 获取SQL和结果

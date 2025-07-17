@@ -2,10 +2,10 @@ from abc import ABC, abstractmethod
 from typing import List, Dict, Any, Optional
 
 class QueryExecutor(ABC):
-    def __init__(self, host: str, port: int, database: str, username: str, password: str):
-        self.host = host
-        self.port = port
-        self.database = database
+    def __init__(self, host: str = None, port: int = None, database: str = None, username: str = None, password: str = None):
+        self.host = host 
+        self.port = port 
+        self.database = database 
         self.username = username
         self.password = password
 

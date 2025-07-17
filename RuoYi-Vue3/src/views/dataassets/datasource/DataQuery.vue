@@ -29,30 +29,33 @@
           />
       </div>
       
+
+      <div class="query-result" v-show="activeTab !== ''">
       <div class="resizer" @mousedown="startResize"></div>
-      
-      <el-tabs 
-        v-model="activeTab" 
-        type="card" 
-        closable 
-        @tab-remove="removeTab"
-        class="query-tabs"
-      >
-        <el-tab-pane
-          v-for="tab in queryTabs"
-          :key="tab.id"
-          :label="tab.label"
-          :name="tab.id"
+        <el-tabs
+            v-model="activeTab" 
+            type="card" 
+            closable 
+            @tab-remove="removeTab"
+            class="query-tabs"
         >
-          <QueryResult
-            :query-result="tab.queryResult"
-            :table-columns="tab.tableColumns"
-            :loading="loading"
-            :error="tab.error"
-            class="query-result"
-          />
-        </el-tab-pane>
-      </el-tabs>
+            <el-tab-pane
+            v-for="tab in queryTabs"
+            :key="tab.id"
+            :label="tab.label"
+            :name="tab.id"
+            >
+            <QueryResult
+                :query-result="tab.queryResult"
+                :table-columns="tab.tableColumns"
+                :loading="loading"
+                :error="tab.error"
+                class="query-result"
+            />
+            </el-tab-pane>
+        </el-tabs>
+      </div>
+
     </div>
   </div>
 </template>
@@ -174,45 +177,51 @@ const handleQuery = async () => {
 
   loading.value = true
   const newTabId = `tab-${tabIndex.value++}`
+
+
+    await executeQuery(selectedDataSource.value, sql).then(response => {
+        // 创建新标签
+        const newTab = {
+        id: newTabId,
+        label: `查询-${tabIndex.value}`,
+        sql: sql,
+        queryResult: [],
+        tableColumns: [],
+        error: response?.error
+        }
+
+        if (response.total > 0) {
+        newTab.tableColumns = Object.keys(response.data[0])
+        newTab.queryResult = response.data
+        }
+
+        queryTabs.value.push(newTab)
+        activeTab.value = newTabId
+        editorHeight.value = 400
+        loading.value = false
+  })
   
-  try {
-    // const formData = new FormData()
-    // formData.append('sql', sql)
+//   try {
+//     // const formData = new FormData()
+//     // formData.append('sql', sql)
     
-    const response = await executeQuery(selectedDataSource.value, sql)
+//     const response = await executeQuery(selectedDataSource.value, sql)
     
-    // 创建新标签
-    const newTab = {
-      id: newTabId,
-      label: `查询-${tabIndex.value}`,
-      sql: sql,
-      queryResult: [],
-      tableColumns: [],
-      error: ''
-    }
 
-    if (response.total > 0) {
-      newTab.tableColumns = Object.keys(response.data[0])
-      newTab.queryResult = response.data
-    }
-
-    queryTabs.value.push(newTab)
-    activeTab.value = newTabId
-    editorHeight.value = 400
-  } catch (err) {
-    const newTab = {
-      id: newTabId,
-      label: `查询-${tabIndex.value}`,
-      sql: sql,
-      queryResult: [],
-      tableColumns: [],
-      error: err.response?.data.error || '查询执行失败'
-    }
-    queryTabs.value.push(newTab)
-    activeTab.value = newTabId
-  } finally {
-    loading.value = false
-  }
+//   } catch (err) {
+//     const newTab = {
+//       id: newTabId,
+//       label: `查询-${tabIndex.value}`,
+//       sql: sql,
+//       queryResult: [],
+//       tableColumns: [],
+//       error: err.response?.data.error || '查询执行失败'
+//     }
+//     queryTabs.value.push(newTab)
+//     activeTab.value = newTabId
+//   } finally {
+//     loading.value = false
+//   }
 }
 
 const removeTab = (targetName) => {

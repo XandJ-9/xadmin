@@ -9,6 +9,9 @@ from .models import DataSource, QueryLog
 from .serializers import DataSourceSerializer, QueryLogSerializer
 from .executors.factory import QueryExecutorFactory
 import logging
+from sshtunnel import SSHTunnelForwarder
+from django.conf import settings
+
 
 logger = logging.getLogger('django')
 
@@ -67,15 +70,21 @@ class DataSourceViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        executor = QueryExecutorFactory.get_executor(datasource.type, 
-        host=datasource.host, 
-        port=datasource.port,
-        database= datasource.database, 
-        username =datasource.username, 
-        password=datasource.password)
+
 
         try:
-            result = executor.execute_query(sql, limit)
+            with SSHTunnelForwarder((settings.REMOTE_SERVER_IP, settings.REMOTE_SERVER_PORT),
+            ssh_username=settings.REMOTE_USER,
+            ssh_password=settings.REMOTE_PASSWORD,
+            remote_bind_address=(settings.PRIVATE_SERVER_IP, datasource.port),
+            local_bind_address=('0.0.0.0', datasource.port)) as server:
+                executor = QueryExecutorFactory.get_executor(datasource.type, 
+                            host=datasource.host, 
+                            port=datasource.port,
+                            database= datasource.database, 
+                            username =datasource.username, 
+                            password=datasource.password)
+                result = executor.execute_query(sql, limit)
             return Response(result)
         except Exception as e:
             logger.error(f'SQL执行失败: {str(e)}')

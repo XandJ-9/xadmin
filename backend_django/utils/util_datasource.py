@@ -1,25 +1,36 @@
 import pymysql, psycopg2
-from pyhive import hive
+from pyhive import hive, presto
 from sshtunnel import SSHTunnelForwarder
 import sys
+from pathlib import Path
 
-from env import *
+import environ,os
 
 
+# Build paths inside the project like this: BASE_DIR / 'subdir'.
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+env = environ.Env()
+# environ.Env.read_env()
+environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+
+REMOTE_SERVER_IP = env('REMOTE_SERVER')  # 本地可访问的服务器地址
+REMOTE_SERVER_PORT = env('REMOTE_SERVER_PORT')   # 本地可访问的远程端口
+PRIVATE_SERVER_IP = env('PRIVATE_SERVER')  # 本地无法访问，但是中间服务器可访问
+REMOTE_PASSWORD = env('REMOTE_PASSWORD')
+REMOTE_USER = env('REMOTE_USER')
 
 def remote_tunnel_server():
     if sys.platform == 'linux':
         return None
-    REMOTE_SERVER_IP = REMOTE_SERVER  # 本地可访问的服务器地址
-    REMOTE_SERVER_PORT = 22   # 本地可访问的都武器端口
-    PRIVATE_SERVER_IP = PRIVATE_SERVER  # 本地无法访问，但是中间服务器可访问
 
     # 创建隧道，登录到中间服务器上， 将local_bind_address指定的端口映射到远程的remote_bind_address指定的端口
-    server = SSHTunnelForwarder((REMOTE_SERVER_IP, REMOTE_SERVER_PORT),
+    server = SSHTunnelForwarder((REMOTE_SERVER_IP, int(REMOTE_SERVER_PORT)),
         ssh_username=REMOTE_USER,
         ssh_password=REMOTE_PASSWORD,
         remote_bind_address=(PRIVATE_SERVER_IP, 10000),
-        local_bind_address=('0.0.0.0', 10000))
+        local_bind_address=('0.0.0.0', 10000)
+        )
     return server
 
 
@@ -132,6 +143,7 @@ class HiveDataSourceHandler(DataSourceHandlerMix,DataSourceHandler):
             'database':self.db_info.get('database','default')
         }
         try:
+            print(db_config)
             self._connect = hive.Connection(**db_config, auth='CUSTOM')
         except:
             raise Exception('连接失败')
