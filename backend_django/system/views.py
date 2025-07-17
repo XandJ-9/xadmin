@@ -13,6 +13,7 @@ from .permissions import IsAdminUser, IsOwnerOrAdmin,HasRolePermission
 
 from utils.viewset import CustomModelViewSet
 from utils.serializer import build_tree
+from utils.import_export_mixin import ModelExportSerializerMixin, ModelImportSerializerMixin
 import logging, uuid
 
 logger = logging.getLogger('django')
@@ -31,6 +32,10 @@ class SystemViewMixin:
         obj.save()
         ser = self.get_serializer(obj)
         return Response(ser.data, status=status.HTTP_200_OK)
+
+
+class ModelImportExportViewSet(ModelImportSerializerMixin,ModelExportSerializerMixin,SystemViewMixin,CustomModelViewSet):
+    pass
 
 class PostViewSet(SystemViewMixin,CustomModelViewSet):
     queryset = Post.objects.all()
@@ -68,7 +73,7 @@ class DeptViewSet(CustomModelViewSet):
         dept_tree = build_tree(serializer.data)
         return Response(dept_tree, status=status.HTTP_200_OK)
 
-class RoleViewSet(SystemViewMixin,CustomModelViewSet):
+class RoleViewSet(ModelImportExportViewSet):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
     export_serializer_class = RoleSerializer
@@ -131,7 +136,7 @@ class RoleViewSet(SystemViewMixin,CustomModelViewSet):
         dept_tree = build_tree(DeptSerializer(depts, many=True).data)
         return Response(dept_tree, status=status.HTTP_200_OK)
 
-class UserViewSet(SystemViewMixin,CustomModelViewSet):
+class UserViewSet(ModelImportExportViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     filter_fields = ['status','username','phonenumber']
@@ -158,7 +163,7 @@ class UserViewSet(SystemViewMixin,CustomModelViewSet):
             }
         },
         "dept_name": {"title": "部门", "choices": {"queryset": Dept.objects.filter(status='1'), "values_name": "dept_name"}},
-        "role": {"title": "角色", "choices": {"queryset": Role.objects.filter(status='1'), "values_name": "role_name"}},
+        "role": {"title": "角色", "choices": {"queryset": Role.objects.filter(status='0'), "values_name": "role_name"}},
     }
 
     def filter_queryset(self, queryset):

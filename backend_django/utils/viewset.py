@@ -6,13 +6,9 @@ from rest_framework.permissions import AllowAny
 from system.permissions import IsOwnerOrAdmin,IsAdminUser, HasRolePermission
 from .util_response import SuccessResponse, ErrorResponse, DetailResponse
 from .filters import SearchFilterBackend
-from .import_export_mixin import ModelExportSerializerMixin, ModelImportSerializerMixin
-import logging
-
-logger = logging.getLogger('django')
 
 
-class CustomModelViewSet(ModelExportSerializerMixin, ModelImportSerializerMixin, ModelViewSet):
+class CustomModelViewSet(ModelViewSet):
     values_queryset = None
     ordering_fields = '__all__'
     create_serializer_class = None

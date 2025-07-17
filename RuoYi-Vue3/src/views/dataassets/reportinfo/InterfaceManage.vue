@@ -31,22 +31,26 @@
         <el-table-column prop="interface_db_name" label="数据库名称"/>
         <el-table-column prop="is_total" label="是否合计">
           <template #default="scope">
-            {{ scope.row.is_total }}
+            <!-- {{ scope.row.is_total }} -->
+              {{ interface_is_total.filter(item => item.value === scope.row.is_total)[0].label }}
           </template>
         </el-table-column>
         <el-table-column prop="is_paging" label="是否分页" width="80">
           <template #default="scope">
-            {{ scope.row.is_paging }}
+            <!-- {{ scope.row.is_paging }} -->
+            {{  interface_is_paging.filter(item => item.value === scope.row.is_paging)[0].label }}
           </template>
         </el-table-column>
         <el-table-column prop="is_date_option" label="是否日期查询">
           <template #default="scope">
-            {{ scope.row.is_date_option }}
+            <!-- {{ scope.row.is_date_option }} -->
+              {{ interface_is_date_option.filter(item => item.value === scope.row.is_date_option)[0].label }}
           </template>
         </el-table-column>
         <el-table-column prop="is_login_visit" label="是否需要登录">
             <template #default="scope">
-                {{ scope.row.is_login_visit }}
+                <!-- {{ scope.row.is_login_visit }} -->
+                  {{ interface_is_login_visit.filter(item => item.value === scope.row.is_login_visit)[0].label }}
             </template>
         </el-table-column>
         <el-table-column prop="updator_username" label="更新用户">
@@ -162,20 +166,23 @@
           </el-form-item>
           <el-form-item label="是否合计" prop="is_total">
             <el-radio-group v-model="formData.is_total">
-              <el-radio value="1">是</el-radio>
-              <el-radio value="0">否</el-radio>
+              <!-- <el-radio value="是">是</el-radio> -->
+              <!-- <el-radio value="否">否</el-radio> -->
+               <el-radio v-for="item in interface_is_total" :key="item.value" :label="item.value">{{ item.label }}</el-radio>"
             </el-radio-group>
           </el-form-item>
           <el-form-item label="是否分页" prop="is_paging">
             <el-radio-group v-model="formData.is_paging">
-              <el-radio value="1">是</el-radio>
-              <el-radio value="0">否</el-radio>
+              <!-- <el-radio value="1">是</el-radio>
+              <el-radio value="0">否</el-radio> -->
+              <el-radio v-for="item in interface_is_paging" :key="item.id" :value="item.value">{{ item.label }}</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="是否日期查询" prop="is_date_option">
             <el-radio-group v-model="formData.is_date_option">
-              <el-radio value="1">是</el-radio>
-              <el-radio value="0">否</el-radio>
+              <!-- <el-radio value="1">是</el-radio> -->
+              <!-- <el-radio value="0">否</el-radio> -->
+               <el-radio v-for="item in interface_is_date_option" :key="item.value" :value="item.value">{{ item.label }}</el-radio>"
             </el-radio-group>
           </el-form-item>
           <el-form-item label="接口sql" prop="interface_sql">
@@ -205,6 +212,9 @@ import QueryParamsForm from '@/components/QueryParamsForm'
 import CrudBar from '@/components/CrudBar'
 import { getDataSourceTypeList } from '@/api/dataassets/datasource'
 import { getPlatformList, getModuleList, getReportList, getInterfaceList, updateInterface, createInterface, deleteInterface, importInterface} from '@/api/dataassets/reportinfo'
+
+const { proxy } = getCurrentInstance()
+const { interface_is_paging, interface_is_total, interface_is_date_option, interface_is_login_visit } = proxy.useDict("interface_is_paging","interface_is_total","interface_is_date_option", "interface_is_login_visit")
 
 const router = useRouter()
 

@@ -2,13 +2,12 @@ from rest_framework.decorators import action
 from django.http.response import HttpResponseNotFound,HttpResponseServerError
 from django.conf import settings
 
-from utils.excel_response import ExcelResponse
-from utils.util_response import DetailResponse
+from utils.util_response import DetailResponse, ExcelResponse
 from ..models import *
 from .operation_excel import generate_interface_workbook, handle_import_interface, handle_import_tableinfo
 from hashlib import md5
 
-import os,logging 
+import logging 
 
 logger = logging.getLogger('django')
 
@@ -67,9 +66,10 @@ class ExcelImportExportMixin:
             fields = InterfaceField.objects.filter(interface_id = interface_id)
             if not fields:
                 fields = None
-            response = ExcelResponse(filename=f"{interface.report}-{interface.interface_name}.xlsx")
-            wb = generate_interface_workbook(interface, fields)
-            wb.save(response)
+            # interface_data = InterfaceInfoExportSerializer(interface).data
+            interface_data = self.get_serializer(interface).data
+            wb = generate_interface_workbook(interface_data, fields)
+            response = ExcelResponse(filename=f"{interface.report}-{interface.interface_name}.xlsx", workbook = wb)
             return response
         except Exception as e:
             logger.error(e)

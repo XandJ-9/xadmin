@@ -26,9 +26,8 @@ def set_area_border(ws,start_row,end_row,start_col,end_col):
         for col in range(start_col,end_col+1):
             ws.cell(row=row,column=col).border = DefaultStyle['border']
 
-def generate_interface_workbook(interface, fields):
+def generate_interface_workbook(data, fields):
 
-    data = InterfaceInfoSerializer(interface).data
     wb = Workbook()
     ws = wb.active
     ws.title = "report"

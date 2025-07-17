@@ -3,14 +3,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.viewsets import ViewSet
 from utils.viewset import CustomModelViewSet
 from .models import PlatformInfo, ModuleInfo, ReportInfo, InterfaceInfo, InterfaceField,InterfaceQueryLog
-from .serializers import (
-    PlatformInfoSerializer,
-    ModuleInfoSerializer,
-    ReportInfoSerializer,
-    InterfaceInfoSerializer,
-    InterfaceFieldSerializer,
-    InterfaceQueryLogSerializer
-)
+from .serializers import *
 from .utils.mixin_excel_import_export import ExcelImportExportMixin
 from .utils.mixin_interface_query import InterfaceQueryMixin 
 
@@ -55,6 +48,7 @@ class InterfaceFieldViewSet(CustomModelViewSet):
 
 class InterfaceImportExportViewSet(ExcelImportExportMixin, CustomModelViewSet):
     queryset = None
+    serializer_class = InterfaceInfoExportSerializer
 
 
 class InterfaceQueryViewSet(InterfaceQueryMixin, CustomModelViewSet):

@@ -84,3 +84,9 @@ Authorization: Bearer {{$dotenv accessToken}}
 ###
 GET {{host}}/api/system/user/69
 Authorization: Bearer {{$dotenv accessToken}}
+
+
+###
+# @name getUserList
+GET {{host}}/api/system/user?pageNum=1&pageSize=10
+Authorization: Bearer {{$dotenv accessToken}}

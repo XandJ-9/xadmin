@@ -2,6 +2,49 @@
 
 ###
 # 查询接口
-GET {{host}}/api/report/interfaces/ HTTP/1.1
+GET {{host}}/api/report/interfaces/3/ HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{$dotenv accessToken}}
+
+###
+# 导出
+GET {{host}}/api/report/interfaces/export/ HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{$dotenv accessToken}}
+
+
+
+###
+# 查询接口
+POST {{host}}/api/report/interface-query/?interface_code=ads_xl_ai_account_exhibit_hall
+Authorization: Bearer {{$dotenv accessToken}}
+
+
+###
+# 获取接口字段
+GET {{host}}/api/report/interface-fields/?interface=3&noPage=1
+Authorization: Bearer {{$dotenv accessToken}}
+
+
+
+###
+# 获取接口分页字典
+GET {{host}}/api/system/dict/data/type/interface_is_paging 
+Authorization: Bearer {{$dotenv accessToken}}
+
+
+###
+# 添加接口字典值
+
+POST {{host}}/api/system/dict/data HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{$dotenv accessToken}}
+
+{
+  "dictLabel": "否",
+  "dictValue": "0",
+  "dictType": "interface_is_login_visit",
+  "dictSort": 2,
+  "status": "0",
+  "remark": "接口是否登录验证"
+}
