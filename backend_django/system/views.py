@@ -428,7 +428,7 @@ class MenuViewSet(CustomModelViewSet):
         '''
         if self.action in ['create', 'update', 'partial_update', 'destroy','all']:
             return [IsAdminUser()]
-        elif self.action == 'user_menus':
+        elif self.action in ['user_menus','getRouters']:
             if self.request.user.is_authenticated:
                 # roles = self.request.user.user_roles.all()
                 roles = Role.objects.filter(id__in=self.request.user.user_roles.values_list('role_id', flat=True))

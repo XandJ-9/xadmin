@@ -33,7 +33,7 @@ router.beforeEach((to, from, next) => {
       next()
     } else {
       if (userStore.roles.length === 0) {
-        isRelogin.show = true
+        isRelogin.show = false
         // 判断当前用户是否已拉取完user_info信息
         userStore.getInfo()
         permissionStore.generateRoutes().then(accessRoutes => {

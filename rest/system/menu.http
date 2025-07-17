@@ -1,6 +1,9 @@
 @host = http://localhost:8000
 
 
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1Mjc3MTU4OSwiaWF0IjoxNzUyNjg1MTg5LCJqdGkiOiI4YWEyZDQxODg5NzI0MzQ3Yjk2YzZkZjVlNDMzN2QzNiIsInVzZXJfaWQiOjY5LCJ1dWlkIjoiYjAwMTJjNzUtM2ZlZi00OGI5LWFjYjMtNWUyNDM2YzVmZGNmIn0.HBQZ4Vwt-g-S3-PsbDiZ9_zI2ZXUuOVkoesrfm_OAr8
+
+
 ###
 # @name getRouters
 GET {{host}}/api/getRouters
