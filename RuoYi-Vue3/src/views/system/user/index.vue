@@ -316,30 +316,30 @@ watch(deptName, val => {
 })
 
 /** 查询用户列表 */
-function getList() {
+async function getList() {
   loading.value = true
-  listUser(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
+  await listUser(proxy.addDateRange(queryParams.value, dateRange.value)).then(res => {
     userList.value = res.data
     total.value = res.total
     loading.value = false
   })
 }
 
-function getPostlist() {
-    listPost({noPage:1}).then(res => {
+async function getPostlist() {
+    await listPost({noPage:1}).then(res => {
         postOptions.value = res.data
     })
 }
 
-function getRolelist() {
-    listRole({noPage:1}).then(res => {
+async function getRolelist() {
+    await listRole({noPage:1}).then(res => {
         roleOptions.value = res.data
     })
 }
 
 /** 查询部门下拉树结构 */
-function getDeptTree() {
-  deptTreeSelect().then(response => {
+async function getDeptTree() {
+  await deptTreeSelect().then(response => {
     deptOptions.value = response
     enabledDeptOptions.value = filterDisabledDept(JSON.parse(JSON.stringify(response)))
   })

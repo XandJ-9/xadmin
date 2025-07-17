@@ -80,9 +80,6 @@
       </el-table>
 
       <div class="card-footer">
-          <div class="add-btn">
-
-          </div>
             <!-- 分页 -->
             <Pagination
                 :total="total"

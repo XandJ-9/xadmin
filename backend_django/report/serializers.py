@@ -25,7 +25,7 @@ class ReportInfoSerializer(BaseModelSerializer):
         fields = '__all__'
         read_only_fields = ['id', 'creator', 'create_datetime', 'update_datetime']
 
-class InterfaceInfoSerializer(ChoiceFieldSerializerMixin,BaseModelSerializer):
+class InterfaceInfoSerializer(BaseModelSerializer):
     report_info = ReportInfoSerializer(source='report',read_only=True)
     class Meta:
         model = InterfaceInfo
@@ -34,7 +34,7 @@ class InterfaceInfoSerializer(ChoiceFieldSerializerMixin,BaseModelSerializer):
 
 
     
-class InterfaceFieldSerializer(ChoiceFieldSerializerMixin,BaseModelSerializer):
+class InterfaceFieldSerializer(BaseModelSerializer):
     class Meta:
         model = InterfaceField
         fields = '__all__'

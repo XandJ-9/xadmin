@@ -116,12 +116,12 @@ service.interceptors.response.use(res => {
             console.log(`relogin: ${isRelogin.show}`)
         if (!isRelogin.show) {
             isRelogin.show = true
+            removeToken()
           ElMessageBox.confirm('登录状态已过期，您可以继续留在该页面，或者重新登录', '系统提示', {
               confirmButtonText: '重新登录', cancelButtonText: '取消', type: 'warning' 
           }
           ).then(() => {
               isRelogin.show = false
-              removeToken()
               location.href = '/login'
             }).catch(() => {
                 isRelogin.show = false
