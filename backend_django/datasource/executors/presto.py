@@ -41,8 +41,13 @@ class PrestoQueryExecutor(QueryExecutor):
             connection = self.connect()
             cursor = connection.cursor()
             cursor.execute(sql)
+            colums = [desc[0] for desc in cursor.description]
+            results = []
             if sql.strip().lower().startswith('select'):
-                results = cursor.fetchmany(limit)
+                rows = cursor.fetchmany(limit)
+                for row in rows:
+                    results.append(dict(zip(colums, row)))
+
                 return {
                     'data': results,
                     'total': len(results)

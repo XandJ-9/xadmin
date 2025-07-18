@@ -207,7 +207,19 @@ const handleQuery = async () => {
         queryTabs.value.push(newTab)
         activeTab.value = newTabId
         editorHeight.value = 400
-        loading.value = false
+    }).catch (err => {
+    const newTab = {
+      id: newTabId,
+      label: `查询-${tabIndex.value}`,
+      sql: sql,
+      queryResult: [],
+      tableColumns: [],
+      error: err.response?.data.error || '查询执行失败'
+    }
+    queryTabs.value.push(newTab)
+    activeTab.value = newTabId
+    }).finally(() => {
+    loading.value = false
   })
   
 //   try {

@@ -232,15 +232,32 @@ const sqlCodeBlock = ref(null)
 
 // 复制SQL功能
 const copySql = () => {
-  if (currentQuery.value.sql) {
-    navigator.clipboard.writeText(currentQuery.value.sql)
-      .then(() => {
-        ElMessage.success('SQL已复制到剪贴板')
-      })
-      .catch(() => {
-        ElMessage.error('复制失败，请手动复制')
-      })
-  }
+    if (currentQuery.value.sql) {
+        if (window.isSecureContext && navigator.clipboard) {
+            navigator.clipboard.writeText(currentQuery.value.sql)
+                .then(() => {
+                    ElMessage.success('SQL已复制到剪贴板')
+                })
+                .catch(() => {
+                    ElMessage.error('复制失败，请手动复制')
+                })
+        } else {
+            try {
+                const textarea = document.createElement("textarea");
+                textarea.value = currentQuery.value.sql;
+                textarea.style.position = "absolute";
+                textarea.style.opacity = "0";
+                document.body.appendChild(textarea);
+                textarea.select();
+                const success = document.execCommand("copy");
+                document.body.removeChild(textarea);
+                ElMessage.success('SQL已复制到剪贴板')
+            } catch (error) {
+                ElMessage.error('复制失败，请手动复制')
+            }
+
+        }
+    }
 }
 
 // 监听对话框显示状态，当对话框显示时应用代码高亮
