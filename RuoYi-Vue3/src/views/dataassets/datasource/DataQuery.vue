@@ -30,7 +30,7 @@
       </div>
       
 
-      <div class="query-result" v-show="activeTab !== ''">
+      <div class="query-result" v-if="queryTabs.length > 0">
       <div class="resizer" @mousedown="startResize"></div>
         <el-tabs
             v-model="activeTab" 
@@ -45,14 +45,28 @@
             :label="tab.label"
             :name="tab.id"
             >
-            <QueryResult
-                :query-result="tab.queryResult"
-                :table-columns="tab.tableColumns"
-                :loading="loading"
-                :error="tab.error"
-                class="query-result"
-            />
+            <template #label>
+                <el-tooltip
+                    class="box-item"
+                    effect="dark"
+                    :content="tab.sql"
+                    placement="top"
+                >
+                    <span>{{ tab.label }}</span>
+                </el-tooltip>
+            </template>
+            <template #default> 
+            
+                <QueryResult
+                    :query-result="tab.queryResult"
+                    :table-columns="tab.tableColumns"
+                    :loading="loading"
+                    :error="tab.error"
+                    class="query-result"
+                />
+            </template>
             </el-tab-pane>
+
         </el-tabs>
       </div>
 
@@ -60,13 +74,8 @@
   </div>
 </template>
 
-<script>
-export default {
-    name: 'DataQuery',
-}
-</script>
 
-<script setup>
+<script setup name="DataQuery">
 import { ref, onMounted, onUnmounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import MonacoEditor from '@/components/MonacoEditor'

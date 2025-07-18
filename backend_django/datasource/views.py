@@ -41,7 +41,7 @@ class DataSourceViewSet(viewsets.ModelViewSet):
         type_set = set(type_list)
         return Response(type_set)
 
-    @action(detail=True, methods=['post'], url_path='test')
+    @action(detail=True, methods=['get'], url_path='test')
     def test_connection(self, request, pk=None):
         datasource = self.get_object()
         executor = QueryExecutorFactory.get_executor(datasource.type, host=datasource.host, port=datasource.port,database= datasource.database, username =datasource.username, password=datasource.password)
@@ -69,22 +69,17 @@ class DataSourceViewSet(viewsets.ModelViewSet):
                 {'error': 'SQL语句不能为空'},
                 status=status.HTTP_400_BAD_REQUEST
             )
-
-
-
+        if sql.strip().endswith(';'):
+            sql = sql[:-1]
+            
         try:
-            with SSHTunnelForwarder((settings.REMOTE_SERVER_IP, settings.REMOTE_SERVER_PORT),
-            ssh_username=settings.REMOTE_USER,
-            ssh_password=settings.REMOTE_PASSWORD,
-            remote_bind_address=(settings.PRIVATE_SERVER_IP, datasource.port),
-            local_bind_address=('0.0.0.0', datasource.port)) as server:
-                executor = QueryExecutorFactory.get_executor(datasource.type, 
-                            host=datasource.host, 
-                            port=datasource.port,
-                            database= datasource.database, 
-                            username =datasource.username, 
-                            password=datasource.password)
-                result = executor.execute_query(sql, limit)
+            executor = QueryExecutorFactory.get_executor(datasource.type, 
+                        host=datasource.host, 
+                        port=datasource.port,
+                        database= datasource.database, 
+                        username =datasource.username, 
+                        password=datasource.password)
+            result = executor.execute_query(sql, limit)
             return Response(result)
         except Exception as e:
             logger.error(f'SQL执行失败: {str(e)}')
@@ -92,7 +87,17 @@ class DataSourceViewSet(viewsets.ModelViewSet):
                 {'error': str(e)},
                 status=status.HTTP_200_OK
             )
-            
+        
+    @action(detail=True, methods=['get'], url_path='show_tables')
+    def show_tables(self, request, pk=None):
+        datasource = self.get_object()
+        executor = QueryExecutorFactory.get_executor(datasource.type,
+                                                     host=datasource.host, 
+                                                     port=datasource.port,
+                                                     database= datasource.database,
+                                                     username =datasource.username, 
+                                                     password=datasource.password)
+        return Response(executor.table_list())
 
 class QueryLogViewSet(CustomModelViewSet):
     queryset = QueryLog.objects.all()

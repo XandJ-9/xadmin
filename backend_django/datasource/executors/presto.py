@@ -3,38 +3,41 @@ from pyhive import presto, hive
 from sshtunnel import SSHTunnelForwarder
 from pathlib import Path
 from .base import QueryExecutor
+from django.conf import settings
+import prestodb
 
+
+REMOTE_SERVER = SSHTunnelForwarder((settings.REMOTE_SERVER_IP, settings.REMOTE_SERVER_PORT),
+            ssh_username=settings.REMOTE_USER,
+            ssh_password=settings.REMOTE_PASSWORD,
+            remote_bind_address=(settings.PRIVATE_SERVER_IP, 8084),
+            local_bind_address=('127.0.0.1', 8084))
 
 class PrestoQueryExecutor(QueryExecutor):
-    # def connect(self) -> prestodb.Connection:
-    #     return prestodb.dbapi.connect(
-    #         host=self.host,
-    #         port=self.port,
-    #         user=self.username,
-    #         catalog=self.database,
-    #         schema=self.database
-    #         )
 
-    def connect(self)->presto.Connection:
-        self.password = None
-        if self.password:
-            return presto.connect(host=self.host, port=self.port, user=self.username, password=self.password, protocol = 'https', schema=self.database)
-        else:
-            print(f'{self.username} {self.password} {self.host} {self.port} {self.database}')
-            return presto.connect(host=self.host, port=self.port, username=self.username, password = self.password, schema=self.database)
-        # return presto.connect(*self._args, **self._kwargs)
+    def connect(self):
+        # connection = presto.connect(host=self.host, port=self.port, username=self.username, schema=self.database)
+        return prestodb.dbapi.connect(host=self.host, 
+                                            port=self.port, 
+                                            user=self.username, 
+                                            catalog='hive',
+                                            schema=self.database
+                                        )
+    
     def test_connection(self) -> bool:
         try:
+            REMOTE_SERVER.start()
             connection = self.connect()
             cursor = connection.cursor()
-            cursor.execute("SELECT 1")
+            cursor.execute("show tables")
             connection.close()
             return True
-        except Exception:
+        except Exception as e:
             return False
 
     def execute_query(self, sql: str, limit: Optional[int] = 10000) -> Dict[str, Any]:
         try:
+            REMOTE_SERVER.start()  ## 本地测试使用隧道代理访问服务器服务
             connection = self.connect()
             cursor = connection.cursor()
             cursor.execute(sql)
@@ -91,7 +94,7 @@ if __name__ == '__main__':
             ## password='0S^tNOHRgNMw',
             database='dwd'
         )
-        res=executor.execute_query('select current_time')
+        res=executor.execute_query('select * from ods_newlink.dy_account limit 10')
     # executor = PrestoQueryExecutor(
     #     host='localhost',
     #     port=8084,

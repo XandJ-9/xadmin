@@ -45,7 +45,7 @@ export function getDataSourceTypeList() {
 export function testDataSourceConnection(id) {
   return request({
     url: `/datasources/${id}/test/`,
-    method: 'post'
+    method: 'get'
   })
 }
 

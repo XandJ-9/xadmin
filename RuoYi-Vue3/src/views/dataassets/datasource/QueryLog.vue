@@ -1,5 +1,5 @@
 <template>
-  <div class="query-log-container">
+  <div class="app-container">
   
       <div class="filter-container">
         <el-form :inline="true" :model="filterForm">
@@ -49,33 +49,33 @@
           </template>
         </el-table-column>
         <el-table-column prop="execution_time" label="执行时间(ms)" width="120"></el-table-column>
-        <el-table-column prop="sql" label="SQL语句">
+        <el-table-column prop="sql" label="SQL语句" show-overflow-tooltip>
           <template #default="scope">
-            <el-tooltip 
-              class="box-item" 
-              effect="dark" 
-              :content="scope.row.sql" 
-              placement="top-start"
-              :hide-after="0"
-            >
+            <!-- <el-tooltip  -->
+              <!-- class="box-item"  -->
+              <!-- effect="dark"  -->
+              <!-- :content="scope.row.sql"  -->
+              <!-- placement="top-start" -->
+              <!-- :hide-after="0" -->
+            <!-- > -->
               <div class="sql-content">{{ scope.row.sql }}</div>
-            </el-tooltip>
+            <!-- </el-tooltip> -->
           </template>
         </el-table-column>
-        <el-table-column prop="error_message" label="错误信息">
+        <el-table-column prop="error_message" label="错误信息" show-overflow-tooltip>
           <template #default="scope">
-            <el-tooltip
-              class="box-item"
-              effect="dark"
-              :content="scope.row.error_message"
-              placement="top-start"
-              :hide-after="0"
-              >
+            <!-- <el-tooltip -->
+              <!-- class="box-item" -->
+              <!-- effect="dark" -->
+              <!-- :content="scope.row.error_message" -->
+              <!-- placement="top-start" -->
+              <!-- :hide-after="0" -->
+              <!-- > -->
               <span v-if="scope.row.status === 'error'" class="error-message">
               {{ scope.row.error_message }}
               </span>
               <span v-else>-</span>
-            </el-tooltip>
+            <!-- </el-tooltip> -->
 
           </template>
         </el-table-column>
@@ -93,12 +93,13 @@
         </el-table-column>
       </el-table>
 
-    <pagination v-show="pagination.total > 0" 
-      :total="pagination.total"
-      v-model:page="pagination.currentPage" 
-      v-model:limit="pagination.pageSize" 
+    <pagination v-show="pageInfo.total > 0" 
+      :total="pageInfo.total"
+      v-model:page="pageInfo.currentPage" 
+      v-model:limit="pageInfo.pageSize" 
       @pagination="searchLogs"
     />
+
     <!-- 查询详情对话框 -->
     <el-dialog
       v-model="dialogVisible"
@@ -175,7 +176,6 @@
 <script setup name="QueryLog">
 import { ref, onMounted, nextTick, watch, reactive } from 'vue'
 import { ElMessage } from 'element-plus'
-import request from '@/utils/request'
 import { useRouter } from 'vue-router'
 import hljs from 'highlight.js/lib/core'
 import sql from 'highlight.js/lib/languages/sql'
@@ -198,7 +198,7 @@ const filterForm = ref({
 })
 
 // 分页信息
-const pagination = reactive({
+const pageInfo = reactive({
   currentPage: 1,
   pageSize: 10,
   total: 0
@@ -255,12 +255,6 @@ watch(dialogVisible, (newVal) => {
 
 // 获取数据源列表
 const fetchDataSources = async () => {
-//   try {
-//     const response = await request.get('/api/datasources/')
-//     dataSourcesOptions.value = response.data
-//   } catch (error) {
-//     // ElMessage.error('获取数据源列表失败')
-    //   }
     getDataSourceList().then((response) => { 
     dataSourcesOptions.value = response
     })
@@ -272,8 +266,8 @@ const searchLogs = async () => {
   try {
     // 构建查询参数
     const params = {
-      pageNum: pagination.currentPage,
-      pageSize: pagination.pageSize,
+      pageNum: pageInfo.currentPage,
+      pageSize: pageInfo.pageSize,
       status: filterForm.value.status,
       datasource_id: filterForm.value.dataSourceId
     }
@@ -286,7 +280,7 @@ const searchLogs = async () => {
     
     await getQueryLogs(params).then(res => {
           logData.value = res.data
-          pagination.total = res.total
+          pageInfo.total = res.total
     })
   } catch (error) {
     // ElMessage.error('获取查询日志失败')
@@ -302,19 +296,19 @@ const resetFilter = () => {
     dataSourceId: '',
     dateRange: []
   }
-  pagination.currentPage = 1
+  pageInfo.currentPage = 1
   searchLogs()
 }
 
 // 处理每页显示数量变化
 const handleSizeChange = (size) => {
-  pagination.pageSize = size
+  pageInfo.pageSize = size
   searchLogs()
 }
 
 // 处理页码变化
 const handleCurrentChange = (page) => {
-  pagination.currentPage = page
+  pageInfo.currentPage = page
   searchLogs()
 }
 
@@ -369,9 +363,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.query-log-container {
-  padding: 20px;
-}
+
 
 /* .box-card {
   margin-top: 20px;
