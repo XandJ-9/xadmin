@@ -127,9 +127,9 @@
               <!-- <el-tooltip content="数据权限" placement="top" v-if="scope.row.roleId !== 1">
                 <el-button link type="primary" icon="CircleCheck" @click="handleDataScope(scope.row)" v-hasPermi="['system:role:edit']"></el-button>
               </el-tooltip> -->
-              <el-tooltip content="分配用户" placement="top" v-if="scope.row.roleId !== 1">
+              <!-- <el-tooltip content="分配用户" placement="top" v-if="scope.row.roleId !== 1">
                 <el-button link type="primary" icon="User" @click="handleAuthUser(scope.row)" v-hasPermi="['system:role:edit']"></el-button>
-              </el-tooltip>
+              </el-tooltip> -->
             </template>
          </el-table-column>
       </el-table>
@@ -171,11 +171,11 @@
                   >{{ dict.label }}</el-radio>
                </el-radio-group>
             </el-form-item>
-            <el-form-item label="菜单权限">
+            <!-- <el-form-item label="菜单权限">
                <el-checkbox v-model="menuExpand" @change="handleCheckedTreeExpand($event, 'menu')">展开/折叠</el-checkbox>
                <el-checkbox v-model="menuNodeAll" @change="handleCheckedTreeNodeAll($event, 'menu')">全选/全不选</el-checkbox>
-               <el-checkbox v-model="form.menuCheckStrictly" @change="handleCheckedTreeConnect($event, 'menu')">父子联动</el-checkbox>
-               <el-tree
+               <el-checkbox v-model="form.menuCheckStrictly" @change="handleCheckedTreeConnect($event, 'menu')">父子联动</el-checkbox> -->
+               <!-- <el-tree
                   class="tree-border"
                   :data="menuOptions"
                   show-checkbox
@@ -184,8 +184,8 @@
                   :check-strictly="!form.menuCheckStrictly"
                   empty-text="加载中，请稍候"
                   :props="{ label: 'menuName', children: 'children' }"
-               ></el-tree>
-            </el-form-item>
+               ></el-tree> -->
+            <!-- </el-form-item> -->
             <el-form-item label="备注">
                <el-input v-model="form.remark" type="textarea" placeholder="请输入内容"></el-input>
             </el-form-item>
@@ -248,9 +248,10 @@
 </template>
 
 <script setup name="Role">
+import { useRouter } from "vue-router"
 import { addRole, changeRoleStatus, dataScope, delRole, getRole, listRole, updateRole, deptTreeSelect } from "@/api/system/role"
-import {exportRole} from "@/api/export"
-import { roleMenuTreeselect, treeselect as menuTreeselect } from "@/api/system/menu"
+import { exportRole } from "@/api/export"
+import { menuTree } from "@/api/system/menu"
 import RolePermission from "./RolePermission.vue"
 
 const router = useRouter()
@@ -275,6 +276,7 @@ const deptNodeAll = ref(false)
 const deptOptions = ref([])
 const openDataScope = ref(false)
 const menuRef = ref(null)
+const selectedMenuIds = ref([])
 const deptRef = ref(null)
 // 角色权限编辑相关
 const rolePermissionRef = ref(null)
@@ -342,9 +344,6 @@ function handleDelete(row) {
 
 /** 导出按钮操作 */
 function handleExport() {
-//   proxy.download("system/role/export", {
-//     ...queryParams.value,
-//   }, `role_${new Date().getTime()}.xlsx`)
     exportRole({...queryParams.value}, { roleIds: ids.value })
 }
 
@@ -387,8 +386,8 @@ function handleAuthUser(row) {
 }
 
 /** 查询菜单树结构 */
-function getMenuTreeselect() {
-  menuTreeselect().then(response => {
+function getMenuTree() {
+  menuTree().then(response => {
     menuOptions.value = response
   })
 }
@@ -430,41 +429,36 @@ function reset() {
 /** 添加角色 */
 function handleAdd() {
   reset()
-  getMenuTreeselect()
+  getMenuTree()
   open.value = true
   title.value = "添加角色"
 }
 
 /** 修改角色 */
-function handleUpdate(row) {
-  reset()
-  getMenuTreeselect()
+async function handleUpdate(row) {
+  await Promise.all(
+    [
+      reset(),
+      getMenuTree()
+    ]
+  )
+
   const roleId = row.roleId || ids.value
-  const roleMenu = getRoleMenuTreeselect(roleId)
-  getRole(roleId).then(response => {
+  await getRole(roleId).then(response => {
     form.value = response.data
     form.value.roleSort = Number(form.value.roleSort)
     open.value = true
-    nextTick(() => {
-      roleMenu.then((res) => {
-        let checkedKeys = res
-        checkedKeys.forEach((v) => {
-          nextTick(() => {
-            menuRef.value.setChecked(v, true, false)
-          })
-        })
+    selectedMenuIds.value = response.data.menuIds
+  })
+
+  nextTick(() => {
+    if (menuRef.value && selectedMenuIds.value.length > 0) {
+      selectedMenuIds.value.forEach(id => {
+        menuRef.value.setChecked(id, true, false)
       })
-    })
+    }
   })
   title.value = "修改角色"
-}
-
-/** 根据角色ID查询菜单树结构 */
-function getRoleMenuTreeselect(roleId) {
-  return roleMenuTreeselect(roleId).then(response => {
-    menuOptions.value = response.menus
-    return response
-  })
 }
 
 /** 根据角色ID查询部门树结构 */

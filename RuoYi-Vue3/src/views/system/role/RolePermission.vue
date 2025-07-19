@@ -43,8 +43,7 @@
 <script setup>
 import { ref, reactive, nextTick } from 'vue'
 import { ElMessage } from 'element-plus'
-import request from '@/utils/request'
-import { treeselect, roleMenuTreeselect } from '@/api/system/menu'
+import { menuTree } from '@/api/system/menu'
 import { updateRoleMenu , roleMenu} from '@/api/system/role'
 
 const { proxy } = getCurrentInstance()
@@ -87,8 +86,6 @@ const open = async (roleData) => {
   // 设置选中状态
   nextTick(() => {
     if (menuTreeRef.value && selectedMenuIds.value.length > 0) {
-      console.log('selectedMenuIds.value', selectedMenuIds.value)
-      // menuTreeRef.value.setCheckedKeys(selectedMenuIds.value,true)
       selectedMenuIds.value.forEach(id => {
         menuTreeRef.value.setChecked(id, true, false)
       })
@@ -99,27 +96,30 @@ const open = async (roleData) => {
 // 获取菜单列表
 const fetchMenuList = async () => {
   loading.value = true
-  try {
-    // const response = await request.get('/api/menus/all/')
-    const response = await treeselect()
-    // menuTreeData.value = listToTree(response.data)
+  await menuTree().then(response => {
     menuTreeData.value = response
-  } catch (error) {
-    console.error('获取菜单列表失败:', error)
-    ElMessage.error('获取菜单列表失败')
-  } finally {
     loading.value = false
-  }
+  }).catch(error => {
+    ElMessage.error('获取菜单列表失败')
+  })
+  // try {
+  //   // const response = await request.get('/api/menus/all/')
+  //   const response = await menuTree()
+  //   // menuTreeData.value = listToTree(response.data)
+  // } catch (error) {
+  //   console.error('获取菜单列表失败:', error)
+  //   ElMessage.error('获取菜单列表失败')
+  // } finally {
+  //   loading.value = false
+  // }
 }
 
 // 获取角色权限
 const fetchRolePermissions = async (roleId) => {
   try {
     // 这里假设后端有获取角色权限的API
-    // const response = await request.get(`/api/roles/${roleId}/menus/`)
     const response = await roleMenu(roleId)
     selectedMenuIds.value = response.menu_ids
-    console.log(selectedMenuIds.value)
   } catch (error) {
     console.error('获取角色权限失败:', error)
     ElMessage.error('获取角色权限失败')

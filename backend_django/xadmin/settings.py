@@ -264,8 +264,8 @@ EMAIL_USE_SSL=env('EMAIL_USE_SSL')
 
 
 
-REMOTE_SERVER_IP = env('REMOTE_SERVER')  # 本地可访问的服务器地址
-REMOTE_SERVER_PORT = int(env('REMOTE_SERVER_PORT'))   # 本地可访问的远程端口
-PRIVATE_SERVER_IP = env('PRIVATE_SERVER')  # 本地无法访问，但是中间服务器可访问
-REMOTE_PASSWORD = env('REMOTE_PASSWORD')
-REMOTE_USER = env('REMOTE_USER')
+REMOTE_SERVER_IP = env('REMOTE_SERVER',default='')  # 本地可访问的服务器地址
+REMOTE_SERVER_PORT = int(env('REMOTE_SERVER_PORT', default=22))   # 本地可访问的远程端口
+PRIVATE_SERVER_IP = env('PRIVATE_SERVER', default='')  # 本地无法访问，但是中间服务器可访问
+REMOTE_PASSWORD = env('REMOTE_PASSWORD',default='')
+REMOTE_USER = env('REMOTE_USER', default='')

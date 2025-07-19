@@ -534,7 +534,7 @@ class MenuViewSet(CustomModelViewSet):
         return Response(tree_data, status=status.HTTP_200_OK)
     
     @action(methods=['get'], detail=False)
-    def treeselect(self, request):
+    def tree(self, request):
         ser = MenuSerializer(Menu.objects.all(), many=True)
         tree_data = build_tree(ser.data, parent_id=None, parent_field_name='parentId', pk_field_name='menuId')
         return Response(tree_data, status=status.HTTP_200_OK)

@@ -118,7 +118,11 @@ export function deptTreeSelect(roleId) {
   })
 }
 
-// 根据角色id查询菜单
+/**
+ * 根据角色id查询菜单
+ * @param {*} roleId 
+ * @returns 
+ */
 export function roleMenu(roleId) {
   return request({
     url: `/system/role/${roleId}/menus`,
