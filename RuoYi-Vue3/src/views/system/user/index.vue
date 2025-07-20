@@ -1,9 +1,9 @@
 <template>
   <div class="app-container">
     <el-row :gutter="20">
-      <splitpanes :horizontal="appStore.device === 'mobile'" class="default-theme">
+      <!-- <splitpanes :horizontal="appStore.device === 'mobile'" class="default-theme"> -->
         <!--部门数据-->
-        <pane size="16">
+        <!-- <pane size="16">
           <el-col>
             <div class="head-container">
               <el-input v-model="deptName" placeholder="请输入部门名称" clearable prefix-icon="Search" style="margin-bottom: 20px" />
@@ -12,9 +12,9 @@
               <el-tree :data="deptOptions" :props="{ label: 'deptName', children: 'children' }" :expand-on-click-node="false" :filter-node-method="filterNode" ref="deptTreeRef" node-key="id" highlight-current default-expand-all @node-click="handleNodeClick" />
             </div>
           </el-col>
-        </pane>
+        </pane> -->
         <!--用户数据-->
-        <pane size="84">
+        <!-- <pane size="84"> -->
           <el-col>
             <el-form :model="queryParams" ref="queryRef" :inline="true" v-show="showSearch" label-width="68px">
               <el-form-item label="用户名称" prop="username">
@@ -109,8 +109,8 @@
               v-model:limit="queryParams.pageSize" 
               @pagination="getList" />
           </el-col>
-        </pane>
-      </splitpanes>
+        <!-- </pane> -->
+      <!-- </splitpanes> -->
     </el-row>
 
     <!-- 添加或修改用户配置对话框 -->
@@ -228,7 +228,7 @@
 <script setup name="User">
 import { getToken } from "@/utils/auth"
 import useAppStore from '@/store/modules/app'
-import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser } from "@/api/system/user"
+import { changeUserStatus, listUser, resetUserPwd, delUser, getUser, updateUser, addUser, updateAuthRole, updateUserPost } from "@/api/system/user"
 import { exportUser, userImportTemplate } from "@/api/export"
 import { deptTreeSelect } from "@/api/system/dept"
 import { listPost } from "@/api/system/post"
@@ -539,6 +539,12 @@ function submitForm() {
     if (valid) {
       if (form.value.userId != undefined) {
         updateUser(form.value).then(response => {
+          if (form.value.roleIds) {
+            updateAuthRole(form.value.userId, { "roleIds": form.value.roleIds })
+          }
+          if (form.value.postIds) {
+            updateUserPost(form.value.userId, { "postIds": form.value.postIds })
+          }
           proxy.$modal.msgSuccess("修改成功")
           open.value = false
           getList()

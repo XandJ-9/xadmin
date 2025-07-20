@@ -333,8 +333,8 @@ class UserViewSet(ModelImportExportViewSet):
             user.email_user(subject='密码重置成功',
                         message= mail_msg)
         return Response({'message': '密码重置成功','data': ser.data}, status=status.HTTP_200_OK)
-    @action(detail=True, methods=['get'], url_path='authRole')
-    def authRole(self, request, pk=None):
+    @action(detail=True, methods=['get'])
+    def getAuthRole(self, request, pk=None):
         user = self.get_object()
         user_roles = user.user_roles.all().values_list('role_id', flat=True)
         roles = Role.objects.all()
@@ -344,6 +344,29 @@ class UserViewSet(ModelImportExportViewSet):
             'roles': RoleSerializer(roles, many=True).data
         }
         return Response(ret)
+    
+    @action(detail=True, methods=['put'])
+    def updateUserPost(self, request, pk=None):
+        user = self.get_object()
+        post_ids = request.data.get('postIds',[])
+
+        # 判断岗位id是否都存在
+        valid_post_ids = set(Post.objects.filter(id__in=post_ids).values_list('id', flat=True))
+        invalid_post_ids = set(post_ids) - valid_post_ids
+
+        existed_post_ids = user.user_posts.values_list('post_id', flat=True)
+        delete_post_ids =set(existed_post_ids) - set(post_ids)
+        UserPost.objects.filter(user_id=user.id, post_id__in=delete_post_ids).delete()
+        new_post_ids = set(post_ids) - set(existed_post_ids)
+        # UserPost.objects.bulk_create([UserPost(user_id=user.id, post_id=post_id) for post_id in new_post_ids])
+        ser = UserPostSerializer(data=[{'user':user.id, 'post':post_id} for post_id in new_post_ids], many=True, request=request)
+        if ser.is_valid(raise_exception=True):
+            ser.save()
+        new_post_ids = user.user_posts.all().values_list('post_id', flat=True)
+        return Response({
+            'message': '更新岗位成功',
+            'post_ids': new_post_ids
+        })
 
     @action(detail=True, methods=['put'])
     def updateAuthRole(self, request, pk=None):
@@ -370,8 +393,8 @@ class UserViewSet(ModelImportExportViewSet):
         if invalid_ids:
             return Response({'error': f'角色ID不存在: {list(invalid_ids)}'}, status=status.HTTP_400_BAD_REQUEST)
 
-        existed_role_ids = UserRole.objects.filter(user_id=user.id).values_list('role_id', flat=True)
-        
+        # existed_role_ids = UserRole.objects.filter(user_id=user.id).values_list('role_id', flat=True)
+        existed_role_ids = user.user_roles.values_list('role_id', flat=True)
         # 删除原有的用户角色关联
         delete_role_ids = set(existed_role_ids) - set(role_ids)
         # for roleId in delete_role_ids:
@@ -437,6 +460,7 @@ class MenuViewSet(CustomModelViewSet):
             if self.request.user.is_authenticated:
                 # roles = self.request.user.user_roles.all()
                 roles = Role.objects.filter(id__in=self.request.user.user_roles.values_list('role_id', flat=True))
+                print(f'roles: {roles}')
                 return [HasRolePermission(allowed_roles = [role.role_key for role in roles])]
         return [IsAdminUser()]
 

@@ -82,7 +82,7 @@ Authorization: Bearer {{$dotenv accessToken}}
 
 
 ###
-GET {{host}}/api/system/user/69
+GET {{host}}/api/system/user/83
 Authorization: Bearer {{$dotenv accessToken}}
 
 
@@ -90,3 +90,34 @@ Authorization: Bearer {{$dotenv accessToken}}
 # @name getUserList
 GET {{host}}/api/system/user?pageNum=1&pageSize=10
 Authorization: Bearer {{$dotenv accessToken}}
+
+
+###
+# @name getAuthRole
+GET {{host}}/api/system/user/79/getAuthRole
+Authorization: Bearer {{$dotenv accessToken}}
+
+###
+# @name updateAuthRole
+PUT {{host}}/api/system/user/79/updateAuthRole
+Authorization: Bearer {{$dotenv accessToken}}
+Content-Type: application/json
+
+{
+  "roleIds": [
+    5
+  ]
+}
+
+
+###
+# @name updateUserPost
+PUT {{host}}/api/system/user/79/updateUserPost
+Authorization: Bearer {{$dotenv accessToken}}
+Content-Type: application/json
+
+{
+  "postIds": [
+    5
+  ]
+}

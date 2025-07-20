@@ -114,7 +114,7 @@ export function uploadAvatar(data) {
 // 查询授权角色
 export function getAuthRole(userId) {
   return request({
-    url: '/system/user/' + userId + '/authRole',
+    url: '/system/user/' + userId + '/getAuthRole',
     method: 'get'
   })
 }
@@ -129,3 +129,10 @@ export function updateAuthRole(userId,data) {
 }
 
 
+export function updateUserPost(userId, data) {
+  return request({
+    url: '/system/user/'+ userId +'/updateUserPost',
+    method: 'put',
+    data: data
+  })
+}

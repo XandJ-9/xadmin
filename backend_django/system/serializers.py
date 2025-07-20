@@ -100,6 +100,11 @@ class UserRoleSerializer(SystemBaseSerializer):
         model = UserRole
         fields = ['id', 'user', 'role','creator','updator']
 
+class UserPostSerializer(SystemBaseSerializer):
+    class Meta:
+        model = UserPost
+        fields = ['id', 'user', 'post','creator','updator']
+
 class MenuSerializer(SystemBaseSerializer):
     menuId = serializers.IntegerField(source='id', read_only=True)
     parentId  = serializers.IntegerField(source='parent.id', required=False)
