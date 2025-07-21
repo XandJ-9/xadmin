@@ -27,6 +27,15 @@ class ModelImportSerializerMixin:
     # 表格表头最大宽度，默认50个字符
     export_column_width = 50
 
+    def get_import_serializer_class(self):
+        """
+        获取导入序列化器
+        :return:
+        """
+        if self.import_serializer_class:
+            return self.import_serializer_class
+        raise ValueError(f"'{self.__class__.__name__}' 请配置对应的导入序列化器。")
+    
     def is_number(self,num):
         try:
             float(num)
@@ -149,7 +158,7 @@ class ModelImportSerializerMixin:
                 filter_dic = {'id':ele.get('id')}
                 instance = filter_dic and queryset.filter(**filter_dic).first()
                 # print(156,ele)
-                serializer = self.import_serializer_class(instance, data=ele, request=request)
+                serializer = self.get_import_serializer_class(instance, data=ele, request=request)
                 serializer.is_valid(raise_exception=True)
                 serializer.save()
             return DetailResponse(msg=f"导入成功！")
@@ -158,8 +167,7 @@ class ModelImportSerializerMixin:
     def import_template(self,request):
         queryset = self.filter_queryset(self.get_queryset())
         assert self.import_field_dict, "'%s' 请配置对应的导入模板字段。" % self.__class__.__name__
-        assert self.import_serializer_class, "'%s' 请配置对应的导入序列化器。" % self.__class__.__name__
-        data = self.import_serializer_class(queryset, many=True, request=request).data
+        data = self.get_import_serializer_class(queryset, many=True, request=request).data
         # 导出excel 表
         response = HttpResponse(content_type="application/msexcel")
         response["Access-Control-Expose-Headers"] = f"Content-Disposition"
@@ -258,6 +266,15 @@ class ModelExportSerializerMixin:
     # 表格表头最大宽度，默认50个字符
     export_column_width = 50
 
+    def get_export_serializer_class(self):
+        """
+        获取导出序列化器
+        :return:
+        """
+        if self.export_serializer_class:
+            return self.export_serializer_class
+        raise ValueError(f"'{self.__class__.__name__}' 请配置对应的导出序列化器。")
+    
     def is_number(self,num):
         try:
             float(num)
@@ -288,15 +305,6 @@ class ModelExportSerializerMixin:
             length += 2.1 if ord(char) > 256 else 1
         return round(length, 1) if length <= self.export_column_width else self.export_column_width
 
-    def get_export_serializer_class(self):
-        """
-        获取导出序列化器
-        :return:
-        """
-        if self.export_serializer_class:
-            return self.export_serializer_class
-        raise ValueError(f"'{self.__class__.__name__}' 请配置对应的导出序列化器。")
-
     @action(methods=['post'],detail=False, url_path='export', url_name='model-export')
     def export_data(self, request: Request, *args, **kwargs):
         """
@@ -306,11 +314,9 @@ class ModelExportSerializerMixin:
         :param kwargs:
         :return:
         """
-        export_serializer_class = self.get_export_serializer_class()
         queryset = self.filter_queryset(self.get_queryset())
         assert self.export_field_label, "'%s' 请配置对应的导出模板字段。" % self.__class__.__name__
-        assert export_serializer_class, "'%s' 请配置对应的导出序列化器。" % self.__class__.__name__
-        data = export_serializer_class(queryset, many=True, request=request).data
+        data = self.get_export_serializer_class(queryset, many=True, request=request).data
         # 导出excel 表
         response = HttpResponse(content_type="application/msexcel")
         response["Access-Control-Expose-Headers"] = f"Content-Disposition"

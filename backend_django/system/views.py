@@ -35,13 +35,17 @@ class SystemViewMixin:
 
 
 class ModelImportExportViewSet(ModelImportSerializerMixin,ModelExportSerializerMixin,SystemViewMixin,CustomModelViewSet):
-    pass
+    def get_export_serializer_class(self):
+        return self.export_serializer_class or self.serializer_class
+    
+    def get_import_serializer_class(self):
+        return self.import_serializer_class or self.serializer_class
 
-class PostViewSet(SystemViewMixin,CustomModelViewSet):
+class PostViewSet(ModelImportExportViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
 
-class DeptViewSet(CustomModelViewSet):
+class DeptViewSet(ModelImportExportViewSet):
     queryset = Dept.objects.all()
     serializer_class = DeptSerializer
     # permission_classes = [IsAdminUser]
