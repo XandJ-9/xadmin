@@ -16,8 +16,9 @@ Authorization: Bearer {{$dotenv accessToken}}
 
 ###
 # 查询接口
-POST {{host}}/api/report/interface-query/?interface_code=ads_xl_ai_account_exhibit_hall
+POST {{host}}/api/report/interface-query/?interface_code=ads_xl_volvo_summary_day
 Authorization: Bearer {{$dotenv accessToken}}
+
 
 
 ###

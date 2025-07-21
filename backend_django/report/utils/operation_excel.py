@@ -174,11 +174,11 @@ def handle_import_interface(file_path, user = None):
     interface = InterfaceInfo.objects.filter(interface_code = interface_info['interface_code'])
     if interface:
         interface_info['updator']=user.id
-        ser = InterfaceInfoSerializer(instance = interface[0],data=interface_info)
+        ser = InterfaceInfoImportExportSerializer(instance = interface[0],data=interface_info)
     else:
         interface_info['creator']=user.id
         interface_info['updator']=user.id
-        ser = InterfaceInfoSerializer(data=interface_info)
+        ser = InterfaceInfoImportExportSerializer(data=interface_info)
     # 在序列化模型对象时，会将选项字段转换
     ser.is_valid(raise_exception=True)
     ser.save()

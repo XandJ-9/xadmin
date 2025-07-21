@@ -39,6 +39,15 @@
                v-hasPermi="exportPermi"
             >导出</el-button>
          </el-col>
+         <el-col :span="1.5" v-if="importBtn"> 
+            <el-button
+               type="info"
+               plain
+               icon="Upload"
+               @click="handleImport"
+               v-hasPermi="importPermi"
+            >导入</el-button>
+         </el-col>
          <!-- <el-col :span="1.5">
             <el-button
                type="danger"
@@ -78,7 +87,11 @@ const props = defineProps({
     exportPermi: {
         type: Array,
         default: ['undefined:undefined:undefined']
-  },
+    },
+    importPermi: {
+        type: Array,
+        default: ['undefined:undefined:undefined']
+   },
   addBtn: {
       type: Boolean,
       default: undefined
@@ -94,6 +107,10 @@ const props = defineProps({
   exportBtn: {
       type: Boolean,
       default: undefined
+    },
+    importBtn: {
+        type: Boolean,
+        default: undefined
   }
 })
 
@@ -115,6 +132,10 @@ const handleDelete = () => {
 
 const handleExport = () => { 
     emit('exportEvent')
+}
+
+const handleImport = () => {
+    emit('importEvent')
 }
 
 </script>

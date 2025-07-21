@@ -76,7 +76,6 @@
 
 <script setup>
 import { ref, reactive, onMounted } from 'vue'
-import request from '@/utils/request'
 import Pagination from '@/components/Pagination'
 import {getInterfaceDetail, getInterfaceFields,executeInterfaceQuery} from '@/api/dataassets/reportinfo'
 
@@ -153,8 +152,7 @@ const errorMsg = ref({
 const queryData = (data) => {
     reset()
     // 只拷贝数值，不修改被引用的对象值
-    let payload = showJsonFormat ? JSON.parse(queryForm.query_field_json) : { ...queryForm.query_para_value }
-    // console.log(this.showJsonFormat, payload)
+    let payload = showJsonFormat.value ? JSON.parse(queryForm.query_field_json) : { ...queryForm.query_para_value }
     payload = Object.assign(payload, {
         "export_type": "1",
         "operate_type": "1",

@@ -145,7 +145,8 @@ import sql from 'highlight.js/lib/languages/sql'
 import 'highlight.js/styles/atom-one-dark.css'
 import { Document } from '@element-plus/icons-vue'
 // import Pagination from '@/components/Pagination'
-import {getInterfaceQueryLogs, getInterfaceQueryLogDetail} from '@/api/dataassets/reportinfo'
+import { getInterfaceQueryLogs, getInterfaceQueryLogDetail } from '@/api/dataassets/reportinfo'
+
 // 注册SQL语言高亮
 hljs.registerLanguage('sql', sql)
 
@@ -228,16 +229,45 @@ const viewQueryDetail = async (row) => {
 }
 
 // 复制SQL
+// const copySql = () => {
+//   if (currentQuery.value.interface_sql) {
+//     navigator.clipboard.writeText(currentQuery.value.interface_sql)
+//       .then(() => {
+//         ElMessage.success('SQL已复制到剪贴板')
+//       })
+//       .catch(() => {
+//         ElMessage.error('复制失败')
+//       })
+//   }
+// }
+
 const copySql = () => {
-  if (currentQuery.value.interface_sql) {
-    navigator.clipboard.writeText(currentQuery.value.interface_sql)
-      .then(() => {
-        ElMessage.success('SQL已复制到剪贴板')
-      })
-      .catch(() => {
-        ElMessage.error('复制失败')
-      })
-  }
+    if (currentQuery.value.interface_sql) {
+        if (window.isSecureContext && navigator.clipboard) {
+            navigator.clipboard.writeText(currentQuery.value.interface_sql)
+                .then(() => {
+                    ElMessage.success('SQL已复制到剪贴板')
+                })
+                .catch(() => {
+                    ElMessage.error('复制失败，请手动复制')
+                })
+        } else {
+            try {
+                const textarea = document.createElement("textarea");
+                textarea.value = currentQuery.value.interface_sql;
+                textarea.style.position = "absolute";
+                textarea.style.opacity = "0";
+                document.body.appendChild(textarea);
+                textarea.select();
+                const success = document.execCommand("copy");
+                document.body.removeChild(textarea);
+                ElMessage.success('SQL已复制到剪贴板')
+            } catch (error) {
+                ElMessage.error('复制失败，请手动复制')
+            }
+
+        }
+    }
 }
 
 // 搜索日志

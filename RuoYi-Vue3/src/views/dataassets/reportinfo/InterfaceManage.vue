@@ -13,6 +13,8 @@
      <crud-bar
      addBtn
      @addEvent="handleAdd"
+     importBtn
+     @importEvent="handleImport"
      />
       <!-- 数据表格 -->
       <el-table ref="tableRef" :data="tableData" style="width: 100%" v-loading="loading" fit highlight-current-row>
@@ -484,7 +486,9 @@ const handleDelete = async (row) => {
 
 // 跳转到字段配置页面
 const handleFields = async (row) => {
-    router.push({ path: '/reportinfo/interface/fields', query: { interface_id: row.id } })
+    // router.push({ path: '/reportinfo/interface/fields', query: { interface_id: row.id } })
+    router.push({ path: `/report/interface/interfaceFields/${row.id}`, query: { interface_name: row.interface_name } })
+
     // fieldEditorVisible.value = true
     //   router.push(`/report/interface-fields/${row.id}`)
     // tableRef.value.toggleRowExpansion(row, true)
@@ -520,9 +524,6 @@ const handleUpload = (options) => {
     importVisible.value = false
     uploadRef.value.clearFiles()
     fetchInterfaceList()
-  }).catch((error) => {
-    console.error('导入失败：', error)
-    ElMessage.error('导入失败')
   })
 }
 

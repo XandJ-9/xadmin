@@ -124,13 +124,8 @@
   </div>
 </template>
 
-<script>
-export default {
-    name: 'InterfaceFields'
-}
-</script>
 
-<script setup>
+<script setup name="InterfaceFields">
 import { ref, onMounted, reactive } from 'vue'
 import { useRoute , useRouter} from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'

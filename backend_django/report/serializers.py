@@ -32,7 +32,7 @@ class InterfaceInfoSerializer(BaseModelSerializer):
         fields = '__all__'
         read_only_fields = ['id', 'create_datetime', 'update_datetime']
 
-class InterfaceInfoExportSerializer(ChoiceFieldSerializerMixin,InterfaceInfoSerializer):
+class InterfaceInfoImportExportSerializer(ChoiceFieldSerializerMixin,InterfaceInfoSerializer):
     pass
     
 class InterfaceFieldSerializer(ChoiceFieldSerializerMixin,BaseModelSerializer):

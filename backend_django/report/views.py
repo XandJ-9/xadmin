@@ -48,7 +48,7 @@ class InterfaceFieldViewSet(CustomModelViewSet):
 
 class InterfaceImportExportViewSet(ExcelImportExportMixin, CustomModelViewSet):
     queryset = None
-    serializer_class = InterfaceInfoExportSerializer
+    serializer_class = InterfaceInfoImportExportSerializer
 
 
 class InterfaceQueryViewSet(InterfaceQueryMixin, CustomModelViewSet):

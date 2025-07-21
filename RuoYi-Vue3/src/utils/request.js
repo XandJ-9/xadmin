@@ -134,7 +134,7 @@ service.interceptors.response.use(res => {
           } else if (message.includes("timeout")) {
             message = "系统接口请求超时"
           } else if (message.includes("Request failed with status code")) {
-            message = "系统接口异常: " + response.status
+            message = "系统接口异常: " + response.status + ", 错误信息" + response.data
           }
     }
     ElMessage({ message: message, type: 'error', duration: 1 * 1000 })
