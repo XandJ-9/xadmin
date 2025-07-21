@@ -49,3 +49,10 @@ Authorization: Bearer {{$dotenv accessToken}}
   "status": "0",
   "remark": "接口是否登录验证"
 }
+
+
+
+###
+# 获取接口字段
+GET {{host}}/api/report/interface-fields/ HTTP/1.1
+Authorization: Bearer {{$dotenv accessToken}}
