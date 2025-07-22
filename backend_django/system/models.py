@@ -208,6 +208,7 @@ class Menu(BaseModel):
     perms = models.CharField(max_length=100, null=True, blank=True, verbose_name='权限标识')
     icon = models.CharField(max_length=100, default='#', verbose_name='菜单图标')
     remark = models.CharField(max_length=500, default='',blank=True, verbose_name='备注')
+    active_menu = models.CharField(max_length=255, null=True, blank=True, verbose_name='激活菜单', db_comment='激活菜单')
 
     class Meta:
         verbose_name = '菜单'

@@ -464,7 +464,6 @@ class MenuViewSet(CustomModelViewSet):
             if self.request.user.is_authenticated:
                 # roles = self.request.user.user_roles.all()
                 roles = Role.objects.filter(id__in=self.request.user.user_roles.values_list('role_id', flat=True))
-                print(f'roles: {roles}')
                 return [HasRolePermission(allowed_roles = [role.role_key for role in roles])]
         return [IsAdminUser()]
 
@@ -532,7 +531,8 @@ class MenuViewSet(CustomModelViewSet):
                 'meta': {
                     'title': menu.menu_name,
                     'icon':  menu.icon,
-                    'noCache': not menu.is_cache
+                    'noCache': not menu.is_cache,
+                    'activeMenu': menu.active_menu
                 }
             }
             

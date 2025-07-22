@@ -17,8 +17,18 @@
      @importEvent="handleImport"
      />
       <!-- 数据表格 -->
-      <el-table ref="tableRef" :data="tableData" style="width: 100%" v-loading="loading" fit highlight-current-row>
-        <el-table-column prop="interface_code" label="接口编码" show-overflow-tooltip />
+      <el-table ref="tableRef" :data="tableData" style="width: 100%" v-loading="loading" highlight-current-row>
+        <el-table-column prop="interface_code" label="接口编码" width="200">
+            <template #default="scope">
+                <!-- {{ scope.row.interface_code ? scope.row.interface_code : scope.row.interface_name }} -->
+                <router-link 
+                :to="{ path: `/report/interface/interfaceFields/${scope.row.id}`, query: { interface_name: scope.row.interface_name } }"
+                style="color: blue;"
+                >
+                    {{ scope.row.interface_code ? scope.row.interface_code : scope.row.interface_name }}
+                </router-link>
+            </template>
+        </el-table-column>
         <el-table-column prop="interface_name" label="接口名称" />
         <el-table-column prop="interface_desc" label="接口描述" show-overflow-tooltip >
             <template #default="scope">
@@ -73,7 +83,7 @@
           <template #default="scope">
             <el-button size="small" type="primary" @click="handleEdit(scope.row)">编辑</el-button>
             <el-button size="small" type="danger" @click="handleDelete(scope.row)">删除</el-button>
-            <el-button size="small" type="success" @click="handleFields(scope.row)">字段配置</el-button>
+            <!-- <el-button size="small" type="success" @click="handleFields(scope.row)">字段配置</el-button> -->
             <el-button size="small" type="info" @click="handleExport(scope.row)">导出</el-button>
             <el-button size="small" type="warning" @click="handleDataview(scope.row)">查询</el-button>
           </template>

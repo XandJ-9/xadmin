@@ -51,8 +51,18 @@ Authorization: Bearer {{$dotenv accessToken}}
 }
 
 
+###
+# 获取接口信息
+GET {{host}}/api/report/interfaces/3/ HTTP/1.1
+Authorization: Bearer {{$dotenv accessToken}}
 
 ###
 # 获取接口字段
 GET {{host}}/api/report/interface-fields/ HTTP/1.1
+Authorization: Bearer {{$dotenv accessToken}}
+
+
+###
+# 获取指定接口字段
+GET {{host}}/api/report/interface-fields/?interface=4 HTTP/1.1
 Authorization: Bearer {{$dotenv accessToken}}

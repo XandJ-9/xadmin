@@ -4,8 +4,8 @@
       <span style="margin-bottom: 10px;">接口字段配置 - {{ interfaceInfo?.interface_name }}</span>
 
       <!-- 数据表格 -->
-      <el-table :data="tableData" style="width: 100%" v-loading="loading">
-        <el-table-column prop="interface_para_code" label="参数编码" width="120" />
+      <el-table :data="tableData" style="width: 100%" v-loading="loading" border>
+        <el-table-column prop="interface_para_code" label="参数编码"/>
         <el-table-column prop="interface_para_name" label="参数名称" width="120" />
         <el-table-column prop="interface_para_position" label="参数位置" width="80" />
         <el-table-column prop="interface_para_type" label="参数类型" width="100">
@@ -46,7 +46,7 @@
         </div>
 
         <!-- 分页 -->
-        <Pagination
+        <pagination
             :total="total"
             :current-page="currentPage"
             :page-size="pageSize"
@@ -129,8 +129,8 @@
 import { ref, onMounted, reactive } from 'vue'
 import { useRoute , useRouter} from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import Pagination from '@/components/Pagination'
 import request from '@/utils/request'
+import { getInterfaceDetail, getInterfaceFields } from '@/api/dataassets/reportinfo'
 
 const router = useRouter()
 const route = useRoute()
@@ -198,39 +198,37 @@ const getDataTypeName = (type) => {
 
 // 获取接口信息
 const getInterfaceInfo = async () => {
-    try {
-    // const interfaceId = route.query.interface_id
-    const response = await request.get(`/api/report/interfaces/${interfaceId}/`)
-    interfaceInfo.value = response.data.data
-  } catch (error) {
-    console.error('获取接口信息失败：', error)
-    ElMessage.error('获取接口信息失败')
-  }
+    let interfaceId = router.currentRoute.value.params.id
+    getInterfaceDetail(interfaceId).then(res => {
+        interfaceInfo.value = res.data
+  }).catch(error => {
+    ElMessage.error('获取接口详情失败')
+  })
 }
 
 // 获取字段列表
 const getFieldList = async () => {
-  loading.value = true
-  try {
+    loading.value = true
     const params = {
       page: currentPage.value,
       page_size: pageSize.value,
-      interface: route.query.interface_id
+      interface: router.currentRoute.value.params.id
     }
-    const response = await request.get('/api/report/interface-fields/list_all/', { params })
-    const tempData = response.data.data
-    if (tempData) {
-      const inputType = tempData.filter(item => item.interface_para_type === '输入参数').sort((a, b) => a.interface_para_position - b.interface_para_position)
-      const outputType = tempData.filter(item => item.interface_para_type === '输出参数').sort((a, b) => a.interface_para_position - b.interface_para_position)
-      tableData.value = [...inputType, ...outputType]
-      total.value = response.data.data.length
-    }
-  } catch (error) {
-    console.error('获取字段列表失败：', error)
-    ElMessage.error('获取字段列表失败')
-  } finally {
-    loading.value = false
-  }
+
+    await getInterfaceFields(params).then(res => {
+        const tempData = res.data
+        if (tempData) {
+            const inputType = tempData.filter(item => item.interface_para_type === '输入参数').sort((a, b) => a.interface_para_position - b.interface_para_position)
+            const outputType = tempData.filter(item => item.interface_para_type === '输出参数').sort((a, b) => a.interface_para_position - b.interface_para_position)
+            tableData.value = [...inputType, ...outputType]
+        }
+        total.value = res.total
+
+    }).catch(error => {
+        ElMessage.error('获取接口字段失败')
+    }).finally(() => {
+        loading.value = false
+    })
 }
 
 const goInterfaceList = () => {
