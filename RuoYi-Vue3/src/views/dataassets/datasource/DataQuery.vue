@@ -1,11 +1,10 @@
 <template>
-  <div class="data-query-container">
+  <div class="app-container">
     <div class="query-header">
       <el-select
         v-model="selectedDataSource"
         placeholder="请选择数据源"
         style="width: 200px"
-        @change="handleDataSourceChange"
       >
         <el-option
           v-for="source in dataSources"
@@ -95,7 +94,7 @@ const queryTabs = ref([])
 const tabIndex = ref(0)
 
 // 编辑器高度相关
-const editorHeight = ref(400)
+const editorHeight = ref(100)
 const isResizing = ref(false)
 const startY = ref(0)
 const startHeight = ref(0)
@@ -130,13 +129,6 @@ const fetchDataSources = async () => {
     getDataSourceList().then(res => {
         dataSources.value = res
      })
-}
-
-const handleDataSourceChange = () => {
-  // 清空当前查询结果
-//   sqlQuery.value = ''
-//   activeTab.value = ''
-//   queryTabs.value = []
 }
 
 // 获取当前光标所在的SQL语句
@@ -334,32 +326,36 @@ const handleCursorChange = (position) => {
   display: flex;
   gap: 16px;
   align-items: center;
+  padding-bottom: 10px;
 }
 
 .query-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  /* gap: 10px; */
   background-color: #fff;
   border-radius: 4px;
-  padding: 16px;
-  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  /* padding: 16px; */
+  /* box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1); */
   overflow: hidden;
+  /* height: 100vh; */
 }
 
 .query-editor {
-  /* border: 1px solid #dcdfe6; */
+  border: 1px solid #dcdfe6;
   border-radius: 4px;
   overflow: hidden;
   position: relative;
   min-height: 100px;
-  resize: vertical;
+  height: 100%;
+  /* resize: vertical; */
+  /* height: 100vh; */
 }
 
 .resizer {
   width: 100%;
-  height: 6px;
+  height: 2px;
   background-color: #f0f2f5;
   cursor: row-resize;
   position: relative;
