@@ -59,10 +59,10 @@
             
                 <QueryResult
                     :query-result="tab.queryResult"
+                    :total="tab.queryResult.length"
                     :table-columns="tab.tableColumns"
                     :loading="loading"
                     :error="tab.error"
-                    class="query-result"
                 />
             </template>
             </el-tab-pane>
@@ -95,7 +95,7 @@ const queryTabs = ref([])
 const tabIndex = ref(0)
 
 // 编辑器高度相关
-const editorHeight = ref(500)
+const editorHeight = ref(400)
 const isResizing = ref(false)
 const startY = ref(0)
 const startHeight = ref(0)
@@ -384,12 +384,11 @@ const handleCursorChange = (position) => {
 .query-tabs {
   margin-top: 16px;
   flex: 1;
-  overflow: auto;
 }
 
 .query-result {
   flex-shrink: 0;
-  height: 100vh;
+  /* height: 100vh; */
 }
 
 .fade-enter-active,

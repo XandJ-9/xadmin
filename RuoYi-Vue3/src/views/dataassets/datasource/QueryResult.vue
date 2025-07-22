@@ -5,7 +5,7 @@
     </div>
     <div v-else-if="queryResult.length > 0" class="result-container">
       <el-table 
-        :data="paginatedData" 
+        :data="data" 
         style="width: 100%" 
         border 
         stripe
@@ -24,15 +24,13 @@
           </template>
         </el-table-column>
       </el-table>
-      <div class="card-footer">
-        <Pagination
-          :total="queryResult.length"
-          :current-page="currentPage"
-          :page-size="pageSize"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
+
+        <pagination
+        :total="total"
+        v-model:page="currentPage" 
+        v-model:limit="pageSize" 
+        @pagination="paginatedData"
         />
-      </div>
     </div>
     <div v-else-if="!loading" class="empty-result">
       <el-empty description="暂无查询结果" />
@@ -40,14 +38,18 @@
   </div>
 </template>
 
-<script setup>
-import { ref, computed } from 'vue'
-import Pagination from '@/components/Pagination'
+<script setup name="QueryResult">
+import { ref, computed, onMounted } from 'vue'
+// import Pagination from '@/components/Pagination'
 
 const props = defineProps({
   queryResult: {
     type: Array,
     default: () => []
+    },
+    total: {
+        type: Number,
+        default: 0
   },
   tableColumns: {
     type: Array,
@@ -66,11 +68,14 @@ const props = defineProps({
 // 分页相关
 const currentPage = ref(1)
 const pageSize = ref(20)
-const paginatedData = computed(() => {
-  const start = (currentPage.value - 1) * pageSize.value
-  const end = start + pageSize.value
-  return props.queryResult.slice(start, end)
-})
+const data = ref([])
+
+const paginatedData = () => {
+    const start = (currentPage.value - 1) * pageSize.value
+    const end = start + pageSize.value
+    data.value = props.queryResult.slice(start, end)
+}
+
 
 const handleSizeChange = (val) => {
   pageSize.value = val
@@ -102,6 +107,11 @@ const formatCellValue = (value) => {
   if (typeof value === 'object') return JSON.stringify(value)
   return value.toString()
 }
+
+onMounted(() => { 
+    paginatedData()
+})
+
 </script>
 
 <style scoped>
