@@ -4,10 +4,10 @@
       <span style="margin-bottom: 10px;">接口字段配置 - {{ interfaceInfo?.interface_name }}</span>
 
       <!-- 数据表格 -->
-      <el-table :data="tableData" style="width: 100%" v-loading="loading" border>
+      <el-table :data="tableData" style="width: 100%" v-loading="loading" border fit>
         <el-table-column prop="interface_para_code" label="参数编码"/>
         <el-table-column prop="interface_para_name" label="参数名称" width="120" />
-        <el-table-column prop="interface_para_position" label="参数位置" width="80" />
+        <el-table-column prop="interface_para_position" label="参数位置" width="100" />
         <el-table-column prop="interface_para_type" label="参数类型" width="100">
           <template #default="scope">
             {{ scope.row.interface_para_type }}
@@ -18,22 +18,23 @@
             {{ getDataTypeName(scope.row.interface_data_type) }}
           </template>
         </el-table-column>
-        <el-table-column prop="interface_para_default" label="默认值" width="100" />
-        <el-table-column prop="interface_show_flag" label="是否显示" width="80">
+        <el-table-column prop="interface_para_default" label="默认值" show-overflow-tooltip/>
+        <el-table-column prop="interface_show_flag" label="是否显示" width="100">
           <template #default="scope">
             {{ scope.row.interface_show_flag === '1' ? '是' : '否' }}
           </template>
         </el-table-column>
-        <el-table-column prop="interface_export_flag" label="是否导出" width="80">
+        <el-table-column prop="interface_export_flag" label="是否导出" width="100">
           <template #default="scope">
             {{ scope.row.interface_export_flag === '1' ? '是' : '否' }}
           </template>
         </el-table-column>
         <el-table-column prop="interface_para_desc" label="参数描述" show-overflow-tooltip />
-        <el-table-column label="操作" width="150" fixed="right">
+        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
             <el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>
             <el-button size="small" type="danger" @click="handleDelete(scope.row)">删除</el-button>
+            <el-button size="small" icon="Plus" @click="handleAppend(scope.row)" v-hasPermi="['system:user:add']">添加</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -206,6 +207,12 @@ const getInterfaceInfo = async () => {
   })
 }
 
+const sortTableData = (dataList) => {
+        const inputType = dataList.filter(item => item.interface_para_type === '输入参数').sort((a, b) => a.interface_para_position - b.interface_para_position)
+        const outputType = dataList.filter(item => item.interface_para_type === '输出参数').sort((a, b) => a.interface_para_position - b.interface_para_position)
+        tableData.value = [...inputType, ...outputType]
+}
+
 // 获取字段列表
 const getFieldList = async () => {
     loading.value = true
@@ -218,9 +225,7 @@ const getFieldList = async () => {
     await getInterfaceFields(params).then(res => {
         const tempData = res.data
         if (tempData) {
-            const inputType = tempData.filter(item => item.interface_para_type === '输入参数').sort((a, b) => a.interface_para_position - b.interface_para_position)
-            const outputType = tempData.filter(item => item.interface_para_type === '输出参数').sort((a, b) => a.interface_para_position - b.interface_para_position)
-            tableData.value = [...inputType, ...outputType]
+            sortTableData(tempData)
         }
         total.value = res.total
 
@@ -293,6 +298,25 @@ const handleDelete = (row) => {
     .catch(() => {
       ElMessage.info('已取消删除')
     })
+}
+
+// 追加字段
+const handleAppend = (row) => {
+
+    const fileInfo = {
+        interface_para_code: '',
+        interface_para_name: '',
+        interface_para_position: row.interface_para_position + 1,
+        interface_para_type: '2',
+        interface_data_type: '1',
+        interface_para_default: '',
+        interface_show_flag: '1',
+        interface_export_flag: '1',
+        interface_para_desc: ''
+    }
+    tableData.value.splice(row.interface_para_position + 1, 0, fileInfo)
+    // 将新增的字段插入到tableData.value中
+    // sortTableData(newTableData)
 }
 
 // 提交表单
