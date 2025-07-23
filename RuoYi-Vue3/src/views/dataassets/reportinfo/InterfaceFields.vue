@@ -1,10 +1,15 @@
 <template>
   <div class="app-container">
-    
-      <span style="margin-bottom: 10px;">接口字段配置 - {{ interfaceInfo?.interface_name }}</span>
 
+      <query-params-form :properties="queryProperties" @query="getFieldList"  @reset="getFieldList"/>
+      <!-- <span style="margin-bottom: 10px;">接口字段配置 - {{ interfaceInfo?.interface_name }}</span> -->
+
+      <crud-bar 
+     addBtn
+     @addEvent="handleAdd"
+    />
       <!-- 数据表格 -->
-      <el-table :data="tableData" style="width: 100%" v-loading="loading" border fit>
+      <el-table :data="paginateData" style="width: 100%" v-loading="loading" border fit>
         <el-table-column prop="interface_para_code" label="参数编码"/>
         <el-table-column prop="interface_para_name" label="参数名称" width="120" />
         <el-table-column prop="interface_para_position" label="参数位置" width="100" />
@@ -32,27 +37,24 @@
         <el-table-column prop="interface_para_desc" label="参数描述" show-overflow-tooltip />
         <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
           <template #default="scope">
-            <el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>
-            <el-button size="small" type="danger" @click="handleDelete(scope.row)">删除</el-button>
-            <el-button size="small" icon="Plus" @click="handleAppend(scope.row)" v-hasPermi="['system:user:add']">添加</el-button>
+            <el-button link type="primary" icon="Edit" @click="handleEdit(scope.row)" v-hasPermi="['report:interface-field:update']"></el-button>
+            <el-button link type="primary" icon="Plus" @click="handleAppend(scope.row)" v-hasPermi="['report:interface-field:add']"></el-button>
+            <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)" v-hasPermi="['report:interface-field:remove']"></el-button>
           </template>
         </el-table-column>
       </el-table>
 
 
       <div class="card-footer">
-        <div>
+        <!-- <div>
             <el-button type="primary" @click="goInterfaceList">返回接口列表</el-button>
             <el-button type="primary" @click="handleAdd">新增字段</el-button>
-        </div>
+        </div> -->
 
         <!-- 分页 -->
-        <pagination
-            :total="total"
-            :current-page="currentPage"
-            :page-size="pageSize"
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
+        <pagination v-show="total > 0" :total="total" 
+              v-model:page="currentPage" 
+              v-model:limit="pageSize" 
         />
       </div>
       <!-- 字段编辑对话框 -->
@@ -125,18 +127,41 @@
   </div>
 </template>
 
+<script>
+
+export default {
+  name: 'InterfaceFields',
+
+  // 路由监听
+  // 修改路由元信息，这样就可以使得复用同一个组件时，元信息是不同的，可以区分部分动态路由
+  beforeRouteEnter(to, from, next) {
+    if (to.query.interface_name) {
+        const title = to.meta.title
+        to.meta.title = title + '-' + to.query.interface_name
+        to.meta.activeMenu = '/report/interface/interfaceManage'
+    }
+    next()
+  },
+}
+
+</script>
 
 <script setup name="InterfaceFields">
-import { ref, onMounted, reactive } from 'vue'
+import { ref, onMounted, reactive, computed } from 'vue'
 import { useRoute , useRouter} from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
-import request from '@/utils/request'
-import { getInterfaceDetail, getInterfaceFields } from '@/api/dataassets/reportinfo'
+import QueryParamsForm from '@/components/QueryParamsForm'
+import CrudBar from '@/components/CrudBar'
+import { getInterfaceDetail, getInterfaceFields, createInterfaceField,updateInterfaceField, deleteInterfaceField } from '@/api/dataassets/reportinfo'
+
+const queryProperties = reactive([
+  { label: '字段名称', type: 'input', prop: 'interface_para_name' },
+  { label: '字段编码', type: 'input', prop: 'interface_para_code' }
+])
 
 const router = useRouter()
 const route = useRoute()
-const interfaceId = route.query.interface_id
-
+const interfaceId = ref(null)
 // 接口信息
 const interfaceInfo = ref(null)
 
@@ -199,8 +224,8 @@ const getDataTypeName = (type) => {
 
 // 获取接口信息
 const getInterfaceInfo = async () => {
-    let interfaceId = router.currentRoute.value.params.id
-    getInterfaceDetail(interfaceId).then(res => {
+    interfaceId.value = router.currentRoute.value.params.id
+    getInterfaceDetail(interfaceId.value).then(res => {
         interfaceInfo.value = res.data
   }).catch(error => {
     ElMessage.error('获取接口详情失败')
@@ -214,12 +239,14 @@ const sortTableData = (dataList) => {
 }
 
 // 获取字段列表
-const getFieldList = async () => {
+const getFieldList = async (queryParams) => {
     loading.value = true
     const params = {
-      page: currentPage.value,
-      page_size: pageSize.value,
-      interface: router.currentRoute.value.params.id
+      // pageNum: currentPage.value,
+      // pageSize: pageSize.value,
+      noPage: 1,
+      interface: interfaceId.value,
+      ...queryParams
     }
 
     await getInterfaceFields(params).then(res => {
@@ -227,7 +254,7 @@ const getFieldList = async () => {
         if (tempData) {
             sortTableData(tempData)
         }
-        total.value = res.total
+        total.value = tableData.value.length
 
     }).catch(error => {
         ElMessage.error('获取接口字段失败')
@@ -286,14 +313,12 @@ const handleDelete = (row) => {
     }
   )
     .then(async () => {
-      try {
-        await request.delete(`/api/report/interface-fields/${row.id}/`)
+      deleteInterfaceField(row.id).then(res => {
         ElMessage.success('删除成功')
         getFieldList()
-      } catch (error) {
-        console.error('删除字段失败：', error)
+      }).catch(error => {
         ElMessage.error('删除字段失败')
-      }
+      })
     })
     .catch(() => {
       ElMessage.info('已取消删除')
@@ -302,19 +327,28 @@ const handleDelete = (row) => {
 
 // 追加字段
 const handleAppend = (row) => {
-
-    const fileInfo = {
-        interface_para_code: '',
-        interface_para_name: '',
-        interface_para_position: row.interface_para_position + 1,
-        interface_para_type: '2',
-        interface_data_type: '1',
-        interface_para_default: '',
-        interface_show_flag: '1',
-        interface_export_flag: '1',
-        interface_para_desc: ''
-    }
-    tableData.value.splice(row.interface_para_position + 1, 0, fileInfo)
+  dialogType.value = 'add'
+  resetForm()
+  
+  // 预设新字段的位置为当前选中字段的后一位
+  formData.interface_para_position = row.interface_para_position + 1
+  // 继承当前字段的参数类型
+  formData.interface_para_type = row.interface_para_type
+  
+  // 打开对话框让用户填写其他信息
+  dialogVisible.value = true
+    // const fileInfo = {
+    //     interface_para_code: '',
+    //     interface_para_name: '',
+    //     interface_para_position: row.interface_para_position + 1,
+    //     interface_para_type: '2',
+    //     interface_data_type: '1',
+    //     interface_para_default: '',
+    //     interface_show_flag: '1',
+    //     interface_export_flag: '1',
+    //     interface_para_desc: ''
+    // }
+    // tableData.value.splice(row.interface_para_position + 1, 0, fileInfo)
     // 将新增的字段插入到tableData.value中
     // sortTableData(newTableData)
 }
@@ -326,13 +360,21 @@ const handleSubmit = async () => {
   await formRef.value.validate(async (valid) => {
     if (valid) {
       try {
-        const data = { ...formData, interface: interfaceId }
+        const data = { ...formData, interface: interfaceId.value }
         if (dialogType.value === 'add') {
-          await request.post('/api/report/interface-fields/', data)
-          ElMessage.success('添加成功')
+          // await request.post('/api/report/interface-fields/', data)
+          await createInterfaceField(data).then(res => {
+            ElMessage.success('添加成功')
+          }).catch(error => {
+            ElMessage.error('添加字段失败'+error)
+          })
         } else {
-          await request.put(`/api/report/interface-fields/${data.id}/`, data)
-          ElMessage.success('更新成功')
+          // await request.put(`/api/report/interface-fields/${data.id}/`, data)
+          await updateInterfaceField(data.id, data).then(res => {
+            ElMessage.success('更新成功')
+          }).catch(error => {
+            ElMessage.error('更新字段失败'+error)
+          })
         }
         dialogVisible.value = false
         getFieldList()
@@ -355,6 +397,14 @@ const handleCurrentChange = (val) => {
   currentPage.value = val
   getFieldList()
 }
+
+
+const paginateData = computed(() => {
+  const startIndex = (currentPage.value - 1) * pageSize.value
+  const endIndex = startIndex + pageSize.value
+  return tableData.value.slice(startIndex, endIndex)
+})
+
 
 // 页面加载时获取数据
 onMounted(() => {

@@ -25,9 +25,16 @@ class InterfaceQueryMixin:
         interface_info = InterfaceInfo.objects.filter(interface_code=interface_code).first()
         if not interface_info:
             return HttpResponseNotFound(content="接口不存在")
-        # 解析查询sql，并执行查询
-        interface_sql_template = Template(interface_info.interface_sql)
-        interface_sql = interface_sql_template.render(Context(request.data))
+        try:
+            # 解析查询sql，并执行查询
+            interface_sql_template = Template(interface_info.interface_sql)
+            interface_sql = interface_sql_template.render(Context(request.data))
+        except Exception as e:
+            return JsonResponse({
+                "code": "-1",
+                "message": str(e)
+            })
+        
         if interface_info.is_total == "1":
             total_sql_template = Template(interface_info.total_sql)
             total_sql = total_sql_template.render(Context(request.data))

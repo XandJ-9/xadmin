@@ -66,3 +66,8 @@ Authorization: Bearer {{$dotenv accessToken}}
 # 获取指定接口字段
 GET {{host}}/api/report/interface-fields/?interface=4 HTTP/1.1
 Authorization: Bearer {{$dotenv accessToken}}
+
+###
+# 获取接口字段
+GET {{host}}/api/report/interface-fields/?interface=5&interface_para_code=ss HTTP/1.1
+Authorization: Bearer {{$dotenv accessToken}}

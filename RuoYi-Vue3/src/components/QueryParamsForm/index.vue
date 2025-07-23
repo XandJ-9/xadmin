@@ -74,6 +74,7 @@ const props = defineProps({
 
 const showSearch = ref(true)
 
+const queryRef = ref(null)
 const queryParams = reactive({})
 
 const handleQuery = () => { 
@@ -91,7 +92,8 @@ const handleSelectClick = (e) => {
 }
 
 const resetQuery = () => { 
-    emit("reset")
+  queryRef.value.resetFields()
+  emit("reset")
 }
 
 </script>

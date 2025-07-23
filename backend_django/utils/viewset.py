@@ -3,6 +3,8 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny
+from rest_framework.filters import SearchFilter, OrderingFilter
+from django_filters.rest_framework import DjangoFilterBackend
 from system.permissions import IsOwnerOrAdmin,IsAdminUser, HasRolePermission
 from .util_response import SuccessResponse, ErrorResponse, DetailResponse
 from .filters import SearchFilterBackend
@@ -14,7 +16,8 @@ class CustomModelViewSet(ModelViewSet):
     create_serializer_class = None
     update_serializer_class = None
     filter_fields = '__all__'
-    filter_backends = [SearchFilterBackend]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter,SearchFilterBackend]
+
     search_fields = ()
 
     # pagination_class = CustomPagination

@@ -46,7 +46,7 @@ class ExcelImportExportMixin:
                 upload_file.save()
             handle_import_interface(upload_file.file.name, request.user)
             return DetailResponse(
-            msg='Import interface information from Excel file',
+            msg='文件导入成功',
             status=200,
             )
         except Exception as e:

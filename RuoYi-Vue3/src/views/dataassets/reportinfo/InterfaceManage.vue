@@ -18,7 +18,7 @@
      />
       <!-- 数据表格 -->
       <el-table ref="tableRef" :data="tableData" style="width: 100%" v-loading="loading" highlight-current-row>
-        <el-table-column prop="interface_code" label="接口编码" width="200">
+        <el-table-column prop="interface_code" label="接口编码" width="250">
             <template #default="scope">
                 <!-- {{ scope.row.interface_code ? scope.row.interface_code : scope.row.interface_name }} -->
                 <router-link 
@@ -79,13 +79,21 @@
             {{ scope.row.create_time }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" min-width="350">
+        <el-table-column label="操作" align="center" width="150">
           <template #default="scope">
-            <el-button size="small" type="primary" @click="handleEdit(scope.row)">编辑</el-button>
-            <el-button size="small" type="danger" @click="handleDelete(scope.row)">删除</el-button>
+            <el-tooltip content="修改" placement="top">
+              <el-button link type="primary" @click="handleEdit(scope.row)" icon="Edit"></el-button>
+            </el-tooltip>
+            <el-tooltip content="删除" placement="top">
+              <el-button link type="danger" @click="handleDelete(scope.row)" icon="Delete"></el-button>
+            </el-tooltip>
+            <el-tooltip content="下载" placement="top">
+              <el-button link type="info" @click="handleExport(scope.row)" icon="Download" ></el-button>
+            </el-tooltip>
             <!-- <el-button size="small" type="success" @click="handleFields(scope.row)">字段配置</el-button> -->
-            <el-button size="small" type="info" @click="handleExport(scope.row)">导出</el-button>
-            <el-button size="small" type="warning" @click="handleDataview(scope.row)">查询</el-button>
+             <el-tooltip content="数据查看" placement="top">
+              <el-button link type="warning" @click="handleDataview(scope.row)" icon="View"></el-button>
+            </el-tooltip>
           </template>
         </el-table-column>
         <!-- <el-table-column type="expand" width="50">

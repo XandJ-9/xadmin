@@ -28,15 +28,15 @@
       <el-table-column prop="execute_time" label="执行时间(ms)" width="120"></el-table-column>
       <el-table-column prop="interface_sql" label="SQL语句">
         <template #default="scope">
-          <el-tooltip 
+          <!-- <el-tooltip 
             class="box-item" 
             effect="dark" 
             :content="scope.row.interface_sql" 
             placement="top-start"
             :hide-after="0"
-          >
+          > -->
             <div class="sql-content">{{ scope.row.interface_sql }}</div>
-          </el-tooltip>
+          <!-- </el-tooltip> -->
         </template>
       </el-table-column>
       <el-table-column prop="execute_result" label="执行结果" width="100">
