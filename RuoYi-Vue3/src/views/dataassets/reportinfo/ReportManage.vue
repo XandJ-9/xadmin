@@ -49,10 +49,10 @@
       <el-table-column prop="module_info.platform_info.name" label="所属平台" />
       <el-table-column prop="create_time" label="创建时间" width="180" />
       <el-table-column prop="update_time" label="更新时间" width="180" />
-      <el-table-column label="操作" width="100" fixed="right">
+      <el-table-column label="操作" width="50" align="center">
         <template #default="{ row }">
-          <el-button type="primary" size="small" @click="handleEdit(row)">编辑</el-button>
-          <!-- <el-button size="small" type="danger" @click="handleDelete(row)">删除</el-button> -->
+            <el-button link type="primary" icon="Edit" @click="handleEdit(row)" v-hasPermi="['report:reportinfo:update']"></el-button>
+            <!-- <el-button link type="danger" icon="Delete" @click="handleDelete(row)"></el-button> -->
         </template>
       </el-table-column>
     </el-table>

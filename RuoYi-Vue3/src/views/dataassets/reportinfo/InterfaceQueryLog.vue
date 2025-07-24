@@ -1,6 +1,6 @@
 <template>
-  <div class="interface-query-log-container">
-    <div class="filter-container">
+  <div class="app-container">
+    <!-- <div class="filter-container"> -->
       <el-form :inline="true" :model="filterForm">
         <el-form-item label="接口编码">
           <el-input v-model="filterForm.interface_code" placeholder="请输入接口编码" style="width: 200px" />
@@ -19,11 +19,15 @@
           <el-button @click="resetFilter">重置</el-button>
         </el-form-item>
       </el-form>
-    </div>
+    <!-- </div> -->
 
     <el-table :data="pageInfo.data" style="width: 100%" border v-loading="loading">
       <el-table-column prop="id" label="ID" width="80"></el-table-column>
-      <el-table-column prop="interface_code" label="接口编码" width="150"></el-table-column>
+      <el-table-column prop="interface_code" label="接口编码" :width="getInterfaceCodeWidth">
+        <template #default="scope">
+          <span>{{ scope.row.interface_code }}</span>
+        </template>
+      </el-table-column>
       <el-table-column prop="creator_username" label="创建用户" width="120"></el-table-column>
       <el-table-column prop="execute_time" label="执行时间(ms)" width="120"></el-table-column>
       <el-table-column prop="interface_sql" label="SQL语句">
@@ -138,7 +142,7 @@
 
 
 <script setup name="InterfaceQueryLog">
-import { reactive, ref, onMounted, nextTick } from 'vue'
+import { reactive, ref, onMounted, nextTick, computed, inject } from 'vue'
 import { ElMessage } from 'element-plus'
 import hljs from 'highlight.js/lib/core'
 import sql from 'highlight.js/lib/languages/sql'
@@ -147,6 +151,8 @@ import { Document } from '@element-plus/icons-vue'
 // import Pagination from '@/components/Pagination'
 import { getInterfaceQueryLogs, getInterfaceQueryLogDetail } from '@/api/dataassets/reportinfo'
 
+// 注入计算列宽方法
+const calculateColumnWidth = inject('calculateColumnWidth')
 // 注册SQL语言高亮
 hljs.registerLanguage('sql', sql)
 
@@ -300,6 +306,27 @@ const handleCurrentChange = (page) => {
 onMounted(() => {
   fetchData()
 })
+
+// 计算属性：动态计算interface_code列宽度
+const getInterfaceCodeWidth = computed(() => {
+  // 如果没有数据，返回默认宽度
+  if (!pageInfo.data || pageInfo.data.length === 0) return 200;
+  
+  // 找出最长的interface_code
+  let maxWidth = 200; // 默认最小宽度
+  
+  pageInfo.data.forEach(item => {
+    if (item.interface_code) {
+      const width = calculateColumnWidth(item.interface_code, {
+        minWidth: 150,  // 最小宽度
+        maxWidth: 300   // 最大宽度
+      });
+      maxWidth = Math.max(maxWidth, width);
+    }
+  });
+  
+  return maxWidth;
+});
 </script>
 
 <style scoped>

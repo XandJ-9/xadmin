@@ -18,7 +18,7 @@
      />
       <!-- 数据表格 -->
       <el-table ref="tableRef" :data="tableData" style="width: 100%" v-loading="loading" highlight-current-row>
-        <el-table-column prop="interface_code" label="接口编码" width="250">
+        <el-table-column prop="interface_code" label="接口编码" :width="interfaceCodeWidth">
             <template #default="scope">
                 <!-- {{ scope.row.interface_code ? scope.row.interface_code : scope.row.interface_name }} -->
                 <router-link 
@@ -29,18 +29,17 @@
                 </router-link>
             </template>
         </el-table-column>
-        <el-table-column prop="interface_name" label="接口名称" />
-        <el-table-column prop="interface_desc" label="接口描述" show-overflow-tooltip >
+        <el-table-column prop="interface_name" label="接口名称" :width="interfaceNameWidth"/>
+        <el-table-column prop="interface_desc" label="接口描述" show-overflow-tooltip width="200">
             <template #default="scope">
                 {{ scope.row.interface_desc ? scope.row.interface_desc : scope.row.interface_name }}
             </template>
         </el-table-column>
-        <el-table-column prop="report_info.name" label="报表名称"/>
-        <el-table-column prop="report_info.module_info.name" label="模块名称"/>
-        <el-table-column prop="report_info.module_info.platform_info.name" label="平台名称"/>
-        <el-table-column prop="interface_url" label="接口地址" show-overflow-tooltip />
-        <el-table-column prop="interface_db_type" label="数据库类型"/>
-        <el-table-column prop="interface_db_name" label="数据库名称"/>
+        <el-table-column prop="report_info.name" label="报表名称" width="200"/>
+        <el-table-column prop="report_info.module_info.name" label="模块名称" width="200"/>
+        <el-table-column prop="report_info.module_info.platform_info.name" label="平台名称" width="200"/>
+        <el-table-column prop="interface_db_type" label="数据库类型" width="100"/>
+        <el-table-column prop="interface_db_name" label="数据库名称" width="100"/>
         <el-table-column prop="is_total" label="是否合计">
           <template #default="scope">
             <!-- {{ scope.row.is_total }} -->
@@ -225,7 +224,7 @@
 </template>
 
 <script setup name="InterfaceManage">
-import { ref, onMounted, reactive, inject } from 'vue'
+import { ref, onMounted, reactive, inject, computed } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
 import QueryParamsForm from '@/components/QueryParamsForm'
@@ -245,6 +244,37 @@ const loading = ref(false)
 const currentPage = ref(1)
 const pageSize = ref(10)
 const total = ref(0)
+
+const calculateColumnWidth = inject('calculateColumnWidth')
+const interfaceCodeWidth = computed(() => { 
+    if (tableData.value.length === 0) return 200
+
+    let maxWidth = 200
+    tableData.value.forEach(item => {
+        const width = calculateColumnWidth(item.interface_code,{
+        minWidth: 150,  // 最小宽度
+        maxWidth: 300   // 最大宽度
+      })
+        maxWidth = Math.max(maxWidth, width)
+    })
+
+    return maxWidth
+})
+
+const interfaceNameWidth = computed(() => { 
+    if (tableData.value.length === 0) return 200
+
+    let maxWidth = 200
+    tableData.value.forEach(item => {
+        const width = calculateColumnWidth(item.interface_name,{
+        minWidth: 150,  // 最小宽度
+        maxWidth: 300   // 最大宽度
+      })
+        maxWidth = Math.max(maxWidth, width)
+    })
+
+    return maxWidth
+})
 
 // 选项数据
 const platformOptions = ref([])

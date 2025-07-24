@@ -26,7 +26,7 @@ import elementIcons from '@/components/SvgIcon/svgicon'
 import './permission' // permission control
 
 import { useDict } from '@/utils/dict'
-import { parseTime, resetForm, addDateRange, handleTree, selectDictLabel, selectDictLabels } from '@/utils/ruoyi'
+import { parseTime, resetForm, addDateRange, handleTree, selectDictLabel, selectDictLabels, calculateColumnWidth } from '@/utils/ruoyi'
 
 // 分页组件
 import Pagination from '@/components/Pagination'
@@ -55,8 +55,12 @@ app.config.globalProperties.addDateRange = addDateRange
 app.config.globalProperties.selectDictLabel = selectDictLabel
 app.config.globalProperties.selectDictLabels = selectDictLabels
 
+
+// vue3推荐注入到全局的方法
 app.provide('download', download)
 app.provide('useDict', useDict)
+app.provide('calculateColumnWidth', calculateColumnWidth)
+
 
 // 全局组件挂载
 app.component('DictTag', DictTag)

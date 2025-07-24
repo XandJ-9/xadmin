@@ -87,7 +87,6 @@ class UserSerializer(SystemBaseSerializer):
         return instance
 
     def update(self, instance, validated_data):
-        print(f'validated_data: {validated_data}')
         if validated_data.get('password', None):
             password = validated_data.pop('password')
             instance.check_password(password)

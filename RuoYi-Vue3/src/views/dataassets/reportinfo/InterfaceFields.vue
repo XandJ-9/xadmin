@@ -10,7 +10,7 @@
     />
       <!-- 数据表格 -->
       <el-table :data="paginateData" style="width: 100%" v-loading="loading" border fit>
-        <el-table-column prop="interface_para_code" label="参数编码"/>
+        <el-table-column prop="interface_para_code" label="参数编码" :width="interfaceParaCodeWidth"/>
         <el-table-column prop="interface_para_name" label="参数名称" width="120" />
         <el-table-column prop="interface_para_position" label="参数位置" width="100" />
         <el-table-column prop="interface_para_type" label="参数类型" width="100">
@@ -23,7 +23,7 @@
             {{ getDataTypeName(scope.row.interface_data_type) }}
           </template>
         </el-table-column>
-        <el-table-column prop="interface_para_default" label="默认值" show-overflow-tooltip/>
+        <el-table-column prop="interface_para_default" label="默认值" width="100" show-overflow-tooltip />
         <el-table-column prop="interface_show_flag" label="是否显示" width="100">
           <template #default="scope">
             {{ scope.row.interface_show_flag === '1' ? '是' : '否' }}
@@ -45,85 +45,85 @@
       </el-table>
 
 
-      <div class="card-footer">
-        <!-- <div>
-            <el-button type="primary" @click="goInterfaceList">返回接口列表</el-button>
-            <el-button type="primary" @click="handleAdd">新增字段</el-button>
-        </div> -->
+    <!-- 分页 -->
+    <pagination v-show="total > 0" :total="total" 
+            v-model:page="currentPage" 
+            v-model:limit="pageSize" 
+    />
 
-        <!-- 分页 -->
-        <pagination v-show="total > 0" :total="total" 
-              v-model:page="currentPage" 
-              v-model:limit="pageSize" 
-        />
-      </div>
-      <!-- 字段编辑对话框 -->
-      <el-dialog
-        v-model="dialogVisible"
-        :title="dialogType === 'add' ? '新增字段' : '编辑字段'"
-        width="50%"
-      >
-        <el-form
-          ref="formRef"
-          :model="formData"
-          :rules="rules"
-          label-width="120px"
-        >
-          <el-form-item label="参数编码" prop="interface_para_code">
-            <el-input v-model="formData.interface_para_code" />
-          </el-form-item>
-          <el-form-item label="参数名称" prop="interface_para_name">
-            <el-input v-model="formData.interface_para_name" />
-          </el-form-item>
-          <el-form-item label="参数位置" prop="interface_para_position">
-            <el-input-number v-model="formData.interface_para_position" :min="1" />
-          </el-form-item>
-          <el-form-item label="参数类型" prop="interface_para_type">
+    <!-- 字段编辑对话框 -->
+    <el-dialog
+    v-model="dialogVisible"
+    :title="dialogType === 'add' ? '新增字段' : '编辑字段'"
+    width="50%"
+    >
+    <el-form
+        ref="formRef"
+        :model="formData"
+        :rules="rules"
+        label-width="120px"
+    >
+        <el-form-item label="参数编码" prop="interface_para_code">
+        <el-input v-model="formData.interface_para_code" />
+        </el-form-item>
+        <el-form-item label="参数名称" prop="interface_para_name">
+        <el-input v-model="formData.interface_para_name" />
+        </el-form-item>
+        <el-form-item label="参数位置" prop="interface_para_position">
+        <el-input-number v-model="formData.interface_para_position" :min="1" />
+        </el-form-item>
+        <el-form-item label="参数类型" prop="interface_para_type">
             <el-select v-model="formData.interface_para_type">
-              <el-option label="输入参数" value="1" />
-              <el-option label="输出参数" value="2" />
+                <!-- <el-option label="输入参数" value="1" /> -->
+                <!-- <el-option label="输出参数" value="2" /> -->
+                 <el-option 
+                 v-for="item in interfaceParaTypeOptions"
+                 :key="item.value"
+                 :label="item.label"
+                 :value="item.value"
+                 />
             </el-select>
-          </el-form-item>
-          <el-form-item label="数据类型" prop="interface_data_type">
-            <el-select v-model="formData.interface_data_type">
-              <el-option
-                v-for="item in dataTypeOptions"
-                :key="item.value"
-                :label="item.label"
-                :value="item.value"
-              />
-            </el-select>
-          </el-form-item>
-          <el-form-item label="默认值" prop="interface_para_default">
-            <el-input v-model="formData.interface_para_default" />
-          </el-form-item>
-          <el-form-item label="是否显示" prop="interface_show_flag">
-            <el-radio-group v-model="formData.interface_show_flag">
-              <el-radio value="1">是</el-radio>
-              <el-radio value="0">否</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item label="是否导出" prop="interface_export_flag">
-            <el-radio-group v-model="formData.interface_export_flag">
-              <el-radio value="1">是</el-radio>
-              <el-radio value="0">否</el-radio>
-            </el-radio-group>
-          </el-form-item>
-          <el-form-item label="参数描述" prop="interface_para_desc">
-            <el-input
-              v-model="formData.interface_para_desc"
-              type="textarea"
-              :rows="3"
+        </el-form-item>
+        <el-form-item label="数据类型" prop="interface_data_type">
+        <el-select v-model="formData.interface_data_type">
+            <el-option
+            v-for="item in dataTypeOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value"
             />
-          </el-form-item>
-        </el-form>
-        <template #footer>
-          <span class="dialog-footer">
-            <el-button @click="dialogVisible = false">取消</el-button>
-            <el-button type="primary" @click="handleSubmit">确定</el-button>
-          </span>
-        </template>
-      </el-dialog>
+        </el-select>
+        </el-form-item>
+        <el-form-item label="默认值" prop="interface_para_default">
+        <el-input v-model="formData.interface_para_default" />
+        </el-form-item>
+        <el-form-item label="是否显示" prop="interface_show_flag">
+        <el-radio-group v-model="formData.interface_show_flag">
+            <el-radio label="是" value="1">是</el-radio>
+            <el-radio label="否" value="0">否</el-radio>
+        </el-radio-group>
+        </el-form-item>
+        <el-form-item label="是否导出" prop="interface_export_flag">
+        <el-radio-group v-model="formData.interface_export_flag">
+            <el-radio label="是" value="1">是</el-radio>
+            <el-radio label="否" value="0">否</el-radio>
+        </el-radio-group>
+        </el-form-item>
+        <el-form-item label="参数描述" prop="interface_para_desc">
+        <el-input
+            v-model="formData.interface_para_desc"
+            type="textarea"
+            :rows="3"
+        />
+        </el-form-item>
+    </el-form>
+    <template #footer>
+        <span class="dialog-footer">
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="handleSubmit">确定</el-button>
+        </span>
+    </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -147,8 +147,8 @@ export default {
 </script>
 
 <script setup name="InterfaceFields">
-import { ref, onMounted, reactive, computed } from 'vue'
-import { useRoute , useRouter} from 'vue-router'
+import { ref, onMounted, reactive, computed, inject } from 'vue'
+import { useRouter} from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import QueryParamsForm from '@/components/QueryParamsForm'
 import CrudBar from '@/components/CrudBar'
@@ -160,7 +160,7 @@ const queryProperties = reactive([
 ])
 
 const router = useRouter()
-const route = useRoute()
+
 const interfaceId = ref(null)
 // 接口信息
 const interfaceInfo = ref(null)
@@ -197,6 +197,12 @@ const rules = {
   interface_data_type: [{ required: true, message: '请选择数据类型', trigger: 'change' }]
 }
 
+// 字段类型选项
+const interfaceParaTypeOptions = [
+    { value: '1', label: '输入参数' },
+    { value: '2', label: '输出参数' }
+]
+
 // 数据类型选项
 const dataTypeOptions = [
   { value: '1', label: '字符' },
@@ -215,6 +221,20 @@ const dataTypeOptions = [
   { value: '14', label: '多选' },
   { value: '15', label: '文本' }
 ]
+
+const calculateColumnWidth = inject('calculateColumnWidth')
+
+const interfaceParaCodeWidth = computed(() => { 
+    let maxWidth = 200
+    if (tableData.value.length === 0) return maxWidth
+
+    tableData.value.forEach(item => {
+        const width = calculateColumnWidth(item.interface_para_code)
+        maxWidth = Math.max(maxWidth, width)
+    })
+
+    return maxWidth
+})
 
 // 获取数据类型名称
 const getDataTypeName = (type) => {
@@ -242,8 +262,6 @@ const sortTableData = (dataList) => {
 const getFieldList = async (queryParams) => {
     loading.value = true
     const params = {
-      // pageNum: currentPage.value,
-      // pageSize: pageSize.value,
       noPage: 1,
       interface: interfaceId.value,
       ...queryParams
@@ -260,12 +278,6 @@ const getFieldList = async (queryParams) => {
         ElMessage.error('获取接口字段失败')
     }).finally(() => {
         loading.value = false
-    })
-}
-
-const goInterfaceList = () => {
-    router.push({
-        path: '/reportinfo/interface'
     })
 }
 
@@ -386,19 +398,7 @@ const handleSubmit = async () => {
   })
 }
 
-// 分页大小变更处理
-const handleSizeChange = (val) => {
-  pageSize.value = val
-  getFieldList()
-}
-
-// 当前页变更处理
-const handleCurrentChange = (val) => {
-  currentPage.value = val
-  getFieldList()
-}
-
-
+// 分页数据
 const paginateData = computed(() => {
   const startIndex = (currentPage.value - 1) * pageSize.value
   const endIndex = startIndex + pageSize.value

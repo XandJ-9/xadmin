@@ -58,6 +58,23 @@ Authorization: Bearer {{$dotenv accessToken}}
 
 
 ###
+# @name updateUser
+# @description 修改用户信息
+PUT {{host}}/api/system/user/profile/update
+Authorization: Bearer {{$dotenv accessToken}}
+Content-Type: application/json
+
+{
+    "username": "admin",
+    "nickname": "hahaa",
+    "sex": "0",
+    "avatar": "",
+    "status": "0",
+    "phonenumber": "15888888888",
+    "email": "jia.xu@qiyucloud.com.cn"
+}
+
+###
 # 修改用户信息
 PUT {{host}}/api/system/user/69
 Content-Type: application/json
