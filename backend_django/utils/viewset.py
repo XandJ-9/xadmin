@@ -16,7 +16,8 @@ class CustomModelViewSet(ModelViewSet):
     create_serializer_class = None
     update_serializer_class = None
     filter_fields = '__all__'
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter,SearchFilterBackend]
+    filter_backends = [DjangoFilterBackend,SearchFilterBackend]  
+    # SearchFilter, OrderingFilter,SearchFilterBackend
 
     search_fields = ()
 

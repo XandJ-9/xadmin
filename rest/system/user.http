@@ -88,7 +88,7 @@ Authorization: Bearer {{$dotenv accessToken}}
 
 ###
 # @name getUserList
-GET {{host}}/api/system/user?pageNum=1&pageSize=10
+GET {{host}}/api/system/user?pageNum=1&pageSize=10&deptId=100
 Authorization: Bearer {{$dotenv accessToken}}
 
 

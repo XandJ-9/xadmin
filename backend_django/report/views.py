@@ -6,7 +6,6 @@ from .models import PlatformInfo, ModuleInfo, ReportInfo, InterfaceInfo, Interfa
 from .serializers import *
 from .utils.mixin_excel_import_export import ExcelImportExportMixin
 from .utils.mixin_interface_query import InterfaceQueryMixin 
-from utils.filters import SearchFilterBackend
 
 class PlatformInfoViewSet(CustomModelViewSet):
     queryset = PlatformInfo.objects.all()

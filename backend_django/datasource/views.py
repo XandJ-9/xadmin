@@ -102,7 +102,6 @@ class DataSourceViewSet(viewsets.ModelViewSet):
 class QueryLogViewSet(CustomModelViewSet):
     queryset = QueryLog.objects.all()
     serializer_class = QueryLogSerializer
-    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
     
     # filterset_fields = ['datasource_id', 'status', ]
     # search_fields = ['datasource_id', 'status', 'sta_date']

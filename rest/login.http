@@ -15,9 +15,6 @@ Content-Type: application/json
 
 
 
-###
-POST {{host}}/api/logout
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1MjgwNjIyNCwiaWF0IjoxNzUyNzE5ODI0LCJqdGkiOiJjNTg2MmE1NTM4MmE0MTg5OGY2Y2I5ZWI5NjYwNDI1ZSIsInVzZXJfaWQiOjEsInV1aWQiOiIzMTUzODE5Ny00YmIyLTRhNDktYmEzZS1hNjUyNGMxNDg0ODQifQ.xsZb_HZISfKKGU-ZyqVxyllLXI1b2_jA2Z2x98f0Kck
 
 
 
