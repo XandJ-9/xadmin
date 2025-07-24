@@ -97,7 +97,7 @@ class InterfaceQueryResult:
             result['totaldata'] = self.data_result.get('totaldata', [])
         return result
 
-    def execute_query(self, interface_sql: str, total_sql: str = None, limit: int = 10000) -> dict:
+    def execute_query(self, interface_sql: str, total_sql: str = None, offset: int = 1, limit: int = 10000) -> dict:
         """
         Executes the query and returns the result.
 
@@ -111,17 +111,17 @@ class InterfaceQueryResult:
             self.data_result = {}
             executor = self.get_executor(self.interface.interface_db_type, self.interface.interface_db_name)
             if self.interface.is_paging == "1":
-                query_result = executor.execute_query_page(sql=interface_sql, page_num=1, page_size=20)
+                query_result = executor.execute_query_page(sql=interface_sql, page_num= offset, page_size= limit)
                 self.data_result["list"]= query_result.get('data', [])
                 self.data_result["total"] = query_result.get('total', 0)
                 if self.interface.is_total == "1":
-                    query_result = executor.execute_query_page(sql=total_sql, page_num=1, page_size=20)
+                    query_result = executor.execute_query_page(sql=total_sql)
                     self.data_result["totalList"] = query_result.get('data', [])
             else:
-                query_result = executor.execute_query(sql=interface_sql, limit=limit)
+                query_result = executor.execute_query(sql=interface_sql)
                 self.data_result["data"] = query_result.get('data', [])
                 if self.interface.is_total == "1":
-                    query_result = executor.execute_query_page(sql=total_sql, page_num=1, page_size=limit)
+                    query_result = executor.execute_query(sql=total_sql)
                     self.data_result["totaldata"] = query_result.get('data', [])
             self.query_success = True
         except Exception as e:

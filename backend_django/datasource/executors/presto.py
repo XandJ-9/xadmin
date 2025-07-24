@@ -65,7 +65,8 @@ class PrestoQueryExecutor(QueryExecutor):
                 connection.close()
 
     def execute_query_page(self, sql, page_num, page_size):
-        return {}
+        sql = f"{sql} offset {(page_num - 1) * page_size} limit {page_size}"
+        return self.execute_query(sql)
     
     def close(self) -> None:
         # 由于每次查询都会创建新的连接，所以这里不需要实现

@@ -57,6 +57,7 @@ class InterfaceInfo(BizBaseModel):
     is_login_visit = models.CharField(default='0', max_length=1,verbose_name='是否登陆验证',choices=IS_LOGIN_VISIT_CHOICE)
     alarm_type = models.CharField(default='0', max_length=1,verbose_name='报警类型',choices=ALARM_TYPE_CHOICES)
     user_name = models.CharField(max_length=255, verbose_name='用户名称', null=True, blank=True)
+    interface_datasource = models.CharField(max_length=255, verbose_name='数据源', null=True, blank=True)
 
     class Meta:
         db_table = "report_interface_info"
@@ -192,6 +193,7 @@ class InterfaceQueryLog(BizBaseModel):
     execute_time = models.IntegerField(verbose_name='执行时间', default=0)
     execute_result = models.TextField(verbose_name='执行结果', null=True)
     error_message = models.TextField(verbose_name='错误信息', null=True)
+    query_params = models.TextField(verbose_name='查询参数', null=True, blank=True)
 
     class Meta:
         db_table = "report_interface_query_log"

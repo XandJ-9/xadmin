@@ -1,10 +1,98 @@
 @host = http://localhost:8000
 
 ###
+# 查询接口列表
+GET {{host}}/api/report/interfaces/?pageNum=2&pageSize=10 HTTP/1.1
+Authorization: Bearer {{$dotenv accessToken}}
+
+
+
+###
 # 查询接口
 GET {{host}}/api/report/interfaces/3/ HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{$dotenv accessToken}}
+
+
+###
+# 更新接口
+POST {{host}}/api/report/interfaces/3/ HTTP/1.1
+Authorization: Bearer {{$dotenv accessToken}}
+Content-Type: application/json
+
+{
+  "id": 9,
+  "creator_username": "admin",
+  "create_time": "2025-07-24 19:08:01",
+  "updator_username": "admin",
+  "update_time": "2025-07-24 19:08:01",
+  "report_info": {
+    "id": 3,
+    "creator_username": "admin",
+    "create_time": "2025-06-26 10:42:04",
+    "updator_username": "admin",
+    "update_time": "2025-07-24 17:29:58",
+    "module_info": {
+      "id": 1,
+      "creator_username": "admin",
+      "create_time": "2025-06-12 18:18:30",
+      "updator_username": "admin",
+      "update_time": "2025-07-24 17:29:58",
+      "platform_info": {
+        "id": 1,
+        "creator_username": "admin",
+        "create_time": "2025-06-12 18:18:30",
+        "updator_username": "admin",
+        "update_time": "2025-07-24 17:29:58",
+        "created_at": "2025-06-12T18:18:30.726493+08:00",
+        "updated_at": "2025-07-24T17:29:58.614837+08:00",
+        "del_flag": "0",
+        "name": "新链营销矩阵",
+        "desc": null,
+        "creator": 1,
+        "updator": 1
+      },
+      "created_at": "2025-06-12T18:18:30.744044+08:00",
+      "updated_at": "2025-07-24T17:29:58.629999+08:00",
+      "del_flag": "0",
+      "name": "数据中心",
+      "desc": null,
+      "creator": 1,
+      "updator": 1,
+      "platform": 1
+    },
+    "created_at": "2025-06-26T10:42:04.329146+08:00",
+    "updated_at": "2025-07-24T17:29:58.646459+08:00",
+    "del_flag": "0",
+    "name": "报表中心",
+    "desc": null,
+    "creator": 1,
+    "updator": 1,
+    "module": 1
+  },
+  "created_at": "2025-07-24T19:08:01.780754+08:00",
+  "updated_at": "2025-07-24T19:08:01.780754+08:00",
+  "del_flag": "0",
+  "interface_name": "测试接口",
+  "interface_code": "ads_test",
+  "interface_desc": "",
+  "interface_db_type": "presto",
+  "interface_db_name": "ads",
+  "interface_sql": "SELECT 1",
+  "is_total": "0",
+  "total_sql": null,
+  "is_paging": "0",
+  "is_date_option": "0",
+  "is_second_table": "0",
+  "is_login_visit": "0",
+  "alarm_type": "0",
+  "user_name": null,
+  "creator": 1,
+  "updator": 1,
+  "report": 3,
+  "sql": "SELECT 1"
+}
+
 
 ###
 # 导出
@@ -16,10 +104,18 @@ Authorization: Bearer {{$dotenv accessToken}}
 
 ###
 # 查询接口
-POST {{host}}/api/report/interface-query/?interface_code=ads_xl_volvo_summary_day
+POST {{host}}/api/report/interface-query/?interface_code=ads_xl_live_force_interaction
 Authorization: Bearer {{$dotenv accessToken}}
+Content-Type: application/json
 
-
+{
+    "period_start": "2025-07-24", 
+    "period_end": "2025-07-24", 
+    "export_type": 1, 
+    "operate_type": 1, 
+    "page_no": 2, 
+    "page_size": 10
+}
 
 ###
 # 获取接口字段
@@ -36,7 +132,6 @@ Authorization: Bearer {{$dotenv accessToken}}
 
 ###
 # 添加接口字典值
-
 POST {{host}}/api/system/dict/data HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{$dotenv accessToken}}
@@ -51,10 +146,6 @@ Authorization: Bearer {{$dotenv accessToken}}
 }
 
 
-###
-# 获取接口信息
-GET {{host}}/api/report/interfaces/3/ HTTP/1.1
-Authorization: Bearer {{$dotenv accessToken}}
 
 ###
 # 获取接口字段
@@ -69,5 +160,11 @@ Authorization: Bearer {{$dotenv accessToken}}
 
 ###
 # 获取接口字段
-GET {{host}}/api/report/interface-fields/?interface=5&interface_para_code=ss HTTP/1.1
+GET {{host}}/api/report/interface-fields/?interface=7&interface_para_name=period_date&noPage=1 HTTP/1.1
+Authorization: Bearer {{$dotenv accessToken}}
+
+
+###
+# 获取接口查询日志
+GET {{host}}/api/report/interface-logs/122/ HTTP/1.1
 Authorization: Bearer {{$dotenv accessToken}}

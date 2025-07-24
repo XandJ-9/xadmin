@@ -35,14 +35,9 @@
         </el-form>
         </el-col>
 
-
-
-
         <el-button @click="queryData({ env_type: 0 })" type="primary" link size="small">查询测试环境</el-button>
-        <!-- <el-button @click="queryData({ env_type: 1 })" type="primary" link size="small">查询生产环境</el-button> -->
-        <!-- <el-button @click="exportData({ env_type: 0 })" type="primary" link size="small">测试导出</el-button> -->
-        <!-- <el-button @click="exportData({ env_type: 1 })" type="primary" link size="small">生产导出</el-button> -->
-        <!-- :label="item.interface_para_name ? item.interface_para_name : item.interface_para_desc"  -->
+
+        <!-- 数据表格 -->
         <el-table :data="pageInfo.tableData" border highlight-current-row style="width: 100%">
             <el-table-column align="center" v-for="item, index in columnsFields" :key="index"
                 :show-overflow-tooltip="true" :min-width="100">
@@ -69,12 +64,10 @@
             </template>
         </el-alert>
         <div class="card-footer">
-            <Pagination
+            <pagination
                 :total="pageInfo.total"
-                :current-page="pageInfo.page_no"
-                :page-size="pageInfo.page_size"
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
+                v-model:current-page="pageInfo.page_no"
+                v-model:limit="pageInfo.page_size"
             />
         </div>
 
@@ -100,21 +93,23 @@ export default {
 }
 </script>
 
-<script setup>
+<script setup name="InterfaceDataView">
 import { useRoute } from 'vue-router'
 import { ref, reactive, onMounted } from 'vue'
 import {getInterfaceDetail, getInterfaceFields,executeInterfaceQuery} from '@/api/dataassets/reportinfo'
-
-
+import { ElMessage } from 'element-plus';
 
 const route = useRoute()
-
+// 接口信息
 const interface_id = ref(parseInt(route.params.id))
 const interface_name = ref(route.query.interface_name)
-
 const interface_code = ref(null)
-const queryFields = ref([])
+
+// 展示表头
 const columnsFields = ref([])
+
+// 查询参数
+const queryFields = ref([])
 
 
 const resDataList = ref([])
@@ -123,6 +118,7 @@ const totalresDataList = ref([])
 const visiable = ref(false)
 const showJsonFormat = ref(false)
 
+// 查询参数字段
 const queryForm = reactive({
     query_field_json: '',
     query_field_list: [],
@@ -153,18 +149,9 @@ const getInterfaceInfo = async () => {
     
 }
 
-// const getReportData = async ({ interface_code, payload, env_type }) => {
-//     request.post(`/api/report/execute-query/?interface_code=${interface_code}`, data).then(response => {})
-// }
-
 const queryLoading = ref(false)
-const downloadLoading = ref(false)
-const exportOptions = ref({
-    filename: 'test.xlsx',
-    autoWidth: true,
-    bookType: 'xlsx'
-})
 
+// 查询结果分页展示
 const pageInfo = reactive({
     env_type: 0,
     page_no: 1,
@@ -189,7 +176,6 @@ const queryData = (data) => {
     })
     queryLoading.value = true
 
-    //   getReportData({ interface_code, payload, env_type: data.env_type }).then(response => {
     executeInterfaceQuery(interface_code.value, payload)
         .then(response => {
         const res = response
@@ -228,6 +214,11 @@ const queryData = (data) => {
     }
     ).finally(() => {
         queryLoading.value = false
+        if (!errorMsg.value.error) {
+            ElMessage.success('查询成功')
+        } else {
+            ElMessage.error(errorMsg.value.msg)
+        }
     })
 }
 

@@ -119,6 +119,18 @@
           </div>
         </div>
         <div class="detail-item full-width">
+          <span class="label">查询参数：</span>
+          <div class="json-code">
+            <div class="sql-header">
+              <span>JSON</span>
+              <el-button type="primary" link size="small" @click="copyJsonParams">
+                <el-icon><Document /></el-icon> 复制
+              </el-button>
+            </div>
+            <pre><code ref="jsonParamsBlock" class="language-json">{{ formatJsonParams }}</code></pre>
+          </div>
+        </div>
+        <div class="detail-item full-width">
           <span class="label">SQL语句：</span>
           <div class="sql-code">
             <div class="sql-header">
@@ -146,6 +158,7 @@ import { reactive, ref, onMounted, nextTick, computed, inject } from 'vue'
 import { ElMessage } from 'element-plus'
 import hljs from 'highlight.js/lib/core'
 import sql from 'highlight.js/lib/languages/sql'
+import json from 'highlight.js/lib/languages/json'
 import 'highlight.js/styles/atom-one-dark.css'
 import { Document } from '@element-plus/icons-vue'
 // import Pagination from '@/components/Pagination'
@@ -153,8 +166,9 @@ import { getInterfaceQueryLogs, getInterfaceQueryLogDetail } from '@/api/dataass
 
 // 注入计算列宽方法
 const calculateColumnWidth = inject('calculateColumnWidth')
-// 注册SQL语言高亮
+// 注册SQL和JSON语言高亮支持
 hljs.registerLanguage('sql', sql)
+hljs.registerLanguage('json', json)
 
 // 过滤表单
 // 表单相关的多个字段用 reactive
@@ -179,6 +193,7 @@ const pageInfo = reactive({
 const dialogVisible = ref(false)
 const currentQuery = ref({})
 const sqlCodeBlock = ref(null)
+const jsonParamsBlock = ref(null)
 
 // 获取日志数据
 const fetchData = async () => {
@@ -216,6 +231,7 @@ const fetchData = async () => {
 }
 
 // 查看详情
+// 查看详情
 const viewQueryDetail = async (row) => {
   try {
     const response = await getInterfaceQueryLogDetail(row.id)
@@ -226,6 +242,9 @@ const viewQueryDetail = async (row) => {
     nextTick(() => {
       if (sqlCodeBlock.value) {
         hljs.highlightElement(sqlCodeBlock.value)
+      }
+      if (jsonParamsBlock.value) {
+        hljs.highlightElement(jsonParamsBlock.value)
       }
     })
   } catch (error) {
@@ -252,7 +271,7 @@ const copySql = () => {
         if (window.isSecureContext && navigator.clipboard) {
             navigator.clipboard.writeText(currentQuery.value.interface_sql)
                 .then(() => {
-                    ElMessage.success('SQL已复制到剪贴板')
+                    ElMessage.success('复制成功')
                 })
                 .catch(() => {
                     ElMessage.error('复制失败，请手动复制')
@@ -267,7 +286,7 @@ const copySql = () => {
                 textarea.select();
                 const success = document.execCommand("copy");
                 document.body.removeChild(textarea);
-                ElMessage.success('SQL已复制到剪贴板')
+                ElMessage.success('复制成功')
             } catch (error) {
                 ElMessage.error('复制失败，请手动复制')
             }
@@ -275,6 +294,37 @@ const copySql = () => {
         }
     }
 }
+
+// 复制JSON参数
+const copyJsonParams = () => {
+  if (currentQuery.value.query_params) {
+    let jsonContent = formatJsonParams.value;
+    
+    if (window.isSecureContext && navigator.clipboard) {
+      navigator.clipboard.writeText(jsonContent)
+        .then(() => {
+          ElMessage.success('参数已复制到剪贴板')
+        })
+        .catch(() => {
+          ElMessage.error('复制失败，请手动复制')
+        })
+    } else {
+      try {
+        const textarea = document.createElement("textarea");
+        textarea.value = jsonContent;
+        textarea.style.position = "absolute";
+        textarea.style.opacity = "0";
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        ElMessage.success('参数已复制到剪贴板');
+      } catch (err) {
+        ElMessage.error('复制失败，请手动复制');
+      }
+    }
+  }
+};
 
 // 搜索日志
 const searchLogs = () => {
@@ -327,6 +377,29 @@ const getInterfaceCodeWidth = computed(() => {
   
   return maxWidth;
 });
+// 计算属性：格式化JSON参数
+const formatJsonParams = computed(() => {
+  if (!currentQuery.value || !currentQuery.value.query_params) {
+    return '{}';
+  }
+  
+  try {
+    // 如果已经是对象，转为字符串再格式化
+    let jsonData = currentQuery.value.query_params;
+    
+    // 如果是字符串，尝试解析为JSON对象
+    if (typeof jsonData === 'string') {
+      jsonData = JSON.parse(jsonData);
+    }
+    
+    // 格式化为美观的JSON字符串
+    return JSON.stringify(jsonData, null, 2);
+  } catch (error) {
+    console.error('JSON格式化失败:', error);
+    // 如果解析失败，返回原始内容
+    return currentQuery.value.query_params;
+  }
+});
 </script>
 
 <style scoped>
@@ -369,6 +442,20 @@ const getInterfaceCodeWidth = computed(() => {
   font-weight: bold;
   margin-right: 10px;
   min-width: 80px;
+}
+
+.json-code {
+  width: 100%;
+  background-color: #282c34;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.json-code pre {
+  margin: 0;
+  padding: 12px;
+  overflow-x: auto;
+  max-height: 300px;
 }
 
 .sql-code {
