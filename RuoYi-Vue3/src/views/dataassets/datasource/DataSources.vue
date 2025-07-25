@@ -231,13 +231,25 @@ const btnTestList = ref([])
 
 const handleTest = async (row) => {
     btnTestList.value.push(row)
-    const response = await testDataSourceConnection(row.id)
-    if (response.status === 'success') {
-      ElMessage.success(`${row.name}连接测试成功`)
-    } else {
-      ElMessage.error(`${row.name}连接测试失败: ${response.msg}`)
-    }
-    btnTestList.value = btnTestList.value.filter(item => item.id !== row.id)
+    // const response = await testDataSourceConnection(row.id)
+    // if (response.status === 'success') {
+    //   ElMessage.success(`${row.name}连接测试成功`)
+    // } else {
+    //   ElMessage.error(`${row.name}连接测试失败: ${response.msg}`)
+    // }
+    // btnTestList.value = btnTestList.value.filter(item => item.id !== row.id)
+
+    await testDataSourceConnection(row.id).then(response => {
+        if (response.status === 'success') {
+          ElMessage.success(`${row.name}连接测试成功`)
+        } else {
+          ElMessage.error(`${row.name}连接测试失败: ${response.msg}`)
+        }
+    }).catch(error => {
+        ElMessage.error(`${row.name}连接测试失败: ${error.message}`)
+    }).finally(() => {
+        btnTestList.value = btnTestList.value.filter(item => item.id !== row.id)
+    })
 }
 
 fetchDataSources()

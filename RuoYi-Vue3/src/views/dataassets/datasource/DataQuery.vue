@@ -1,85 +1,94 @@
 <template>
   <div class="app-container">
     <div class="query-header">
-      <el-select
-        v-model="selectedDataSource"
-        placeholder="请选择数据源"
-        style="width: 200px"
-      >
-        <el-option
-          v-for="source in dataSources"
-          :key="source.id"
-          :label="source.name"
-          :value="source.id"
-        />
-      </el-select>
-      <el-button type="primary" @click="handleQuery" :loading="loading">执行查询</el-button>
+      <div class="header-left">
+        <el-select
+          v-model="selectedDataSource"
+          placeholder="选择数据源"
+          style="width: 200px"
+        >
+          <el-option
+            v-for="source in dataSources"
+            :key="source.id"
+            :label="source.name"
+            :value="source.id"
+          />
+        </el-select>
+      </div>
+      <div class="header-right">
+        <el-button  icon="Search" @click="handleQuery" :loading="loading">
+           执行查询
+        </el-button>
+        <el-button  icon="Save" @click="handleSave" :disabled="!sqlQuery.trim()">
+          保存
+        </el-button>
+      </div>
     </div>
 
     <div class="query-content">
+      <!-- SQL编辑器区域 -->
       <div class="query-editor" :style="{ height: editorHeight + 'px' }">
-          <MonacoEditor
-            v-model="sqlQuery"
-            :options="editorOptions"
-            language="sql"
-            theme="vs-light"
-            @change="onEditorChange"
-            @cursor-change="handleCursorChange"
-          />
+        <MonacoEditor
+          v-model="sqlQuery"
+          :options="editorOptions"
+          language="sql"
+          theme="vs-light"
+          @change="onEditorChange"
+          @cursor-change="handleCursorChange"
+        />
       </div>
-      
 
-      <div class="query-result" v-if="queryTabs.length > 0">
-      <div class="resizer" @mousedown="startResize"></div>
+      <!-- 可调整大小的分隔条 -->
+      <div class="resizer" v-if="queryTabs.length > 0" @mousedown="startResize"></div>
+
+      <!-- 查询结果区域 -->
+      <div class="query-result" v-if="queryTabs.length > 0" :style="{ height: resultHeight + 'px' }">
         <el-tabs
-            v-model="activeTab" 
-            type="card" 
-            closable 
-            @tab-remove="removeTab"
-            class="query-tabs"
+          v-model="activeTab" 
+          type="card" 
+          closable 
+          @tab-remove="removeTab"
+          class="query-tabs"
         >
-            <el-tab-pane
+          <el-tab-pane
             v-for="tab in queryTabs"
             :key="tab.id"
             :label="tab.label"
             :name="tab.id"
-            >
+          >
             <template #label>
-                <el-tooltip
-                    class="box-item"
-                    effect="dark"
-                    :content="tab.sql"
-                    placement="top"
-                >
-                    <span>{{ tab.label }}</span>
-                </el-tooltip>
+              <el-tooltip
+                class="box-item"
+                effect="dark"
+                :content="tab.sql"
+                placement="top"
+              >
+                <span>{{ tab.label }}</span>
+              </el-tooltip>
             </template>
             <template #default> 
-            
-                <QueryResult
-                    :query-result="tab.queryResult"
-                    :total="tab.queryResult.length"
-                    :table-columns="tab.tableColumns"
-                    :loading="loading"
-                    :error="tab.error"
-                />
+              <QueryResult
+                :query-result="tab.queryResult"
+                :total="tab.queryResult.length"
+                :table-columns="tab.tableColumns"
+                :loading="loading"
+                :error="tab.error"
+              />
             </template>
-            </el-tab-pane>
-
+          </el-tab-pane>
         </el-tabs>
       </div>
-
     </div>
   </div>
 </template>
 
-
 <script setup name="DataQuery">
 import { ref, onMounted, onUnmounted } from 'vue'
-import { ElMessage } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
+// import { Search, Save } from '@element-plus/icons-vue'
 import MonacoEditor from '@/components/MonacoEditor'
 import QueryResult from './QueryResult'
-import {  getDataSourceList, executeQuery } from '@/api/dataassets/datasource'
+import { getDataSourceList, executeQuery, saveSqlQuery } from '@/api/dataassets/datasource'
 
 // 数据查询相关数据
 const dataSources = ref([])
@@ -93,31 +102,59 @@ const activeTab = ref('')
 const queryTabs = ref([])
 const tabIndex = ref(0)
 
-// 编辑器高度相关
-const editorHeight = ref(100)
+// 编辑器和结果区域高度相关
+const editorHeight = ref(400) // 初始编辑器高度
+const resultHeight = ref(300) // 初始结果区域高度
 const isResizing = ref(false)
 const startY = ref(0)
-const startHeight = ref(0)
+const startEditorHeight = ref(0)
+const startResultHeight = ref(0)
+const minEditorHeight = 200 // 编辑器最小高度
+const minResultHeight = 200 // 结果区域最小高度
+
+// 计算可用的总高度（减去头部和分隔条高度）
+const calculateAvailableHeight = () => {
+  return window.innerHeight - 60 - 6 // 头部高度60px，分隔条高度6px
+}
 
 const startResize = (e) => {
   isResizing.value = true
   startY.value = e.clientY
-  startHeight.value = editorHeight.value
+  startEditorHeight.value = editorHeight.value
+  startResultHeight.value = resultHeight.value
   document.addEventListener('mousemove', handleMouseMove)
   document.addEventListener('mouseup', stopResize)
+  document.body.style.cursor = 'row-resize'
 }
 
 const handleMouseMove = (e) => {
   if (!isResizing.value) return
+  
   const deltaY = e.clientY - startY.value
-  const newHeight = Math.max(100, Math.min(window.innerHeight - 300, startHeight.value + deltaY))
-  editorHeight.value = newHeight
+  const availableHeight = calculateAvailableHeight()
+  
+  // 计算新的编辑器高度和结果区域高度
+  let newEditorHeight = startEditorHeight.value + deltaY
+  let newResultHeight = startResultHeight.value - deltaY
+  
+  // 确保两个区域都不小于最小高度
+  if (newEditorHeight < minEditorHeight) {
+    newEditorHeight = minEditorHeight
+    newResultHeight = availableHeight - minEditorHeight
+  } else if (newResultHeight < minResultHeight) {
+    newResultHeight = minResultHeight
+    newEditorHeight = availableHeight - minResultHeight
+  }
+  
+  editorHeight.value = newEditorHeight
+  resultHeight.value = newResultHeight
 }
 
 const stopResize = () => {
   isResizing.value = false
   document.removeEventListener('mousemove', handleMouseMove)
   document.removeEventListener('mouseup', stopResize)
+  document.body.style.cursor = ''
 }
 
 onUnmounted(() => {
@@ -179,27 +216,32 @@ const handleQuery = async () => {
   loading.value = true
   const newTabId = `tab-${tabIndex.value++}`
 
+  try {
+    const response = await executeQuery(selectedDataSource.value, sql)
+    
+    // 创建新标签
+    const newTab = {
+      id: newTabId,
+      label: `查询-${tabIndex.value}`,
+      sql: sql,
+      queryResult: [],
+      tableColumns: [],
+      error: response?.error
+    }
 
-    await executeQuery(selectedDataSource.value, sql).then(response => {
-        // 创建新标签
-        const newTab = {
-        id: newTabId,
-        label: `查询-${tabIndex.value}`,
-        sql: sql,
-        queryResult: [],
-        tableColumns: [],
-        error: response?.error
-        }
+    if (response.total > 0) {
+      newTab.tableColumns = Object.keys(response.data[0])
+      newTab.queryResult = response.data
+    }
 
-        if (response.total > 0) {
-        newTab.tableColumns = Object.keys(response.data[0])
-        newTab.queryResult = response.data
-        }
-
-        queryTabs.value.push(newTab)
-        activeTab.value = newTabId
-        editorHeight.value = 400
-    }).catch (err => {
+    queryTabs.value.push(newTab)
+    activeTab.value = newTabId
+    
+    // 调整编辑器和结果区域的高度
+    const availableHeight = calculateAvailableHeight()
+    editorHeight.value = Math.floor(availableHeight * 0.6) // 编辑器占60%
+    resultHeight.value = Math.floor(availableHeight * 0.4) // 结果区域占40%
+  } catch (err) {
     const newTab = {
       id: newTabId,
       label: `查询-${tabIndex.value}`,
@@ -210,9 +252,14 @@ const handleQuery = async () => {
     }
     queryTabs.value.push(newTab)
     activeTab.value = newTabId
-    }).finally(() => {
+    
+    // 调整编辑器和结果区域的高度
+    const availableHeight = calculateAvailableHeight()
+    editorHeight.value = Math.floor(availableHeight * 0.6) // 编辑器占60%
+    resultHeight.value = Math.floor(availableHeight * 0.4) // 结果区域占40%
+  } finally {
     loading.value = false
-  })
+  }
   
 //   try {
 //     // const formData = new FormData()
@@ -311,35 +358,88 @@ const onEditorChange = (value) => {
 const handleCursorChange = (position) => {
   currentCursorPosition.value = position
 }
+
+// 保存查询脚本
+const handleSave = async () => {
+  if (!selectedDataSource.value) {
+    ElMessage.warning('请选择数据源')
+    return
+  }
+
+  if (!sqlQuery.value.trim()) {
+    ElMessage.warning('请输入SQL查询语句')
+    return
+  }
+
+  const sql = getCurrentSql()
+
+  if (!sql) {
+    ElMessage.warning('请输入SQL语句')
+    return
+  }
+
+  // 弹出对话框让用户输入查询名称
+  ElMessageBox.prompt('请输入查询名称', '保存SQL查询', {
+    confirmButtonText: '确认',
+    cancelButtonText: '取消',
+    inputPattern: /\S+/,
+    inputErrorMessage: '名称不能为空'
+  }).then(({ value }) => {
+    // 调用保存API
+    saveSqlQuery(selectedDataSource.value, value, sql)
+      .then(() => {
+        ElMessage.success('保存成功')
+      })
+      .catch(error => {
+        ElMessage.error(`保存失败: ${error.message || '未知错误'}`)
+      })
+  }).catch(() => {
+    // 用户取消操作
+  })
+}
 </script>
 
 <style scoped>
-.data-query-container {
-  padding: 20px;
+.app-container {
+  padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  /* height: calc(100vh - 120px); */
+  height: calc(100vh - 84px); /* 减去顶部导航和标签页的高度 */
+  background-color: #f5f7fa;
+  overflow: hidden;
 }
 
 .query-header {
   display: flex;
-  gap: 16px;
+  gap: 20px;
   align-items: center;
-  padding-bottom: 10px;
+  padding: 12px 16px;
+  background-color: #fff;
+  border-bottom: 1px solid #e4e7ed;
+  height: 60px;
+  box-sizing: border-box;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
 .query-content {
   flex: 1;
   display: flex;
   flex-direction: column;
-  /* gap: 10px; */
-  background-color: #fff;
-  border-radius: 4px;
-  /* padding: 16px; */
-  /* box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1); */
   overflow: hidden;
-  /* height: 100vh; */
+  background-color: #fff;
+  height: calc(100vh - 60px); /* 减去头部高度 */
+  position: relative;
 }
 
 .query-editor {
@@ -347,18 +447,18 @@ const handleCursorChange = (position) => {
   border-radius: 4px;
   overflow: hidden;
   position: relative;
-  min-height: 100px;
-  height: 100%;
-  /* resize: vertical; */
-  /* height: 100vh; */
+  min-height: 200px;
+  flex: 1;
+  transition: height 0.3s ease;
 }
 
 .resizer {
   width: 100%;
-  height: 2px;
+  height: 6px;
   background-color: #f0f2f5;
   cursor: row-resize;
   position: relative;
+  z-index: 10;
 }
 
 .resizer:hover {
@@ -371,20 +471,33 @@ const handleCursorChange = (position) => {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 30px;
-  height: 2px;
+  width: 40px;
+  height: 4px;
   background-color: #909399;
-  border-radius: 1px;
+  border-radius: 2px;
 }
 
 .query-tabs {
-  margin-top: 16px;
-  flex: 1;
+  margin-top: 8px;
 }
 
 .query-result {
   flex-shrink: 0;
-  /* height: 100vh; */
+  min-height: 200px;
+  max-height: 60vh;
+  overflow: auto;
+  width: 100%;
+}
+
+/* 确保Monaco编辑器填充其容器 */
+:deep(.monaco-editor) {
+  height: 100% !important;
+}
+
+/* 确保查询结果表格正确显示 */
+:deep(.el-tabs__content) {
+  height: calc(100% - 40px); /* 减去标签页头部的高度 */
+  overflow: auto;
 }
 
 .fade-enter-active,

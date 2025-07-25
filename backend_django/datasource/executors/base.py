@@ -20,7 +20,6 @@ class QueryExecutor(ABC):
         pass
 
     
-    @abstractmethod
     def execute_query_page(self, sql: str, page_num: int, page_size: int) -> Dict[str, Any]:
         """执行SQL查询并分页"""
         pass

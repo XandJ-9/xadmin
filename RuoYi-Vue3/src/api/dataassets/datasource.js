@@ -64,6 +64,18 @@ export function executeQuery(dataSourceId, data) {
   })
 }
 
+// 保存SQL查询
+export function saveSqlQuery(dataSourceId, name, sql) {
+  return request({
+    url: `/datasources/${dataSourceId}/save-query/`,
+    method: 'post',
+    data: {
+      name,
+      sql
+    }
+  })
+}
+
 // 获取查询日志列表
 export function getQueryLogs(params) {
   return request({
