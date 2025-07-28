@@ -1,5 +1,5 @@
 from django.urls import path, include,re_path
-from rest_framework.routers import DefaultRouter
+from rest_framework.routers import DefaultRouter, APIRootView
 from .views import *
 
 router = DefaultRouter(trailing_slash=False)
@@ -11,6 +11,7 @@ router.register('menu', MenuViewSet)
 router.register('configs', SystemConfigViewSet)
 router.register('dict/type', SystemDictTypeViewSet, basename='system-dict-type')
 router.register('dict/data', SystemDictDataViewSet, basename='system-dict-data')
+
 
 urlpatterns = [
     path('system/', include(router.urls)),

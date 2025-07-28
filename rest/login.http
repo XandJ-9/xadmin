@@ -7,7 +7,7 @@ POST {{host}}/api/login
 Content-Type: application/json
 
 {
-    "username": "admin",
+    "username": "Tom",
     "password": "123456",
     "code": "X888",
     "uuid": "acf9c378-2f56-499b-9cb3-028451dfe842"

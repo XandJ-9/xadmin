@@ -5,7 +5,7 @@ from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from system.permissions import IsOwnerOrAdmin,IsAdminUser, HasRolePermission
+from system.permissions import IsOwnerOrAdmin,IsAdminUser, HasRolePermission, has_perms
 from .util_response import SuccessResponse, ErrorResponse, DetailResponse
 from .filters import SearchFilterBackend
 
@@ -20,8 +20,19 @@ class CustomModelViewSet(ModelViewSet):
     # SearchFilter, OrderingFilter,SearchFilterBackend
 
     search_fields = ()
+    _perms_map = {}
 
     # pagination_class = CustomPagination
+
+    @property
+    def perms_map(self):
+        """
+        获取权限映射表
+        """
+        if self._perms_map is not None:
+            return self._perms_map
+        extra_actions = self.get_extra_actions()
+        return {}
 
     def get_permissions(self):
         # if self.action in ['list']:
@@ -66,6 +77,7 @@ class CustomModelViewSet(ModelViewSet):
             return ErrorResponse(msg=str(e))
         return DetailResponse(data=serializer.data, msg="新增成功")
 
+    @has_perms(['system:config:list'])
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         # 这里先序列化，再分页，数据量大的情况下不可取，需要优化

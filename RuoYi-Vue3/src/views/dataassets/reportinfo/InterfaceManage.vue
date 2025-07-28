@@ -71,7 +71,7 @@
             <el-table-column label="操作" align="center" width="150">
                 <template #default="scope">
                     <el-tooltip content="修改" placement="top">
-                        <el-button link type="primary" @click="handleEdit(scope.row)" icon="Edit"></el-button>
+                        <el-button link type="primary" @click="handleEdit(scope.row)" icon="Edit" v-hasPermi="['report:interface:update']"></el-button>
                     </el-tooltip>
                     <el-tooltip content="删除" placement="top">
                         <el-button link type="danger" @click="handleDelete(scope.row)" icon="Delete"></el-button>
@@ -150,13 +150,13 @@
                 <el-form-item label="是否分页" prop="is_paging">
                     <el-radio-group v-model="formData.is_paging">
                         <el-radio v-for="item in interface_is_paging" :key="item.id"
-                            :value="item.value">{{ item.label }}</el-radio>
+                            :label="item.value">{{ item.label }}</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="是否日期查询" prop="is_date_option">
                     <el-radio-group v-model="formData.is_date_option">
                         <el-radio v-for="item in interface_is_date_option" :key="item.value"
-                            :value="item.value">{{ item.label }}</el-radio>"
+                            :label="item.value">{{ item.label }}</el-radio>"
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="接口sql" prop="interface_sql">

@@ -99,7 +99,7 @@ Authorization: Bearer {{$dotenv accessToken}}
 
 
 ###
-GET {{host}}/api/system/user/83
+GET {{host}}/api/system/user
 Authorization: Bearer {{$dotenv accessToken}}
 
 
@@ -138,3 +138,5 @@ Content-Type: application/json
     5
   ]
 }
+
+

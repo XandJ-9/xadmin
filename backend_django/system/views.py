@@ -9,7 +9,7 @@ from django.db.models import Q
 from PIL import Image, ImageDraw, ImageFont
 from .models import Post,Dept,User, Role, Menu, SystemConfig, Captcha, UserRole, SystemDictType,SystemDictData
 from .serializers import *
-from .permissions import IsAdminUser, IsOwnerOrAdmin,HasRolePermission
+from .permissions import IsAdminUser, IsOwnerOrAdmin,HasRolePermission, has_perms
 
 from utils.viewset import CustomModelViewSet
 from utils.serializer import build_tree
@@ -197,10 +197,11 @@ class UserViewSet(ModelImportExportViewSet):
     def get_permissions(self):
         if self.action in ['login', 'register', 'captchaImage']:
             return [AllowAny()]
-        if self.action in ['retrieve', 'update', 'partial_update', 'destroy']:
-            return [IsAdminUser()]
-        return [IsOwnerOrAdmin()]
+        if self.action in ['update', 'partial_update', 'destroy']:
+            return [IsOwnerOrAdmin()]
+        return [HasRolePermission()]
 
+    @has_perms(perms=['system:user:query'])
     def retrieve(self, request, *args, **kwargs):
         '''
         自定义返回单个对象的数据格式
@@ -316,7 +317,13 @@ class UserViewSet(ModelImportExportViewSet):
             # 获取用户角色
             user_roles = user.user_roles.all()
             role_ids = [user_role.role.id for user_role in user_roles]
-            permissions = ['*:*:*']
+            # permissions = ['*:*:*']
+            if user.username == 'admin':
+                permissions = ['*:*:*']
+            else:
+                permissions = Menu.objects.filter(
+                    role_menus__role__in=role_ids
+                ).values_list('perms', flat=True).distinct()
             return Response({"user": UserSerializer(user).data,"roles": role_ids, "permissions": permissions})
         else:
             return Response({'error': '用户未登录'}, status=status.HTTP_401_UNAUTHORIZED)

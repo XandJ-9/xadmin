@@ -1,3 +1,4 @@
+from abc import abstractmethod
 from utils.util_response import DetailResponse, ExcelResponse
 from hashlib import md5
 from report.models import UploadFileInfo
@@ -7,6 +8,7 @@ class ExcelImportExportMixin:
     import_serializer_class = None
     filename = 'excel_file'
 
+    @abstractmethod
     def create_excel_file(self, data, output_file_name = None):
         raise NotImplementedError('请实现create_excel_file方法')
     
@@ -19,7 +21,7 @@ class ExcelImportExportMixin:
         except Exception as e:
             return DetailResponse(msg=str(e))
     
-
+    @abstractmethod
     def parse_import_file(self, request, *args, **kwargs):
         raise NotImplementedError('请实现parse_import_file方法')
     def import_data(self, request, *args, **kwargs):
