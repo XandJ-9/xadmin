@@ -143,9 +143,10 @@ import {
     createInterfaceField,
     updateInterfaceField,
     deleteInterfaceField,
-    executeInterfaceQuery,
     updateInterface
 } from '@/api/dataassets/reportinfo'
+
+import { executeQuery } from '@/api/dataassets/datasource'
 
 const queryProperties = reactive([
     { label: '字段名称', type: 'input', prop: 'interface_para_name' },
@@ -391,26 +392,20 @@ const showSqlEditor = () => {
 }
 
 // 处理SQL执行
-const handleExecuteSql = async ({ sql, interfaceId }) => {
-    try {
-        console.log('handleExecuteSql: ', sql, interfaceId)
-        // const response = await executeInterfaceQuery(interfaceInfo.value.interface_code, payload)
-        // return response
-        // 1. 获取输入参数
+const handleExecuteSql = async ({ sql, interfaceId }, callback) => {
+    const datasourceId = interfaceInfo.value.interface_datasource
 
-        // 2. 传入sql模板
-        const payload = {
-            input_params: {},
-            query_sql: sql
-        }
-
-        // 3. 获取数据源
-        interfaceInfo.value.interface_db_type
-
-    } catch (error) {
+    // 3. 执行查询
+    const result = await executeQuery(datasourceId, sql).then(res => {
+        return res
+    }).catch(error => {
         console.error('执行SQL失败：', error)
+        ElMessage.error('执行SQL失败：' + (error.message || ''))
         return { error: error.message || '执行SQL失败' }
-    }
+    })
+    // console.log('execute result', result)
+    callback(result)
+    return result
 }
 
 // 处理SQL保存

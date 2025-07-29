@@ -27,8 +27,12 @@
         </div>
       </div>
       
-      <div class="sql-result" v-if="sqlExecuted">
-        <div class="section-title">执行结果</div>
+      <div class="sql-result" v-if="resultVisible">
+        <div class="section-title">
+            <span>执行结果</span>
+            <span class="close-btn" @click="closeResult">关闭</span>
+        </div>
+
         <div v-if="sqlError" class="sql-error">
           <pre>{{ sqlError }}</pre>
         </div>
@@ -70,7 +74,7 @@ const emit = defineEmits(['update:sql', 'execute', 'save', 'close'])
 
 // 状态变量
 const sqlContent = ref(props.initialSql || '')
-const sqlExecuted = ref(false)
+const resultVisible = ref(false)
 const sqlResult = ref([])
 const sqlColumns = ref([])
 const sqlError = ref('')
@@ -150,7 +154,7 @@ const getCurrentSql = () => {
 }
 
 // 执行SQL
-const executeSql = async () => {
+const executeSql = () => {
   if (!sqlContent.value.trim()) {
     ElMessage.warning('请输入SQL查询语句')
     return
@@ -167,36 +171,43 @@ const executeSql = async () => {
   
   try {
     // 触发执行事件，由父组件处理实际的SQL执行
-    const result = await emit('execute', {
-      sql,
-      interfaceId: props.interfaceInfo?.id
-    })
-    
-    // 如果父组件返回了结果
-    if (result && result.data) {
-      sqlResult.value = result.data
-      if (result.data.length > 0) {
-        sqlColumns.value = Object.keys(result.data[0])
-      } else {
+    emit('execute', {
+        sql,
+        interfaceId: props.interfaceInfo?.id
+    },
+        // 回调函数，获取父组件返回值
+        async (result) => { 
+        console.log('execute result', result)
+        // 如果父组件返回了结果
+        if (result && result.data) {
+        sqlResult.value = result.data
+        if (result.data.length > 0) {
+            sqlColumns.value = Object.keys(result.data[0])
+        } else {
+            sqlColumns.value = []
+        }
+        sqlError.value = ''
+        } else if (result && result.error) {
+        sqlError.value = result.error
+        sqlResult.value = []
         sqlColumns.value = []
-      }
-      sqlError.value = ''
-    } else if (result && result.error) {
-      sqlError.value = result.error
-      sqlResult.value = []
-      sqlColumns.value = []
-    }
-    
-    sqlExecuted.value = true
+        }
+        resultVisible.value = true
+    })
+
   } catch (error) {
     console.error('SQL执行失败：', error)
     sqlError.value = error.message || '执行SQL失败'
     sqlResult.value = []
     sqlColumns.value = []
-    sqlExecuted.value = true
+    resultVisible.value = true
   } finally {
     loading.value = false
   }
+}
+
+const closeResult = () => {
+  resultVisible.value = false
 }
 
 // 保存SQL
@@ -347,5 +358,26 @@ onMounted(() => {
   margin: 0;
   white-space: pre-wrap;
   font-family: monospace;
+}
+
+.section-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  font-size: 14px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #303133;
+}
+
+.close-btn {
+  color: #409EFF;
+  cursor: pointer;
+  font-size: 13px;
+  user-select: none;
+  transition: color 0.2s;
+}
+.close-btn:hover {
+  color: #f56c6c;
 }
 </style>

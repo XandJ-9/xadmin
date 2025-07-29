@@ -1,5 +1,11 @@
 @host = http://localhost:8000
 
+
+###
+# 获取数据源
+GET {{host}}/api/datasources/
+Authorization: Bearer {{$dotenv accessToken}}
+
 ###
 #
 GET {{host}}/api/datasources/3/test/

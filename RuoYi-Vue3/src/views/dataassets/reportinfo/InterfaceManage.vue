@@ -129,10 +129,16 @@
                 <el-form-item label="接口描述" prop="interface_desc">
                     <el-input v-model="formData.interface_desc" type="textarea" :rows="3" placeholder="请输入接口描述" />
                 </el-form-item>
-                <el-form-item label="数据库类型" prop="interface_db_type">
-                    <el-select v-model="formData.interface_db_type" placeholder="请选择数据库类型"
+                <el-form-item label="数据源名称" prop="interface_name">
+                    <el-select v-model="formData.interface_datasource" placeholder="请选择数据源"
                         @click="fetchDataSourceOptions">
-                        <el-option v-for="item in dataSourceOptions" :key="item.id" :label="item.label"
+                        <el-option v-for="item in dataSourceOptions" :key="item.id" :label="item.name"
+                            :value="item.id" />
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="数据库类型" prop="interface_db_type">
+                    <el-select v-model="formData.interface_db_type" placeholder="请选择数据库类型">
+                        <el-option v-for="item in dialogDataSourceTypeOptions" :key="item.id" :label="item.label"
                             :value="item.value" />
                     </el-select>
                 </el-form-item>
@@ -180,7 +186,7 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import { useRouter } from 'vue-router'
 import QueryParamsForm from '@/components/QueryParamsForm'
 import CrudBar from '@/components/CrudBar'
-import { getDataSourceTypeList } from '@/api/dataassets/datasource'
+import { getDataSourceList } from '@/api/dataassets/datasource'
 import { getPlatformList, getModuleList, getReportList, getInterfaceList,getInterfaceDetail, updateInterface, createInterface, deleteInterface, importInterface } from '@/api/dataassets/reportinfo'
 
 const { proxy } = getCurrentInstance()
@@ -231,14 +237,14 @@ const interfaceNameWidth = computed(() => {
 const platformOptions = ref([])
 const moduleOptions = ref([])
 const reportOptions = ref([])
-const dataSourceOptions = ref([])
+const dataSourceTypeOptions = ref([])
 
 // 指定搜索条件字段信息
 const queryProperties = reactive([
     { label: '平台名称', prop: 'platformId', type: 'select', options: platformOptions },
     { label: '模块名称', prop: 'moduleId', type: 'select', options: moduleOptions },
     { label: '报表名称', prop: 'reportId', type: 'select', options: reportOptions },
-    { label: '数据源类型', prop: 'dataSourceType', type: 'select', options: dataSourceOptions },
+    { label: '数据源类型', prop: 'dataSourceType', type: 'select', options: dataSourceTypeOptions },
     { label: '接口编码', prop: 'interfaceCode', type: 'input' }
 ])
 
@@ -290,16 +296,28 @@ const fetchReportOptions = async (moduleId) => {
     })
 }
 
+
+const dataSourceOptions = ref([])
+const dialogDataSourceTypeOptions = computed(() => {
+    return dataSourceOptions.value.filter(item => item.id === formData.interface_datasource).map(item => {
+        return {
+            label: item.type,
+            value: item.type
+        }
+    })
+})
+
 const fetchDataSourceOptions = async () => {
-    await getDataSourceTypeList().then((res) => {
-        dataSourceOptions.value = []
-        let arr = res
-        arr.forEach(item => {
-            dataSourceOptions.value.push({
-                label: item[0],
-                value: item[0]
+    await getDataSourceList().then((res) => {
+        dataSourceOptions.value = res
+        dataSourceOptions.value.forEach(item => {
+            if(dataSourceTypeOptions.value.some(option => option.value === item.type)) return
+            dataSourceTypeOptions.value.push({
+                label: item.type,
+                value: item.type
             })
         })
+
     }).catch(error => {
         ElMessage.error('获取数据源类型列表失败')
     })
@@ -379,7 +397,8 @@ const formData = reactive({
     is_date_option: '0',
     platform: '',
     module: '',
-    report: ''
+    report: '',
+    interface_datasource: ''
 })
 
 // 表单校验规则
@@ -413,11 +432,11 @@ const resetForm = () => {
     formData.platform = ''
     formData.module = ''
     formData.report = ''
+    formData.interface_datasource = ''
 }
 
 // 新增接口
 const handleAdd = () => {
-    console.log("handleAdd")
     dialogType.value = 'add'
     resetForm()
     dialogVisible.value = true
@@ -425,6 +444,7 @@ const handleAdd = () => {
 
 // 编辑接口
 const handleEdit = async (row) => {
+    resetForm()
     dialogType.value = 'edit'
 
     await getInterfaceDetail(row.id).then(response => {
