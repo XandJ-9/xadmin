@@ -170,6 +170,8 @@ class UserViewSet(ModelImportExportViewSet):
         "role": {"title": "角色", "choices": {"queryset": Role.objects.filter(status='0'), "values_name": "role_name"}},
     }
 
+    perms_map = {"list":["system:user:list"]}
+
     def filter_queryset(self, queryset):
         '''
         外键搜索单独处理
@@ -197,7 +199,7 @@ class UserViewSet(ModelImportExportViewSet):
     def get_permissions(self):
         if self.action in ['login', 'register', 'captchaImage']:
             return [AllowAny()]
-        if self.action in ['update', 'partial_update', 'destroy']:
+        if self.action in ['update', 'partial_update', 'destroy','getInfo']:
             return [IsOwnerOrAdmin()]
         return [HasRolePermission()]
 
@@ -324,6 +326,8 @@ class UserViewSet(ModelImportExportViewSet):
             else:
                 permissions = Menu.objects.filter(
                     role_menus__role__in=role_ids
+                ).filter(
+                    ~Q(perms=None)
                 ).values_list('perms', flat=True)
             return Response({"user": UserSerializer(user).data,"roles": role_ids, "permissions": set(permissions)})
         else:
@@ -421,6 +425,7 @@ class UserViewSet(ModelImportExportViewSet):
         new_role_ids = user.user_roles.all().values_list('role_id', flat=True)
         return Response({'message': '授权成功','role_ids':new_role_ids}, status=status.HTTP_200_OK)
 
+    @has_perms(perms=['system:user:query'])
     @action(detail=False, methods=['get'])
     def profile(self, request):
         user = request.user

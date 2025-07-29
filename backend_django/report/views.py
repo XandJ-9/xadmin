@@ -1,6 +1,3 @@
-from rest_framework.filters import SearchFilter, OrderingFilter
-from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework.viewsets import ViewSet
 from utils.viewset import CustomModelViewSet
 from .models import PlatformInfo, ModuleInfo, ReportInfo, InterfaceInfo, InterfaceField,InterfaceQueryLog
 from .serializers import *

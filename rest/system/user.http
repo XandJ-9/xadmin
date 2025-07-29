@@ -99,7 +99,7 @@ Authorization: Bearer {{$dotenv accessToken}}
 
 
 ###
-GET {{host}}/api/system/user
+GET {{host}}/api/system/user/79
 Authorization: Bearer {{$dotenv accessToken}}
 
 

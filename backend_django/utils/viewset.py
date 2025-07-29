@@ -21,27 +21,38 @@ class CustomModelViewSet(ModelViewSet):
     # SearchFilter, OrderingFilter,SearchFilterBackend
 
     search_fields = ()
-    _perms_map = None
+    perms_map = None
 
     # pagination_class = CustomPagination
 
-    @property
-    def perms_map(self):
+    # @property
+    # def perms_map(self):
+    #     """
+    #     获取权限映射表
+    #     """
+    #     if self._perms_map is not None:
+    #         return self._perms_map
+    #     self._perms_map = {}
+    #     # 获取所有方法的权限
+    #     for name, method in getmembers(self, lambda x: hasattr(x, 'perms') and isinstance(x.perms,list)):
+    #         self._perms_map[method.__name__] = method.perms
+    #     return self._perms_map
+
+    def get_perms_map(self):
         """
         获取权限映射表
         """
-        if self._perms_map is not None:
-            return self._perms_map
-        self._perms_map = {}
+        if self.perms_map is None:
+            self.perms_map = {}
         # 获取所有方法的权限
         for name, method in getmembers(self, lambda x: hasattr(x, 'perms') and isinstance(x.perms,list)):
-            self._perms_map[method.__name__] = method.perms
-        return self._perms_map
-
-    def get_permissions(self):
+            self.perms_map[method.__name__] = method.perms
+        return self.perms_map
+    
+    # def get_permissions(self):
         # if self.action in ['list']:
             # return [AllowAny()]
-        return [IsOwnerOrAdmin()]
+        # return [IsOwnerOrAdmin()]
     
     def filter_queryset(self, queryset):
         for backend in set(set(self.filter_backends) or []):
@@ -81,7 +92,6 @@ class CustomModelViewSet(ModelViewSet):
             return ErrorResponse(msg=str(e))
         return DetailResponse(data=serializer.data, msg="新增成功")
 
-    @has_perms(['system:config:list'])
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
         # 这里先序列化，再分页，数据量大的情况下不可取，需要优化
