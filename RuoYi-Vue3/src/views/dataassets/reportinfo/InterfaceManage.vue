@@ -181,7 +181,7 @@ import { useRouter } from 'vue-router'
 import QueryParamsForm from '@/components/QueryParamsForm'
 import CrudBar from '@/components/CrudBar'
 import { getDataSourceTypeList } from '@/api/dataassets/datasource'
-import { getPlatformList, getModuleList, getReportList, getInterfaceList, updateInterface, createInterface, deleteInterface, importInterface } from '@/api/dataassets/reportinfo'
+import { getPlatformList, getModuleList, getReportList, getInterfaceList,getInterfaceDetail, updateInterface, createInterface, deleteInterface, importInterface } from '@/api/dataassets/reportinfo'
 
 const { proxy } = getCurrentInstance()
 const { interface_is_paging, interface_is_total, interface_is_date_option, interface_is_login_visit } = proxy.useDict("interface_is_paging", "interface_is_total", "interface_is_date_option", "interface_is_login_visit")
@@ -424,23 +424,28 @@ const handleAdd = () => {
 }
 
 // 编辑接口
-const handleEdit = (row) => {
+const handleEdit = async (row) => {
     dialogType.value = 'edit'
-    Object.assign(formData, {
-        id: row.id,
-        interface_code: row.interface_code,
-        interface_name: row.interface_name,
-        interface_desc: row.interface_desc,
-        interface_db_type: row.interface_db_type,
-        interface_db_name: row.interface_db_name,
-        interface_sql: row.interface_sql,
-        is_total: row.is_total,
-        is_paging: row.is_paging,
-        is_date_option: row.is_date_option,
-        platform: row.report_info.module_info.platform,
-        module: row.report_info.module,
-        report: row.report
-    })
+
+    await getInterfaceDetail(row.id).then(response => {
+        const data = response.data
+        Object.assign(formData, {
+            id: data.id,
+            interface_code: data.interface_code,
+            interface_name: data.interface_name,
+            interface_desc: data.interface_desc,
+            interface_db_type: data.interface_db_type,
+            interface_db_name: data.interface_db_name,
+            interface_sql: data.interface_sql,
+            is_total: data.is_total,
+            is_paging: data.is_paging,
+            is_date_option: data.is_date_option,
+            platform: data.report_info.module_info.platform,
+            module: data.report_info.module,
+            report: data.report
+        })
+        }
+    )
     dialogVisible.value = true
 }
 
