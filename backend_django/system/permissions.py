@@ -37,9 +37,17 @@ class HasRolePermission(permissions.BasePermission):
     def __init__(self, allowed_roles=None):
         self.allowed_roles = allowed_roles or []
 
+    def check_action_perms(self, view):
+        if not hasattr(view, 'perms_map'):
+            return []
+        perms_map = view.perms_map
+        perms = perms_map.get(view.action, [])
+        return perms
+
+
+
     def has_permission(self, request, view):
-        print(f'{view.__dict__}')
-        logger.info(f"Checking permission for {request.user} , action: {view.action}, with perms: {getattr(request, 'perms', None)}")
+        logger.info(f"Checking permission for {request.user} , action: {view.action}, with perms: {self.check_action_perms(view)}")
         if not request.user or not request.user.is_authenticated:
             return False
         if request.user.is_superuser:
@@ -51,18 +59,17 @@ class HasRolePermission(permissions.BasePermission):
         return True
 
     def has_object_permission(self, request, view, obj):
-        logger.info(f"Checking object permission for {request.user} , action: {view.action}, with perms: {getattr(request, 'perms', None)}")
+        logger.info(f"Checking object permission for {request.user} , action: {view.action}, with perms:  {self.check_action_perms(view)}")
         return True
 
 
 
 def has_perms(perms=None):
+    '''
+    给视图函数绑定权限标识
+    '''
     def warp_func(view_func):
-        def wrapper(*args, **kwargs):
-            _request = args[1]
-            if isinstance(_request, Request):
-                _request.perms = perms
-            result = view_func(*args, **kwargs)
-            return result
-        return wrapper
+        if perms and not hasattr(view_func, 'perms'):
+            view_func.perms = perms
+        return view_func
     return warp_func

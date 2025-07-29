@@ -1,17 +1,17 @@
-from rest_framework.views import exception_handler
+from django.db.models import ProtectedError, RestrictedError
+from django.http import Http404,HttpResponseRedirect
 from django.db.utils import DatabaseError
-from rest_framework.exceptions import APIException
-from rest_framework import status
-from django.http import Http404
-from rest_framework.exceptions import AuthenticationFailed
-from rest_framework.response import Response
 from django.core.exceptions import PermissionDenied
-from rest_framework.exceptions import ValidationError
-from rest_framework.exceptions import NotAuthenticated
-from rest_framework.exceptions import MethodNotAllowed
 
-from ..utils.util_response import ErrorResponse
+from rest_framework.views import exception_handler
+from rest_framework.exceptions import APIException, AuthenticationFailed,  set_rollback
+from rest_framework.status import HTTP_401_UNAUTHORIZED
 
+import logging
+import traceback
+from .util_response import ErrorResponse
+
+logger = logging.getLogger('django')
 def CustomExceptionHandler(ex, context):
     """
     统一异常拦截处理
@@ -40,7 +40,7 @@ def CustomExceptionHandler(ex, context):
     elif isinstance(ex, Http404):
         code = 404
         msg = "对象不存在"
-    elif isinstance(ex, DRFAPIException):
+    elif isinstance(ex, APIException):
         set_rollback()
         msg = ex.detail
         if isinstance(ex, PermissionDenied):

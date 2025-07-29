@@ -8,6 +8,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from system.permissions import IsOwnerOrAdmin,IsAdminUser, HasRolePermission, has_perms
 from .util_response import SuccessResponse, ErrorResponse, DetailResponse
 from .filters import SearchFilterBackend
+from inspect import getmembers
 
 
 class CustomModelViewSet(ModelViewSet):
@@ -20,7 +21,7 @@ class CustomModelViewSet(ModelViewSet):
     # SearchFilter, OrderingFilter,SearchFilterBackend
 
     search_fields = ()
-    _perms_map = {}
+    _perms_map = None
 
     # pagination_class = CustomPagination
 
@@ -31,8 +32,11 @@ class CustomModelViewSet(ModelViewSet):
         """
         if self._perms_map is not None:
             return self._perms_map
-        extra_actions = self.get_extra_actions()
-        return {}
+        self._perms_map = {}
+        # 获取所有方法的权限
+        for name, method in getmembers(self, lambda x: hasattr(x, 'perms') and isinstance(x.perms,list)):
+            self._perms_map[method.__name__] = method.perms
+        return self._perms_map
 
     def get_permissions(self):
         # if self.action in ['list']:

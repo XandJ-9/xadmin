@@ -315,16 +315,17 @@ class UserViewSet(ModelImportExportViewSet):
         user = request.user
         if user.is_authenticated:
             # 获取用户角色
-            user_roles = user.user_roles.all()
-            role_ids = [user_role.role.id for user_role in user_roles]
+            # user_roles = user.user_roles.all()
+            # role_ids = [user_role.role.id for user_role in user_roles]
+            role_ids = Role.objects.filter(id__in=user.user_roles.values_list('role_id')).values_list('id', flat=True)
             # permissions = ['*:*:*']
             if user.username == 'admin':
                 permissions = ['*:*:*']
             else:
                 permissions = Menu.objects.filter(
                     role_menus__role__in=role_ids
-                ).values_list('perms', flat=True).distinct()
-            return Response({"user": UserSerializer(user).data,"roles": role_ids, "permissions": permissions})
+                ).values_list('perms', flat=True)
+            return Response({"user": UserSerializer(user).data,"roles": role_ids, "permissions": set(permissions)})
         else:
             return Response({'error': '用户未登录'}, status=status.HTTP_401_UNAUTHORIZED)
 
@@ -427,6 +428,7 @@ class UserViewSet(ModelImportExportViewSet):
                          "roleGroup":[user_role.role.role_name for user_role in user.user_roles.all()],
                          "postGroup":[user_post.post.post_name for user_post in user.user_posts.all()]
                          })
+    
     @action(detail=False, methods=['put'], url_path='profile/update')
     def updateProfile(self, request):
         user = request.user

@@ -4,7 +4,6 @@ from urllib.parse import quote
 from django.http import HttpResponse
 from rest_framework.response import Response
 from openpyxl import Workbook
-from openpyxl.writer.excel import save_workbook
 from openpyxl.cell import WriteOnlyCell
 from openpyxl.styles import Font
 import csv
@@ -176,7 +175,6 @@ class WrapperExcelResponse(HttpResponse):
             font = self.data_font
 
         row = []
-        print(f'append_excel_row: {data}')
         for item in data:
             cell = WriteOnlyCell(worksheet, item)
             cell.font = font
