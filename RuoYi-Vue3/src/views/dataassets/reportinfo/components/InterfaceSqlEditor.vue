@@ -171,7 +171,7 @@ const executeSql = async () => {
   
   try {
     // 触发执行事件，由父组件处理实际的SQL执行
-    await emit('execute', {
+    emit('execute', {
         sql,
         interfaceId: props.interfaceInfo?.id
     },
@@ -239,12 +239,12 @@ const calculateColumnWidth = (columnName) => {
 }
 
 // 组件挂载时初始化
-onMounted(() => {
-  // 如果有初始SQL，设置到编辑器中
-  if (props.initialSql) {
-    sqlContent.value = props.initialSql
-  }
-})
+// onMounted(() => {
+//   // 如果有初始SQL，设置到编辑器中
+//   if (props.initialSql) {
+//     sqlContent.value = props.initialSql
+//   }
+// })
 </script>
 
 <style scoped>

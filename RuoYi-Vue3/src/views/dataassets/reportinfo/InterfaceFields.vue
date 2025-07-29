@@ -436,11 +436,11 @@ const handleExecuteSql = async ({ sql, interfaceId }, callback) => {
             }
             position += 1
             newFields.push(newField)
+            if(tableData.value.some(item => item.interface_para_code === newField.interface_para_code)) return
             tableData.value.splice(start, 0, newField)
-
         })
         // tableData.value.splice(start, 0, newFields)
-        console.log('add new fileds', newFields)
+        console.log('add new fileds', tableData.value)
     }
 }
 
