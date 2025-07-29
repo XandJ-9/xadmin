@@ -93,7 +93,7 @@ def generate_interface_workbook(data, fields):
         cell.fill = PatternFill(patternType='solid', fgColor='C0C0C0')
         cell.value = column_info.get('label')
     if fields:
-        fields_data = InterfaceFieldSerializer(instance=fields,many=True).data
+        fields_data = InterfaceFieldImportExportSerializer(instance=fields,many=True).data
         fields_data.sort(key=lambda x:x['interface_para_position'])
         fields_type_input = [field for field in fields_data if field['interface_para_type'] == '输入参数']
         fields_type_output = [field for field in fields_data if field['interface_para_type'] == '输出参数']
@@ -212,7 +212,7 @@ def handle_import_interface(file_path, user = None):
     
     existed_fields = InterfaceField.objects.filter(interface_id = ser.data['id'])
 
-    field_ser = InterfaceFieldSerializer(data=interface_fields,many=True)
+    field_ser = InterfaceFieldImportExportSerializer(data=interface_fields,many=True)
     field_ser.is_valid(raise_exception=True)
     new_fields = field_ser.save()
 

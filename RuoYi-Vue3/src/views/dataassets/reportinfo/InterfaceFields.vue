@@ -11,7 +11,8 @@
             <el-table-column prop="interface_para_position" label="参数位置" width="100" />
             <el-table-column prop="interface_para_type" label="参数类型" width="100">
                 <template #default="scope">
-                    {{ scope.row.interface_para_type }}
+                    <!-- {{ scope.row.interface_para_type }} -->
+                    {{ interfaceParaTypeOptions.filter(item => item.value === scope.row.interface_para_type)[0].label }}
                 </template>
             </el-table-column>
             <el-table-column prop="interface_data_type" label="数据类型" width="100">
@@ -43,10 +44,15 @@
             </el-table-column>
         </el-table>
 
-        <el-button type="primary" @click="showSqlEditor">接口开发</el-button>
+        <el-row>
+            <el-col :span="24" style="margin-top: 10px;">
+                <el-button type="primary" @click="showSqlEditor">接口开发</el-button>
+                <el-button type="primary" @click="showSqlEditor">保存信息</el-button>
+            </el-col>
+        </el-row>
 
         <!-- 分页 -->
-        <pagination v-show="total > 0" :total="total" v-model:page="currentPage" v-model:limit="pageSize" />
+        <pagination v-show="paginatedTotal > 0" :total="paginatedTotal" v-model:page="currentPage" v-model:limit="pageSize" />
 
         <!-- 字段编辑对话框 -->
         <el-dialog v-model="dialogVisible" 
@@ -164,7 +170,6 @@ const tableData = ref([])
 const loading = ref(false)
 const currentPage = ref(1)
 const pageSize = ref(10)
-const total = ref(0)
 
 // 对话框相关
 const dialogVisible = ref(false)
@@ -220,9 +225,9 @@ const calculateColumnWidth = inject('calculateColumnWidth')
 
 const interfaceParaCodeWidth = computed(() => {
     let maxWidth = 200
-    if (tableData.value.length === 0) return maxWidth
+    if (paginateData.length === 0) return maxWidth
 
-    tableData.value.forEach(item => {
+    paginateData.value.forEach(item => {
         const width = calculateColumnWidth(item.interface_para_code)
         maxWidth = Math.max(maxWidth, width)
     })
@@ -246,12 +251,11 @@ const getInterfaceInfo = async () => {
     })
 }
 
-const sortTableData = (dataList) => {
-    const inputType = dataList.filter(item => item.interface_para_type === '输入参数').sort((a, b) => a.interface_para_position - b.interface_para_position)
-    const outputType = dataList.filter(item => item.interface_para_type === '输出参数').sort((a, b) => a.interface_para_position - b.interface_para_position)
-    tableData.value = [...inputType, ...outputType]
-}
-
+// 接口字段对象
+const interfaceFields = reactive({
+    inputFields: [],
+    outputFields: []
+})
 // 获取字段列表
 const getFieldList = async (queryParams) => {
     loading.value = true
@@ -264,9 +268,11 @@ const getFieldList = async (queryParams) => {
     await getInterfaceFields(params).then(res => {
         const tempData = res.data || []
         if (tempData) {
-            sortTableData(tempData)
+            // sortTableData(tempData)
+            interfaceFields.inputFields = tempData.filter(item => item.interface_para_type === '1').sort((a, b) => a.interface_para_position - b.interface_para_position)
+            interfaceFields.outputFields = tempData.filter(item => item.interface_para_type === '2').sort((a, b) => a.interface_para_position - b.interface_para_position)
         }
-        total.value = tableData.value.length
+        tableData.value = [...interfaceFields.inputFields, ...interfaceFields.outputFields]
 
     }).catch(error => {
         ElMessage.error('获取接口字段失败')
@@ -383,6 +389,9 @@ const paginateData = computed(() => {
     return tableData.value.slice(startIndex, endIndex)
 })
 
+// 分页数据总数
+const paginatedTotal = computed(() => tableData.value.length)
+
 // SQL编辑器相关
 const sqlEditorVisible = ref(false)
 
@@ -404,8 +413,35 @@ const handleExecuteSql = async ({ sql, interfaceId }, callback) => {
         return { error: error.message || '执行SQL失败' }
     })
     // console.log('execute result', result)
+    // 回调函数，将结果返回给子组件中
     callback(result)
-    return result
+
+    // 获取返回的字段名称
+    if (result && result.data && result.data.length > 0) {
+        const fieldNames = Object.keys(result.data[0])
+        let position = interfaceFields.outputFields.length + 1
+        let start = tableData.length
+        const newFields = []
+        fieldNames.forEach(fieldName => {
+            const newField = {
+                    interface_para_code: fieldName,
+                    interface_para_name: '',
+                    interface_para_position: position,
+                    interface_para_type: '2',
+                    interface_data_type: '1',
+                    interface_para_default: '',
+                    interface_show_flag: '1',
+                    interface_export_flag: '1',
+                    interface_para_desc: ''
+            }
+            position += 1
+            newFields.push(newField)
+            tableData.value.splice(start, 0, newField)
+
+        })
+        // tableData.value.splice(start, 0, newFields)
+        console.log('add new fileds', newFields)
+    }
 }
 
 // 处理SQL保存

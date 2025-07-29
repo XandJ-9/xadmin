@@ -31,11 +31,8 @@ class InterfaceInfoSerializer(BaseModelSerializer):
         model = InterfaceInfo
         fields = '__all__'
         read_only_fields = ['id', 'create_datetime', 'update_datetime']
-
-class InterfaceInfoImportExportSerializer(ChoiceFieldSerializerMixin,InterfaceInfoSerializer):
-    pass
     
-class InterfaceFieldSerializer(ChoiceFieldSerializerMixin,BaseModelSerializer):
+class InterfaceFieldSerializer(BaseModelSerializer):
     class Meta:
         model = InterfaceField
         fields = '__all__'
@@ -57,6 +54,11 @@ class InterfaceFieldSerializer(ChoiceFieldSerializerMixin,BaseModelSerializer):
             self.update(instance, validated_data)
         return instance
 
+class InterfaceFieldImportExportSerializer(ChoiceFieldSerializerMixin,InterfaceFieldSerializer):
+    pass
+
+class InterfaceInfoImportExportSerializer(ChoiceFieldSerializerMixin,InterfaceInfoSerializer):
+    pass
 
 class InterfaceQueryLogSerializer(BaseModelSerializer):
     execute_start_time = serializers.DateTimeField(format='%Y-%m-%d %H:%M:%S', read_only=True)

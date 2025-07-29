@@ -154,7 +154,7 @@ const getCurrentSql = () => {
 }
 
 // 执行SQL
-const executeSql = () => {
+const executeSql = async () => {
   if (!sqlContent.value.trim()) {
     ElMessage.warning('请输入SQL查询语句')
     return
@@ -171,13 +171,12 @@ const executeSql = () => {
   
   try {
     // 触发执行事件，由父组件处理实际的SQL执行
-    emit('execute', {
+    await emit('execute', {
         sql,
         interfaceId: props.interfaceInfo?.id
     },
         // 回调函数，获取父组件返回值
         async (result) => { 
-        console.log('execute result', result)
         // 如果父组件返回了结果
         if (result && result.data) {
         sqlResult.value = result.data
