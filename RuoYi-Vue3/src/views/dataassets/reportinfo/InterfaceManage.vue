@@ -150,24 +150,27 @@
                         <!-- <el-radio value="是">是</el-radio> -->
                         <!-- <el-radio value="否">否</el-radio> -->
                         <el-radio v-for="item in interface_is_total" :key="item.value"
-                            :label="item.value">{{ item.label }}</el-radio>"
+                            :value="item.value">{{ item.label }}</el-radio>"
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="是否分页" prop="is_paging">
                     <el-radio-group v-model="formData.is_paging">
                         <el-radio v-for="item in interface_is_paging" :key="item.id"
-                            :label="item.value">{{ item.label }}</el-radio>
+                            :value="item.value">{{ item.label }}</el-radio>
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="是否日期查询" prop="is_date_option">
                     <el-radio-group v-model="formData.is_date_option">
                         <el-radio v-for="item in interface_is_date_option" :key="item.value"
-                            :label="item.value">{{ item.label }}</el-radio>"
+                            :value="item.value">{{ item.label }}</el-radio>"
                     </el-radio-group>
                 </el-form-item>
                 <el-form-item label="接口sql" prop="interface_sql">
                     <el-input v-model="formData.interface_sql" type="textarea" placeholder="请输入接口sql" />
                 </el-form-item>
+                <el-form-item label="接口sql" prop="total_sql" v-if="formData.is_total == '1'">
+                    <el-input v-model="formData.total_sql" type="textarea" placeholder="请输入汇总sql" />
+                </el-form-item>            
             </el-form>
             <template #footer>
                 <span class="dialog-footer">
@@ -393,6 +396,7 @@ const formData = reactive({
     interface_db_name: '',
     interface_sql: '',
     is_total: '0',
+    total_sql: '',
     is_paging: '0',
     is_date_option: '0',
     platform: '',
@@ -427,6 +431,7 @@ const resetForm = () => {
     formData.interface_db_name = ''
     formData.interface_sql = ''
     formData.is_total = '0'
+    formData.total_sql = ''
     formData.is_paging = '0'
     formData.is_date_option = '0'
     formData.platform = ''
@@ -457,6 +462,7 @@ const handleEdit = async (row) => {
             interface_db_type: data.interface_db_type,
             interface_db_name: data.interface_db_name,
             interface_sql: data.interface_sql,
+            total_sql: data.total_sql,
             is_total: data.is_total,
             is_paging: data.is_paging,
             is_date_option: data.is_date_option,

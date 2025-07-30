@@ -136,12 +136,12 @@ const getInterfaceInfo = async () => {
     if (!fields) {
         return
     }
-    queryFields.value = fields.filter(e => e.interface_para_type == '输入参数')
-    columnsFields.value = fields.filter(e => e.interface_para_type == '输出参数')
+    queryFields.value = fields.filter(e => e.interface_para_type == '1')
+    columnsFields.value = fields.filter(e => e.interface_para_type == '2')
     queryForm.query_field_list = queryFields
 
     queryFields.value.forEach((item) => {
-        if (item.interface_para_type == '输入参数') {
+        if (item.interface_para_type == '1') {
             queryForm.query_para_value[item.interface_para_code] = ''
         }
     })
@@ -217,7 +217,7 @@ const queryData = (data) => {
         if (!errorMsg.value.error) {
             ElMessage.success('查询成功')
         } else {
-            ElMessage.error(errorMsg.value.msg)
+            // ElMessage.error(errorMsg.value.msg)
         }
     })
 }

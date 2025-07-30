@@ -3,9 +3,9 @@ from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.viewsets import ModelViewSet
 from rest_framework.permissions import AllowAny
-from rest_framework.filters import SearchFilter, OrderingFilter
+# from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from system.permissions import IsOwnerOrAdmin,IsAdminUser, HasRolePermission, has_perms
+from system.permissions import IsOwnerOrAdmin,IsAdminUser, HasRolePermission
 from .util_response import SuccessResponse, ErrorResponse, DetailResponse
 from .filters import SearchFilterBackend
 from inspect import getmembers
@@ -49,10 +49,10 @@ class CustomModelViewSet(ModelViewSet):
             self.perms_map[method.__name__] = method.perms
         return self.perms_map
     
-    # def get_permissions(self):
+    def get_permissions(self):
         # if self.action in ['list']:
-            # return [AllowAny()]
-        # return [IsOwnerOrAdmin()]
+        #     return [IsOwnerOrAdmin()]
+        return [HasRolePermission()]
     
     def filter_queryset(self, queryset):
         for backend in set(set(self.filter_backends) or []):

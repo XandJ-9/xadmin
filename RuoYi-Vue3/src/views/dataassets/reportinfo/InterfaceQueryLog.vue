@@ -123,7 +123,7 @@
           <div class="json-code">
             <div class="sql-header">
               <span>JSON</span>
-              <el-button type="primary" link size="small" @click="copyJsonParams">
+              <el-button type="primary" link size="small" @click="copyText(currentQuery.query_params)">
                 <el-icon><Document /></el-icon> 复制
               </el-button>
             </div>
@@ -135,11 +135,23 @@
           <div class="sql-code">
             <div class="sql-header">
               <span>SQL</span>
-              <el-button type="primary" link size="small" @click="copySql">
+              <el-button type="primary" link size="small" @click="copyText(currentQuery.interface_sql)">
                 <el-icon><Document /></el-icon> 复制
               </el-button>
             </div>
             <pre><code ref="sqlCodeBlock" class="language-sql">{{ currentQuery.interface_sql }}</code></pre>
+          </div>
+        </div>
+        <div class="detail-item full-width">
+          <span class="label">合计SQL语句：</span>
+          <div class="sql-code">
+            <div class="sql-header">
+              <span>SQL</span>
+              <el-button type="primary" link size="small" @click="copyText(currentQuery.interface_total_sql)">
+                <el-icon><Document /></el-icon> 复制
+              </el-button>
+            </div>
+            <pre><code ref="sqlCodeBlock" class="language-sql">{{ currentQuery.interface_total_sql }}</code></pre>
           </div>
         </div>
       </div>
@@ -265,6 +277,33 @@ const viewQueryDetail = async (row) => {
 //       })
 //   }
 // }
+
+const copyText = (text) => {
+        if (window.isSecureContext && navigator.clipboard) {
+            navigator.clipboard.writeText(text)
+                .then(() => {
+                    ElMessage.success('复制成功')
+                })
+                .catch(() => {
+                    ElMessage.error('复制失败，请手动复制')
+                })
+        } else {
+            try {
+                const textarea = document.createElement("textarea");
+                textarea.value = text;
+                textarea.style.position = "absolute";
+                textarea.style.opacity = "0";
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand("copy");
+                document.body.removeChild(textarea);
+                ElMessage.success('复制成功')
+            } catch (error) {
+                ElMessage.error('复制失败，请手动复制')
+            }
+
+        }
+}
 
 const copySql = () => {
     if (currentQuery.value.interface_sql) {

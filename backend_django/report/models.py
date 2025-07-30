@@ -188,6 +188,7 @@ class UploadFileInfo(BizBaseModel):
 class InterfaceQueryLog(BizBaseModel):
     interface_code = models.CharField(max_length=255, verbose_name='接口编码')
     interface_sql  = models.TextField(verbose_name='接口sql', null=True)
+    interface_total_sql = models.TextField(verbose_name='接口总sql', null=True)
     execute_start_time = models.DateTimeField(verbose_name='开始时间', auto_now_add=True, null=True)
     execute_end_time = models.DateTimeField(verbose_name='结束时间', auto_now_add=True, null=True)
     execute_time = models.IntegerField(verbose_name='执行时间', default=0)
