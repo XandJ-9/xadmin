@@ -15,7 +15,6 @@
                type="success"
                plain
                icon="Edit"
-               :disabled="single"
                @click="handleUpdate"
                v-hasPermi="editPermi"
             >修改</el-button>
@@ -25,8 +24,7 @@
                type="danger"
                plain
                icon="Delete"
-               :disabled="multiple"
-               @click="handleDelete"
+               @click="handleRemove"
                v-hasPermi="removePermi"
             >删除</el-button>
          </el-col>
@@ -48,6 +46,15 @@
                v-hasPermi="importPermi"
             >导入</el-button>
          </el-col>
+         <el-col :span="1.5" v-if="saveBtn"> 
+            <el-button
+               type="info"
+               plain
+               icon="Save"
+               @click="handleSave"
+               v-hasPermi="savePermi"
+            >保存</el-button>
+         </el-col>
          <!-- <el-col :span="1.5">
             <el-button
                type="danger"
@@ -64,14 +71,6 @@
 <script setup>
 
 const props = defineProps({
-    multiple: {
-        type: Boolean,
-        default: true
-    },
-    single: {
-        type: Boolean,
-        default: true
-    },
     addPermi: {
         type: Array,
         default: ['undefined:undefined:undefined']
@@ -89,6 +88,10 @@ const props = defineProps({
         default: ['undefined:undefined:undefined']
     },
     importPermi: {
+        type: Array,
+        default: ['undefined:undefined:undefined']
+   },
+    savePermi: {
         type: Array,
         default: ['undefined:undefined:undefined']
    },
@@ -111,10 +114,15 @@ const props = defineProps({
     importBtn: {
         type: Boolean,
         default: undefined
-  }
+    },
+    saveBtn: {
+        type: Boolean,
+        default: undefined
+    },
+  
 })
 
-const emit = defineEmits(["addEvent", "updateEvent", "deleteEvent", "exportEvent"])
+const emit = defineEmits(["addEvent", "updateEvent", "removeEvent", "exportEvent", "saveEvent"])
 
 
 
@@ -126,8 +134,8 @@ const handleUpdate = () => {
     emit('updateEvent')
 }
 
-const handleDelete = () => {
-    emit('deleteEvent')
+const handleRemove = () => {
+    emit('removeEvent')
  }
 
 const handleExport = () => { 
@@ -136,6 +144,10 @@ const handleExport = () => {
 
 const handleImport = () => {
     emit('importEvent')
+}
+
+const handleSave = () => { 
+    emit('saveEvent')
 }
 
 </script>

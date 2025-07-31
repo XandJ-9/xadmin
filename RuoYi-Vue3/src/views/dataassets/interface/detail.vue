@@ -15,15 +15,21 @@
                     <span class="item-label">接口描述: </span>
                     <span class="item-content">{{ interfaceInfo?.interface_desc }}</span>
                 </el-col>
+                <el-col :span="12" class="item-box">
+                    <span class="item-label">是否登录: </span>
+                    <span class="item-content">{{ interfaceInfo?.is_login_visit }}</span>
+                </el-col>
              </el-row>
         </el-card>
         <el-card>
             <!-- 字段搜索 -->
             <query-params-form :properties="queryProperties" @query="getFieldList" @reset="getFieldList" />
 
-            <crud-bar addBtn @addEvent="handleAdd" />
+            <crud-bar addBtn @addEvent="handleAdd" removeBtn @removeEvent="handleMultiDelete" saveBtn @saveEvent="handleMutltiSave"/>
             <!-- 数据表格 -->
-            <el-table :data="paginateData" style="width: 100%" v-loading="loading" border fit>
+            <el-table :data="paginateData" style="width: 100%" v-loading="loading" border fit @selection-change="handleSelectionChange">
+                <el-table-column type="selection" width="50" align="center" />
+
                 <el-table-column prop="interface_para_code" label="参数编码" :width="interfaceParaCodeWidth" />
                 <el-table-column prop="interface_para_name" label="参数名称">
                     <template #default="scope">
@@ -69,12 +75,22 @@
                 <el-table-column prop="interface_para_default" label="默认值" width="100" show-overflow-tooltip />
                 <el-table-column prop="interface_show_flag" label="是否显示" width="100">
                     <template #default="scope">
-                        {{ scope.row.interface_show_flag === '1' ? '是' : '否' }}
+                        <!-- {{ scope.row.interface_show_flag === '1' ? '是' : '否' }} -->
+                        <item-wrapper
+                        type="select"
+                        :options="[{'label':'是', 'value':'1'},{'label':'否', 'value':'0'}]"
+                        v-model="scope.row.interface_show_flag"
+                        />
                     </template>
                 </el-table-column>
                 <el-table-column prop="interface_export_flag" label="是否导出" width="100">
                     <template #default="scope">
-                        {{ scope.row.interface_export_flag === '1' ? '是' : '否' }}
+                        <!-- {{ scope.row.interface_export_flag === '1' ? '是' : '否' }} -->
+                        <item-wrapper
+                        type="select"
+                        :options="[{'label':'是', 'value':'1'},{'label':'否', 'value':'0'}]"
+                        v-model="scope.row.interface_export_flag"
+                        />
                     </template>
                 </el-table-column>
                 <el-table-column prop="interface_para_desc" label="参数描述" show-overflow-tooltip />
@@ -103,7 +119,8 @@
         <el-row>
             <el-col :span="24" style="margin-top: 10px;">
                 <el-button type="primary" @click="showSqlEditor">接口开发</el-button>
-                <el-button type="primary" @click="showSqlEditor">保存信息</el-button>
+                <el-button type="primary" @click="refreshFields">刷新顺序</el-button>
+                <el-button type="primary" @click="saveInterface">更新接口</el-button>
             </el-col>
         </el-row>
 
@@ -192,7 +209,7 @@ export default {
 </script>
 
 <script setup name="InterfaceDetail">
-import { ref, onMounted, reactive, computed, inject } from 'vue'
+import { ref, reactive, computed, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import QueryParamsForm from '@/components/QueryParamsForm'
@@ -248,7 +265,6 @@ const router = useRouter()
 const interfaceInfo = ref({})
 
 // 表格数据
-const tableData = ref([])
 const loading = ref(false)
 const currentPage = ref(1)
 const pageSize = ref(10)
@@ -279,11 +295,15 @@ const rules = {
 }
 
 
+const selectionItems = ref([])
+const handleSelectionChange = (selections) => { 
+    selectionItems.value = selections
+}
 
 const calculateColumnWidth = inject('calculateColumnWidth')
 
 const interfaceParaCodeWidth = computed(() => {
-    let maxWidth = 200
+    let maxWidth = 150
     if (paginateData.length === 0) return maxWidth
 
     paginateData.value.forEach(item => {
@@ -327,7 +347,6 @@ const getFieldList = async (queryParams) => {
             interfaceFields.inputFields = tempData.filter(item => item.interface_para_type === '1').sort((a, b) => a.interface_para_position - b.interface_para_position)
             interfaceFields.outputFields = tempData.filter(item => item.interface_para_type === '2').sort((a, b) => a.interface_para_position - b.interface_para_position)
         }
-        tableData.value = [...interfaceFields.inputFields, ...interfaceFields.outputFields]
 
     }).catch(error => {
         ElMessage.error('获取接口字段失败')
@@ -378,15 +397,15 @@ const handleEdit = (row) => {
 
 // 删除字段
 const handleDelete = (row) => {
-    ElMessageBox.confirm(
-        '确认删除该字段吗？',
-        '警告',
-        {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning',
-        }
-    )
+        ElMessageBox.confirm(
+            '确认删除该字段吗？',
+            '警告',
+            {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning',
+            }
+        )
         .then(async () => {
             deleteInterfaceField(row.id).then(res => {
                 ElMessage.success('删除成功')
@@ -399,6 +418,20 @@ const handleDelete = (row) => {
             ElMessage.info('已取消删除')
         })
 }
+
+const handleMultiDelete = () => {
+    if(selectionItems.value.length > 0){
+            const ids = selectionItems.value.map(item => item.id)
+            // 将数组转换为逗号分隔的字符串
+            const idString = ids.join(',')
+            deleteInterfaceField(idString).then(res => { 
+                ElMessage.success(res.msg)
+                getFieldList()
+            })
+        } else {
+            ElMessage.info('请选择要删除的字段')
+        }
+ }
 
 // 追加字段
 const handleAppend = (row) => {
@@ -449,11 +482,11 @@ const handleSubmit = async () => {
 const paginateData = computed(() => {
     const startIndex = (currentPage.value - 1) * pageSize.value
     const endIndex = startIndex + pageSize.value
-    return tableData.value.slice(startIndex, endIndex)
+    return [...interfaceFields.inputFields, ...interfaceFields.outputFields].slice(startIndex, endIndex)
 })
 
 // 分页数据总数
-const paginatedTotal = computed(() => tableData.value.length)
+const paginatedTotal = computed(() => [...interfaceFields.inputFields, ...interfaceFields.outputFields].length)
 
 // SQL编辑器相关
 const sqlEditorVisible = ref(false)
@@ -485,7 +518,7 @@ const handleExecuteSql = async ({ sql, interfaceId }, callback) => {
     if (result && result.data && result.data.length > 0) {
         const fieldNames = Object.keys(result.data[0])
         let position = interfaceFields.outputFields.length + 1
-        let start = tableData.length
+        let start = interfaceFields.outputFields.length
         fieldNames.forEach(fieldCode => {
             let fieldName = fieldCode  // 这里可以尝试关联到字段的中文名
             const newField = {
@@ -503,20 +536,28 @@ const handleExecuteSql = async ({ sql, interfaceId }, callback) => {
             }
             position += 1
             newFields.value.push(newField)
-            if(tableData.value.some(item => item.interface_para_code === newField.interface_para_code)) return
-            tableData.value.splice(start, 0, newField)
+            if (interfaceFields.outputFields.some(item => item.interface_para_code === newField.interface_para_code)) return
+            interfaceFields.outputFields.splice(start, 0, newField)
             start += 1
         })
-        tableData.value = sortFields(tableData.value)
     }
 }
 // 添加查询返回的新字段
 const handleSave = async (row) => {
     await createInterfaceField(row).then(res => { 
         ElMessage.success('保存成功')
+        row.new_field = false
     }).catch(error => { 
         ElMessage.error(`保存失败: ${error?.response.data.msg || '未知错误'}`)
     })
+}
+
+const handleMutltiSave = async () => {
+
+ }
+
+// 刷新字段顺序
+const refreshFields = async () => { 
 }
 
 
@@ -536,6 +577,14 @@ const handleSaveSql = async ({ sql, interfaceId }) => {
         ElMessage.error('保存SQL失败：' + (error.message || ''))
         return false
     }
+}
+
+
+// 更新接口信息
+const saveInterface = async () => { 
+    await updateInterface(interfaceInfo.value.id, interfaceInfo.value)
+
+    // 接口字段不与接口信息一起更新
 }
 
 // 页面加载时获取数据

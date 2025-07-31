@@ -198,6 +198,11 @@ Content-Type: application/json
 ]
 
 ###
+# 删除多个接口字段
+DELETE {{host}}/api/report/interface-fields/680,681/
+Authorization: Bearer {{$dotenv accessToken}}
+
+###
 # 获取接口查询日志
 GET {{host}}/api/report/interface-logs/122/ HTTP/1.1
 Authorization: Bearer {{$dotenv accessToken}}
