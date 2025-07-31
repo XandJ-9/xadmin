@@ -25,19 +25,26 @@
             <!-- 数据表格 -->
             <el-table :data="paginateData" style="width: 100%" v-loading="loading" border fit>
                 <el-table-column prop="interface_para_code" label="参数编码" :width="interfaceParaCodeWidth" />
-                <el-table-column prop="interface_para_name" label="参数名称" width="200">
+                <el-table-column prop="interface_para_name" label="参数名称">
                     <template #default="scope">
-                        <el-input v-if="scope.row.new_flag" v-model="scope.row.interface_para_name" placeholder="请输入参数名称" />
+                        <!-- <el-input v-if="scope.row.new_flag" v-model="scope.row.interface_para_name" placeholder="请输入参数名称" /> -->
+                         <item-wrapper v-model:modelValue="scope.row.interface_para_name" type="input" placeholder="请输入参数名称" />
                     </template>
                 </el-table-column>
-                <el-table-column prop="interface_para_position" label="参数位置" width="100" />
-                <el-table-column prop="interface_para_type" label="参数类型" width="100">
+                <el-table-column prop="interface_para_position" label="参数位置" >
+                    <template #default="scope">
+                        <item-wrapper v-model:modelValue="scope.row.interface_para_position" 
+                        type="input-number" 
+                        />
+                    </template>
+                </el-table-column>
+                <el-table-column prop="interface_para_type" label="参数类型">
                     <template #default="scope">
                         <!-- <el-select v-model="scope.row.interface_para_type" placeholder="请选择参数类型" style="width: 100%">
                             <el-option v-for="item in interfaceParaTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
                         </el-select> -->
                         <item-wrapper 
-                        type="el-select" 
+                        type="select" 
                         :options="interfaceParaTypeOptions" 
                         v-model:modelValue="scope.row.interface_para_type" 
                         placeholder="请输入参数值" >
@@ -47,9 +54,16 @@
                 </el-table-column>
                 <el-table-column prop="interface_data_type" label="数据类型" width="100">
                     <template #default="scope">
-                        <el-select v-model="scope.row.interface_data_type">
+                        <!-- <el-select v-model="scope.row.interface_data_type">
                             <el-option v-for="item in dataTypeOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-                        </el-select>
+                        </el-select> -->
+                        <item-wrapper 
+                        type="select" 
+                        :options="dataTypeOptions" 
+                        v-model:modelValue="scope.row.interface_data_type" 
+                        placeholder="请选择" >
+
+                        </item-wrapper>
                     </template>
                 </el-table-column>
                 <el-table-column prop="interface_para_default" label="默认值" width="100" show-overflow-tooltip />
@@ -201,6 +215,33 @@ const queryProperties = reactive([
     { label: '字段编码', type: 'input', prop: 'interface_para_code' }
 ])
 
+
+// 字段类型选项
+const interfaceParaTypeOptions = [
+    { value: '1', label: '输入参数' },
+    { value: '2', label: '输出参数' }
+]
+
+// 数据类型选项
+const dataTypeOptions = [
+    { value: '1', label: '字符' },
+    { value: '2', label: '整数' },
+    { value: '3', label: '小数' },
+    { value: '4', label: '百分比' },
+    { value: '5', label: '无格式整数' },
+    { value: '6', label: '无格式小数' },
+    { value: '7', label: '无格式百分比' },
+    { value: '8', label: '1位百分比' },
+    { value: '9', label: '1位小数' },
+    { value: '10', label: '年份' },
+    { value: '11', label: '日期' },
+    { value: '12', label: '月份' },
+    { value: '13', label: '单选' },
+    { value: '14', label: '多选' },
+    { value: '15', label: '文本' }
+]
+
+
 const router = useRouter()
 
 // 接口信息
@@ -237,30 +278,7 @@ const rules = {
     interface_data_type: [{ required: true, message: '请选择数据类型', trigger: 'change' }]
 }
 
-// 字段类型选项
-const interfaceParaTypeOptions = [
-    { value: '1', label: '输入参数' },
-    { value: '2', label: '输出参数' }
-]
 
-// 数据类型选项
-const dataTypeOptions = [
-    { value: '1', label: '字符' },
-    { value: '2', label: '整数' },
-    { value: '3', label: '小数' },
-    { value: '4', label: '百分比' },
-    { value: '5', label: '无格式整数' },
-    { value: '6', label: '无格式小数' },
-    { value: '7', label: '无格式百分比' },
-    { value: '8', label: '1位百分比' },
-    { value: '9', label: '1位小数' },
-    { value: '10', label: '年份' },
-    { value: '11', label: '日期' },
-    { value: '12', label: '月份' },
-    { value: '13', label: '单选' },
-    { value: '14', label: '多选' },
-    { value: '15', label: '文本' }
-]
 
 const calculateColumnWidth = inject('calculateColumnWidth')
 
