@@ -18,7 +18,6 @@ class BaseModel(models.Model):
     class Meta:
         abstract = True
 
-
 class Captcha(models.Model):
     """验证码模型"""
     code = models.CharField(max_length=10, verbose_name='验证码')
@@ -208,7 +207,7 @@ class Menu(BaseModel):
     perms = models.CharField(max_length=100, null=True, blank=True, verbose_name='权限标识')
     icon = models.CharField(max_length=100, default='#', verbose_name='菜单图标')
     remark = models.CharField(max_length=500, default='',blank=True, verbose_name='备注')
-    active_menu = models.CharField(max_length=255, null=True, blank=True, verbose_name='激活菜单', db_comment='激活菜单')
+    active_menu = models.CharField(max_length=255, null=True, blank=True, verbose_name='激活菜单')
 
     class Meta:
         verbose_name = '菜单'
@@ -259,7 +258,6 @@ class SystemConfig(BaseModel):
     def __str__(self):
         return f"{self.config_key}"
 
-
 class SystemDictType(BaseModel):
     """系统字典模型"""
     STATUS_CHOICES = [
@@ -309,3 +307,17 @@ class SystemDictData(BaseModel):
     def __str__(self):
         return self.dict_label
 
+# 导入文件信息记录
+class UploadFileInfo(BaseModel):
+    FILE_TYPE_CHOICES = (('1','TXT'),('2', 'Excel'),('3', 'CSV'), ('4', 'JSON'), ('5', 'SQL'))
+    BIZ_TYPE_CHOICES = (('1','导入接口文件'),('2', '导入元数据文件'),('3','导入表映射文件'))
+    source_file_name = models.CharField(max_length=255, verbose_name='源文件名', default='')
+    file_type = models.CharField(max_length=255, verbose_name='文件类型', choices=FILE_TYPE_CHOICES, default='1')
+    file_size = models.IntegerField(verbose_name='文件大小',default=0)
+    # file_content = models.TextField(verbose_name='文件内容',null=True)
+    # file_content = models.BinaryField(verbose_name='文件内容',null=True)
+    file = models.FileField(upload_to=settings.UPLOAD_ROOT, verbose_name='文件',null=True)
+    file_md5 = models.CharField(max_length=255, verbose_name='文件md5',unique=True)  # 校验文件上传是否重复 
+    biz_type = models.CharField(max_length=1, verbose_name='业务类型', choices=BIZ_TYPE_CHOICES, default='1')
+    class Meta:
+        db_table = "sys_upload_file_info"

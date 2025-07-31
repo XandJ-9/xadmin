@@ -1,19 +1,19 @@
 <template>
     <div class="app-container">
-        <el-card>
+        <el-card style="margin-bottom: 5px;">
             <!-- 接口信息 -->
              <el-row style="padding: 20px;">
                 <el-col :span="12" class="item-box">
                     <span class="item-label">接口代码: </span>
-                    <span class="item-content">{{ interfaceInfo.interface_code }}</span>
+                    <span class="item-content">{{ interfaceInfo?.interface_code }}</span>
                 </el-col>
                 <el-col :span="12" class="item-box">
                     <span class="item-label">接口名称: </span>
-                    <span class="item-content">{{ interfaceInfo.interface_name }}</span>
+                    <span class="item-content">{{ interfaceInfo?.interface_name }}</span>
                 </el-col>
                 <el-col :span="12" class="item-box">
                     <span class="item-label">接口描述: </span>
-                    <span class="item-content">{{ interfaceInfo.interface_desc }}</span>
+                    <span class="item-content">{{ interfaceInfo?.interface_desc }}</span>
                 </el-col>
              </el-row>
         </el-card>
@@ -142,6 +142,7 @@
 <script>
 
 export default {
+    name: 'InterfaceDetail',
     // 路由监听
     // 修改路由元信息，这样就可以使得复用同一个组件时，元信息是不同的，可以区分部分动态路由
     beforeRouteEnter(to, from, next) {
@@ -183,7 +184,7 @@ const router = useRouter()
 
 const interfaceId = ref(null)
 // 接口信息
-const interfaceInfo = ref(null)
+const interfaceInfo = ref({})
 
 // 表格数据
 const tableData = ref([])
@@ -264,7 +265,7 @@ const getDataTypeName = (type) => {
 // 获取接口信息
 const getInterfaceInfo = async () => {
     interfaceId.value = router.currentRoute.value.params.id
-    getInterfaceDetail(interfaceId.value).then(res => {
+    await getInterfaceDetail(interfaceId.value).then(res => {
         interfaceInfo.value = res.data
     }).catch(error => {
         ElMessage.error('获取接口详情失败')
@@ -490,19 +491,27 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.interface-fields {
-    padding: 20px;
-}
-
-.item-box {
-    margin-bottom: 20px;
-}
 
 .card-header {
     display: flex;
     /* justify-content: space-between; */
     align-items: center;
     margin-bottom: 10px;
+}
+
+.item-box {
+    margin-bottom: 10px;
+}
+
+.item-label {
+    margin-right: 5px;
+    font-weight: bold;
+}
+
+.item-content { 
+    margin-bottom: 5px;
+    padding-left: 5px;
+
 }
 
 .dialog-footer {

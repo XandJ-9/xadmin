@@ -1,9 +1,9 @@
 from rest_framework.decorators import action
 from django.http.response import HttpResponseNotFound,HttpResponseServerError
-from django.conf import settings
 
 from utils.util_response import DetailResponse, ExcelResponse
-from ..models import *
+from system.models import UploadFileInfo
+from report.models import *
 from .operation_excel import generate_interface_workbook, handle_import_interface, handle_import_tableinfo
 from hashlib import md5
 

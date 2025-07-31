@@ -247,6 +247,10 @@ LOGGING = {
 }
 
 
+
+# 上传文件根路径
+UPLOAD_ROOT = os.path.join(BASE_DIR, 'uploads')
+
 # CORS settings
 CORS_ALLOW_ALL_ORIGINS = True  # 开发环境下允许所有来源
 CORS_ALLOW_CREDENTIALS = True   # 允许携带认证信息
