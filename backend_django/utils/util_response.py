@@ -45,7 +45,7 @@ class ErrorResponse(Response):
     (1)默认错误码返回400, 也可以指定其他返回码:ErrorResponse(code=xxx)
     """
 
-    def __init__(self, data=None, msg='error', code=None, status=None, template_name=None, headers=None,
+    def __init__(self, data=None, msg='error', code=None, status=400, template_name=None, headers=None,
                  exception=False, content_type=None):
         std_data = {
             "msg": msg

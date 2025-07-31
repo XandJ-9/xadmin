@@ -137,7 +137,7 @@ service.interceptors.response.use(res => {
             message = "系统接口异常: " + response.status + ", 错误信息" + response.data
           }
     }
-    ElMessage({ message: message, type: 'error', duration: 1 * 1000 })
+    // ElMessage({ message: message, type: 'error', duration: 1 * 1000 })
     return Promise.reject(error)
   }
 )

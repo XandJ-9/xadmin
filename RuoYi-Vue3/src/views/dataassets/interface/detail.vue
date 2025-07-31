@@ -25,17 +25,31 @@
             <!-- 数据表格 -->
             <el-table :data="paginateData" style="width: 100%" v-loading="loading" border fit>
                 <el-table-column prop="interface_para_code" label="参数编码" :width="interfaceParaCodeWidth" />
-                <el-table-column prop="interface_para_name" label="参数名称" width="200" />
+                <el-table-column prop="interface_para_name" label="参数名称" width="200">
+                    <template #default="scope">
+                        <el-input v-if="scope.row.new_flag" v-model="scope.row.interface_para_name" placeholder="请输入参数名称" />
+                    </template>
+                </el-table-column>
                 <el-table-column prop="interface_para_position" label="参数位置" width="100" />
                 <el-table-column prop="interface_para_type" label="参数类型" width="100">
                     <template #default="scope">
-                        <!-- {{ scope.row.interface_para_type }} -->
-                        {{ interfaceParaTypeOptions.filter(item => item.value === scope.row.interface_para_type)[0].label }}
+                        <!-- <el-select v-model="scope.row.interface_para_type" placeholder="请选择参数类型" style="width: 100%">
+                            <el-option v-for="item in interfaceParaTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                        </el-select> -->
+                        <item-wrapper 
+                        type="el-select" 
+                        :options="interfaceParaTypeOptions" 
+                        v-model:modelValue="scope.row.interface_para_type" 
+                        placeholder="请输入参数值" >
+
+                        </item-wrapper>
                     </template>
                 </el-table-column>
                 <el-table-column prop="interface_data_type" label="数据类型" width="100">
                     <template #default="scope">
-                        {{ getDataTypeName(scope.row.interface_data_type) }}
+                        <el-select v-model="scope.row.interface_data_type">
+                            <el-option v-for="item in dataTypeOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                        </el-select>
                     </template>
                 </el-table-column>
                 <el-table-column prop="interface_para_default" label="默认值" width="100" show-overflow-tooltip />
@@ -52,6 +66,12 @@
                 <el-table-column prop="interface_para_desc" label="参数描述" show-overflow-tooltip />
                 <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
                     <template #default="scope">
+                        <el-button
+                        v-if="scope.row.new_flag"
+                        link type="primary" @click="handleSave(scope.row)">
+                            保存
+                        </el-button>
+
                         <el-button link type="primary" icon="Edit" @click="handleEdit(scope.row)"
                             v-hasPermi="['report:interface-field:update']"></el-button>
                         <el-button link type="primary" icon="Plus" @click="handleAppend(scope.row)"
@@ -163,7 +183,7 @@ import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import QueryParamsForm from '@/components/QueryParamsForm'
 import CrudBar from '@/components/CrudBar'
-import InterfaceSqlEditor from '@/views/dataassets/components/InterfaceSqlEditor.vue'
+import InterfaceSqlEditor from '../components/InterfaceSqlEditor.vue'
 import {
     getInterfaceDetail,
     getInterfaceFields,
@@ -174,6 +194,7 @@ import {
 } from '@/api/dataassets/reportinfo'
 
 import { executeQuery } from '@/api/dataassets/datasource'
+import ItemWrapper from '../components/ItemWrapper.vue'
 
 const queryProperties = reactive([
     { label: '字段名称', type: 'input', prop: 'interface_para_name' },
@@ -255,12 +276,6 @@ const interfaceParaCodeWidth = computed(() => {
     return maxWidth
 })
 
-// 获取数据类型名称
-const getDataTypeName = (type) => {
-    const option = dataTypeOptions.find(item => item.value === type)
-    return option ? option.label : type
-}
-
 // 获取接口信息
 const getInterfaceInfo = async () => {
     let id = router.currentRoute.value.params.id
@@ -307,6 +322,7 @@ const sortFields = (fields) => {
     let arr1 = fields.filter(item => item.interface_para_type === '1').sort((a, b) => a.interface_para_position - b.interface_para_position)
     let arr2 = fields.filter(item => item.interface_para_type === '2').sort((a, b) => a.interface_para_position - b.interface_para_position)
     fields = [...arr1, ...arr2]
+    return fields
  }
 
 
@@ -452,18 +468,20 @@ const handleExecuteSql = async ({ sql, interfaceId }, callback) => {
         const fieldNames = Object.keys(result.data[0])
         let position = interfaceFields.outputFields.length + 1
         let start = tableData.length
-        fieldNames.forEach(fieldName => {
+        fieldNames.forEach(fieldCode => {
+            let fieldName = fieldCode  // 这里可以尝试关联到字段的中文名
             const newField = {
-                    interface: interfaceInfo.id,
-                    interface_para_code: fieldName,
-                    interface_para_name: '',
+                    interface: interfaceId,
+                    interface_para_code: fieldCode,
+                    interface_para_name: fieldName,
                     interface_para_position: position,
                     interface_para_type: '2',
                     interface_data_type: '1',
                     interface_para_default: '',
                     interface_show_flag: '1',
                     interface_export_flag: '1',
-                    interface_para_desc: ''
+                    interface_para_desc: '',
+                    new_flag: true
             }
             position += 1
             newFields.value.push(newField)
@@ -471,11 +489,18 @@ const handleExecuteSql = async ({ sql, interfaceId }, callback) => {
             tableData.value.splice(start, 0, newField)
             start += 1
         })
-        // tableData.value.splice(start, 0, newFields)
-        console.log('add new fileds', tableData.value)
-        sortFields(tableData.value)
+        tableData.value = sortFields(tableData.value)
     }
 }
+// 添加查询返回的新字段
+const handleSave = async (row) => {
+    await createInterfaceField(row).then(res => { 
+        ElMessage.success('保存成功')
+    }).catch(error => { 
+        ElMessage.error(`保存失败: ${error?.response.data.msg || '未知错误'}`)
+    })
+}
+
 
 // 处理SQL保存
 const handleSaveSql = async ({ sql, interfaceId }) => {
