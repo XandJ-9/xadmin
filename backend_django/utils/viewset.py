@@ -84,13 +84,19 @@ class CustomModelViewSet(ModelViewSet):
 
 
     def create(self, request):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
+        data = request.data
+        if isinstance(data, list):
+            serializer = self.get_serializer(data=data, many=True)
+            msg = '批量新增成功'
+        else:
+            serializer = self.get_serializer(data=request.data)
+            msg = '新增成功'
         try:
+            serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)
         except Exception as e:
             return ErrorResponse(msg=str(e))
-        return DetailResponse(data=serializer.data, msg="新增成功")
+        return DetailResponse(data=serializer.data, msg=msg)
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())

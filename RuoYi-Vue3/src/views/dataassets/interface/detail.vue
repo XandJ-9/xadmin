@@ -182,7 +182,6 @@ const queryProperties = reactive([
 
 const router = useRouter()
 
-const interfaceId = ref(null)
 // 接口信息
 const interfaceInfo = ref({})
 
@@ -264,12 +263,14 @@ const getDataTypeName = (type) => {
 
 // 获取接口信息
 const getInterfaceInfo = async () => {
-    interfaceId.value = router.currentRoute.value.params.id
-    await getInterfaceDetail(interfaceId.value).then(res => {
+    let id = router.currentRoute.value.params.id
+    await getInterfaceDetail(id).then(res => {
         interfaceInfo.value = res.data
     }).catch(error => {
         ElMessage.error('获取接口详情失败')
     })
+
+    await getFieldList()
 }
 
 // 接口字段对象
@@ -282,7 +283,7 @@ const getFieldList = async (queryParams) => {
     loading.value = true
     const params = {
         noPage: 1,
-        interface: interfaceId.value,
+        interface: interfaceInfo.value.id,
         ...queryParams
     }
 
@@ -301,6 +302,13 @@ const getFieldList = async (queryParams) => {
         loading.value = false
     })
 }
+
+const sortFields = (fields) => {
+    let arr1 = fields.filter(item => item.interface_para_type === '1').sort((a, b) => a.interface_para_position - b.interface_para_position)
+    let arr2 = fields.filter(item => item.interface_para_type === '2').sort((a, b) => a.interface_para_position - b.interface_para_position)
+    fields = [...arr1, ...arr2]
+ }
+
 
 // 重置表单
 const resetForm = () => {
@@ -379,7 +387,7 @@ const handleSubmit = async () => {
     await formRef.value.validate(async (valid) => {
         if (valid) {
             try {
-                const data = { ...formData, interface: interfaceId.value }
+                const data = { ...formData, interface: interfaceInfo.value.id }
                 if (dialogType.value === 'add') {
                     await createInterfaceField(data).then(res => {
                         ElMessage.success('添加成功')
@@ -421,6 +429,8 @@ const showSqlEditor = () => {
     sqlEditorVisible.value = true
 }
 
+
+const newFields = ref([])
 // 处理SQL执行
 const handleExecuteSql = async ({ sql, interfaceId }, callback) => {
     const datasourceId = interfaceInfo.value.interface_datasource
@@ -442,9 +452,9 @@ const handleExecuteSql = async ({ sql, interfaceId }, callback) => {
         const fieldNames = Object.keys(result.data[0])
         let position = interfaceFields.outputFields.length + 1
         let start = tableData.length
-        const newFields = []
         fieldNames.forEach(fieldName => {
             const newField = {
+                    interface: interfaceInfo.id,
                     interface_para_code: fieldName,
                     interface_para_name: '',
                     interface_para_position: position,
@@ -456,12 +466,14 @@ const handleExecuteSql = async ({ sql, interfaceId }, callback) => {
                     interface_para_desc: ''
             }
             position += 1
-            newFields.push(newField)
+            newFields.value.push(newField)
             if(tableData.value.some(item => item.interface_para_code === newField.interface_para_code)) return
             tableData.value.splice(start, 0, newField)
+            start += 1
         })
         // tableData.value.splice(start, 0, newFields)
         console.log('add new fileds', tableData.value)
+        sortFields(tableData.value)
     }
 }
 
@@ -484,10 +496,11 @@ const handleSaveSql = async ({ sql, interfaceId }) => {
 }
 
 // 页面加载时获取数据
-onMounted(() => {
-    getInterfaceInfo()
-    getFieldList()
-})
+// onMounted(() => {
+    // getInterfaceInfo()
+// })
+
+getInterfaceInfo()
 </script>
 
 <style scoped>
