@@ -1,48 +1,70 @@
 <template>
     <div class="app-container">
+        <el-card>
+            <!-- 接口信息 -->
+             <el-row style="padding: 20px;">
+                <el-col :span="12" class="item-box">
+                    <span class="item-label">接口代码: </span>
+                    <span class="item-content">{{ interfaceInfo.interface_code }}</span>
+                </el-col>
+                <el-col :span="12" class="item-box">
+                    <span class="item-label">接口名称: </span>
+                    <span class="item-content">{{ interfaceInfo.interface_name }}</span>
+                </el-col>
+                <el-col :span="12" class="item-box">
+                    <span class="item-label">接口描述: </span>
+                    <span class="item-content">{{ interfaceInfo.interface_desc }}</span>
+                </el-col>
+             </el-row>
+        </el-card>
+        <el-card>
+            <!-- 字段搜索 -->
+            <query-params-form :properties="queryProperties" @query="getFieldList" @reset="getFieldList" />
 
-        <query-params-form :properties="queryProperties" @query="getFieldList" @reset="getFieldList" />
+            <crud-bar addBtn @addEvent="handleAdd" />
+            <!-- 数据表格 -->
+            <el-table :data="paginateData" style="width: 100%" v-loading="loading" border fit>
+                <el-table-column prop="interface_para_code" label="参数编码" :width="interfaceParaCodeWidth" />
+                <el-table-column prop="interface_para_name" label="参数名称" width="200" />
+                <el-table-column prop="interface_para_position" label="参数位置" width="100" />
+                <el-table-column prop="interface_para_type" label="参数类型" width="100">
+                    <template #default="scope">
+                        <!-- {{ scope.row.interface_para_type }} -->
+                        {{ interfaceParaTypeOptions.filter(item => item.value === scope.row.interface_para_type)[0].label }}
+                    </template>
+                </el-table-column>
+                <el-table-column prop="interface_data_type" label="数据类型" width="100">
+                    <template #default="scope">
+                        {{ getDataTypeName(scope.row.interface_data_type) }}
+                    </template>
+                </el-table-column>
+                <el-table-column prop="interface_para_default" label="默认值" width="100" show-overflow-tooltip />
+                <el-table-column prop="interface_show_flag" label="是否显示" width="100">
+                    <template #default="scope">
+                        {{ scope.row.interface_show_flag === '1' ? '是' : '否' }}
+                    </template>
+                </el-table-column>
+                <el-table-column prop="interface_export_flag" label="是否导出" width="100">
+                    <template #default="scope">
+                        {{ scope.row.interface_export_flag === '1' ? '是' : '否' }}
+                    </template>
+                </el-table-column>
+                <el-table-column prop="interface_para_desc" label="参数描述" show-overflow-tooltip />
+                <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+                    <template #default="scope">
+                        <el-button link type="primary" icon="Edit" @click="handleEdit(scope.row)"
+                            v-hasPermi="['report:interface-field:update']"></el-button>
+                        <el-button link type="primary" icon="Plus" @click="handleAppend(scope.row)"
+                            v-hasPermi="['report:interface-field:add']"></el-button>
+                        <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
+                            v-hasPermi="['report:interface-field:remove']"></el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+                    <!-- 分页 -->
+            <pagination v-show="paginatedTotal > 0" :total="paginatedTotal" v-model:page="currentPage" v-model:limit="pageSize" />
 
-        <crud-bar addBtn @addEvent="handleAdd" />
-        <!-- 数据表格 -->
-        <el-table :data="paginateData" style="width: 100%" v-loading="loading" border fit>
-            <el-table-column prop="interface_para_code" label="参数编码" :width="interfaceParaCodeWidth" />
-            <el-table-column prop="interface_para_name" label="参数名称" width="200" />
-            <el-table-column prop="interface_para_position" label="参数位置" width="100" />
-            <el-table-column prop="interface_para_type" label="参数类型" width="100">
-                <template #default="scope">
-                    <!-- {{ scope.row.interface_para_type }} -->
-                    {{ interfaceParaTypeOptions.filter(item => item.value === scope.row.interface_para_type)[0].label }}
-                </template>
-            </el-table-column>
-            <el-table-column prop="interface_data_type" label="数据类型" width="100">
-                <template #default="scope">
-                    {{ getDataTypeName(scope.row.interface_data_type) }}
-                </template>
-            </el-table-column>
-            <el-table-column prop="interface_para_default" label="默认值" width="100" show-overflow-tooltip />
-            <el-table-column prop="interface_show_flag" label="是否显示" width="100">
-                <template #default="scope">
-                    {{ scope.row.interface_show_flag === '1' ? '是' : '否' }}
-                </template>
-            </el-table-column>
-            <el-table-column prop="interface_export_flag" label="是否导出" width="100">
-                <template #default="scope">
-                    {{ scope.row.interface_export_flag === '1' ? '是' : '否' }}
-                </template>
-            </el-table-column>
-            <el-table-column prop="interface_para_desc" label="参数描述" show-overflow-tooltip />
-            <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
-                <template #default="scope">
-                    <el-button link type="primary" icon="Edit" @click="handleEdit(scope.row)"
-                        v-hasPermi="['report:interface-field:update']"></el-button>
-                    <el-button link type="primary" icon="Plus" @click="handleAppend(scope.row)"
-                        v-hasPermi="['report:interface-field:add']"></el-button>
-                    <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
-                        v-hasPermi="['report:interface-field:remove']"></el-button>
-                </template>
-            </el-table-column>
-        </el-table>
+        </el-card>
 
         <el-row>
             <el-col :span="24" style="margin-top: 10px;">
@@ -51,8 +73,6 @@
             </el-col>
         </el-row>
 
-        <!-- 分页 -->
-        <pagination v-show="paginatedTotal > 0" :total="paginatedTotal" v-model:page="currentPage" v-model:limit="pageSize" />
 
         <!-- 字段编辑对话框 -->
         <el-dialog v-model="dialogVisible" 
@@ -136,13 +156,13 @@ export default {
 
 </script>
 
-<script setup name="InterfaceFields">
+<script setup name="InterfaceDetail">
 import { ref, onMounted, reactive, computed, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import QueryParamsForm from '@/components/QueryParamsForm'
 import CrudBar from '@/components/CrudBar'
-import InterfaceSqlEditor from './components/InterfaceSqlEditor.vue'
+import InterfaceSqlEditor from '@/views/dataassets/components/InterfaceSqlEditor.vue'
 import {
     getInterfaceDetail,
     getInterfaceFields,
@@ -472,6 +492,10 @@ onMounted(() => {
 <style scoped>
 .interface-fields {
     padding: 20px;
+}
+
+.item-box {
+    margin-bottom: 20px;
 }
 
 .card-header {

@@ -1,5 +1,6 @@
 <template>
     <div class="app-container">
+        <el-row :gutter="20">
         <query-params-form 
             :properties="queryProperties" 
             @query="handleQuery" 
@@ -7,90 +8,94 @@
             @select-click="handleSelectClick" />
 
         <crud-bar addBtn @addEvent="handleAdd" importBtn @importEvent="handleImport" />
-        <!-- 数据表格 -->
-        <el-table ref="tableRef" :data="tableData" style="width: 100%" v-loading="loading" highlight-current-row>
-            <el-table-column prop="interface_code" label="接口编码" :width="interfaceCodeWidth">
-                <template #default="scope">
-                    <!-- {{ scope.row.interface_code ? scope.row.interface_code : scope.row.interface_name }} -->
-                    <router-link
-                        :to="{ path: `/report/interface/interfaceFields/${scope.row.id}`, query: { interface_name: scope.row.interface_name } }"
-                        style="color: blue;">
-                        {{ scope.row.interface_code ? scope.row.interface_code : scope.row.interface_name }}
-                    </router-link>
+        </el-row>
+
+        <el-row :gutter="20">
+            <!-- 数据表格 -->
+            <el-table ref="tableRef" :data="tableData" style="width: 100%" v-loading="loading" height="calc(100vh - 400px)" highlight-current-row>
+                <el-table-column prop="interface_code" label="接口编码" :width="interfaceCodeWidth">
+                    <template #default="scope">
+                        <!-- {{ scope.row.interface_code ? scope.row.interface_code : scope.row.interface_name }} -->
+                        <router-link
+                            :to="{ path: `/report/interface/interfaceFields/${scope.row.id}`, query: { interface_name: scope.row.interface_name } }"
+                            style="color: blue;">
+                            {{ scope.row.interface_code ? scope.row.interface_code : scope.row.interface_name }}
+                        </router-link>
+                    </template>
+                </el-table-column>
+                <el-table-column prop="interface_name" label="接口名称" :width="interfaceNameWidth" />
+                <el-table-column prop="interface_desc" label="接口描述" show-overflow-tooltip width="200">
+                    <template #default="scope">
+                        {{ scope.row.interface_desc ? scope.row.interface_desc : scope.row.interface_name }}
+                    </template>
+                </el-table-column>
+                <el-table-column prop="report_info.name" label="报表名称" width="200" />
+                <el-table-column prop="report_info.module_info.name" label="模块名称" width="200" />
+                <el-table-column prop="report_info.module_info.platform_info.name" label="平台名称" width="200" />
+                <el-table-column prop="interface_db_type" label="数据库类型" width="100" />
+                <el-table-column prop="interface_db_name" label="数据库名称" width="100" />
+                <el-table-column prop="is_total" label="是否合计">
+                    <template #default="scope">
+                        <!-- {{ scope.row.is_total }} -->
+                        {{interface_is_total.filter(item => item.value === scope.row.is_total)[0].label}}
+                    </template>
+                </el-table-column>
+                <el-table-column prop="is_paging" label="是否分页" width="80">
+                    <template #default="scope">
+                        <!-- {{ scope.row.is_paging }} -->
+                        {{interface_is_paging.filter(item => item.value === scope.row.is_paging)[0].label}}
+                    </template>
+                </el-table-column>
+                <el-table-column prop="is_date_option" label="是否日期查询">
+                    <template #default="scope">
+                        <!-- {{ scope.row.is_date_option }} -->
+                        {{interface_is_date_option.filter(item => item.value === scope.row.is_date_option)[0].label}}
+                    </template>
+                </el-table-column>
+                <el-table-column prop="is_login_visit" label="是否需要登录">
+                    <template #default="scope">
+                        <!-- {{ scope.row.is_login_visit }} -->
+                        {{interface_is_login_visit.filter(item => item.value === scope.row.is_login_visit)[0].label}}
+                    </template>
+                </el-table-column>
+                <el-table-column prop="updator_username" label="更新用户">
+                </el-table-column>
+                <el-table-column prop="update_time" label="更新时间" width="150">
+                    <template #default="scope">
+                        {{ scope.row.update_time }}
+                    </template>
+                </el-table-column>
+                <el-table-column prop="creator_username" label="创建用户">
+                </el-table-column>
+                <el-table-column prop="create_time" label="创建时间" width="150">
+                    <template #default="scope">
+                        {{ scope.row.create_time }}
+                    </template>
+                </el-table-column>
+                <el-table-column label="操作" align="center" width="150">
+                    <template #default="scope">
+                        <el-tooltip content="修改" placement="top">
+                            <el-button link type="primary" @click="handleEdit(scope.row)" icon="Edit" v-hasPermi="['report:interface:update']"></el-button>
+                        </el-tooltip>
+                        <el-tooltip content="删除" placement="top">
+                            <el-button link type="danger" @click="handleDelete(scope.row)" icon="Delete"></el-button>
+                        </el-tooltip>
+                        <el-tooltip content="下载" placement="top">
+                            <el-button link type="info" @click="handleExport(scope.row)" icon="Download"></el-button>
+                        </el-tooltip>
+                        <!-- <el-button size="small" type="success" @click="handleFields(scope.row)">字段配置</el-button> -->
+                        <el-tooltip content="数据查看" placement="top">
+                            <el-button link type="warning" @click="handleDataview(scope.row)" icon="View"></el-button>
+                        </el-tooltip>
+                    </template>
+                </el-table-column>
+                <!-- <el-table-column type="expand" width="50">
+                <template>
+                    <interface-fields-editor :table-data="interfaceFields" />
                 </template>
-            </el-table-column>
-            <el-table-column prop="interface_name" label="接口名称" :width="interfaceNameWidth" />
-            <el-table-column prop="interface_desc" label="接口描述" show-overflow-tooltip width="200">
-                <template #default="scope">
-                    {{ scope.row.interface_desc ? scope.row.interface_desc : scope.row.interface_name }}
-                </template>
-            </el-table-column>
-            <el-table-column prop="report_info.name" label="报表名称" width="200" />
-            <el-table-column prop="report_info.module_info.name" label="模块名称" width="200" />
-            <el-table-column prop="report_info.module_info.platform_info.name" label="平台名称" width="200" />
-            <el-table-column prop="interface_db_type" label="数据库类型" width="100" />
-            <el-table-column prop="interface_db_name" label="数据库名称" width="100" />
-            <el-table-column prop="is_total" label="是否合计">
-                <template #default="scope">
-                    <!-- {{ scope.row.is_total }} -->
-                    {{interface_is_total.filter(item => item.value === scope.row.is_total)[0].label}}
-                </template>
-            </el-table-column>
-            <el-table-column prop="is_paging" label="是否分页" width="80">
-                <template #default="scope">
-                    <!-- {{ scope.row.is_paging }} -->
-                    {{interface_is_paging.filter(item => item.value === scope.row.is_paging)[0].label}}
-                </template>
-            </el-table-column>
-            <el-table-column prop="is_date_option" label="是否日期查询">
-                <template #default="scope">
-                    <!-- {{ scope.row.is_date_option }} -->
-                    {{interface_is_date_option.filter(item => item.value === scope.row.is_date_option)[0].label}}
-                </template>
-            </el-table-column>
-            <el-table-column prop="is_login_visit" label="是否需要登录">
-                <template #default="scope">
-                    <!-- {{ scope.row.is_login_visit }} -->
-                    {{interface_is_login_visit.filter(item => item.value === scope.row.is_login_visit)[0].label}}
-                </template>
-            </el-table-column>
-            <el-table-column prop="updator_username" label="更新用户">
-            </el-table-column>
-            <el-table-column prop="update_time" label="更新时间" width="150">
-                <template #default="scope">
-                    {{ scope.row.update_time }}
-                </template>
-            </el-table-column>
-            <el-table-column prop="creator_username" label="创建用户">
-            </el-table-column>
-            <el-table-column prop="create_time" label="创建时间" width="150">
-                <template #default="scope">
-                    {{ scope.row.create_time }}
-                </template>
-            </el-table-column>
-            <el-table-column label="操作" align="center" width="150">
-                <template #default="scope">
-                    <el-tooltip content="修改" placement="top">
-                        <el-button link type="primary" @click="handleEdit(scope.row)" icon="Edit" v-hasPermi="['report:interface:update']"></el-button>
-                    </el-tooltip>
-                    <el-tooltip content="删除" placement="top">
-                        <el-button link type="danger" @click="handleDelete(scope.row)" icon="Delete"></el-button>
-                    </el-tooltip>
-                    <el-tooltip content="下载" placement="top">
-                        <el-button link type="info" @click="handleExport(scope.row)" icon="Download"></el-button>
-                    </el-tooltip>
-                    <!-- <el-button size="small" type="success" @click="handleFields(scope.row)">字段配置</el-button> -->
-                    <el-tooltip content="数据查看" placement="top">
-                        <el-button link type="warning" @click="handleDataview(scope.row)" icon="View"></el-button>
-                    </el-tooltip>
-                </template>
-            </el-table-column>
-            <!-- <el-table-column type="expand" width="50">
-            <template>
-                <interface-fields-editor :table-data="interfaceFields" />
-            </template>
-        </el-table-column> -->
-        </el-table>
+            </el-table-column> -->
+            </el-table>
+        </el-row>
 
         <!-- 分页 -->
         <pagination v-show="total > 0" :total="total" v-model:page="currentPage" v-model:limit="pageSize" @pagination="fetchInterfaceList" />
@@ -589,24 +594,3 @@ onMounted(() => {
     fetchInterfaceList()
 })
 </script>
-
-<style scoped>
-.interface-manage {
-    padding: 20px;
-    /* height: 100%; */
-    /* display: flex; */
-    /* flex-direction: column; */
-}
-
-.search-area {
-    margin-bottom: 20px;
-}
-
-.add-btn {
-    margin-bottom: 20px;
-}
-
-.el-table__expand-icon {
-    display: none;
-}
-</style>
