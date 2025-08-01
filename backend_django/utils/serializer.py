@@ -179,6 +179,7 @@ class BaseModelSerializer(serializers.ModelSerializer):
             super().__init__(instance, data, **kwargs)
             self.request: Request = request or self.context.get("request", None)
     def create(self, validated_data):
+        print(f'create: {validated_data}')
         if not validated_data.get('creator', None) and not self.request.user.is_anonymous:
             validated_data.setdefault('creator', self.request.user)
             validated_data.setdefault('updator', self.request.user)

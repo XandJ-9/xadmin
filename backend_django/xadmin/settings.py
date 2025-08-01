@@ -249,7 +249,7 @@ LOGGING = {
 
 
 # 上传文件根路径
-UPLOAD_ROOT = os.path.join(BASE_DIR, 'uploads')
+UPLOAD_ROOT = os.path.join('.','uploads')
 
 # CORS settings
 CORS_ALLOW_ALL_ORIGINS = True  # 开发环境下允许所有来源

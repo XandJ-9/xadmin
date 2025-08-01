@@ -74,7 +74,7 @@ const usedmemory = ref(null)
 const { proxy } = getCurrentInstance()
 
 function getList() {
-  proxy.$modal.loading("正在加载缓存监控数据，请稍候！")
+  // proxy.$modal.loading("正在加载缓存监控数据，请稍候！")
   getCache().then(response => {
     proxy.$modal.closeLoading()
     cache.value = response.data

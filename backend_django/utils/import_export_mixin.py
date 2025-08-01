@@ -59,14 +59,27 @@ class ExcelImportExportMixin(ImportViewSetMixin, ExportViewSetMixin):
     @action(methods =['post'], detail=False, url_name='import_data', url_path='import')
     def import_data(self, request, *args, **kwargs):
         file_obj = request.FILES.get('file')
+        update_support = request.query_params.get('updateSupport', False)
         if not file_obj:
             return DetailResponse(status=400, msg='请上传文件')
-        data = self.parse_import_excel(file_obj)
-        if data is None:
+        data_list = self.parse_import_excel(file_obj)
+        if data_list is None:
             return ErrorResponse(status=400, msg='请上传正确的文件')
-        serializer = self.get_import_serializer(data=data, many=True, request=request)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
+        for data in data_list:
+            if data.get('id', None):
+                if update_support == '1':
+                    instance = self.get_queryset().filter(id=data.get('id')).first()
+                    serializer = self.get_import_serializer(instance = instance,data=data, request=request)
+                    if serializer.is_valid(raise_exception=True):
+                        serializer.save()
+                else:
+                    continue
+            else:
+                serializer = self.get_import_serializer(data=data, request=request)
+                if serializer.is_valid(raise_exception=False):
+                    serializer.save()
+                else:
+                    return ErrorResponse(status=400, msg=f'数据验证失败:{data}')
         return DetailResponse(msg='导入成功')
 
     def make_export_excel(self, data: list = None, *args, **kwargs):
@@ -247,6 +260,27 @@ class ModelImportExportMixin(ExcelImportExportMixin):
     def parse_import_excel(self, file, *args, **kwargs):
         wb = load_workbook(file)
         ws = wb.active
-        
-        return None
+        ## 获取字段名
+        header_data = ["序号","更新主键(勿改)"]
+        hidden_header = ["#","id"]
+        for index, item in enumerate(self.import_field_dict.items()):
+            key = item[0]
+            value = item[1]
+            hidden_header.append(key)
+            if isinstance(value, dict):
+                header_data.append(value.get("title"))
+            else:
+                header_data.append(value)
+        data_list = []
+        for row in ws.iter_rows(min_row=2):
+            data = {}
+            for index, item in enumerate(row):
+                if index == 0:
+                    continue
+                if item.value is None:
+                    continue
+                data[hidden_header[index]] = item.value
+            data_list.append(data)
+        # print(f'获取到数据行数：{data_list}')
+        return data_list
 
