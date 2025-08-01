@@ -2,8 +2,8 @@ import { download } from '@/utils/request'
 
 export function userImportTemplate() {
     download(
-        '/system/user/importTemplate',
-        `user_${new Date().getTime()}.xlsx`
+        '/system/user/template',
+        `user_${new Date().getTime()}导入模板.xlsx`
     )
 }
 

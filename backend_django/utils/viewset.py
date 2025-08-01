@@ -49,10 +49,10 @@ class CustomModelViewSet(ModelViewSet):
             self.perms_map[method.__name__] = method.perms
         return self.perms_map
     
-    def get_permissions(self):
+    # def get_permissions(self):
         # if self.action in ['list']:
         #     return [IsOwnerOrAdmin()]
-        return [HasRolePermission()]
+        # return [HasRolePermission()]
     
     def filter_queryset(self, queryset):
         for backend in set(set(self.filter_backends) or []):

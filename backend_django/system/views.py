@@ -13,7 +13,7 @@ from .permissions import IsAdminUser, IsOwnerOrAdmin,HasRolePermission, has_perm
 
 from utils.viewset import CustomModelViewSet
 from utils.serializer import build_tree
-from utils.import_export_mixin import ModelExportSerializerMixin, ModelImportSerializerMixin
+from utils.import_export_mixin import ModelImportExportMixin
 import logging, uuid
 
 logger = logging.getLogger('django')
@@ -34,12 +34,8 @@ class SystemViewMixin:
         return Response(ser.data, status=status.HTTP_200_OK)
 
 
-class ModelImportExportViewSet(ModelImportSerializerMixin,ModelExportSerializerMixin,SystemViewMixin,CustomModelViewSet):
-    def get_export_serializer_class(self):
-        return self.export_serializer_class or self.serializer_class
-    
-    def get_import_serializer_class(self):
-        return self.import_serializer_class or self.serializer_class
+class ModelImportExportViewSet(ModelImportExportMixin,SystemViewMixin,CustomModelViewSet):
+    pass
 
 class PostViewSet(ModelImportExportViewSet):
     queryset = Post.objects.all()
