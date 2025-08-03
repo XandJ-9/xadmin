@@ -17,7 +17,10 @@
                 </el-col>
                 <el-col :span="12" class="item-box">
                     <span class="item-label">是否登录: </span>
-                    <span class="item-content">{{ interfaceInfo?.is_login_visit }}</span>
+                    <span class="item-content">
+                      {{ interfaceInfo?.is_login_visit }}
+                    </span>
+
                 </el-col>
              </el-row>
         </el-card>
@@ -227,6 +230,10 @@ import {
 import { executeQuery } from '@/api/dataassets/datasource'
 import ItemWrapper from '../components/ItemWrapper.vue'
 
+const { proxy } = getCurrentInstance()
+
+const { interface_is_paging, interface_is_total, interface_is_date_option, interface_is_login_visit } = proxy.useDict("interface_is_paging", "interface_is_total", "interface_is_date_option", "interface_is_login_visit")
+
 const queryProperties = reactive([
     { label: '字段名称', type: 'input', prop: 'interface_para_name' },
     { label: '字段编码', type: 'input', prop: 'interface_para_code' }
@@ -296,6 +303,7 @@ const rules = {
 
 
 const selectionItems = ref([])
+
 const handleSelectionChange = (selections) => { 
     selectionItems.value = selections
 }
@@ -360,8 +368,7 @@ const sortFields = (fields) => {
     let arr2 = fields.filter(item => item.interface_para_type === '2').sort((a, b) => a.interface_para_position - b.interface_para_position)
     fields = [...arr1, ...arr2]
     return fields
- }
-
+}
 
 // 重置表单
 const resetForm = () => {
@@ -397,26 +404,26 @@ const handleEdit = (row) => {
 
 // 删除字段
 const handleDelete = (row) => {
-        ElMessageBox.confirm(
-            '确认删除该字段吗？',
-            '警告',
-            {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning',
-            }
-        )
-        .then(async () => {
-            deleteInterfaceField(row.id).then(res => {
-                ElMessage.success('删除成功')
-                getFieldList()
-            }).catch(error => {
-                ElMessage.error('删除字段失败')
-            })
+    ElMessageBox.confirm(
+        '确认删除该字段吗？',
+        '警告',
+        {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning',
+        }
+    )
+    .then(async () => {
+        deleteInterfaceField(row.id).then(res => {
+            ElMessage.success('删除成功')
+            getFieldList()
+        }).catch(error => {
+            ElMessage.error('删除字段失败')
         })
-        .catch(() => {
-            ElMessage.info('已取消删除')
-        })
+    })
+    .catch(() => {
+        ElMessage.info('已取消删除')
+    })
 }
 
 const handleMultiDelete = () => {
@@ -431,7 +438,7 @@ const handleMultiDelete = () => {
         } else {
             ElMessage.info('请选择要删除的字段')
         }
- }
+}
 
 // 追加字段
 const handleAppend = (row) => {
@@ -496,8 +503,9 @@ const showSqlEditor = () => {
     sqlEditorVisible.value = true
 }
 
-
+// 新增字段
 const newFields = ref([])
+
 // 处理SQL执行
 const handleExecuteSql = async ({ sql, interfaceId }, callback) => {
     const datasourceId = interfaceInfo.value.interface_datasource
@@ -542,6 +550,7 @@ const handleExecuteSql = async ({ sql, interfaceId }, callback) => {
         })
     }
 }
+
 // 添加查询返回的新字段
 const handleSave = async (row) => {
     await createInterfaceField(row).then(res => { 
@@ -553,13 +562,11 @@ const handleSave = async (row) => {
 }
 
 const handleMutltiSave = async () => {
-
- }
+}
 
 // 刷新字段顺序
 const refreshFields = async () => { 
 }
-
 
 // 处理SQL保存
 const handleSaveSql = async ({ sql, interfaceId }) => {
@@ -578,7 +585,6 @@ const handleSaveSql = async ({ sql, interfaceId }) => {
         return false
     }
 }
-
 
 // 更新接口信息
 const saveInterface = async () => { 
@@ -613,10 +619,9 @@ getInterfaceInfo()
     font-weight: bold;
 }
 
-.item-content { 
+.item-content {
     margin-bottom: 5px;
     padding-left: 5px;
-
 }
 
 .dialog-footer {
