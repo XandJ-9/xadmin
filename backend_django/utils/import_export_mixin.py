@@ -13,6 +13,7 @@ from rest_framework.request import Request
 
 from utils.util_response import DetailResponse, ExcelResponse, ErrorResponse
 from utils.util_request import get_verbose_name
+from utils.models import get_field_verbose_name
 
 from openpyxl import load_workbook
 
@@ -67,7 +68,7 @@ class ExcelImportExportMixin(ImportViewSetMixin, ExportViewSetMixin):
             return ErrorResponse(status=400, msg='请上传正确的文件')
         for data in data_list:
             if data.get('id', None):
-                if update_support == '1':
+                if update_support:
                     instance = self.get_queryset().filter(id=data.get('id')).first()
                     serializer = self.get_import_serializer(instance = instance,data=data, request=request)
                     if serializer.is_valid(raise_exception=True):
@@ -128,7 +129,14 @@ class ModelImportExportMixin(ExcelImportExportMixin):
 
     # 导出字段
     export_field_label = {}
-
+    
+    def get_export_column_label(self):
+        query_set = self.get_queryset()
+        model = query_set.model
+        result = {}
+        for field in model._meta.fields:
+            result[field.name] = get_field_verbose_name(model, field.name)
+        print(result)
 
     @action(methods=['post'],detail=False, url_path='template')
     def import_excel_template(self,request):
@@ -141,6 +149,7 @@ class ModelImportExportMixin(ExcelImportExportMixin):
         return response
     
     def make_export_excel(self, data = None, *args, **kwargs):
+        self.get_export_column_label()
         wb = Workbook()
         ws = wb.active
         header_data = ["序号", *self.export_field_label.values()]

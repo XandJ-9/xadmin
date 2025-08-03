@@ -2,7 +2,6 @@
 from __future__ import absolute_import, unicode_literals
 from urllib.parse import quote
 from django.http import HttpResponse
-from rest_framework.response import Response
 from openpyxl import Workbook
 from openpyxl.cell import WriteOnlyCell
 from openpyxl.styles import Font

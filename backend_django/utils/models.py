@@ -32,3 +32,15 @@ class BizBaseModel(models.Model):
 
     class Meta:
         abstract = True
+
+
+
+def get_field_verbose_name(model, field_name):
+    """
+    获取字段verbose_name
+    :param model:
+    :param field_name:
+    :return:
+    """
+    field = model._meta.get_field(field_name)
+    return field.verbose_name

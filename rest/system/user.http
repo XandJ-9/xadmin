@@ -82,7 +82,7 @@ Authorization: Bearer {{$dotenv accessToken}}
 
 {
   "userId": 69,
-  "username": "Jack",
+  "username": "",
   "nickname": "Jack",
   "sex": "0",
   "deptId": 108,
@@ -99,7 +99,7 @@ Authorization: Bearer {{$dotenv accessToken}}
 
 
 ###
-GET {{host}}/api/system/user/79
+GET {{host}}/api/system/user
 Authorization: Bearer {{$dotenv accessToken}}
 
 

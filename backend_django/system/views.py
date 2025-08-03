@@ -162,8 +162,18 @@ class UserViewSet(ModelImportExportViewSet):
                 "data": {"启用": True, "禁用": False},
             }
         },
-        "dept_name": {"title": "部门", "choices": {"queryset": Dept.objects.filter(status='1'), "values_name": "dept_name"}},
-        "role": {"title": "角色", "choices": {"queryset": Role.objects.filter(status='0'), "values_name": "role_name"}},
+        "dept_name": {
+            "title": "部门", 
+            "choices": {
+                "queryset": Dept.objects.filter(status='1'), "values_name": "dept_name"
+            }
+        },
+        "role": {
+            "title": "角色", 
+            "choices": {
+                "queryset": Role.objects.filter(status='0'), "values_name": "role_name"
+            }
+        },
     }
 
     perms_map = {"list":["system:user:list"]}
