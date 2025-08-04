@@ -1,10 +1,10 @@
 <template>
   <div class="sql-editor-container">
     <div class="editor-header">
-      <div class="interface-info" v-if="interfaceInfo">
+      <!-- <div class="interface-info" v-if="interfaceInfo">
         <span class="interface-name">{{ interfaceInfo.interface_name }}</span>
         <span class="interface-code">({{ interfaceInfo.interface_code }})</span>
-      </div>
+      </div> -->
       <div class="editor-actions">
         <el-button type="primary" @click="executeSql" :loading="loading">执行</el-button>
         <el-button @click="saveSql">保存</el-button>

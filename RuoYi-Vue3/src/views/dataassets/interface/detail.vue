@@ -33,18 +33,20 @@
             <el-table :data="paginateData" style="width: 100%" v-loading="loading" border fit @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="50" align="center" />
 
-                <el-table-column prop="interface_para_code" label="参数编码" :width="interfaceParaCodeWidth" />
-                <el-table-column prop="interface_para_name" label="参数名称">
+                <el-table-column prop="interface_para_code" label="参数编码" :width="interfaceParaCodeWidth">
                     <template #default="scope">
-                        <!-- <el-input v-if="scope.row.new_flag" v-model="scope.row.interface_para_name" placeholder="请输入参数名称" /> -->
-                         <item-wrapper v-model:modelValue="scope.row.interface_para_name" type="input" placeholder="请输入参数名称" />
+                        <item-wrapper type="input" v-model:modelValue="scope.row.interface_para_code" placeholder="请输入参数编码" />
                     </template>
                 </el-table-column>
-                <el-table-column prop="interface_para_position" label="参数位置" >
+                <el-table-column prop="interface_para_name" label="参数名称">
                     <template #default="scope">
-                        <item-wrapper v-model:modelValue="scope.row.interface_para_position" 
-                        type="input-number" 
-                        />
+                         <item-wrapper type="input" v-model:modelValue="scope.row.interface_para_name"  placeholder="请输入参数名称" />
+                    </template>
+                </el-table-column>
+                <el-table-column prop="interface_para_position" label="参数位置" width="80" align="center">
+                    <template #default="scope">
+                        <span>{{ scope.row.interface_para_position }}</span>
+                        <!-- <item-wrapper type="input-number"  v-model:modelValue="scope.row.interface_para_position" /> -->
                     </template>
                 </el-table-column>
                 <el-table-column prop="interface_para_type" label="参数类型">
@@ -97,19 +99,19 @@
                     </template>
                 </el-table-column>
                 <el-table-column prop="interface_para_desc" label="参数描述" show-overflow-tooltip />
-                <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+                <el-table-column label="操作" align="center" class-name="small-padding">
                     <template #default="scope">
                         <el-button
                         v-if="scope.row.new_flag"
-                        link type="primary" @click="handleSave(scope.row)">
+                        link type="primary" @click="handleSaveField(scope.row)">
                             保存
                         </el-button>
 
-                        <el-button link type="primary" icon="Edit" @click="handleEdit(scope.row)"
-                            v-hasPermi="['report:interface-field:update']"></el-button>
-                        <el-button link type="primary" icon="Plus" @click="handleAppend(scope.row)"
+                        <!-- <el-button link type="primary" icon="Edit" @click="handleEdit(scope.row)"
+                            v-hasPermi="['report:interface-field:update']"></el-button> -->
+                        <el-button link type="primary" icon="Plus" @click="handleAppendField(scope.row)"
                             v-hasPermi="['report:interface-field:add']"></el-button>
-                        <el-button link type="danger" icon="Delete" @click="handleDelete(scope.row)"
+                        <el-button link type="danger" icon="Delete" @click="handleDeleteField(scope.row)"
                             v-hasPermi="['report:interface-field:remove']"></el-button>
                     </template>
                 </el-table-column>
@@ -127,9 +129,13 @@
             </el-col>
         </el-row>
 
+        <el-card style="margin-top: 10px;" v-if="sqlEditorVisible">
+            <InterfaceSqlEditor :initial-sql="interfaceInfo?.interface_sql || ''" :interface-info="interfaceInfo"
+                @execute="handleExecuteSql" @save="handleSaveSql" @close="sqlEditorVisible = false" />
+        </el-card>
 
         <!-- 字段编辑对话框 -->
-        <el-dialog v-model="dialogVisible" 
+        <!-- <el-dialog v-model="dialogVisible" 
         :title="dialogType === 'add' ? '新增字段' : '编辑字段'" 
         width="50%">
             <el-form ref="formRef" :model="formData" :rules="rules" label-width="120px">
@@ -179,17 +185,17 @@
                     <el-button type="primary" @click="handleSubmit">确定</el-button>
                 </div>
             </template>
-        </el-dialog>
+        </el-dialog> -->
 
         <!-- SQL编辑器对话框 -->
-        <el-dialog v-model="sqlEditorVisible" 
+        <!-- <el-dialog v-model="sqlEditorVisible" 
         title="接口SQL开发" fullscreen 
         :destroy-on-close="true" 
         :show-close="true"
             class="sql-editor-dialog" :close-on-click-modal="false">
             <InterfaceSqlEditor :initial-sql="interfaceInfo?.interface_sql || ''" :interface-info="interfaceInfo"
                 @execute="handleExecuteSql" @save="handleSaveSql" @close="sqlEditorVisible = false" />
-        </el-dialog>
+        </el-dialog> -->
     </div>
 </template>
 
@@ -363,12 +369,6 @@ const getFieldList = async (queryParams) => {
     })
 }
 
-const sortFields = (fields) => {
-    let arr1 = fields.filter(item => item.interface_para_type === '1').sort((a, b) => a.interface_para_position - b.interface_para_position)
-    let arr2 = fields.filter(item => item.interface_para_type === '2').sort((a, b) => a.interface_para_position - b.interface_para_position)
-    fields = [...arr1, ...arr2]
-    return fields
-}
 
 // 重置表单
 const resetForm = () => {
@@ -403,7 +403,7 @@ const handleEdit = (row) => {
 }
 
 // 删除字段
-const handleDelete = (row) => {
+const handleDeleteField = (row) => {
     ElMessageBox.confirm(
         '确认删除该字段吗？',
         '警告',
@@ -452,6 +452,27 @@ const handleAppend = (row) => {
 
     // 打开对话框让用户填写其他信息
     dialogVisible.value = true
+}
+
+const handleAppendField = (row) => { 
+    const pre_postion = row.interface_para_position
+    const newField = {
+            interface_para_code: '',
+            interface_para_name: '',
+            interface_para_position: pre_postion + 1,
+            interface_para_type: row.interface_para_type,
+            interface_data_type: '',
+            interface_para_default: '',
+            interface_show_flag: '1',
+            interface_export_flag: '1',
+            new_flag: true
+    }
+    if (row.interface_para_type === '1') { 
+        // interfaceFields.inputFields.push(newField)
+        interfaceFields.inputFields.splice(pre_postion, 0, newField)
+    } else if (row.interface_para_type === '2') {
+        interfaceFields.outputFields.splice(pre_postion, 0, newField)
+    }
 }
 
 // 提交表单
@@ -552,20 +573,38 @@ const handleExecuteSql = async ({ sql, interfaceId }, callback) => {
 }
 
 // 添加查询返回的新字段
-const handleSave = async (row) => {
-    await createInterfaceField(row).then(res => { 
-        ElMessage.success('保存成功')
-        row.new_field = false
-    }).catch(error => { 
-        ElMessage.error(`保存失败: ${error?.response.data.msg || '未知错误'}`)
-    })
+const handleSaveField = async (row) => {
+    console.log('handleSaveField', row.id)
+    if (row.id===undefined) {
+        await createInterfaceField(row).then(res => { 
+            ElMessage.success('新增字段成功')
+            row.new_field = false
+        }).catch(error => { 
+            ElMessage.error(`新增字段失败: ${error?.response.data.msg || '未知错误'}`)
+        })
+    } else {
+        await updateInterfaceField(row).then(res => { 
+            ElMessage.success('更新字段成功')
+        }).catch(error => {
+            ElMessage.error(`更新字段失败: ${error?.response.data.msg || '未知错误'}`)
+        })
+    }
+
 }
 
 const handleMutltiSave = async () => {
 }
 
 // 刷新字段顺序
-const refreshFields = async () => { 
+const refreshFields = () => { 
+    // 更新输入字段位置编号
+    for (let i = 0; i<interfaceFields.inputFields.length; i++) { 
+        interfaceFields.inputFields[i].interface_para_position = i + 1
+    }
+    // 更新输出字段位置编号
+    for (let i = 0; i<interfaceFields.outputFields.length; i++) { 
+        interfaceFields.outputFields[i].interface_para_position = i + 1
+    }
 }
 
 // 处理SQL保存

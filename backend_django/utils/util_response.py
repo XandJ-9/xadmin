@@ -49,6 +49,8 @@ class ErrorResponse(Response):
         std_data = {
             "msg": msg
         }
+        if code:  # 如果指定了code,则返回code
+            std_data["code"] = code
         super().__init__(std_data, status, template_name, headers, exception, content_type)
 
 #########
