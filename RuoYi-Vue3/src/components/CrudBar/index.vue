@@ -122,7 +122,7 @@ const props = defineProps({
   
 })
 
-const emit = defineEmits(["addEvent", "updateEvent", "removeEvent", "exportEvent", "saveEvent"])
+const emit = defineEmits(["addEvent", "updateEvent", "removeEvent","importEvent", "exportEvent", "saveEvent"])
 
 
 

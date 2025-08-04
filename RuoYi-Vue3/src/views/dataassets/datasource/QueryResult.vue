@@ -16,6 +16,7 @@
           :key="column"
           :prop="column"
           :label="column"
+          height="50px"
           sortable
           show-overflow-tooltip
         >

@@ -163,8 +163,10 @@ onUnmounted(() => {
 })
 
 const fetchDataSources = async () => {
-    getDataSourceList().then(res => {
-        dataSources.value = res
+    await getDataSourceList().then(res => {
+        dataSources.value = res.data
+    }).catch(error => {
+        ElMessage.error(error.message)
      })
 }
 

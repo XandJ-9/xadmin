@@ -25,7 +25,7 @@ def CustomExceptionHandler(ex, context):
     code = 300
     # 调用默认的异常处理函数
     response = exception_handler(ex, context)
-    if isinstance(ex, AuthenticationFailed) or response.status_code == 401:
+    if isinstance(ex, AuthenticationFailed):
         # 如果是身份验证错误
         if response and response.data.get("detail") == "Given token not valid for any token type":
             code = 401

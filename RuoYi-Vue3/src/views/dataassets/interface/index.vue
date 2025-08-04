@@ -8,7 +8,7 @@
         <crud-bar addBtn @addEvent="handleAdd" importBtn @importEvent="handleImport" />
 
         <!-- 数据表格 -->
-        <el-table ref="tableRef" :data="tableData" style="width: 100%" v-loading="loading" height="calc(100vh - 350px)" highlight-current-row>
+        <el-table ref="tableRef" :data="tableData" style="width: 100%" border v-loading="loading" height="calc(100vh - 350px)" highlight-current-row>
             <el-table-column prop="interface_code" label="接口编码" :width="interfaceCodeWidth">
                 <template #default="scope">
                     <!-- {{ scope.row.interface_code ? scope.row.interface_code : scope.row.interface_name }} -->
@@ -20,14 +20,14 @@
                 </template>
             </el-table-column>
             <el-table-column prop="interface_name" label="接口名称" :width="interfaceNameWidth" />
-            <el-table-column prop="interface_desc" label="接口描述" show-overflow-tooltip width="200">
+            <el-table-column prop="interface_desc" label="接口描述" show-overflow-tooltip>
                 <template #default="scope">
                     {{ scope.row.interface_desc ? scope.row.interface_desc : scope.row.interface_name }}
                 </template>
             </el-table-column>
-            <el-table-column prop="report_info.name" label="报表名称" width="200" />
-            <el-table-column prop="report_info.module_info.name" label="模块名称" width="200" />
-            <el-table-column prop="report_info.module_info.platform_info.name" label="平台名称" width="200" />
+            <el-table-column prop="report_info.name" label="报表名称"/>
+            <el-table-column prop="report_info.module_info.name" label="模块名称" />
+            <el-table-column prop="report_info.module_info.platform_info.name" label="平台名称" />
             <el-table-column prop="interface_db_type" label="数据库类型" width="100" />
             <el-table-column prop="interface_db_name" label="数据库名称" width="100" />
             <el-table-column prop="is_total" label="是否合计">
@@ -56,19 +56,19 @@
             </el-table-column>
             <el-table-column prop="updator_username" label="更新用户">
             </el-table-column>
-            <el-table-column prop="update_time" label="更新时间" width="150">
+            <el-table-column prop="update_time" label="更新时间">
                 <template #default="scope">
                     {{ scope.row.update_time }}
                 </template>
             </el-table-column>
             <el-table-column prop="creator_username" label="创建用户">
             </el-table-column>
-            <el-table-column prop="create_time" label="创建时间" width="150">
+            <el-table-column prop="create_time" label="创建时间">
                 <template #default="scope">
                     {{ scope.row.create_time }}
                 </template>
             </el-table-column>
-            <el-table-column label="操作" align="center" width="150">
+            <el-table-column label="操作" align="center" width="150" class-name="small-padding fixed-width">
                 <template #default="scope">
                     <el-tooltip content="修改" placement="top">
                         <el-button link type="primary" @click="handleEdit(scope.row)" icon="Edit" v-hasPermi="['report:interface:update']"></el-button>
@@ -113,7 +113,7 @@
         <!-- 接口表单对话框 -->
         <el-dialog v-model="dialogVisible" :title="dialogType === 'add' ? '新增接口' : '编辑接口'" width="50%">
             <el-form ref="formRef" :model="formData" :rules="rules" label-width="120px">
-                <el-form-item label="报表名称" prop="report">
+                <el-form-item label="报表名称">
                     <el-select v-model="formData.report" placeholder="请选择报表" @focus="fetchReportOptions">
                         <el-option v-for="item in reportOptions" :key="item.id" :label="item.label"
                             :value="item.value" />
@@ -128,13 +128,14 @@
                 <el-form-item label="接口描述" prop="interface_desc">
                     <el-input v-model="formData.interface_desc" type="textarea" :rows="3" placeholder="请输入接口描述" />
                 </el-form-item>
-                <el-form-item label="数据源名称" prop="interface_datasource">
-                    <el-select v-model="formData.interface_datasource" placeholder="请选择数据源">
+                <el-form-item label="数据源名称">
+                    <el-select v-model="formData.interface_datasource" placeholder="请选择数据源"
+                    @focus="fetchDataSourceOptions">
                         <el-option v-for="item in dataSourceOptions" :key="item.id" :label="item.label"
-                            :value="item.id" />
+                            :value="item.value" />
                     </el-select>
                 </el-form-item>
-                <el-form-item label="数据库类型" prop="interface_db_type">
+                <el-form-item label="数据库类型">
                     <el-select v-model="formData.interface_db_type" placeholder="请选择数据库类型">
                         <el-option v-for="item in dataSourceTypeOptions" :key="item.id" :label="item.label"
                             :value="item.value" />
@@ -245,8 +246,8 @@ const dataSourceOptions = ref([])
 const dataSourceTypeOptions = computed(() => {
     return dataSourceOptions.value.filter(item => item.id === formData.interface_datasource).map(item => {
         return {
-            label: item.type,
-            value: item.type
+            label: item.db_name,
+            value: item.db_type
         }
     })
 })
@@ -310,7 +311,7 @@ const fetchReportOptions = async () => {
         moduleId: queryParams.value?.moduleId,
         noPage: 1
     }
-    await getReportList(params).then((res) => {
+  await getReportList(params).then((res) => {
         reportOptions.value = []
         let arr = res.data
         arr.forEach(item => {
@@ -331,16 +332,20 @@ const fetchDataSourceOptions = async () => {
     const params = {
         noPage: 1
     }
-    await getDataSourceList(params).then((res) => {
+  await getDataSourceList(params).then((res) => {
+        dataSourceOptions.value = []
         let arr = res.data
         arr.forEach(item => {
             dataSourceOptions.value.push({
                 id: item.id,
                 label: item.name,
-                value: item.id
+                value: item.id,
+                db_type: item.type,
+                db_name: item.database
             })
-        })
-        console.log(dataSourceOptions.value)
+      })
+        // dataSourceOptions.value = res.data
+        // console.log("dataSourceOptions", dataSourceOptions.value, dataSourceTypeOptions)
     }).catch(error => {
         ElMessage.error('获取数据源类型列表失败')
     })
@@ -407,23 +412,7 @@ const handleCurrentChange = (val) => {
 }
 
 // 表单数据
-const formData = reactive({
-    id: '',
-    interface_code: '',
-    interface_name: '',
-    interface_desc: '',
-    interface_db_type: '',
-    interface_db_name: '',
-    interface_sql: '',
-    is_total: '0',
-    total_sql: '',
-    is_paging: '0',
-    is_date_option: '0',
-    platform: '',
-    module: '',
-    report: '',
-    interface_datasource: ''
-})
+const formData = reactive({})
 
 // 表单校验规则
 const rules = {
@@ -443,11 +432,11 @@ const formRef = ref(null)
 
 // 重置表单
 const resetForm = () => {
-    formData.id = ''
+    formData.id = undefined
     formData.interface_code = ''
     formData.interface_name = ''
     formData.interface_desc = ''
-    formData.interface_datasource = '',
+    formData.interface_datasource = ''
     formData.interface_db_type = ''
     formData.interface_db_name = ''
     formData.interface_sql = ''
@@ -456,7 +445,7 @@ const resetForm = () => {
     formData.is_paging = '0'
     formData.is_date_option = '0'
     formData.platform = ''
-    formData.module = ''
+    formData.module = undefined
     formData.report = ''
 }
 

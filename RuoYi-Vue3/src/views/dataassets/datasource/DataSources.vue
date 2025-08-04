@@ -137,16 +137,14 @@ const rules = {
 }
 
 const fetchDataSources = async () => {
-  try {
-    loading.value = true
-    const response = await getDataSourceList()
-    dataSources.value = response
-  } catch (error) {
-    // ElMessage.error('获取数据源列表失败')
+  loading.value = true
+  await getDataSourceList().then(response => {
+    dataSources.value = response.data
+  }).catch(error => {
     console.error(error)
-  } finally {
+  }).finally(() => {
     loading.value = false
-  }
+  })
 }
 
 const handleQuery = (queryParams) => {
@@ -194,16 +192,17 @@ const handleSubmit = async () => {
     if (valid) {
       try {
         if (form.value.id) {
-          await updateDataSource(form.value.id, form.value)
-          ElMessage.success('更新成功')
+          await updateDataSource(form.value.id, form.value).then(response => {
+            ElMessage.success('更新成功')
+          })
         } else {
-          await createDataSource(form.value)
-          ElMessage.success('创建成功')
+          await createDataSource(form.value).then(response => {
+            ElMessage.success('创建成功')
+          })
         }
         dialogVisible.value = false
         fetchDataSources()
       } catch (error) {
-        console.error(error)
         ElMessage.error(error.response?.data?.message || '操作失败')
       }
     }

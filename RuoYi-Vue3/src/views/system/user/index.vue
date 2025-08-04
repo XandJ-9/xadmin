@@ -155,6 +155,7 @@
         <el-row>
           <el-col :span="12">
             <el-form-item label="用户性别">
+              <span>{{ form.sex }}</span>
               <el-select v-model="form.sex" placeholder="请选择">
                 <el-option v-for="dict in sys_user_sex" :key="dict.value" :label="dict.label" :value="dict.value"></el-option>
               </el-select>
