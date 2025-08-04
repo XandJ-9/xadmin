@@ -142,6 +142,13 @@ class CustomModelViewSet(ModelViewSet):
             # instance._prefetched_objects_cache = {}
         return DetailResponse(data=serializer.data)
 
+    def batch_update(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data, many=True)
+        try:
+            serializer.is_valid(raise_exception=True)
+            self.perform_update(serializer)
+        except Exception as e:
+            return ErrorResponse(msg=str(e))
     def destroy(self, request, *args, **kwargs):
         """
         自定义修改，支持多条删除

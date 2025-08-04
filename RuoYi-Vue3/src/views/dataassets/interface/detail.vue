@@ -101,7 +101,6 @@
                 <el-table-column label="操作" align="center">
                     <template #default="scope">
                         <el-button
-                        v-if="scope.row.new_flag"
                         link type="primary" @click="handleSaveField(scope.row)">
                             保存
                         </el-button>
@@ -370,7 +369,8 @@ const handleAppend = (row) => {
 }
 
 const handleAppendField = (row) => { 
-    const pre_postion = row.interface_para_position
+  const pre_postion = row.interface_para_position
+    console.log('add field after ', pre_postion)
     const newField = {
             interface_para_code: '',
             interface_para_name: '',
@@ -394,14 +394,14 @@ const handleAppendField = (row) => {
 // 添加查询返回的新字段
 const handleSaveField = async (row) => {
     if (row.id===undefined) {
-        await createInterfaceField(row).then(res => { 
+      await createInterfaceField({ interface: interfaceInfo.value.id, ...row }).then(res => { 
             ElMessage.success('新增字段成功')
             row.new_field = false
         }).catch(error => { 
             ElMessage.error(`新增字段失败: ${error?.response.data.msg || '未知错误'}`)
         })
     } else {
-        await updateInterfaceField(row).then(res => { 
+        await updateInterfaceField(row.id, row).then(res => { 
             ElMessage.success('更新字段成功')
         }).catch(error => {
             ElMessage.error(`更新字段失败: ${error?.response.data.msg || '未知错误'}`)
@@ -543,6 +543,9 @@ const handleExecuteSql = async ({ sql, interfaceId }, callback) => {
 
 
 const handleMutltiSave = async () => {
+  selectionItems.value.forEach(row => {
+    handleSaveField(row)
+  })
 }
 
 // 刷新字段顺序
