@@ -536,16 +536,6 @@ const handleDelete = async (row) => {
         })
 }
 
-// 跳转到字段配置页面
-const handleFields = async (row) => {
-    // router.push({ path: '/reportinfo/interface/fields', query: { interface_id: row.id } })
-    router.push({ path: `/report/interface/interfaceFields/${row.id}`, query: { interface_name: row.interface_name } })
-
-    // fieldEditorVisible.value = true
-    //   router.push(`/report/interface-fields/${row.id}`)
-    // tableRef.value.toggleRowExpansion(row, true)
-    // const response = await request.get(`/report/interface-fields/?noPage=1&interface=${row.id}`)
-}
 
 const download = inject('download')
 
@@ -565,10 +555,10 @@ const handleSubmitImport = async () => {
     uploadRef.value.submit()
 }
 
-const handleUpload = (options) => {
+const handleUpload = async (options) => {
 
     // request.post('/report/interfaces/importInterfaceinfo/', formData, { headers })
-    importInterface(options.file).then((response) => {
+    await importInterface(options.file).then((response) => {
         ElMessage.success('导入成功')
         options.onSuccess = () => {
             console.log('上传成功')
