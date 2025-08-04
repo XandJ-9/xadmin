@@ -1,102 +1,96 @@
 <template>
     <div class="app-container">
-        <el-row :gutter="20">
         <query-params-form 
             :properties="queryProperties" 
             @query="handleQuery" 
-            @select-change="handleSelectChange"
-            @select-click="handleSelectClick" />
+            @select-change="handleSelectChange"/>
 
         <crud-bar addBtn @addEvent="handleAdd" importBtn @importEvent="handleImport" />
-        </el-row>
 
-        <el-row :gutter="20">
-            <!-- 数据表格 -->
-            <el-table ref="tableRef" :data="tableData" style="width: 100%" v-loading="loading" height="calc(100vh - 400px)" highlight-current-row>
-                <el-table-column prop="interface_code" label="接口编码" :width="interfaceCodeWidth">
-                    <template #default="scope">
-                        <!-- {{ scope.row.interface_code ? scope.row.interface_code : scope.row.interface_name }} -->
-                        <router-link
-                            :to="{ path: `/report/interface/interfaceFields/${scope.row.id}`, query: { interface_name: scope.row.interface_name } }"
-                            style="color: blue;">
-                            {{ scope.row.interface_code ? scope.row.interface_code : scope.row.interface_name }}
-                        </router-link>
-                    </template>
-                </el-table-column>
-                <el-table-column prop="interface_name" label="接口名称" :width="interfaceNameWidth" />
-                <el-table-column prop="interface_desc" label="接口描述" show-overflow-tooltip width="200">
-                    <template #default="scope">
-                        {{ scope.row.interface_desc ? scope.row.interface_desc : scope.row.interface_name }}
-                    </template>
-                </el-table-column>
-                <el-table-column prop="report_info.name" label="报表名称" width="200" />
-                <el-table-column prop="report_info.module_info.name" label="模块名称" width="200" />
-                <el-table-column prop="report_info.module_info.platform_info.name" label="平台名称" width="200" />
-                <el-table-column prop="interface_db_type" label="数据库类型" width="100" />
-                <el-table-column prop="interface_db_name" label="数据库名称" width="100" />
-                <el-table-column prop="is_total" label="是否合计">
-                    <template #default="scope">
-                        <!-- {{ scope.row.is_total }} -->
-                        {{interface_is_total.filter(item => item.value === scope.row.is_total)[0].label}}
-                    </template>
-                </el-table-column>
-                <el-table-column prop="is_paging" label="是否分页" width="80">
-                    <template #default="scope">
-                        <!-- {{ scope.row.is_paging }} -->
-                        {{interface_is_paging.filter(item => item.value === scope.row.is_paging)[0].label}}
-                    </template>
-                </el-table-column>
-                <el-table-column prop="is_date_option" label="是否日期查询">
-                    <template #default="scope">
-                        <!-- {{ scope.row.is_date_option }} -->
-                        {{interface_is_date_option.filter(item => item.value === scope.row.is_date_option)[0].label}}
-                    </template>
-                </el-table-column>
-                <el-table-column prop="is_login_visit" label="是否需要登录">
-                    <template #default="scope">
-                        <!-- {{ scope.row.is_login_visit }} -->
-                        {{interface_is_login_visit.filter(item => item.value === scope.row.is_login_visit)[0].label}}
-                    </template>
-                </el-table-column>
-                <el-table-column prop="updator_username" label="更新用户">
-                </el-table-column>
-                <el-table-column prop="update_time" label="更新时间" width="150">
-                    <template #default="scope">
-                        {{ scope.row.update_time }}
-                    </template>
-                </el-table-column>
-                <el-table-column prop="creator_username" label="创建用户">
-                </el-table-column>
-                <el-table-column prop="create_time" label="创建时间" width="150">
-                    <template #default="scope">
-                        {{ scope.row.create_time }}
-                    </template>
-                </el-table-column>
-                <el-table-column label="操作" align="center" width="150">
-                    <template #default="scope">
-                        <el-tooltip content="修改" placement="top">
-                            <el-button link type="primary" @click="handleEdit(scope.row)" icon="Edit" v-hasPermi="['report:interface:update']"></el-button>
-                        </el-tooltip>
-                        <el-tooltip content="删除" placement="top">
-                            <el-button link type="danger" @click="handleDelete(scope.row)" icon="Delete"></el-button>
-                        </el-tooltip>
-                        <el-tooltip content="下载" placement="top">
-                            <el-button link type="info" @click="handleExport(scope.row)" icon="Download"></el-button>
-                        </el-tooltip>
-                        <!-- <el-button size="small" type="success" @click="handleFields(scope.row)">字段配置</el-button> -->
-                        <el-tooltip content="数据查看" placement="top">
-                            <el-button link type="warning" @click="handleDataview(scope.row)" icon="View"></el-button>
-                        </el-tooltip>
-                    </template>
-                </el-table-column>
-                <!-- <el-table-column type="expand" width="50">
-                <template>
-                    <interface-fields-editor :table-data="interfaceFields" />
+        <!-- 数据表格 -->
+        <el-table ref="tableRef" :data="tableData" style="width: 100%" v-loading="loading" height="calc(100vh - 350px)" highlight-current-row>
+            <el-table-column prop="interface_code" label="接口编码" :width="interfaceCodeWidth">
+                <template #default="scope">
+                    <!-- {{ scope.row.interface_code ? scope.row.interface_code : scope.row.interface_name }} -->
+                    <router-link
+                        :to="{ path: `/report/interface/interfaceFields/${scope.row.id}`, query: { interface_name: scope.row.interface_name } }"
+                        style="color: blue;">
+                        {{ scope.row.interface_code ? scope.row.interface_code : scope.row.interface_name }}
+                    </router-link>
                 </template>
-            </el-table-column> -->
-            </el-table>
-        </el-row>
-
+            </el-table-column>
+            <el-table-column prop="interface_name" label="接口名称" :width="interfaceNameWidth" />
+            <el-table-column prop="interface_desc" label="接口描述" show-overflow-tooltip width="200">
+                <template #default="scope">
+                    {{ scope.row.interface_desc ? scope.row.interface_desc : scope.row.interface_name }}
+                </template>
+            </el-table-column>
+            <el-table-column prop="report_info.name" label="报表名称" width="200" />
+            <el-table-column prop="report_info.module_info.name" label="模块名称" width="200" />
+            <el-table-column prop="report_info.module_info.platform_info.name" label="平台名称" width="200" />
+            <el-table-column prop="interface_db_type" label="数据库类型" width="100" />
+            <el-table-column prop="interface_db_name" label="数据库名称" width="100" />
+            <el-table-column prop="is_total" label="是否合计">
+                <template #default="scope">
+                    <!-- {{ scope.row.is_total }} -->
+                    {{interface_is_total.filter(item => item.value === scope.row.is_total)[0].label}}
+                </template>
+            </el-table-column>
+            <el-table-column prop="is_paging" label="是否分页" width="80">
+                <template #default="scope">
+                    <!-- {{ scope.row.is_paging }} -->
+                    {{interface_is_paging.filter(item => item.value === scope.row.is_paging)[0].label}}
+                </template>
+            </el-table-column>
+            <el-table-column prop="is_date_option" label="是否日期查询">
+                <template #default="scope">
+                    <!-- {{ scope.row.is_date_option }} -->
+                    {{interface_is_date_option.filter(item => item.value === scope.row.is_date_option)[0].label}}
+                </template>
+            </el-table-column>
+            <el-table-column prop="is_login_visit" label="是否需要登录">
+                <template #default="scope">
+                    <!-- {{ scope.row.is_login_visit }} -->
+                    {{interface_is_login_visit.filter(item => item.value === scope.row.is_login_visit)[0].label}}
+                </template>
+            </el-table-column>
+            <el-table-column prop="updator_username" label="更新用户">
+            </el-table-column>
+            <el-table-column prop="update_time" label="更新时间" width="150">
+                <template #default="scope">
+                    {{ scope.row.update_time }}
+                </template>
+            </el-table-column>
+            <el-table-column prop="creator_username" label="创建用户">
+            </el-table-column>
+            <el-table-column prop="create_time" label="创建时间" width="150">
+                <template #default="scope">
+                    {{ scope.row.create_time }}
+                </template>
+            </el-table-column>
+            <el-table-column label="操作" align="center" width="150">
+                <template #default="scope">
+                    <el-tooltip content="修改" placement="top">
+                        <el-button link type="primary" @click="handleEdit(scope.row)" icon="Edit" v-hasPermi="['report:interface:update']"></el-button>
+                    </el-tooltip>
+                    <el-tooltip content="删除" placement="top">
+                        <el-button link type="danger" @click="handleDelete(scope.row)" icon="Delete"></el-button>
+                    </el-tooltip>
+                    <el-tooltip content="下载" placement="top">
+                        <el-button link type="info" @click="handleExport(scope.row)" icon="Download"></el-button>
+                    </el-tooltip>
+                    <!-- <el-button size="small" type="success" @click="handleFields(scope.row)">字段配置</el-button> -->
+                    <el-tooltip content="数据查看" placement="top">
+                        <el-button link type="warning" @click="handleDataview(scope.row)" icon="View"></el-button>
+                    </el-tooltip>
+                </template>
+            </el-table-column>
+            <!-- <el-table-column type="expand" width="50">
+            <template>
+                <interface-fields-editor :table-data="interfaceFields" />
+            </template>
+        </el-table-column> -->
+        </el-table>
         <!-- 分页 -->
         <pagination v-show="total > 0" :total="total" v-model:page="currentPage" v-model:limit="pageSize" @pagination="fetchInterfaceList" />
 
@@ -134,16 +128,15 @@
                 <el-form-item label="接口描述" prop="interface_desc">
                     <el-input v-model="formData.interface_desc" type="textarea" :rows="3" placeholder="请输入接口描述" />
                 </el-form-item>
-                <el-form-item label="数据源名称" prop="interface_name">
-                    <el-select v-model="formData.interface_datasource" placeholder="请选择数据源"
-                        @click="fetchDataSourceOptions">
-                        <el-option v-for="item in dataSourceOptions" :key="item.id" :label="item.name"
+                <el-form-item label="数据源名称" prop="interface_datasource">
+                    <el-select v-model="formData.interface_datasource" placeholder="请选择数据源">
+                        <el-option v-for="item in dataSourceOptions" :key="item.id" :label="item.label"
                             :value="item.id" />
                     </el-select>
                 </el-form-item>
                 <el-form-item label="数据库类型" prop="interface_db_type">
                     <el-select v-model="formData.interface_db_type" placeholder="请选择数据库类型">
-                        <el-option v-for="item in dialogDataSourceTypeOptions" :key="item.id" :label="item.label"
+                        <el-option v-for="item in dataSourceTypeOptions" :key="item.id" :label="item.label"
                             :value="item.value" />
                     </el-select>
                 </el-form-item>
@@ -245,19 +238,39 @@ const interfaceNameWidth = computed(() => {
 const platformOptions = ref([])
 const moduleOptions = ref([])
 const reportOptions = ref([])
-const dataSourceTypeOptions = ref([])
+// 数据源类型选项
+// const dataSourceTypeOptions = ref([])
+// 数据源选项
+const dataSourceOptions = ref([])
+const dataSourceTypeOptions = computed(() => {
+    return dataSourceOptions.value.filter(item => item.id === formData.interface_datasource).map(item => {
+        return {
+            label: item.type,
+            value: item.type
+        }
+    })
+})
+
+
 
 // 指定搜索条件字段信息
 const queryProperties = reactive([
     { label: '平台名称', prop: 'platformId', type: 'select', options: platformOptions },
     { label: '模块名称', prop: 'moduleId', type: 'select', options: moduleOptions },
     { label: '报表名称', prop: 'reportId', type: 'select', options: reportOptions },
-    { label: '数据源类型', prop: 'dataSourceType', type: 'select', options: dataSourceTypeOptions },
+    // { label: '数据源', prop: 'dataSourceId', type: 'select', options: dataSourceOptions },
+    // { label: '数据库类型', prop: 'dataSourceType', type: 'select', options: dataSourceTypeOptions },
     { label: '接口编码', prop: 'interfaceCode', type: 'input' }
 ])
 
+// 接收搜索条件的字段
+const queryParams = ref(null)
+
 const fetchPlatformOptions = async () => {
-    await getPlatformList({ noPage: 1 }).then((response) => {
+    const params = {
+        noPage: 1
+    }
+    await getPlatformList(params).then((response) => {
         platformOptions.value = []
         let arr = response.data
         arr.forEach(item => {
@@ -272,8 +285,12 @@ const fetchPlatformOptions = async () => {
     })
 }
 
-const fetchModuleOptions = async (platformId) => {
-    await getModuleList({ platformId, noPage: 1 }).then((res) => {
+const fetchModuleOptions = async () => {
+    const params = {
+        platformId: queryParams.value?.platformId,
+        noPage: 1
+    }
+    await getModuleList(params).then((res) => {
         moduleOptions.value = []
         let arr = res.data
         arr.forEach(item => {
@@ -288,8 +305,12 @@ const fetchModuleOptions = async (platformId) => {
     })
 }
 
-const fetchReportOptions = async (moduleId) => {
-    await getReportList({ moduleId, noPage: 1 }).then((res) => {
+const fetchReportOptions = async () => {
+    const params = {
+        moduleId: queryParams.value?.moduleId,
+        noPage: 1
+    }
+    await getReportList(params).then((res) => {
         reportOptions.value = []
         let arr = res.data
         arr.forEach(item => {
@@ -305,42 +326,36 @@ const fetchReportOptions = async (moduleId) => {
 }
 
 
-const dataSourceOptions = ref([])
-const dialogDataSourceTypeOptions = computed(() => {
-    return dataSourceOptions.value.filter(item => item.id === formData.interface_datasource).map(item => {
-        return {
-            label: item.type,
-            value: item.type
-        }
-    })
-})
 
 const fetchDataSourceOptions = async () => {
-    await getDataSourceList().then((res) => {
-        dataSourceOptions.value = res
-        dataSourceOptions.value.forEach(item => {
-            if(dataSourceTypeOptions.value.some(option => option.value === item.type)) return
-            dataSourceTypeOptions.value.push({
-                label: item.type,
-                value: item.type
+    const params = {
+        noPage: 1
+    }
+    await getDataSourceList(params).then((res) => {
+        let arr = res.data
+        arr.forEach(item => {
+            dataSourceOptions.value.push({
+                id: item.id,
+                label: item.name,
+                value: item.id
             })
         })
-
+        console.log(dataSourceOptions.value)
     }).catch(error => {
         ElMessage.error('获取数据源类型列表失败')
     })
 }
 
 // 获取接口列表
-const fetchInterfaceList = async (queryParams) => {
+const fetchInterfaceList = async () => {
     loading.value = true
     const params = {
         pageNum: currentPage.value,
         pageSize: pageSize.value,
-        platform_id: queryParams?.platformId,
-        module_id: queryParams?.moduleId,
-        report_id: queryParams?.reportId,
-        interface_code: queryParams?.interfaceCode
+        platform_id: queryParams.value?.platformId,
+        module_id: queryParams.value?.moduleId,
+        report_id: queryParams.value?.reportId,
+        interface_code: queryParams.value?.interfaceCode
     }
 
     await getInterfaceList(params).then(res => {
@@ -354,25 +369,25 @@ const fetchInterfaceList = async (queryParams) => {
 }
 
 // 处理搜索条件变更
-const handleSelectChange = (queryParams) => {
-    // console.log("select-change", queryParams)
+const handleSelectChange = (params) => {
+    console.log("select-change", params)
+    queryParams.value = params
     // 每次条件变更时，变更选项信息
-    let { moduleId, platformId } = queryParams
+    // let { moduleId, platformId } = queryParams
     fetchPlatformOptions()
-    fetchModuleOptions(platformId)
-    fetchReportOptions(moduleId)
+    fetchModuleOptions()
+    fetchReportOptions()
     fetchDataSourceOptions()
 }
 
 // 点击选项框时，调用该方法
-const handleSelectClick = (event) => {
-    // console.log("select-click",event)
-}
+// const handleSelectClick = (event) => {
+// }
 
 // 搜索处理
 const handleQuery = (queryParams) => {
     currentPage.value = 1
-    fetchInterfaceList(queryParams)
+    fetchInterfaceList()
 }
 
 // 重置搜索
@@ -432,6 +447,7 @@ const resetForm = () => {
     formData.interface_code = ''
     formData.interface_name = ''
     formData.interface_desc = ''
+    formData.interface_datasource = '',
     formData.interface_db_type = ''
     formData.interface_db_name = ''
     formData.interface_sql = ''
@@ -442,7 +458,6 @@ const resetForm = () => {
     formData.platform = ''
     formData.module = ''
     formData.report = ''
-    formData.interface_datasource = ''
 }
 
 // 新增接口
@@ -464,6 +479,7 @@ const handleEdit = async (row) => {
             interface_code: data.interface_code,
             interface_name: data.interface_name,
             interface_desc: data.interface_desc,
+            interface_datasource: data.interface_datasource,
             interface_db_type: data.interface_db_type,
             interface_db_name: data.interface_db_name,
             interface_sql: data.interface_sql,
@@ -485,6 +501,7 @@ const handleSubmit = async () => {
     if (!formRef.value) return
 
     await formRef.value.validate(async (valid) => {
+        console.log("valid", formData.interface_datasource)
         if (valid) {
             if (dialogType.value === 'add') {
                 // await request.post('/report/interfaces/', formData)

@@ -1,10 +1,11 @@
 import request from '@/utils/request'
 
 // 获取数据源列表
-export function getDataSourceList() {
+export function getDataSourceList(params) {
   return request({
     url: '/datasources/',
-    method: 'get'
+    method: 'get',
+    params
   })
 }
 

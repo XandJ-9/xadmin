@@ -15,7 +15,7 @@ from django.conf import settings
 
 logger = logging.getLogger('django')
 
-class DataSourceViewSet(viewsets.ModelViewSet):
+class DataSourceViewSet(CustomModelViewSet):
     queryset = DataSource.objects.all()
     serializer_class = DataSourceSerializer
 

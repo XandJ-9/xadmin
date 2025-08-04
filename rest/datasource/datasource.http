@@ -3,7 +3,7 @@
 
 ###
 # 获取数据源
-GET {{host}}/api/datasources/
+GET {{host}}/api/datasources/?noPage=1
 Authorization: Bearer {{$dotenv accessToken}}
 
 ###

@@ -20,7 +20,6 @@
                     <span class="item-content">
                       {{ interfaceInfo?.is_login_visit }}
                     </span>
-
                 </el-col>
              </el-row>
         </el-card>
