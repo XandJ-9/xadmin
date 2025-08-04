@@ -98,8 +98,8 @@
                         />
                     </template>
                 </el-table-column>
-                <el-table-column prop="interface_para_desc" label="参数描述" show-overflow-tooltip />
-                <el-table-column label="操作" align="center" class-name="small-padding">
+                <!-- <el-table-column prop="interface_para_desc" label="参数描述" /> -->
+                <el-table-column label="操作" align="center">
                     <template #default="scope">
                         <el-button
                         v-if="scope.row.new_flag"
@@ -134,68 +134,6 @@
                 @execute="handleExecuteSql" @save="handleSaveSql" @close="sqlEditorVisible = false" />
         </el-card>
 
-        <!-- 字段编辑对话框 -->
-        <!-- <el-dialog v-model="dialogVisible" 
-        :title="dialogType === 'add' ? '新增字段' : '编辑字段'" 
-        width="50%">
-            <el-form ref="formRef" :model="formData" :rules="rules" label-width="120px">
-                <el-form-item label="参数编码" prop="interface_para_code">
-                    <el-input v-model="formData.interface_para_code" />
-                </el-form-item>
-                <el-form-item label="参数名称" prop="interface_para_name">
-                    <el-input v-model="formData.interface_para_name" />
-                </el-form-item>
-                <el-form-item label="参数位置" prop="interface_para_position">
-                    <el-input-number v-model="formData.interface_para_position" :min="1" />
-                </el-form-item>
-                <el-form-item label="参数类型" prop="interface_para_type">
-                    <el-select v-model="formData.interface_para_type">
-                        <el-option v-for="item in interfaceParaTypeOptions" :key="item.value" :label="item.label"
-                            :value="item.value" />
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="数据类型" prop="interface_data_type">
-                    <el-select v-model="formData.interface_data_type">
-                        <el-option v-for="item in dataTypeOptions" :key="item.value" :label="item.label"
-                            :value="item.value" />
-                    </el-select>
-                </el-form-item>
-                <el-form-item label="默认值" prop="interface_para_default">
-                    <el-input v-model="formData.interface_para_default" />
-                </el-form-item>
-                <el-form-item label="是否显示" prop="interface_show_flag">
-                    <el-radio-group v-model="formData.interface_show_flag">
-                        <el-radio value="1">是</el-radio>
-                        <el-radio value="0">否</el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="是否导出" prop="interface_export_flag">
-                    <el-radio-group v-model="formData.interface_export_flag">
-                        <el-radio value="1">是</el-radio>
-                        <el-radio value="0">否</el-radio>
-                    </el-radio-group>
-                </el-form-item>
-                <el-form-item label="参数描述" prop="interface_para_desc">
-                    <el-input v-model="formData.interface_para_desc" type="textarea" />
-                </el-form-item>
-            </el-form>
-            <template #footer>
-                <div class="dialog-footer">
-                    <el-button @click="dialogVisible = false">取消</el-button>
-                    <el-button type="primary" @click="handleSubmit">确定</el-button>
-                </div>
-            </template>
-        </el-dialog> -->
-
-        <!-- SQL编辑器对话框 -->
-        <!-- <el-dialog v-model="sqlEditorVisible" 
-        title="接口SQL开发" fullscreen 
-        :destroy-on-close="true" 
-        :show-close="true"
-            class="sql-editor-dialog" :close-on-click-modal="false">
-            <InterfaceSqlEditor :initial-sql="interfaceInfo?.interface_sql || ''" :interface-info="interfaceInfo"
-                @execute="handleExecuteSql" @save="handleSaveSql" @close="sqlEditorVisible = false" />
-        </el-dialog> -->
     </div>
 </template>
 
@@ -402,29 +340,7 @@ const handleEdit = (row) => {
     dialogVisible.value = true
 }
 
-// 删除字段
-const handleDeleteField = (row) => {
-    ElMessageBox.confirm(
-        '确认删除该字段吗？',
-        '警告',
-        {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning',
-        }
-    )
-    .then(async () => {
-        deleteInterfaceField(row.id).then(res => {
-            ElMessage.success('删除成功')
-            getFieldList()
-        }).catch(error => {
-            ElMessage.error('删除字段失败')
-        })
-    })
-    .catch(() => {
-        ElMessage.info('已取消删除')
-    })
-}
+
 
 const handleMultiDelete = () => {
     if(selectionItems.value.length > 0){
@@ -472,6 +388,59 @@ const handleAppendField = (row) => {
         interfaceFields.inputFields.splice(pre_postion, 0, newField)
     } else if (row.interface_para_type === '2') {
         interfaceFields.outputFields.splice(pre_postion, 0, newField)
+    }
+}
+
+
+// 添加查询返回的新字段
+const handleSaveField = async (row) => {
+    if (row.id===undefined) {
+        await createInterfaceField(row).then(res => { 
+            ElMessage.success('新增字段成功')
+            row.new_field = false
+        }).catch(error => { 
+            ElMessage.error(`新增字段失败: ${error?.response.data.msg || '未知错误'}`)
+        })
+    } else {
+        await updateInterfaceField(row).then(res => { 
+            ElMessage.success('更新字段成功')
+        }).catch(error => {
+            ElMessage.error(`更新字段失败: ${error?.response.data.msg || '未知错误'}`)
+        })
+    }
+
+}
+
+
+// 删除字段
+const handleDeleteField = (row) => {
+    if (row.id === undefined) {
+        if (row.interface_para_type === '1') {
+            interfaceFields.inputFields=interfaceFields.inputFields.filter(item => item.id !== row.id)
+        } else {
+            interfaceFields.outputFields=interfaceFields.outputFields.filter(item => item.id !== row.id)
+        }
+    } else {
+        ElMessageBox.confirm(
+            '确认删除该字段吗？',
+            '警告',
+            {
+                confirmButtonText: '确定',
+                cancelButtonText: '取消',
+                type: 'warning',
+            }
+        )
+        .then(async () => {
+            deleteInterfaceField(row.id).then(res => {
+                ElMessage.success('删除成功')
+                getFieldList()
+            }).catch(error => {
+                ElMessage.error('删除字段失败')
+            })
+        })
+        .catch(() => {
+            ElMessage.info('已取消删除')
+        })
     }
 }
 
@@ -572,25 +541,7 @@ const handleExecuteSql = async ({ sql, interfaceId }, callback) => {
     }
 }
 
-// 添加查询返回的新字段
-const handleSaveField = async (row) => {
-    console.log('handleSaveField', row.id)
-    if (row.id===undefined) {
-        await createInterfaceField(row).then(res => { 
-            ElMessage.success('新增字段成功')
-            row.new_field = false
-        }).catch(error => { 
-            ElMessage.error(`新增字段失败: ${error?.response.data.msg || '未知错误'}`)
-        })
-    } else {
-        await updateInterfaceField(row).then(res => { 
-            ElMessage.success('更新字段成功')
-        }).catch(error => {
-            ElMessage.error(`更新字段失败: ${error?.response.data.msg || '未知错误'}`)
-        })
-    }
 
-}
 
 const handleMutltiSave = async () => {
 }
