@@ -1,19 +1,36 @@
-@host = http://localhost:8000
-
-
-@accessToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc1NDAxODIyNiwiaWF0IjoxNzUzOTMxODI2LCJqdGkiOiIwOWQxODU4YWMzNWQ0MDJiODBkN2EzNWRmZTgzNzFhMyIsInVzZXJfaWQiOjEsInV1aWQiOiJhY2Y5YzM3OC0yZjU2LTQ5OWItOWNiMy0wMjg0NTFkZmU4NDIifQ.CMkdxpuIZj8wAxJguQaLaczvxuRLhfB13hy_CNzF4eA
-
-
-
 ###
 # @name getRouters
-GET {{host}}/api/getRouters
-Authorization: Bearer {{accessToken}}
+GET {{$dotenv host}}/api/getRouters
+Authorization: Bearer {{$dotenv accessToken}}
 
 
 ###
 # @name getMenuList
-GET {{host}}/api/system/menu?noPage=1
-Authorization: Bearer {{accessToken}}
+GET {{$dotenv host}}/api/system/menu?noPage=1
+Authorization: Bearer {{$dotenv accessToken}}
 
 
+###
+# @name createMenu
+POST {{$dotenv host}}/api/system/menu
+Authorization: Bearer {{$dotenv accessToken}}
+Content-Type: application/json
+
+
+{
+      "menuName": "数据同步",
+      "orderNum": 1,
+      "path": "syncTable",
+      "component": "dataassets/integrate/index",
+      "query": "",
+      "routeName": "System",
+      "isFrame": 1,
+      "isCache": 1,
+      "menuType": "M",
+      "visible": "0",
+      "status": "0",
+      "perms": "",
+      "icon": "chart",
+      "remark": "数据同步",
+      "parent": 1083
+}

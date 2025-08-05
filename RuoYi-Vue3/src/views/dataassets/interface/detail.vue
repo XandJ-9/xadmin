@@ -383,10 +383,13 @@ const handleAppendField = (row) => {
             new_flag: true
     }
     if (row.interface_para_type === '1') { 
-        // interfaceFields.inputFields.push(newField)
-        interfaceFields.inputFields.splice(pre_postion, 0, newField)
+        // 查找插入位置
+        let insertIdx = interfaceFields.inputFields.findIndex(item => item === row)
+        interfaceFields.inputFields.splice(insertIdx, 0, newField)
     } else if (row.interface_para_type === '2') {
-        interfaceFields.outputFields.splice(pre_postion, 0, newField)
+        // 查找插入位置
+        let insertIdx = interfaceFields.outputFields.findIndex(item => item === row)
+        interfaceFields.outputFields.splice(insertIdx, 0, newField)
     }
 }
 
