@@ -8,7 +8,21 @@
       <el-step title="配置同步规则" description="设置同步方式和规则" />
       <el-step title="确认并执行" description="检查配置并启动同步" />
     </el-steps>
-
+    <!-- 步骤控制按钮 -->
+    <div class="step-actions">
+      <el-button v-if="activeStep > 0" @click="prevStep">上一步</el-button>
+      <el-button
+        v-if="activeStep < 2"
+        type="primary"
+        @click="nextStep"
+      >下一步</el-button>
+      <el-button
+        v-else
+        type="success"
+        :disabled="!canSync"
+        @click="handleSync"
+      >开始同步</el-button>
+    </div>
         <!-- 步骤内容区 -->
     <div class="step-content">
       <!-- 第一步：数据源配置 -->
@@ -48,6 +62,9 @@
             </el-tab-pane>
             <el-tab-pane label="高级配置" name="advanced">
               <!-- <json-editor v-model="syncRule.advanced" /> -->
+               <!-- 选择需要同步的数据表 -->
+                <!-- 1. 单租户单表同步 -->
+                <!-- 2. 多租户单表同步 -->
             </el-tab-pane>
           </el-tabs>
         </el-card>
@@ -72,22 +89,6 @@
           </el-descriptions>
         </el-card>
       </div>
-    </div>
-
-    <!-- 步骤控制按钮 -->
-    <div class="step-actions">
-      <el-button v-if="activeStep > 0" @click="prevStep">上一步</el-button>
-      <el-button
-        v-if="activeStep < 2"
-        type="primary"
-        @click="nextStep"
-      >下一步</el-button>
-      <el-button
-        v-else
-        type="success"
-        :disabled="!canSync"
-        @click="handleSync"
-      >开始同步</el-button>
     </div>
 
   </div>
