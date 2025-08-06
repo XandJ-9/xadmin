@@ -29,10 +29,12 @@ def CustomExceptionHandler(ex, context):
         # 如果是身份验证错误
         if response and response.data.get("detail") == "Given token not valid for any token type":
             code = 401
-            msg = ex.detail
+            msg = "身份验证错误"
+            return ErrorResponse(status=HTTP_401_UNAUTHORIZED, msg=msg)
         elif response and response.data.get("detail") == "Token is blacklisted":
             # token在黑名单
-            return ErrorResponse(status=HTTP_401_UNAUTHORIZED)
+            msg = "登录信息失效"
+            return ErrorResponse(status=HTTP_401_UNAUTHORIZED, msg=msg)
         else:
             code = 401
             msg = ex.detail

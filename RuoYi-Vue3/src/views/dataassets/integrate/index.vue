@@ -65,6 +65,9 @@
                <!-- 选择需要同步的数据表 -->
                 <!-- 1. 单租户单表同步 -->
                 <!-- 2. 多租户单表同步 -->
+                 <!-- <field-mapping /> -->
+                <!-- <draggable-field-mapping /> -->
+                <optiomized-field-mapping />
             </el-tab-pane>
           </el-tabs>
         </el-card>
@@ -97,6 +100,9 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
+// import FieldMapping from '../components/FieldMapping'
+// import DraggableFieldMapping from '../components/DraggableFieldMapping'
+import OptiomizedFieldMapping from '../components/OptimizedFieldMapping'
 import { getDataSourceList, getDataSourceTypeList, createDataSource, updateDataSource, deleteDataSource, saveSqlQuery } from '@/api/dataassets/datasource'
 
 // 模拟数据源、模板库、租户库
