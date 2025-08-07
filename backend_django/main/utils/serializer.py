@@ -6,7 +6,7 @@ from rest_framework.fields import SkipField,empty
 from rest_framework.relations import PKOnlyObject  # NOQA # isort:skip
 
 
-from utils.util_str import underline_to_camel_string
+from .util_str import underline_to_camel_string
 
 
 def build_tree(data_list, parent_id=None, parent_field_name='parent', pk_field_name='id'):

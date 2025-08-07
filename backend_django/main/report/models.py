@@ -1,6 +1,6 @@
 from django.db import models
 from django.db.models import F
-from utils.models import BizBaseModel
+from main.utils.models import BizBaseModel
 
 # 平台信息
 class PlatformInfo(BizBaseModel):

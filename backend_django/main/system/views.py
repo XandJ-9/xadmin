@@ -11,9 +11,9 @@ from .models import Post,Dept,User, Role, Menu, SystemConfig, Captcha, UserRole,
 from .serializers import *
 from .permissions import IsAdminUser, IsOwnerOrAdmin,HasRolePermission, has_perms
 
-from utils.viewset import CustomModelViewSet
-from utils.serializer import build_tree
-from utils.import_export_mixin import ModelImportExportMixin
+from ..utils.viewset import CustomModelViewSet
+from ..utils.serializer import build_tree
+from ..utils.import_export_mixin import ModelImportExportMixin
 import logging, uuid
 
 logger = logging.getLogger('django')

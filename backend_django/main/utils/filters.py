@@ -1,6 +1,6 @@
 from rest_framework.filters import BaseFilterBackend
 from django.db.models import ForeignKey
-from utils.util_str import underline_to_camel_string
+from .util_str import underline_to_camel_string
 
 class SearchFilterBackend(BaseFilterBackend):
 

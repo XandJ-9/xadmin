@@ -1,8 +1,8 @@
 from openpyxl import Workbook, load_workbook
-from openpyxl.styles import Font,DEFAULT_FONT, PatternFill, Border, Side, Alignment
+from openpyxl.styles import Font, PatternFill, Border, Side
 import os
-from report.serializers import *
-from report.models import *
+from ..serializers import *
+from ..models import *
 
 DefaultStyle={
     "font" : Font(name='Calibri',

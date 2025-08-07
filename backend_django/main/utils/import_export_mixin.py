@@ -11,9 +11,9 @@ from openpyxl.worksheet.table import Table, TableStyleInfo
 from rest_framework.decorators import action
 from rest_framework.request import Request
 
-from utils.util_response import DetailResponse, ExcelResponse, ErrorResponse
-from utils.util_request import get_verbose_name
-from utils.models import get_field_verbose_name
+from main.utils.util_response import DetailResponse, ExcelResponse, ErrorResponse
+from main.utils.util_request import get_verbose_name
+from main.utils.models import get_field_verbose_name
 
 from openpyxl import load_workbook
 

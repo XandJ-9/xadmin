@@ -2,9 +2,11 @@ from django.utils.deprecation import MiddlewareMixin
 import time
 from decimal import Decimal
 import logging
-from .models import QueryLog
+
 from rest_framework.settings import api_settings
 from rest_framework.request import Request
+from main.utils.util_request import convert_to_restf_request
+from .models import QueryLog
 
 logger = logging.getLogger('django')
 
@@ -57,9 +59,7 @@ class QueryLogMiddleware(MiddlewareMixin):
 
             # 解析请求数据 
             # 将httprequest转换为rest_framework.request.Request对象
-            parser_classes = api_settings.DEFAULT_PARSER_CLASSES
-            new_request = Request(request, parsers=[parser() for parser in parser_classes])
-            
+            new_request = convert_to_restf_request(request)
 
             # 获取SQL和结果
             sql = new_request.data.get('sql', '')

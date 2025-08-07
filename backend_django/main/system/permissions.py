@@ -1,7 +1,7 @@
 from rest_framework import permissions
 from django.db.models import Q
 
-from system.models import *
+from .models import *
 import logging
 
 logger = logging.getLogger('django')

@@ -46,10 +46,10 @@ INSTALLED_APPS = [
     'rest_framework_swagger',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',  # 添加CORS应用
-    'datasource.apps.DatasourceConfig',
-    'report.apps.ReportConfig',
-    'system.apps.SystemConfig',  # 添加system应用
-    'app_init.apps.AppInitConfig'
+    'main.datasource.apps.DatasourceConfig',
+    'main.report.apps.ReportConfig',
+    'main.system.apps.SystemConfig',  # 添加system应用
+    'main.app_init.apps.AppInitConfig'
 ]
 
 MIDDLEWARE = [
@@ -61,9 +61,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'system.middleware.UserOperationMiddleware',  # 添加用户操作中间件
+    'main.system.middleware.UserOperationMiddleware',  # 添加用户操作中间件
     # 'system.middleware.JWTAuthenticationMiddleware', # 添加JWT认证中间件
-    'datasource.middleware.QueryLogMiddleware',  # 添加查询日志中间件
+    'main.datasource.middleware.QueryLogMiddleware',  # 添加查询日志中间件
 ]
 
 ROOT_URLCONF = 'xadmin.urls'
@@ -174,7 +174,7 @@ REST_FRAMEWORK = {
     # 'DEFAULT_PERMISSION_CLASSES': (
     #     'rest_framework.permissions.IsAuthenticated',
     # ),
-    'EXCEPTION_HANDLER': 'utils.exception.CustomExceptionHandler',
+    'EXCEPTION_HANDLER': 'main.utils.exception.CustomExceptionHandler',
 }
 
 # JWT settings

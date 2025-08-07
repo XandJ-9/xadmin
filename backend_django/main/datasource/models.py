@@ -1,5 +1,5 @@
 from django.db import models
-from utils.models import BizBaseModel
+from main.utils.models import BizBaseModel
 
 class DataSource(BizBaseModel):
     name = models.CharField(max_length=100, verbose_name='数据源名称')

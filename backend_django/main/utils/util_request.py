@@ -3,13 +3,14 @@ Request工具类
 """
 import json
 
-import requests
 from django.conf import settings
 from django.contrib.auth.models import AbstractBaseUser
 from django.contrib.auth.models import AnonymousUser
 from django.urls.resolvers import ResolverMatch
+from django.http.request import HttpRequest
 from rest_framework_simplejwt.authentication import JWTAuthentication
-
+from rest_framework.request import Request
+from rest_framework.settings import api_settings
 
 def get_request_user(request):
     """
@@ -139,3 +140,9 @@ def get_verbose_name(queryset=None, view=None, model=None):
     except Exception as e:
         pass
     return model if model else ""
+
+
+def convert_to_restf_request(request):
+                # 将httprequest转换为rest_framework.request.Request对象
+    parser_classes = api_settings.DEFAULT_PARSER_CLASSES
+    return Request(request, parsers=[parser() for parser in parser_classes])

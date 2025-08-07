@@ -2,11 +2,11 @@ import traceback
 from django.http.response import HttpResponseNotFound, JsonResponse
 from django.template import Template, Context
 from rest_framework.decorators import action
-from ..models  import InterfaceInfo,InterfaceField,InterfaceQueryLog
-
-from .operation_interface_query import InterfaceQueryResult
-from utils.util_datetime import getNowTimestamp
 import logging,json
+
+from main.utils.util_datetime import getNowTimestamp
+from .operation_interface_query import InterfaceQueryResult
+from ..models  import InterfaceInfo,InterfaceQueryLog
 
 
 logger = logging.getLogger(__name__)

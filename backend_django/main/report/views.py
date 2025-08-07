@@ -1,8 +1,8 @@
-from utils.viewset import CustomModelViewSet
+from main.utils.viewset import CustomModelViewSet
 from .models import PlatformInfo, ModuleInfo, ReportInfo, InterfaceInfo, InterfaceField,InterfaceQueryLog
 from .serializers import *
-from .utils.mixin_excel_import_export import ExcelImportExportMixin
-from .utils.mixin_interface_query import InterfaceQueryMixin 
+from .common.mixin_excel_import_export import ExcelImportExportMixin
+from .common.mixin_interface_query import InterfaceQueryMixin 
 
 class PlatformInfoViewSet(CustomModelViewSet):
     queryset = PlatformInfo.objects.all()

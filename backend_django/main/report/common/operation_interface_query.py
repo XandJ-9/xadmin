@@ -1,5 +1,5 @@
-from datasource.models import DataSource
-from datasource.executors.factory import QueryExecutorFactory
+from main.datasource.models import DataSource
+from main.datasource.executors.factory import QueryExecutorFactory
 from ..models  import InterfaceInfo,InterfaceField
 
 

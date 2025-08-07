@@ -3,8 +3,8 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
 from django_filters.rest_framework import DjangoFilterBackend
-from system.permissions import IsAdminUser, IsOwnerOrAdmin
-from utils.viewset import CustomModelViewSet
+from main.system.permissions import IsAdminUser, IsOwnerOrAdmin
+from main.utils.viewset import CustomModelViewSet
 from .models import DataSource, QueryLog
 from .serializers import DataSourceSerializer, QueryLogSerializer
 from .executors.factory import QueryExecutorFactory

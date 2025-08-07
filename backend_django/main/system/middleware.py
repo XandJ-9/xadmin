@@ -1,8 +1,6 @@
 from django.utils.deprecation import MiddlewareMixin
-from django.http import HttpResponse
 from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.request import Request
+from main.utils.util_request import convert_to_restf_request
 from .models import Captcha
 
 import logging
@@ -14,23 +12,25 @@ class UserOperationMiddleware(MiddlewareMixin):
     def process_response(self, request, response):
         if not hasattr(request, 'resolver_match') or not request.resolver_match:
             return response
+        # 将httprequest转换为rest_framework.request.Request对象
+        new_request = convert_to_restf_request(request)
 
-        if request.method.lower() in ['post', 'get', 'put', 'delete']:
-            if not isinstance(request, Request):
-                pass
-            if request.resolver_match.url_name == 'user-login':
-                if response.status_code == status.HTTP_200_OK:
-                    logger.info(f'用户登录成功，用户名：{request.user}')
-                else:
-                    logger.warning(f'用户登录失败，用户名：{request.user}')
-            elif request.resolver_match.url_name == 'user-register':
-                if response.status_code == status.HTTP_201_CREATED:
-                    logger.info(f'新用户注册成功，用户名：{request.user}')
-                else:
-                    logger.info(f'新用户注册失败，用户名：{request.user}')
-            else:
+        if request.user and request.user.is_authenticated:
                 logger.info(f'用户操作记录，用户名：{request.user}，请求路径：{request.path}，请求方法：{request.method}, 请求视图名称：{request.resolver_match.url_name}')
-
+        else:
+            print(f'new request: {new_request.data}')
+            if new_request.resolver_match.url_name == 'user-login':
+                username = new_request.data.get('username')
+                if response.status_code == status.HTTP_200_OK:
+                    logger.info(f'用户登录成功，用户名：{username}')
+                else:
+                    logger.warning(f'用户登录失败，用户名：{username}')
+            elif new_request.resolver_match.url_name == 'user-register':
+                username = new_request.data.get('username')
+                if response.status_code == status.HTTP_201_CREATED:
+                    logger.info(f'新用户注册成功，用户名：{username}')
+                else:
+                    logger.info(f'新用户注册失败，用户名：{username}')
         return response
     
 

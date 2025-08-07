@@ -1,9 +1,7 @@
 from rest_framework import serializers
-from rest_framework.request import Request
-from rest_framework.fields import empty
+from main.utils.serializer import ChoiceFieldSerializerMixin, CamelFieldSerializerMixin,BaseModelSerializer
+
 from .models import *
-from utils.serializer import ChoiceFieldSerializerMixin, CamelFieldSerializerMixin,UpdateSourceFieldSerializerMixin,BaseModelSerializer
-from django.contrib.auth.hashers import make_password
 
 
 
