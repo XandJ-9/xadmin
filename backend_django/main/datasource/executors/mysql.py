@@ -1,6 +1,13 @@
 from typing import Dict, Any, Optional
-import pymysql
+import pymysql, datetime
 from .base import QueryExecutor
+
+
+# 自定义时间转换器：将 datetime 转为指定格式的字符串
+def datetime_conv(value):
+    if isinstance(value, datetime):
+        return value.strftime("%Y-%m-%d %H:%M:%S")
+    return value
 
 class MySQLQueryExecutor(QueryExecutor):
     def connect(self) -> pymysql.Connection:
@@ -10,7 +17,8 @@ class MySQLQueryExecutor(QueryExecutor):
             user=self.username,
             password=self.password,
             database=self.database,
-            cursorclass=pymysql.cursors.DictCursor
+            cursorclass=pymysql.cursors.DictCursor,
+            conv={datetime: datetime_conv}
         )
 
     def test_connection(self) -> bool:
