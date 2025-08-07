@@ -6,8 +6,10 @@
         <span class="interface-code">({{ interfaceInfo.interface_code }})</span>
       </div> -->
       <div class="editor-actions">
+        <el-tooltip content="纯sql执行，如果有输入参数，请先移除输入参数，待验证sql查询正常，再添加输入参数模板" placement="top">
         <el-button type="primary" @click="executeSql" :loading="loading">执行</el-button>
-        <el-button @click="saveSql">保存</el-button>
+        </el-tooltip>
+        <el-button @click="saveSql">更新SQL</el-button>
         <el-button @click="$emit('close')">关闭</el-button>
       </div>
     </div>
@@ -216,18 +218,12 @@ const saveSql = async () => {
     return
   }
   
-  try {
     // 触发保存事件，由父组件处理实际的保存操作
-    await emit('save', {
-      sql: sqlContent.value,
-      interfaceId: props.interfaceInfo?.id
+    emit('save', {
+        sql: sqlContent.value,
+        interfaceId: props.interfaceInfo?.id
     })
     
-    ElMessage.success('SQL保存成功')
-  } catch (error) {
-    console.error('保存SQL失败：', error)
-    ElMessage.error('保存SQL失败：' + (error.message || ''))
-  }
 }
 
 // 计算列宽

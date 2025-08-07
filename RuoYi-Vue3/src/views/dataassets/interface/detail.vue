@@ -121,7 +121,7 @@
 
         <el-row>
             <el-col :span="24" style="margin-top: 10px;">
-                <el-button type="primary" @click="showSqlEditor">接口开发</el-button>
+                <el-button type="primary" @click="showSqlEditor">SQL详情</el-button>
                 <el-button type="primary" @click="refreshFields">刷新顺序</el-button>
                 <el-button type="primary" @click="saveInterface">更新接口</el-button>
             </el-col>
@@ -567,17 +567,15 @@ const refreshFields = () => {
 const handleSaveSql = async ({ sql, interfaceId }) => {
     try {
         const payload = Object.assign({}, interfaceInfo.value, { interface_sql: sql })
-        console.log('保存SQL：', payload)
-        await updateInterface(interfaceId, payload)
-        // 更新本地接口信息
-        if (interfaceInfo.value) {
-            interfaceInfo.value.interface_sql = sql
-        }
-        return true
+        await updateInterface(interfaceId, payload).then(res => { 
+            ElMessage.success('保存成功')
+            // 更新本地接口信息
+            if (interfaceInfo.value) {
+                interfaceInfo.value.interface_sql = sql
+            }
+        })
     } catch (error) {
-        console.error('保存SQL失败：', error)
         ElMessage.error('保存SQL失败：' + (error.message || ''))
-        return false
     }
 }
 
