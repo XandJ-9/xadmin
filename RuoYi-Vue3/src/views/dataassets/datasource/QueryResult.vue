@@ -4,9 +4,11 @@
       <el-alert :title="error" type="error" show-icon />
     </div>
     <div v-else-if="queryResult.length > 0" class="result-container">
+      <div class="table-container">
       <el-table 
         :data="data" 
         style="width: 100%" 
+        height="calc(100% - 100px)"
         border 
         stripe
         @sort-change="handleSortChange"
@@ -16,7 +18,6 @@
           :key="column"
           :prop="column"
           :label="column"
-          height="50px"
           :width="columnWidth(column)" 
           sortable
           show-overflow-tooltip
@@ -26,13 +27,17 @@
           </template>
         </el-table-column>
       </el-table>
+      </div>
 
+      <div class="pagination-container">
         <pagination
         :total="total"
         v-model:page="currentPage" 
         v-model:limit="pageSize" 
         @pagination="paginatedData"
         />
+      </div>
+
     </div>
     <div v-else-if="!loading" class="empty-result">
       <el-empty description="暂无查询结果" />
@@ -41,7 +46,6 @@
 </template>
 
 <script setup name="QueryResult">
-import { column } from 'element-plus/es/components/table-v2/src/common.mjs'
 import { ref, computed, onMounted } from 'vue'
 
 
@@ -125,18 +129,18 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.query-result {
+/* .query-result {
   display: flex;
   flex-direction: column;
   height: 100%;
-}
+  overflow: auto;
+} */
 
-.result-container {
+/* .result-container {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  gap: 16px;
-}
+ gap: 16px;
+} */
 
 .error-message {
   margin-bottom: 16px;
@@ -147,5 +151,26 @@ onMounted(() => {
   justify-content: center;
   align-items: center;
   height: 100%;
+}
+
+
+/* 结果表格容器 */
+.table-container {
+  flex: 1;
+  overflow: auto; /* 表格内容滚动 */
+  padding: 12px;
+  box-sizing: border-box;
+  height: calc(100% - 100px);
+}
+
+/* 分页控件容器 */
+.pagination-container {
+  padding: 12px;
+  border-top: 1px solid #e4e7ed;
+  background-color: #fafafa;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  box-sizing: border-box;
 }
 </style>
