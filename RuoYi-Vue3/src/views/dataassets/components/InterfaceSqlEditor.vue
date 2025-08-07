@@ -10,7 +10,7 @@
         <el-button type="primary" plain @click="executeSql" :loading="loading">执行</el-button>
         </el-tooltip>
         <el-button plain @click="saveSql">更新SQL</el-button>
-        <el-button plain @click="closeSql">关闭</el-button>
+        <!-- <el-button plain @click="closeSql">关闭</el-button> -->
       </div>
     </div>
     
@@ -255,7 +255,7 @@ const calculateColumnWidth = (columnName) => {
   background-color: #f5f7fa;
   border-radius: 4px;
   overflow: hidden;
-  animation: flip-in 0.5s ease-out;
+  /* animation: flip-in 0.5s ease-out; */
 }
 
 @keyframes flip-in {
@@ -296,7 +296,7 @@ const calculateColumnWidth = (columnName) => {
 
 .editor-actions {
   display: flex;
-  gap: 8px;
+  /* gap: 8px; */
 }
 
 .editor-main {
@@ -336,7 +336,7 @@ const calculateColumnWidth = (columnName) => {
 .sql-result {
   flex: 1;
   min-height: 30vh; /* 使用视口高度的30%作为最小高度 */
-  display: flex;
+  /* display: flex; */
   flex-direction: column;
   background-color: #fff;
   border-radius: 4px;
