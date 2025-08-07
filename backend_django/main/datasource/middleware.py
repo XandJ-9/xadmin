@@ -64,7 +64,7 @@ class QueryLogMiddleware(MiddlewareMixin):
             # 获取SQL和结果
             sql = new_request.data.get('sql', '')
             # sql = request.POST.get('sql') if request.method == 'POST' else request.GET.get('sql')
-            logger.info(f'开始记录查询sql: {sql}')
+            # logger.info(f'开始记录查询sql: {sql}')
             
             if not sql:
                 return response

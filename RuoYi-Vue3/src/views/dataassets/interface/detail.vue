@@ -28,6 +28,7 @@
             <query-params-form :properties="queryProperties" @query="getFieldList" @reset="getFieldList" />
 
             <crud-bar addBtn @addEvent="handleAdd" removeBtn @removeEvent="handleMultiDelete" saveBtn @saveEvent="handleMutltiSave"/>
+
             <!-- 数据表格 -->
             <el-table :data="paginateData" style="width: 100%" v-loading="loading" border fit @selection-change="handleSelectionChange">
                 <el-table-column type="selection" width="50" align="center" />
@@ -116,23 +117,23 @@
             </el-table>
                     <!-- 分页 -->
             <pagination v-show="paginatedTotal > 0" :total="paginatedTotal" v-model:page="currentPage" v-model:limit="pageSize" />
-
-        </el-card>
-
-        <el-row>
-            <el-col :span="24" style="margin-top: 10px;">
-                <el-button type="primary" plain @click="showSqlEditor">SQL详情</el-button>
+            <el-col>
                 <el-button type="primary" plain @click="refreshFields">刷新顺序</el-button>
                 <el-button type="primary" plain @click="saveInterface">更新接口</el-button>
             </el-col>
-        </el-row>
-
-        <div ref="sqlContentRef" class="sql-content">
-        <el-card style="margin-top: 10px;" v-if="sqlEditorVisible">
-            <InterfaceSqlEditor :initial-sql="interfaceInfo?.interface_sql || ''" :interface-info="interfaceInfo"
-                @execute="handleExecuteSql" @save="handleSaveSql" @close="sqlEditorVisible = false" />
         </el-card>
-        </div>
+
+        <el-card style="margin-top: 10px;" >
+            <el-row>
+                <el-col :span="24" style="margin-top: 10px;">
+                    <el-button type="primary" plain @click="showSqlEditor">SQL详情</el-button>
+                </el-col>
+            </el-row>
+            <div ref="sqlContentRef" class="sql-content" v-if="sqlEditorVisible">
+                <InterfaceSqlEditor :initial-sql="interfaceInfo?.interface_sql || ''" :interface-info="interfaceInfo"
+                    @execute="handleExecuteSql" @save="handleSaveSql" @close="sqlEditorVisible = false" />
+            </div>
+        </el-card>
 
 
     </div>
