@@ -387,14 +387,15 @@ const handleSave = async () => {
     inputPattern: /\S+/,
     inputErrorMessage: '名称不能为空'
   }).then(({ value }) => {
+    ElMessage.info(`查询日志已经记录了查询语句，因此无须保存`)
     // 调用保存API
-    saveSqlQuery(selectedDataSource.value, value, sql)
-      .then(() => {
-        ElMessage.success('保存成功')
-      })
-      .catch(error => {
-        ElMessage.error(`保存${value}失败: ${error.message || '未知错误'}`)
-      })
+    // saveSqlQuery(selectedDataSource.value, value, sql)
+    //   .then(() => {
+    //     ElMessage.success('保存成功')
+    //   })
+    //   .catch(error => {
+    //     ElMessage.error(`保存${value}失败: ${error.message || '未知错误'}`)
+    //   })
   }).catch(() => {
     // 用户取消操作
   })
