@@ -33,3 +33,8 @@ class QueryExecutor(ABC):
     def close(self) -> None:
         """关闭数据库连接"""
         pass
+
+
+    def query_metadata(self, sql: str) -> Dict[str, Any]:
+        """查询元数据"""
+        pass
