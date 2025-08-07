@@ -121,16 +121,19 @@
 
         <el-row>
             <el-col :span="24" style="margin-top: 10px;">
-                <el-button type="primary" @click="showSqlEditor">SQL详情</el-button>
-                <el-button type="primary" @click="refreshFields">刷新顺序</el-button>
-                <el-button type="primary" @click="saveInterface">更新接口</el-button>
+                <el-button type="primary" plain @click="showSqlEditor">SQL详情</el-button>
+                <el-button type="primary" plain @click="refreshFields">刷新顺序</el-button>
+                <el-button type="primary" plain @click="saveInterface">更新接口</el-button>
             </el-col>
         </el-row>
 
+        <div ref="sqlContentRef" class="sql-content">
         <el-card style="margin-top: 10px;" v-if="sqlEditorVisible">
             <InterfaceSqlEditor :initial-sql="interfaceInfo?.interface_sql || ''" :interface-info="interfaceInfo"
                 @execute="handleExecuteSql" @save="handleSaveSql" @close="sqlEditorVisible = false" />
         </el-card>
+        </div>
+
 
     </div>
 </template>
@@ -154,7 +157,7 @@ export default {
 </script>
 
 <script setup name="InterfaceDetail">
-import { ref, reactive, computed, inject } from 'vue'
+import { ref, reactive, computed, inject, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import QueryParamsForm from '@/components/QueryParamsForm'
@@ -490,9 +493,21 @@ const paginatedTotal = computed(() => [...interfaceFields.inputFields, ...interf
 // SQL编辑器相关
 const sqlEditorVisible = ref(false)
 
+
+const sqlContentRef = ref(null)
 // 显示SQL编辑器
 const showSqlEditor = () => {
     sqlEditorVisible.value = true
+    // 关键：使用nextTick确保DOM已更新后再执行滚动
+    nextTick(() => {
+        if (sqlContentRef.value) {
+        // 滚动到新内容区域
+        sqlContentRef.value.scrollIntoView({
+            behavior: 'smooth', // 平滑滚动效果
+            block: 'start'      // 对齐方式：顶部对齐
+        });
+        }
+    });
 }
 
 // 新增字段

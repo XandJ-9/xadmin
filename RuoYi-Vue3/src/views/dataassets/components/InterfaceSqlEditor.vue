@@ -7,10 +7,10 @@
       </div> -->
       <div class="editor-actions">
         <el-tooltip content="纯sql执行，如果有输入参数，请先移除输入参数，待验证sql查询正常，再添加输入参数模板" placement="top">
-        <el-button type="primary" @click="executeSql" :loading="loading">执行</el-button>
+        <el-button type="primary" plain @click="executeSql" :loading="loading">执行</el-button>
         </el-tooltip>
-        <el-button @click="saveSql">更新SQL</el-button>
-        <el-button @click="$emit('close')">关闭</el-button>
+        <el-button plain @click="saveSql">更新SQL</el-button>
+        <el-button plain @click="closeSql">关闭</el-button>
       </div>
     </div>
     
@@ -205,6 +205,10 @@ const executeSql = async () => {
   } finally {
     loading.value = false
   }
+}
+
+const closeSql = () => {
+    emit('close')
 }
 
 const closeResult = () => {
