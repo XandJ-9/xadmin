@@ -63,3 +63,20 @@ class MySQLQueryExecutor(QueryExecutor):
     def close(self) -> None:
         # 由于每次查询都会创建新的连接，所以这里不需要实现
         pass
+
+    def query_tables(self, database: str) -> Dict[str, Any]:
+        connection = self.connect()
+        cursor = connection.cursor()
+        sql = 'SELECT * FROM information_schema.tables WHERE table_schema = %s'
+        cursor.execute(sql, (database,))
+        tables = cursor.fetchall()
+        cursor.close()
+        connection.close()
+        return {
+            'list': tables
+        }
+    
+    def query_table_metadata(self, table_schema: str ,table_name: str) -> Dict[str, Any]:
+        connection = self.connect()
+        cursor = connection.cursor()
+        sql = 'SELECT * FROM information_schema.columns WHERE table_schema = %s AND table_name = %s'

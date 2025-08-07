@@ -35,6 +35,10 @@ class QueryExecutor(ABC):
         pass
 
 
-    def query_metadata(self, sql: str) -> Dict[str, Any]:
-        """查询元数据"""
+    def query_tables(self, database: str) -> Dict[str, Any]:
+        """查询数据库表元数据"""
+        pass
+
+    def query_table_metadata(self, *args, **kwargs) -> Dict[str, Any]:
+        """查询表元数据"""
         pass
