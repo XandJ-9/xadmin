@@ -497,7 +497,6 @@ const handleSave = async () => {
   /* overflow: auto; */
   /* overflow-y: hidden; */
   width: 100%;
-  border: 1px solid yellow;
 }
 
 /* 确保Monaco编辑器填充其容器 */
