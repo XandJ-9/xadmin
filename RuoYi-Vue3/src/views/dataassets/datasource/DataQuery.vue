@@ -138,13 +138,13 @@ const handleMouseMove = (e) => {
   let newResultHeight = startResultHeight.value - deltaY
   
   // 确保两个区域都不小于最小高度
-  if (newEditorHeight < minEditorHeight) {
-    newEditorHeight = minEditorHeight
-    newResultHeight = availableHeight - minEditorHeight
-  } else if (newResultHeight < minResultHeight) {
-    newResultHeight = minResultHeight
-    newEditorHeight = availableHeight - minResultHeight
-  }
+//   if (newEditorHeight < minEditorHeight) {
+//     newEditorHeight = minEditorHeight
+//     newResultHeight = availableHeight - minEditorHeight
+//   } else if (newResultHeight < minResultHeight) {
+//     newResultHeight = minResultHeight
+//     newEditorHeight = availableHeight - minResultHeight
+//   }
   
   editorHeight.value = newEditorHeight
   resultHeight.value = newResultHeight
@@ -154,8 +154,7 @@ const stopResize = () => {
   isResizing.value = false
   document.removeEventListener('mousemove', handleMouseMove)
   document.removeEventListener('mouseup', stopResize)
-    document.body.style.cursor = ''
-  console.log('resultHeight ',resultHeight)
+  document.body.style.cursor = ''
 }
 
 onUnmounted(() => {
@@ -394,7 +393,7 @@ const handleSave = async () => {
         ElMessage.success('保存成功')
       })
       .catch(error => {
-        ElMessage.error(`保存失败: ${error.message || '未知错误'}`)
+        ElMessage.error(`保存${value}失败: ${error.message || '未知错误'}`)
       })
   }).catch(() => {
     // 用户取消操作
@@ -492,8 +491,8 @@ const handleSave = async () => {
 
 .query-result {
   flex-shrink: 0;
-  min-height: 200px;
-  max-height: 60vh;
+  /* min-height: 200px; */
+  /* max-height: 60vh; */
   /* overflow: auto; */
   /* overflow-y: hidden; */
   width: 100%;
