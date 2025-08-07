@@ -6,6 +6,7 @@
 POST {{host}}/api/login
 Content-Type: application/json
 
+
 {
     "username": "admin",
     "password": "123456",
@@ -14,7 +15,12 @@ Content-Type: application/json
 }
 
 
+###
+# 表单请求登录
+POST {{host}}/api/login
+Content-Type: application/x-www-form-urlencoded
 
+username=admin&password=123456&code=X888&uuid=acf9c378-2f56-499b-9cb3-028451dfe842
 
 
 

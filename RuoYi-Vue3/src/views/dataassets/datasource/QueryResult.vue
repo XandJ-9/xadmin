@@ -17,6 +17,7 @@
           :prop="column"
           :label="column"
           height="50px"
+          :width="columnWidth(column)" 
           sortable
           show-overflow-tooltip
         >
@@ -40,8 +41,11 @@
 </template>
 
 <script setup name="QueryResult">
+import { column } from 'element-plus/es/components/table-v2/src/common.mjs'
 import { ref, computed, onMounted } from 'vue'
-// import Pagination from '@/components/Pagination'
+
+
+const calculateColumnWidth = inject('calculateColumnWidth')
 
 const props = defineProps({
   queryResult: {
@@ -107,6 +111,11 @@ const formatCellValue = (value) => {
   if (value instanceof Date) return value.toLocaleString()
   if (typeof value === 'object') return JSON.stringify(value)
   return value.toString()
+}
+
+// 根据列名计算列宽度
+const columnWidth = (columnName) => {
+    return calculateColumnWidth(columnName, {})
 }
 
 onMounted(() => { 

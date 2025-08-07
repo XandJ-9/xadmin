@@ -142,7 +142,9 @@ def get_verbose_name(queryset=None, view=None, model=None):
     return model if model else ""
 
 
-def convert_to_restf_request(request):
-                # 将httprequest转换为rest_framework.request.Request对象
+def convert_to_restf_request(request: HttpRequest):
+    # 将httprequest转换为rest_framework.request.Request对象
+    # 只有表单请求支持转换，
+    # json请求会报异常： You cannot access body after reading from request's data strea
     parser_classes = api_settings.DEFAULT_PARSER_CLASSES
     return Request(request, parsers=[parser() for parser in parser_classes])
