@@ -154,7 +154,8 @@ const stopResize = () => {
   isResizing.value = false
   document.removeEventListener('mousemove', handleMouseMove)
   document.removeEventListener('mouseup', stopResize)
-  document.body.style.cursor = ''
+    document.body.style.cursor = ''
+  console.log('resultHeight ',resultHeight)
 }
 
 onUnmounted(() => {
@@ -442,14 +443,16 @@ const handleSave = async () => {
   background-color: #fff;
   height: calc(100vh - 60px); /* 减去头部高度 */
   position: relative;
+  /* border: red 1px solid; */
 }
 
 .query-editor {
-  border: 1px solid #dcdfe6;
+  /* border: 1px solid #dcdfe6; */
+  /* border: 1px solid blue; */
   border-radius: 4px;
   overflow: hidden;
   position: relative;
-  min-height: 200px;
+  /* min-height: 200px; */
   flex: 1;
   transition: height 0.3s ease;
 }
@@ -483,7 +486,8 @@ const handleSave = async () => {
 }
 
 .query-tabs {
-  margin-top: 8px;
+  /* margin-top: 8px; */
+  height: 100%;
 }
 
 .query-result {
@@ -493,6 +497,7 @@ const handleSave = async () => {
   /* overflow: auto; */
   /* overflow-y: hidden; */
   width: 100%;
+  border: 1px solid yellow;
 }
 
 /* 确保Monaco编辑器填充其容器 */
@@ -500,10 +505,20 @@ const handleSave = async () => {
   height: 100% !important;
 }
 
+:deep(.el-tab__header) {
+    height: 40px;
+    margin: none;
+}
+
 /* 确保查询结果表格正确显示 */
 :deep(.el-tabs__content) {
-  height: calc(100% - 40px); /* 减去标签页头部的高度 */
-  overflow: auto;
+  /* 减去标签页头部的高度 */
+  height: calc(100% - 40px); 
+  /* overflow: auto; */
+}
+
+:deep(.el-tab-pane) {
+    height: 100%;
 }
 
 .fade-enter-active,
@@ -516,148 +531,3 @@ const handleSave = async () => {
   opacity: 0;
 }
 </style> 
-
-
-<!-- <style scoped>
-.app-container {
-  padding: 0;
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 84px); /* 减去顶部导航高度 */
-  background-color: #f5f7fa;
-  overflow: hidden;
-}
-
-.query-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 12px 16px;
-  background-color: #fff;
-  border-bottom: 1px solid #e4e7ed;
-  height: 60px;
-  box-sizing: border-box;
-}
-
-.query-content {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  background-color: #fff;
-  position: relative;
-}
-
-/* 编辑器区域样式 */
-.query-editor {
-  border: 1px solid #dcdfe6;
-  border-radius: 4px 4px 0 0;
-  overflow: hidden;
-  min-height: 200px; /* 最小高度限制 */
-  transition: height 0.1s ease; /* 平滑高度过渡 */
-}
-
-/* 拖拽分隔条样式 */
-.resizer {
-  width: 100%;
-  height: 6px;
-  background-color: #f0f2f5;
-  cursor: row-resize;
-  position: relative;
-  z-index: 10;
-  border-left: 1px solid #dcdfe6;
-  border-right: 1px solid #dcdfe6;
-  user-select: none; /* 防止拖拽时选中文本 */
-}
-
-.resizer:hover {
-  background-color: #e4e7ed;
-}
-
-.resizer::before {
-  content: '';
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 40px;
-  height: 2px;
-  background-color: #909399;
-  border-radius: 1px;
-}
-
-/* 拖拽过程中的样式反馈 */
-.resizer.dragging {
-  background-color: #e4e7ed;
-}
-
-.resizer.dragging::before {
-  background-color: #409eff;
-}
-
-/* 结果展示区域样式 */
-.query-result {
-  display: flex;
-  flex-direction: column;
-  border: 1px solid #dcdfe6;
-  border-top: none;
-  border-radius: 0 0 4px 4px;
-  min-height: 200px; /* 最小高度限制 */
-  max-height: calc(100vh - 300px); /* 最大高度限制 */
-  transition: height 0.1s ease; /* 平滑高度过渡 */
-  overflow: hidden;
-}
-
-/* 标签页样式 */
-.query-tabs {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-/* 结果表格容器 */
-.result-table-container {
-  flex: 1;
-  overflow: auto; /* 表格内容滚动 */
-  padding: 12px;
-  box-sizing: border-box;
-}
-
-/* 分页控件容器 */
-.pagination-container {
-  padding: 12px;
-  border-top: 1px solid #e4e7ed;
-  background-color: #fafafa;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  box-sizing: border-box;
-}
-
-/* 确保Element UI表格正确显示 */
-:deep(.el-table) {
-  width: 100%;
-  height: 100%;
-  border-radius: 4px;
-}
-
-/* 确保分页控件正确显示 */
-:deep(.el-pagination) {
-  margin: 0;
-}
-
-/* 标签页内容区域 */
-:deep(.el-tabs__content) {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  height: calc(100% - 40px);
-}
-
-/* 拖拽时的全局光标样式 */
-body.dragging {
-  cursor: row-resize !important;
-  user-select: none;
-}
-</style> -->

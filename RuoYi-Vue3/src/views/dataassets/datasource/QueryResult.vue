@@ -1,53 +1,52 @@
 <template>
   <div class="query-result" v-loading="loading">
-    <div v-if="error" class="error-message">
+    <div v-if="error" class="error-container">
       <el-alert :title="error" type="error" show-icon />
     </div>
     <div v-else-if="queryResult.length > 0" class="result-container">
-      <div class="table-container">
-      <el-table 
-        :data="data" 
-        style="width: 100%" 
-        height="calc(100% - 100px)"
-        border 
-        stripe
-        @sort-change="handleSortChange"
-      >
-        <el-table-column
-          v-for="column in tableColumns"
-          :key="column"
-          :prop="column"
-          :label="column"
-          :width="columnWidth(column)" 
-          sortable
-          show-overflow-tooltip
-        >
-          <template #default="scope">
-            <span>{{ formatCellValue(scope.row[column]) }}</span>
-          </template>
-        </el-table-column>
-      </el-table>
-      </div>
-
       <div class="pagination-container">
         <pagination
-        :total="total"
-        v-model:page="currentPage" 
-        v-model:limit="pageSize" 
-        @pagination="paginatedData"
+          :total="total"
+          v-model:page="currentPage" 
+          v-model:limit="pageSize" 
+          @pagination="paginatedData"
         />
       </div>
+      <div class="table-container">
+        <el-table 
+          :data="data" 
+          style="width: 100%" 
+          border 
+          stripe
+          @sort-change="handleSortChange"
+        >
+          <el-table-column
+            v-for="column in tableColumns"
+            :key="column"
+            :prop="column"
+            :label="column"
+            :width="columnWidth(column)" 
+            sortable
+            show-overflow-tooltip
+          >
+            <template #default="scope">
+              <span>{{ formatCellValue(scope.row[column]) }}</span>
+            </template>
+          </el-table-column>
+        </el-table>
+      </div>
+
 
     </div>
-    <div v-else-if="!loading" class="empty-result">
+    <div v-else-if="!loading" class="empty-container">
       <el-empty description="暂无查询结果" />
     </div>
   </div>
 </template>
 
 <script setup name="QueryResult">
-import { ref, computed, onMounted } from 'vue'
-
+import { ref, computed, onMounted, inject } from 'vue'
+import { defineProps } from 'vue'
 
 const calculateColumnWidth = inject('calculateColumnWidth')
 
@@ -55,10 +54,10 @@ const props = defineProps({
   queryResult: {
     type: Array,
     default: () => []
-    },
-    total: {
-        type: Number,
-        default: 0
+  },
+  total: {
+    type: Number,
+    default: 0
   },
   tableColumns: {
     type: Array,
@@ -80,19 +79,9 @@ const pageSize = ref(20)
 const data = ref([])
 
 const paginatedData = () => {
-    const start = (currentPage.value - 1) * pageSize.value
-    const end = start + pageSize.value
-    data.value = props.queryResult.slice(start, end)
-}
-
-
-const handleSizeChange = (val) => {
-  pageSize.value = val
-  currentPage.value = 1
-}
-
-const handleCurrentChange = (val) => {
-  currentPage.value = val
+  const start = (currentPage.value - 1) * pageSize.value
+  const end = start + pageSize.value
+  data.value = props.queryResult.slice(start, end)
 }
 
 const handleSortChange = ({ prop, order }) => {
@@ -119,58 +108,83 @@ const formatCellValue = (value) => {
 
 // 根据列名计算列宽度
 const columnWidth = (columnName) => {
-    return calculateColumnWidth(columnName, {})
+  return calculateColumnWidth(columnName, {})
 }
 
 onMounted(() => { 
-    paginatedData()
+  paginatedData()
 })
-
 </script>
 
 <style scoped>
-/* .query-result {
+/* 核心容器 - 占满父容器高度 */
+.query-result {
   display: flex;
   flex-direction: column;
   height: 100%;
-  overflow: auto;
-} */
+  width: 100%;
+  /* overflow: hidden; */
+}
 
-/* .result-container {
+/* 结果容器 - 使用flex布局确保分页在底部 */
+.result-container {
   display: flex;
   flex-direction: column;
- gap: 16px;
-} */
-
-.error-message {
-  margin-bottom: 16px;
-}
-
-.empty-result {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   height: 100%;
+  overflow: hidden;
+  margin: 0;
 }
 
-
-/* 结果表格容器 */
+/* 表格容器 - 自动填充剩余空间 */
 .table-container {
-  flex: 1;
-  overflow: auto; /* 表格内容滚动 */
-  padding: 12px;
+  flex: 1; /* 关键：占满剩余空间 */
+  overflow: auto; /* 内容超出时可滚动 */
+  padding-bottom: 10px;
   box-sizing: border-box;
-  height: calc(100% - 100px);
+  min-height: 100px; /* 确保表格区域不会过小 */
+  /* height: 70%; */
+  height: calc(100% - 50px);
 }
 
-/* 分页控件容器 */
+/* 移除表格固定高度，由容器自动控制 */
+:deep(.el-table) {
+  width: 100%;
+  height: 100%; /* 表格占满容器高度 */
+}
+
+/* 分页容器 - 固定在底部 */
 .pagination-container {
-  padding: 12px;
-  border-top: 1px solid #e4e7ed;
+  margin: 0px;
+  padding: 0px 16px;
   background-color: #fafafa;
+  /* border-top: 1px solid #e4e7ed; */
   display: flex;
   justify-content: flex-end;
   align-items: center;
   box-sizing: border-box;
+  width: 100%;
+  /* 固定高度确保分页区域不会伸缩 */
+  height: 30px;
+}
+
+/* 错误提示容器 */
+.error-container {
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+/* 空状态容器 - 居中显示 */
+.empty-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  padding: 20px;
+}
+
+/* 处理加载状态的覆盖层位置 */
+:deep(.el-loading-mask) {
+  height: 100%;
+  width: 100%;
 }
 </style>
