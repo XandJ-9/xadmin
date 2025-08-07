@@ -13,12 +13,12 @@ class UserOperationMiddleware(MiddlewareMixin):
         if not hasattr(request, 'resolver_match') or not request.resolver_match:
             return response
         
-        if request.headers.get('Content-Type') == 'application/json':
-            data = json.loads(request.data)
-        else:
-            # 将httprequest转换为rest_framework.request.Request对象
-            new_request = convert_to_restf_request(request)
-            data = new_request.data
+        # if request.headers.get('Content-Type') == 'application/json':
+        #     data = json.loads(request.data)
+        # else:
+        #     # 将httprequest转换为rest_framework.request.Request对象
+        #     new_request = convert_to_restf_request(request)
+        #     data = new_request.data
 
         if request.user and request.user.is_authenticated:
                 logger.info(f'用户操作记录，用户名：{request.user}，请求路径：{request.path}，请求方法：{request.method}, 请求视图名称：{request.resolver_match.url_name}')
