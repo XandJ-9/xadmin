@@ -69,14 +69,44 @@ class MySQLQueryExecutor(QueryExecutor):
         cursor = connection.cursor()
         sql = 'SELECT * FROM information_schema.tables WHERE table_schema = %s'
         cursor.execute(sql, (database,))
-        tables = cursor.fetchall()
+        result = cursor.fetchall()
         cursor.close()
         connection.close()
         return {
-            'list': tables
+            'list': result
         }
     
     def query_table_metadata(self, table_schema: str ,table_name: str) -> Dict[str, Any]:
         connection = self.connect()
         cursor = connection.cursor()
-        sql = 'SELECT * FROM information_schema.columns WHERE table_schema = %s AND table_name = %s'
+        # sql = 'SELECT * FROM information_schema.columns WHERE table_schema = %s AND table_name = %s'
+        sql = '''
+        SELECT 
+            TABLE_CATALOG, 
+            TABLE_SCHEMA, 
+            TABLE_NAME, 
+            COLUMN_NAME, 
+            ORDINAL_POSITION, 
+            COLUMN_DEFAULT, 
+            IS_NULLABLE, 
+            DATA_TYPE, 
+            CHARACTER_MAXIMUM_LENGTH, 
+            CHARACTER_OCTET_LENGTH, 
+            NUMERIC_PRECISION, 
+            NUMERIC_SCALE, 
+            DATETIME_PRECISION, 
+            CHARACTER_SET_NAME, 
+            COLLATION_NAME, 
+            COLUMN_TYPE, 
+            COLUMN_KEY, 
+            EXTRA, 
+            `PRIVILEGES`, 
+            COLUMN_COMMENT
+        FROM information_schema.columns 
+        WHERE table_schema = %s AND table_name = %s
+        '''
+        cursor.execute(sql, (table_schema, table_name))
+        result = cursor.fetchall()
+        return {
+            'list': result
+        }
