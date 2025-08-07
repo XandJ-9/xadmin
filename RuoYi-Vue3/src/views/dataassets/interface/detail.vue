@@ -126,7 +126,7 @@
               </el-table-column>
           </el-table>
                   <!-- 分页 -->
-          <pagination v-show="paginatedTotal > 0" :total="paginatedTotal" v-model:page="currentPage" v-model:limit="pageSize" autoScroll="false"/>
+          <pagination v-show="paginatedTotal > 0" :total="paginatedTotal" v-model:page="currentPage" v-model:limit="pageSize" />
           <el-col>
               <el-button type="primary" plain @click="refreshFields">刷新顺序</el-button>
               <el-button type="primary" plain @click="saveInterface">更新接口</el-button>
@@ -189,13 +189,16 @@ const { proxy } = getCurrentInstance()
 
 const { interface_is_paging, interface_is_total, interface_is_date_option, interface_is_login_visit } = proxy.useDict("interface_is_paging", "interface_is_total", "interface_is_date_option", "interface_is_login_visit")
 
+
+const sqlContentRef = ref(null)
+
 // 控制当前展开的部分
 const activeSection = ref('basic');
 
 // 处理部分展开/折叠
-const handleSectionToggle = (sectionKey) => {
-  activeSection.value = activeSection.value === sectionKey ? null : sectionKey;
-  if (activeSection.value === 'sqlInfo') {
+const handleSectionToggle = (sectionKeys) => {
+  // activeSection.value = activeSection.value === sectionKey ? null : sectionKey;
+  if (sectionKeys.includes('sqlInfo')) {
     nextTick(() => {
         if (sqlContentRef.value) {
         // 滚动到新内容区域
@@ -525,7 +528,6 @@ const paginatedTotal = computed(() => [...interfaceFields.inputFields, ...interf
 const sqlEditorVisible = ref(false)
 
 
-const sqlContentRef = ref(null)
 // 显示SQL编辑器
 const showSqlEditor = () => {
     sqlEditorVisible.value = true
