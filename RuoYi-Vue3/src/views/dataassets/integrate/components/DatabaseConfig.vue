@@ -112,7 +112,7 @@
 </template>
 
 <script setup>
-import { ref, computed, defineProps, defineEmits, useSlots, useAttrs } from 'vue';
+import { ref, computed, useSlots, useAttrs } from 'vue';
 
 const props = defineProps({
   title: {
