@@ -1,138 +1,132 @@
 <template>
     <div class="app-container">
-      <el-collapse v-model="activeSection" @change="handleSectionToggle">
-        <!-- 第一部分：基本信息 -->
-        <el-collapse-item
-              title="基本信息" 
-              name="basic"
-              disabled
-            >
-              <!-- 接口信息 -->
-              <el-row style="padding: 20px;">
-                  <el-col :span="12" class="item-box">
-                      <span class="item-label">接口代码: </span>
-                      <span class="item-content">{{ interfaceInfo?.interface_code }}</span>
-                  </el-col>
-                  <el-col :span="12" class="item-box">
-                      <span class="item-label">接口名称: </span>
-                      <span class="item-content">{{ interfaceInfo?.interface_name }}</span>
-                  </el-col>
-                  <el-col :span="12" class="item-box">
-                      <span class="item-label">接口描述: </span>
-                      <span class="item-content">{{ interfaceInfo?.interface_desc }}</span>
-                  </el-col>
-                  <el-col :span="12" class="item-box">
-                      <span class="item-label">是否登录: </span>
-                      <span class="item-content">
-                        {{ interfaceInfo?.is_login_visit }}
-                      </span>
-                  </el-col>
-              </el-row>
-        </el-collapse-item>
 
-        <el-collapse-item 
-              title="字段信息"
-              name="fields"
-              >
-          <!-- 字段搜索 -->
-          <query-params-form :properties="queryProperties" @query="getFieldList" @reset="getFieldList" />
+    <!-- 第一部分：基本信息 -->
+    <el-card class="card-box">
+            <!-- 接口信息 -->
+            <el-row style="padding: 20px;">
+                <el-col :span="12" class="item-box">
+                    <span class="item-label">接口代码: </span>
+                    <span class="item-content">{{ interfaceInfo?.interface_code }}</span>
+                </el-col>
+                <el-col :span="12" class="item-box">
+                    <span class="item-label">接口名称: </span>
+                    <span class="item-content">{{ interfaceInfo?.interface_name }}</span>
+                </el-col>
+                <el-col :span="12" class="item-box">
+                    <span class="item-label">接口描述: </span>
+                    <span class="item-content">{{ interfaceInfo?.interface_desc }}</span>
+                </el-col>
+                <el-col :span="12" class="item-box">
+                    <span class="item-label">是否登录: </span>
+                    <span class="item-content">
+                    {{ interfaceInfo?.is_login_visit }}
+                    </span>
+                </el-col>
+            </el-row>
+    </el-card>
 
-          <crud-bar addBtn @addEvent="handleAdd" removeBtn @removeEvent="handleMultiDelete" saveBtn @saveEvent="handleMutltiSave"/>
+    <el-card class="card-box">
+        <!-- 字段搜索 -->
+        <query-params-form :properties="queryProperties" @query="getFieldList" @reset="getFieldList" />
 
-          <!-- 数据表格 -->
-          <el-table :data="paginateData" style="width: 100%" v-loading="loading" border fit @selection-change="handleSelectionChange">
-              <el-table-column type="selection" width="50" align="center" />
+        <crud-bar addBtn @addEvent="handleAdd" removeBtn @removeEvent="handleMultiDelete" saveBtn @saveEvent="handleMutltiSave"/>
 
-              <el-table-column prop="interface_para_code" label="参数编码" :width="interfaceParaCodeWidth">
-                  <template #default="scope">
-                      <item-wrapper type="input" v-model:modelValue="scope.row.interface_para_code" placeholder="请输入参数编码" />
-                  </template>
-              </el-table-column>
-              <el-table-column prop="interface_para_name" label="参数名称">
-                  <template #default="scope">
-                        <item-wrapper type="input" v-model:modelValue="scope.row.interface_para_name"  placeholder="请输入参数名称" />
-                  </template>
-              </el-table-column>
-              <el-table-column prop="interface_para_position" label="参数位置" width="80" align="center">
-                  <template #default="scope">
-                      <span>{{ scope.row.interface_para_position }}</span>
-                      <!-- <item-wrapper type="input-number"  v-model:modelValue="scope.row.interface_para_position" /> -->
-                  </template>
-              </el-table-column>
-              <el-table-column prop="interface_para_type" label="参数类型">
-                  <template #default="scope">
-                      <!-- <el-select v-model="scope.row.interface_para_type" placeholder="请选择参数类型" style="width: 100%">
-                          <el-option v-for="item in interfaceParaTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                      </el-select> -->
-                      <item-wrapper 
-                      type="select" 
-                      :options="interfaceParaTypeOptions" 
-                      v-model:modelValue="scope.row.interface_para_type" 
-                      placeholder="请输入参数值" >
+        <!-- 数据表格 -->
+        <el-table :data="paginateData" style="width: 100%" v-loading="loading" border fit @selection-change="handleSelectionChange">
+            <el-table-column type="selection" width="50" align="center" />
 
-                      </item-wrapper>
-                  </template>
-              </el-table-column>
-              <el-table-column prop="interface_data_type" label="数据类型" width="100">
-                  <template #default="scope">
-                      <!-- <el-select v-model="scope.row.interface_data_type">
-                          <el-option v-for="item in dataTypeOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-                      </el-select> -->
-                      <item-wrapper 
-                      type="select" 
-                      :options="dataTypeOptions" 
-                      v-model:modelValue="scope.row.interface_data_type" 
-                      placeholder="请选择" >
+            <el-table-column prop="interface_para_code" label="参数编码" :width="interfaceParaCodeWidth">
+                <template #default="scope">
+                    <item-wrapper type="input" v-model:modelValue="scope.row.interface_para_code" placeholder="请输入参数编码" />
+                </template>
+            </el-table-column>
+            <el-table-column prop="interface_para_name" label="参数名称">
+                <template #default="scope">
+                    <item-wrapper type="input" v-model:modelValue="scope.row.interface_para_name"  placeholder="请输入参数名称" />
+                </template>
+            </el-table-column>
+            <el-table-column prop="interface_para_position" label="参数位置" width="80" align="center">
+                <template #default="scope">
+                    <span>{{ scope.row.interface_para_position }}</span>
+                    <!-- <item-wrapper type="input-number"  v-model:modelValue="scope.row.interface_para_position" /> -->
+                </template>
+            </el-table-column>
+            <el-table-column prop="interface_para_type" label="参数类型">
+                <template #default="scope">
+                    <!-- <el-select v-model="scope.row.interface_para_type" placeholder="请选择参数类型" style="width: 100%">
+                        <el-option v-for="item in interfaceParaTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                    </el-select> -->
+                    <item-wrapper 
+                    type="select" 
+                    :options="interfaceParaTypeOptions" 
+                    v-model:modelValue="scope.row.interface_para_type" 
+                    placeholder="请输入参数值" >
 
-                      </item-wrapper>
-                  </template>
-              </el-table-column>
-              <el-table-column prop="interface_para_default" label="默认值" width="100" show-overflow-tooltip />
-              <el-table-column prop="interface_show_flag" label="是否显示" width="100">
-                  <template #default="scope">
-                      <!-- {{ scope.row.interface_show_flag === '1' ? '是' : '否' }} -->
-                      <item-wrapper
-                      type="select"
-                      :options="[{'label':'是', 'value':'1'},{'label':'否', 'value':'0'}]"
-                      v-model="scope.row.interface_show_flag"
-                      />
-                  </template>
-              </el-table-column>
-              <el-table-column prop="interface_export_flag" label="是否导出" width="100">
-                  <template #default="scope">
-                      <!-- {{ scope.row.interface_export_flag === '1' ? '是' : '否' }} -->
-                      <item-wrapper
-                      type="select"
-                      :options="[{'label':'是', 'value':'1'},{'label':'否', 'value':'0'}]"
-                      v-model="scope.row.interface_export_flag"
-                      />
-                  </template>
-              </el-table-column>
-              <!-- <el-table-column prop="interface_para_desc" label="参数描述" /> -->
-              <el-table-column label="操作" align="center">
-                  <template #default="scope">
-                      <el-button
-                      link type="primary" @click="handleSaveField(scope.row)">
-                          保存
-                      </el-button>
+                    </item-wrapper>
+                </template>
+            </el-table-column>
+            <el-table-column prop="interface_data_type" label="数据类型" width="100">
+                <template #default="scope">
+                    <!-- <el-select v-model="scope.row.interface_data_type">
+                        <el-option v-for="item in dataTypeOptions" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                    </el-select> -->
+                    <item-wrapper 
+                    type="select" 
+                    :options="dataTypeOptions" 
+                    v-model:modelValue="scope.row.interface_data_type" 
+                    placeholder="请选择" >
 
-                      <!-- <el-button link type="primary" icon="Edit" @click="handleEdit(scope.row)"
-                          v-hasPermi="['report:interface-field:update']"></el-button> -->
-                      <el-button link type="primary" icon="Plus" @click="handleAppendField(scope.row)"
-                          v-hasPermi="['report:interface-field:add']"></el-button>
-                      <el-button link type="danger" icon="Delete" @click="handleDeleteField(scope.row)"
-                          v-hasPermi="['report:interface-field:remove']"></el-button>
-                  </template>
-              </el-table-column>
-          </el-table>
-                  <!-- 分页 -->
-          <pagination v-show="paginatedTotal > 0" :total="paginatedTotal" v-model:page="currentPage" v-model:limit="pageSize" />
-          <el-col>
-              <el-button type="primary" plain @click="refreshFields">刷新顺序</el-button>
-              <el-button type="primary" plain @click="saveInterface">更新接口</el-button>
-          </el-col>
-        </el-collapse-item>
+                    </item-wrapper>
+                </template>
+            </el-table-column>
+            <el-table-column prop="interface_para_default" label="默认值" width="100" show-overflow-tooltip />
+            <el-table-column prop="interface_show_flag" label="是否显示" width="100">
+                <template #default="scope">
+                    <!-- {{ scope.row.interface_show_flag === '1' ? '是' : '否' }} -->
+                    <item-wrapper
+                    type="select"
+                    :options="[{'label':'是', 'value':'1'},{'label':'否', 'value':'0'}]"
+                    v-model="scope.row.interface_show_flag"
+                    />
+                </template>
+            </el-table-column>
+            <el-table-column prop="interface_export_flag" label="是否导出" width="100">
+                <template #default="scope">
+                    <!-- {{ scope.row.interface_export_flag === '1' ? '是' : '否' }} -->
+                    <item-wrapper
+                    type="select"
+                    :options="[{'label':'是', 'value':'1'},{'label':'否', 'value':'0'}]"
+                    v-model="scope.row.interface_export_flag"
+                    />
+                </template>
+            </el-table-column>
+            <!-- <el-table-column prop="interface_para_desc" label="参数描述" /> -->
+            <el-table-column label="操作" align="center">
+                <template #default="scope">
+                    <el-button
+                    link type="primary" @click="handleSaveField(scope.row)">
+                        保存
+                    </el-button>
+
+                    <!-- <el-button link type="primary" icon="Edit" @click="handleEdit(scope.row)"
+                        v-hasPermi="['report:interface-field:update']"></el-button> -->
+                    <el-button link type="primary" icon="Plus" @click="handleAppendField(scope.row)"
+                        v-hasPermi="['report:interface-field:add']"></el-button>
+                    <el-button link type="danger" icon="Delete" @click="handleDeleteField(scope.row)"
+                        v-hasPermi="['report:interface-field:remove']"></el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+                <!-- 分页 -->
+        <pagination v-show="paginatedTotal > 0" :total="paginatedTotal" v-model:page="currentPage" v-model:limit="pageSize" />
+        <el-col>
+            <el-button type="primary" plain @click="refreshFields">刷新顺序</el-button>
+            <el-button type="primary" plain @click="saveInterface">更新接口</el-button>
+        </el-col>
+    </el-card>
         
+    <el-collapse v-model="activeSection" @change="handleSectionToggle">
         <el-collapse-item
               title="SQL详情"
               name="sqlInfo"
@@ -143,7 +137,7 @@
             @execute="handleExecuteSql" @save="handleSaveSql" @close="sqlEditorVisible = false" />
           </div>
         </el-collapse-item>
-      </el-collapse>
+    </el-collapse>
 
     </div>
 </template>
@@ -644,7 +638,7 @@ getInterfaceInfo()
 
 <style scoped>
 
-.card-content {
+.card-box {
     /* display: flex; */
     /* justify-content: space-between; */
     align-items: center;

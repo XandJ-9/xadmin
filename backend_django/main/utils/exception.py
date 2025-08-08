@@ -3,7 +3,7 @@ from django.http import Http404,HttpResponseRedirect
 from django.db.utils import DatabaseError
 from django.core.exceptions import PermissionDenied
 
-from rest_framework.views import exception_handler
+from rest_framework.views import exception_handler, set_rollback
 from rest_framework.exceptions import APIException, AuthenticationFailed
 from rest_framework.status import HTTP_401_UNAUTHORIZED
 
@@ -22,7 +22,7 @@ def CustomExceptionHandler(ex, context):
     :return:
     """
     msg = ""
-    code = 300
+    code = 400
     # 调用默认的异常处理函数
     response = exception_handler(ex, context)
     if isinstance(ex, AuthenticationFailed):
@@ -43,7 +43,7 @@ def CustomExceptionHandler(ex, context):
         code = 404
         msg = "对象不存在"
     elif isinstance(ex, APIException):
-        # set_rollback()
+        set_rollback()
         msg = ex.detail
         if isinstance(ex, PermissionDenied):
             msg = f'{msg} ({context["request"].method}: {context["request"].path})'
@@ -52,11 +52,11 @@ def CustomExceptionHandler(ex, context):
                 for i in v:
                     msg = "%s:%s" % (k, i)
     elif isinstance(ex, (ProtectedError, RestrictedError)):
-        # set_rollback()
+        set_rollback()
         msg = "无法删除:该条数据与其他数据有相关绑定"
-    # elif isinstance(ex, DatabaseError):
-    #     set_rollback()
-    #     msg = "接口服务器异常,请联系管理员"
+    elif isinstance(ex, DatabaseError):
+        set_rollback()
+        msg = "接口服务器异常,请联系管理员"
     elif isinstance(ex, Exception):
         logger.exception(traceback.format_exc())
         msg = str(ex)
