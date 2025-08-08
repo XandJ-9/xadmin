@@ -2,7 +2,46 @@
   <div class="database-config">
     <h2>{{ title }}</h2>
     <div class="config-tabs">
-      <el-tabs v-model="activeTab" type="card">
+
+      <el-select
+            v-model="selectedDbId"
+            placeholder="请选择数据库"
+            clearable
+            class="db-select"
+          >
+            <el-option
+              v-for="db in filteredDatabases"
+              :key="db.id"
+              :label="db.name"
+              :value="db.id"
+            />
+      </el-select>
+
+      <el-card v-if="selectedDb" class="db-info-card">
+        <div class="db-info-item">
+          <span class="label">数据库名称：</span>
+          <span class="value">{{ selectedDb.name }}</span>
+        </div>
+        <div class="db-info-item">
+          <span class="label">数据库类型：</span>
+          <span class="value">{{ getDbTypeName(selectedDb.type) }}</span>
+        </div>
+        <div class="db-info-item">
+          <span class="label">连接地址：</span>
+          <span class="value">{{ selectedDb.host }}:{{ selectedDb.port }}</span>
+        </div>
+        <div class="db-info-item">
+          <span class="label">数据库名：</span>
+          <span class="value">{{ selectedDb.database }}</span>
+        </div>
+        <div class="db-info-item">
+          <span class="label">用户名：</span>
+          <span class="value">{{ selectedDb.username }}</span>
+        </div>
+      </el-card>
+
+      <!-- <el-tabs v-model="activeTab" type="card"> -->
+        <!--
         <el-tab-pane label="选择已有数据库">
           <el-select
             v-model="selectedDbId"
@@ -33,15 +72,17 @@
             </div>
             <div class="db-info-item">
               <span class="label">数据库名：</span>
-              <span class="value">{{ selectedDb.dbName }}</span>
+              <span class="value">{{ selectedDb.database }}</span>
             </div>
             <div class="db-info-item">
               <span class="label">用户名：</span>
               <span class="value">{{ selectedDb.username }}</span>
             </div>
           </el-card>
-        </el-tab-pane>
-        
+        </el-tab-pane> 
+        -->
+
+        <!-- 
         <el-tab-pane label="新增数据库">
           <el-form
             ref="dbForm"
@@ -95,9 +136,10 @@
               </span>
             </el-form-item>
           </el-form>
-        </el-tab-pane>
-      </el-tabs>
-      
+        </el-tab-pane> 
+        -->
+      <!-- </el-tabs> -->
+
       <div class="config-actions">
         <el-button 
           type="primary" 
@@ -107,6 +149,7 @@
           保存配置
         </el-button>
       </div>
+
     </div>
   </div>
 </template>
@@ -153,11 +196,11 @@ const filteredDatabases = computed(() => {
 const activeTab = ref('0');
 const selectedDbId = ref(props.selectedDb?.id || null);
 const newDbConfig = ref({
-  name: '',
+  datasource_name: '',
   type: '',
   host: '',
   port: '',
-  dbName: '',
+  database: '',
   username: '',
   password: ''
 });
@@ -170,7 +213,7 @@ const dbRules = {
   type: [{ required: true, message: '请选择数据库类型', trigger: 'change' }],
   host: [{ required: true, message: '请输入主机地址', trigger: 'blur' }],
   port: [{ required: true, message: '请输入端口号', trigger: 'blur' }],
-  dbName: [{ required: true, message: '请输入数据库名', trigger: 'blur' }],
+  database: [{ required: true, message: '请输入数据库名', trigger: 'blur' }],
   username: [{ required: true, message: '请输入用户名', trigger: 'blur' }]
 };
 

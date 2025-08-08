@@ -11,6 +11,10 @@ Authorization: Bearer {{$dotenv accessToken}}
 GET {{host}}/api/datasources/3/test/
 Authorization: Bearer {{$dotenv accessToken}}
 
+###
+GET {{host}}/api/datasources/1/show_tables/
+Authorization: Bearer {{$dotenv accessToken}}
+
 
 ###
 GET {{host}}/api/querylogs/

@@ -93,6 +93,8 @@ import TableFieldSelector from './components/TableFieldSelector.vue';
 import SyncMethodConfig from './components/SyncMethodConfig.vue';
 import SyncConfirmation from './components/SyncConfirmation.vue';
 
+import { getDataSourceList } from '@/api/dataassets/datasource'
+
 // 数据库类型选项
 const dbTypes = [
   { label: 'MySQL', value: 'mysql' },
@@ -103,38 +105,7 @@ const dbTypes = [
 ];
 
 // 模拟数据库列表
-const databases = ref([
-  {
-    id: 1,
-    name: '用户中心数据库',
-    type: 'mysql',
-    host: '192.168.1.100',
-    port: '3306',
-    username: 'admin',
-    password: '******',
-    dbName: 'user_center'
-  },
-  {
-    id: 2,
-    name: '订单系统数据库',
-    type: 'mysql',
-    host: '192.168.1.101',
-    port: '3306',
-    username: 'admin',
-    password: '******',
-    dbName: 'order_system'
-  },
-  {
-    id: 3,
-    name: '数据分析数据库',
-    type: 'postgresql',
-    host: '192.168.1.102',
-    port: '5432',
-    username: 'postgres',
-    password: '******',
-    dbName: 'data_analysis'
-  }
-]);
+const databases = ref([]);
 
 // 状态管理
 const activeStep = ref(0);
@@ -146,6 +117,15 @@ const syncMethod = ref({
   incrementField: '',
   syncFrequency: 'manual' // manual: 手动, daily: 每日, weekly: 每周
 });
+
+// 获取数据源
+const fetchDataSource = async () => {
+  getDataSourceList().then(res => {
+    databases.value = res.data
+  }).catch(err => {
+
+  })
+};
 
 // 处理源数据库保存
 const handleSourceDbSave = (dbConfig) => {
@@ -217,6 +197,9 @@ const executeSync = () => {
   // 显示成功消息，实际项目中可以跳转到同步任务列表或结果页面
   alert('数据同步任务已启动！');
 };
+
+
+fetchDataSource();
 </script>
 
 <style scoped>

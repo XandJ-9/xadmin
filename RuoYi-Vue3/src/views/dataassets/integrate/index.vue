@@ -1,6 +1,6 @@
 <template>
   <div>
-  数据集成同步
+    数据集成同步
   </div>
 </template>
 

@@ -97,7 +97,7 @@ class DataSourceViewSet(CustomModelViewSet):
                                                      database= datasource.database,
                                                      username =datasource.username, 
                                                      password=datasource.password)
-        return Response(executor.table_list())
+        return Response(executor.query_tables(datasource.database))
 
 class QueryLogViewSet(CustomModelViewSet):
     queryset = QueryLog.objects.all()
